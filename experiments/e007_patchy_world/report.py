@@ -401,7 +401,10 @@ VIEWER_JS = r"""
   }
   function setMode(){ frames = data[mode.value]; i = 0; slider.max = frames.length - 1; densest(); draw(); }
   function tick(){ i = (i + 1) % frames.length; draw(); }
-  playBtn.onclick = function(){ if (timer) { clearInterval(timer); timer = null; playBtn.textContent = 'Play'; } else { timer = setInterval(tick, mode.value === 'clip' ? 100 : 250); playBtn.textContent = 'Pause'; } };
+  const speed = document.getElementById('speed');
+  function interval(){ return (mode.value === 'clip' ? 250 : 600) / +speed.value; }
+  playBtn.onclick = function(){ if (timer) { clearInterval(timer); timer = null; playBtn.textContent = 'Play'; } else { timer = setInterval(tick, interval()); playBtn.textContent = 'Pause'; } };
+  speed.onchange = function(){ if (timer) { clearInterval(timer); timer = setInterval(tick, interval()); } };
   slider.oninput = function(){ i = +slider.value; draw(); };
   mode.onchange = function(){ if (timer) playBtn.onclick(); setMode(); };
   cv.onclick = function(e){ const r = cv.getBoundingClientRect(); zx = (Math.floor((e.clientX - r.left) / r.width * W - ZN / 2) + W) % W; zy = (Math.floor((e.clientY - r.top) / r.height * H - ZN / 2) + H) % H; draw(); };
@@ -592,6 +595,7 @@ def main():
   <div class="bar">
     <button id="play">Play</button>
     <select id="mode"><option value="long">Long view: every 20,000 steps</option><option value="clip">Clip: every 2nd step from 600,000</option></select>
+    <select id="speed"><option value="1">Slow</option><option value="2">Normal</option><option value="4">Fast</option></select>
     <span id="steplbl"></span>
   </div>
   <div class="bar"><input id="scrub" type="range" min="0" max="0" value="0"></div>
