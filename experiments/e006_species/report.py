@@ -257,6 +257,8 @@ pre.log {{ background: var(--surface); border: 1px solid var(--border); border-r
 .viewer input[type=range] {{ flex: 1; }}
 .viewer button, .viewer select {{ font: inherit; font-size: 13px; padding: 2px 10px; }}
 .viewer .lin {{ display: inline-block; padding: 0 6px; border-radius: 3px; color: #fff; font-size: 12px; margin-right: 4px; }}
+.viewer .sw {{ display: inline-block; width: 11px; height: 11px; border-radius: 2px; vertical-align: -1px; margin: 0 3px 0 6px; }}
+.viewer .sw.dot {{ background: #666; position: relative; }} .viewer .sw.dot::after {{ content: ""; position: absolute; left: 4px; top: 4px; width: 3px; height: 3px; background: #fff; }}
 @media (max-width: 700px) {{ .viewer .canvases {{ grid-template-columns: 1fr; }} }}
 """
 
@@ -359,8 +361,15 @@ VIEWER_JS = r"""
   const slider = document.getElementById('scrub'), stepLbl = document.getElementById('steplbl'), linLbl = document.getElementById('linlbl');
   const playBtn = document.getElementById('play'), mode = document.getElementById('mode');
   let frames = data.long, i = 0, timer = null, zx = 26, zy = 26;
-  const sprites = {};
+  const sprites = {}, stats = {};
   function color(lin){ return lin ? PAL[data.slots[lin] || 0] : NONE; }
+  // Same rules as the simulation: attack = min(hard blocks in the top 3 rows, muscle blocks); defense = hard / 2.
+  function stat(id){
+    if (stats[id]) return stats[id];
+    const cells = bodies[id] || ''; let hard = 0, front = 0, muscle = 0;
+    for (let k = 0; k < 64; k++) { const v = cells.charCodeAt(k) - 48; if (v === 1) { hard++; if (k < 24) front++; } else if (v === 2) muscle++; }
+    return stats[id] = { attack: Math.min(front, muscle), defense: hard / 2 };
+  }
   function sprite(id){
     if (sprites[id]) return sprites[id];
     const c = document.createElement('canvas'); c.width = 8; c.height = 8; const x = c.getContext('2d');
@@ -389,20 +398,23 @@ VIEWER_JS = r"""
     octx.putImageData(img, 0, 0);
     ctx.drawImage(off, 0, 0, cv.width, cv.height);
     paintFood(zctx, food, zx, zy, ZN, ZS);
-    const counts = {}; let n = 0;
+    const counts = {}, teeth = {}, armor = {}; let n = 0;
     for (let k = 0; k < ag.length; k += 6) {
       const x = ag[k], y = ag[k + 1], id = ag[k + 2] | (ag[k + 3] << 8), lin = ag[k + 4] | (ag[k + 5] << 8);
+      const st = stat(id);
       ctx.fillStyle = color(lin); ctx.fillRect(x * S + 1, y * S + 1, S - 2, S - 2);
+      if (st.attack > 0) { ctx.fillStyle = '#fff'; ctx.fillRect(x * S + S / 2 - 1.5, y * S + S / 2 - 1.5, 3, 3); }
       const dx = (x - zx + 64) & 63, dy = (y - zy + 64) & 63;
       if (dx < ZN && dy < ZN) { zctx.fillStyle = color(lin); zctx.fillRect(dx * ZS + 1, dy * ZS + 1, ZS - 2, ZS - 2); zctx.drawImage(sprite(id), dx * ZS + 5, dy * ZS + 5, ZS - 10, ZS - 10); }
-      counts[lin] = (counts[lin] || 0) + 1; n++;
+      counts[lin] = (counts[lin] || 0) + 1; teeth[lin] = (teeth[lin] || 0) + st.attack; armor[lin] = (armor[lin] || 0) + st.defense; n++;
     }
     zctx.strokeStyle = 'rgba(255,255,255,0.35)'; zctx.lineWidth = 1;
     for (let k = 0; k <= ZN; k++) { zctx.beginPath(); zctx.moveTo(k * ZS, 0); zctx.lineTo(k * ZS, zv.height); zctx.stroke(); zctx.beginPath(); zctx.moveTo(0, k * ZS); zctx.lineTo(zv.width, k * ZS); zctx.stroke(); }
     ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.strokeRect(zx * S, zy * S, ZN * S, ZN * S);
     stepLbl.textContent = 'step ' + fr.s.toLocaleString() + ' - ' + n + ' agents';
     const keys = Object.keys(counts).map(Number).sort((a, b) => counts[b] - counts[a]);
-    linLbl.innerHTML = keys.map(l => '<span class="lin" style="background:' + color(l) + '">' + (l ? 'lineage ' + l : 'none') + ': ' + counts[l] + '</span>').join('');
+    linLbl.innerHTML = keys.map(l => '<span class="lin" style="background:' + color(l) + '">' + (l ? 'lineage ' + l : 'none') + ': ' + counts[l]
+      + ' (teeth ' + Math.round(teeth[l] / counts[l]) + ', armor ' + Math.round(armor[l] / counts[l]) + ')</span>').join('');
   }
   function setMode(){ frames = data[mode.value]; i = 0; slider.max = frames.length - 1; draw(); }
   function tick(){ i = (i + 1) % frames.length; draw(); }
@@ -492,6 +504,7 @@ def main():
     bodies = load_bodies(run1)
     long_frames, used_l = pack_frames(f"results/{run1}_long.jsonl", first, every=2)
     clip_frames, used_c = pack_frames(f"results/{run1}_clip.jsonl", first, limit=200)
+    legend = " ".join(f'<span class="sw" style="background:{KIND_COLOR[k]}"></span>{name}' for k, name in ((1, "hard"), (2, "muscle"), (3, "sensor"), (4, "digestive")))
     viewer_data = {"long": long_frames, "clip": clip_frames, "bodies": {str(b): bodies[b] for b in used_l | used_c},
                    "kindColors": {str(k): v for k, v in KIND_COLOR.items()}, "palette": LINEAGE_PALETTE, "none": NONE_COLOR,
                    "slots": {str(k): v for k, v in color_slots(run1).items()}}
@@ -623,7 +636,8 @@ def main():
   </div>
   <div class="bar"><input id="scrub" type="range" min="0" max="0" value="0"></div>
   <div class="bar" id="linlbl"></div>
-  <div class="bar">Left: the whole world, each agent colored by its lineage (gray: none). Click to move the white box. Right: the box at 12x12 cells, bodies drawn on the lineage color. Green: food. Sexual mode, seed 1.</div>
+  <div class="bar" id="legend">Blocks: {legend} <span class="sw dot"></span> can bite (attack &gt; 0)</div>
+  <div class="bar">Left: the whole world, each agent colored by its lineage (gray: none); a white dot marks an agent with attack above 0, so it can eat prey. Click to move the white box. Right: the box at 12x12 cells, bodies drawn on the lineage color. Green: food. Labels: agents per lineage, then the lineage's mean attack (teeth) and defense (armor). Sexual mode, seed 1.</div>
 </div>
 <p>{text["viewer"]}</p>
 <div class="grid2">{charts["sps"]}</div>
@@ -661,7 +675,7 @@ TEXT = {
     "r1": "With or without mating, the world holds two to three lineages most of the time, one of them large. The asexual charts (bottom row) are the control: same shape, same range. Seeds differ more from each other than the modes do. Agents in no lineage are 0-12% of the population: the detector labels nearly everyone.",
     "r2": "The timeline is the evolution log drawn: bands are lineages, and every mark is one line of <code>events.csv</code>. Almost every lineage is born by splitting from another (one or two <em>birth</em> events per run, all the rest <em>split</em>). Lifetimes are heavy-tailed: half the lineages are gone within 6,000 steps of confirmation, a tenth last 85,000 steps or more, and seed 2 has one that lasts 856,000. A generation is 100-170 steps here, so a median lineage is 60-100 generations. Lineages have different bodies: in seed 1, lineage 1 (armored grazer, 28-36 hard blocks, no muscle) and lineage 13 (omnivore, 20 hard, 19 muscle, attack 17) coexist from step 18,000 to 132,000. The gene-distance histogram shows why the detector works: within a lineage, pairs are 0-4 apart; between lineages, 15-22; little sits at the threshold.",
     "r3": "A mate is found at 16-23% of births. The reason is density, not incompatibility: a living agent is in reach (5 cells) at only 25-36% of births, and when one is, it is compatible 61-63% of the time. With a search radius of 3 (25 cells) mating rises to 58% of births, and the lineage picture does not move. D = 3 makes lineages smaller and shorter (195 over the run, 0.39 events per 1,000 steps, 23% of agents in none); D = 10 makes them fewer and bigger (53, 0.10 events per 1,000 steps, the largest above 90% in 38% of windows). D is a law that sets the grain of the log; sex is not a law that changes the world.",
-    "viewer": "Each agent is drawn in its lineage's color. In the long view, the world is one or two colors at a time, with a new color appearing at an edge and either spreading or vanishing; the labels under the canvas count agents per lineage. In the clip, colors barely change: 400 steps is two or three generations, and lineages are things of tens of thousands of steps.",
+    "viewer": "Each agent is drawn in its lineage's color, and a white dot marks the ones that can bite (attack above 0, the same rule the world uses). In the long view, the world is one or two colors at a time, with a new color appearing at an edge and either spreading or vanishing; the labels under the canvas count agents per lineage and give the lineage's mean teeth and armor, so an omnivore lineage (teeth 10-20) and a grazer lineage (teeth 0, armor 15-20) can be told apart without reading the bodies. At step 305,000, for example, lineage 42 (102 agents, teeth 11) is the one with dots and lineage 260 (120 agents, teeth 0, armor 21) has none. In the clip, colors barely change: 400 steps is two or three generations, and lineages are things of tens of thousands of steps.",
     "discussion": "<p>The evolution log is real. Detection by gene distance, with a confirmation window and merges told apart from extinctions, produces a log with about one event per 5,000 steps and lineages that last tens of thousands of steps. Without the confirmation window, the first version of the detector logged one event per 1,000 steps and a median lifetime of one detection: groups fall apart and rejoin whenever a connecting agent dies. The 5,000-step window is a filter on the detector, not a change to the world.</p><p>Sex, as built, is a no-op, and the numbers say why twice over. First, it is rare: with 250 agents on 4,096 cells a parent has nobody in reach three times out of four. Second, when it happens, it is between genomes whose gene lists already match within 6, so a one-point crossover of two near-clones is a near-clone. Widening the search to 25 cells fixes the first and not the second. The species boundaries in this world are made by mutation, drift, and the clonal sweeps of e005; separate families are 15-22 genes apart within 60-100 generations, and the compatibility limit only names what is already there.</p><p>What this does not show: whether sex could matter if it had a reason to exist (a cost to budding, an advantage to recombination) and a wider compatibility limit. Nor whether 60-100 generations per lineage is a good pace to watch; the app phase decides that, and the knobs are the mutation rate and D, both laws. One rough edge in the log: at a split the bigger piece keeps the name, and once in seed 1 that piece died within 2,000 steps while the armored piece went on under a new id. A naming rule that follows the body would read better.</p>",
     "conclusion": "Keep the detector, the event log, and the lineage-colored viewer: they turn e005's world into something with a history a person can read. Keep the mating code, it is cheap, but do not count on it: species in this world are kin groups, and sex neither makes nor holds them. The three mechanisms of <code>vision.md</code> are now built; the world has bodies, a food web, and named lineages that are born, split, and die on their own. Next: the open items from e005 (prey worth eating, sensors that mean something) and the question of pace, since lineages turn over every 60-100 generations and the viewer shows a world that changes its colors every few frames.",
 }

@@ -29,17 +29,17 @@ predation, and species all come out of the genome and the world's rules.
 
 ## Order of work
 
-Done: e004 (shape from the genome), e005 (shape to function, predation), e006 (lineages, event log).
+Done: e004 (shape from the genome), e005 (shape to function, predation), e006 (lineages, event log),
+#9 (viewer: a white dot on agents that can bite, block legend, teeth and armor per lineage label).
 
 Next, in this order (GitHub issue numbers):
-1. #9 Viewer: show who can bite (teeth marker, block legend, attack and armor per lineage). Small.
-2. #10 e007: a bigger world (256x256) with patchy food. Do eyes get a reason to exist? The
+1. #10 e007: a bigger world (256x256) with patchy food. Do eyes get a reason to exist? The
    environment half of #8.
-3. #7 Make prey worth eating (energy stored in a body that grows). No pure carnivores so far.
-4. #8 Neighbor perception in the policy (prey vs threat as inputs), once e007 says whether
+2. #7 Make prey worth eating (energy stored in a body that grows). No pure carnivores so far.
+3. #8 Neighbor perception in the policy (prey vs threat as inputs), once e007 says whether
    sensors appear at all.
-5. #4 Learning, growth, aging, health as a layer on top of birth traits.
-6. #5 3D bodies (same development, 8x8x8).
+4. #4 Learning, growth, aging, health as a layer on top of birth traits.
+5. #5 3D bodies (same development, 8x8x8).
 
 ## Kept from earlier experiments
 
