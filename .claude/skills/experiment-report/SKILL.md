@@ -50,3 +50,10 @@ Write in plain English. One idea per paragraph. Numbers where possible. Do not r
 
 - Everything in the report is English. Plain words over jargon; define a term once where it is first used.
 - Keep `report.py` self-contained (standard library + matplotlib). No shared report library until several experiments need the same thing.
+
+## Viewer (when the experiment has snapshots)
+
+- Reuse the latest experiment's `VIEWER_JS` and `pack_frames` (e007 onward: any world size, frames as one gzip'd blob).
+- Playback must be slow by default: 600 ms per frame in the long view, 250 ms in the clip, with a
+  Slow / Normal / Fast selector (1x / 2x / 4x) next to Play. The user asked for this; do not speed it up again.
+- Keep the marks: lineage color, white dot on agents that can bite, block legend, per-lineage label with teeth / armor / eyes.
