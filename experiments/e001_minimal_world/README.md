@@ -51,9 +51,14 @@ Run (from repo root): `cargo run --release -p e001_minimal_world -- <steps> <see
 
 (drift excludes the first window, which includes the initial random genomes)
 
+Charts and a plain-language write-up: `report.html` (build with `python3 report.py`).
+
 Behavior: within ~100k steps, "stay" drops to ~0 in every seed. Agents keep moving in one direction
 (seed 1: 80% west at the end). This is a sweeping-grazer strategy: move constantly, eat what has regrown.
 Seeds 2 and 3 later show a mix of directions (roughly equal N/S/E/W by step 1M), that is, several lineages coexist.
+
+Turnover falls over time: births per 10,000 steps start at 10,000-19,000 and end at 3,000-7,000 (agents live 3-6x longer).
+The drop coincides with the switch from a single dominant direction to a mix of directions (seed 1 at ~600k steps, seeds 2 and 3 before 200k).
 
 Population is pinned at ~510 by resource regrowth (64*64*0.01 = 41 energy/step supply vs ~0.08/step per agent).
 Mean resource level stays around 0.05-0.06: the grid is almost always eaten bare.

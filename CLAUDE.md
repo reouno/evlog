@@ -36,6 +36,9 @@ And must end with:
 
 Record seed, parameters, and results. Use `experiments/TEMPLATE.md`.
 
+Each experiment also ships a `report.html` in its folder: charts and a plain-English write-up
+for a reader who does not know the code or the algorithms. Self-contained (inline SVG, no external assets).
+
 ## Layout
 
 Cargo workspace. Each experiment is its own crate: `experiments/eNNN_<name>/` with a `README.md` based on the template.
