@@ -36,12 +36,7 @@ And must end with:
 
 Record seed, parameters, and results. Use `experiments/TEMPLATE.md`.
 
-Each experiment also ships a `report.html` in its folder: charts and a plain-English write-up
-for a reader who does not know the code or the algorithms. Self-contained (inline SVG, no external assets).
-Structure it like a paper (the tone can stay casual): TL;DR, question, method, results, discussion, conclusion and next step, data appendix.
-The method section includes a diagram of the mechanism (how agents, environment, and rules interact), hand-drawn as inline SVG.
-Charts are made with matplotlib and inlined as SVG (transparent background, mid-gray chrome so they read in light and dark mode). Do not hand-draw charts.
-Keep it short. If it is long, nobody reads it.
+Each experiment also ships a `report.html`. Build it with the `experiment-report` skill.
 
 ## Layout
 
