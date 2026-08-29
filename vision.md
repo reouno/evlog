@@ -30,16 +30,17 @@ predation, and species all come out of the genome and the world's rules.
 ## Order of work
 
 Done: e004 (shape from the genome), e005 (shape to function, predation), e006 (lineages, event log),
-#9 (viewer: a white dot on agents that can bite, block legend, teeth and armor per lineage label).
+#9 (viewer: a white dot on agents that can bite, block legend, teeth and armor per lineage label),
+e007 (256x256 world with drifting food patches: islands, half the predation, three times the
+lineages, and the first sensor lineage that lasted).
 
 Next, in this order (GitHub issue numbers):
-1. #10 e007: a bigger world (256x256) with patchy food. Do eyes get a reason to exist? The
-   environment half of #8.
-2. #7 Make prey worth eating (energy stored in a body that grows). No pure carnivores so far.
-3. #8 Neighbor perception in the policy (prey vs threat as inputs), once e007 says whether
-   sensors appear at all.
-4. #4 Learning, growth, aging, health as a layer on top of birth traits.
-5. #5 3D bodies (same development, 8x8x8).
+1. #7 Make prey worth eating (energy stored in a body that grows). No pure carnivores so far.
+   Run it on the 256 patchy world.
+2. #8 Neighbor perception in the policy (prey vs threat as inputs), together with a sensor
+   knockout (same world, sense forced to 0) to tell an eye that pays from one that rides along.
+3. #4 Learning, growth, aging, health as a layer on top of birth traits.
+4. #5 3D bodies (same development, 8x8x8).
 
 ## Kept from earlier experiments
 
@@ -57,3 +58,10 @@ Next, in this order (GitHub issue numbers):
   the lineage-colored viewer. Sex under the compatibility limit changed nothing: a mate is in reach at 16-23% of
   births and is a near-clone when found. Species boundaries here come from mutation, drift, and clonal sweeps; the
   limit only names them. Mating stays in the code but is not a mechanism until it has a reason to exist.
+- e007: patchy food (one Gaussian patch of width 8 per 64x64 cells, drifting one cell every 50 steps, same total
+  regrowth as uniform) is a law of the world from here on. A bigger world with uniform food is the same world
+  sixteen times over (food per cell sets the density). Patches make islands: 12-21 lineages alive instead of 4-6,
+  three times the splits, predation deaths per birth halved. Sensor blocks stayed for the first time (one seed:
+  a grazer lineage with 2-3 sensor cells for 880,000 steps, its sensor changing one move in five), but the eye
+  is not shown to pay: intake per digestive block is the same with and without, and two sensor blocks cost 2%
+  of a grazer's intake. Use the 256 patchy world for what comes next; cost is linear in agents (400-700 steps/s).
