@@ -59,6 +59,14 @@ Runs: 64 and 256, uniform and patchy, seeds 1-3, 1,000,000 steps; 12 runs sharin
 machine. `64 patchy` separates the patch effect from the size effect.
 
 Run (from repo root): `cargo run --release -p e007_patchy_world -- <steps> <seed> <64|256> <uniform|patchy>`
+`EVLOG_THREADS=n` sets the threads used for development (default: all cores). Development is 75% of
+the step on the 256 world (profiled: `develop_genes` plus its `expf`), so the children born in one
+step are developed together on several threads, in birth order, with the same result. One run goes
+from 26.7 s to 14.3 s per 20,000 steps (1 vs 12 threads; about 10 developments per step is the
+ceiling). It shortens one run only: runs sharing a machine should split the cores between them.
+A body cache by gene list also skips children whose list a living agent already has (13% fewer
+developments than parent-reuse alone). Both were added after the runs above; outputs are
+byte-identical (checked on seed 9, 20,000 steps).
 Outputs: `results/<size>_<food>_seed<seed>_{log,agents,events,lineages,dist}.csv` and
 `_{long,clip,bodies}.jsonl` (not committed; re-run to regenerate before building the report).
 

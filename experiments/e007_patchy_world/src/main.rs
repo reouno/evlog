@@ -334,6 +334,7 @@ struct Agent {
     alive: bool,
     genome: Vec<u8>,
     keys: Vec<u16>, // sorted gene keys, for distances
+    gene_ids: Vec<u16>, // gene keys in genome order: the body is a function of this list
     body: Body,
 }
 
@@ -530,10 +531,18 @@ fn main() {
             next_id += 1;
             Agent {
                 id: next_id - 1, lineage: 0, x: rng.below(w), y: rng.below(h), energy: INIT_ENERGY, age: 0, plant: 0.0, meat: 0.0,
-                alive: body.mass > 0, keys: sorted_keys(&genes), genome, body,
+                alive: body.mass > 0, keys: sorted_keys(&genes), gene_ids: genes.iter().map(Gene::key).collect(), genome, body,
             }
         })
         .collect();
+    // Bodies by ordered gene list. The body is a pure function of the list (same list, same
+    // floating point order, same body), so a child whose list any living agent already has is not
+    // developed again. Entries are dropped when nobody living carries the list.
+    let mut cache: HashMap<Vec<u16>, Body> = agents.iter().map(|a| (a.gene_ids.clone(), a.body.clone())).collect();
+    let mut develops = 0u64;
+    // Threads for development (EVLOG_THREADS; default: all cores). Runs sharing a machine should
+    // split the cores between them: the total work is the same, threads only shorten one run.
+    let threads: usize = std::env::var("EVLOG_THREADS").ok().and_then(|s| s.parse().ok()).unwrap_or_else(|| std::thread::available_parallelism().map(|n| n.get()).unwrap_or(1)).max(1);
     let mut next_lineage = 1u32;
     let mut seen: HashMap<u32, u32> = HashMap::new(); // id -> detections in a row as a group
     let mut origin: HashMap<u32, u32> = HashMap::new(); // provisional id -> id it split from (0 = none)
@@ -545,7 +554,7 @@ fn main() {
          stay,n,s,e,w,steps_per_sec,mass_mean,mass_std,hard_mean,hard_std,muscle_mean,muscle_std,sensor_mean,sensor_std,\
          digestive_mean,digestive_std,attack_mean,attack_std,speed_mean,speed_std,distinct_bodies,top_body_share,\
          diet_plants,diet_mixed,diet_meat,diet_none,births_with_neighbor,sexual_births,lineages,top_lineage_share,no_lineage_share,\
-         sensor_agents_share,sense_decisions,sense_used,res_std,res_above_half,regrowth"
+         sensor_agents_share,sense_decisions,sense_used,res_std,res_above_half,regrowth,develops"
     )
     .unwrap();
 
@@ -604,6 +613,7 @@ fn main() {
         };
 
         let mut newborn = Vec::new();
+        let mut pending: Vec<(Agent, Option<Vec<Gene>>)> = Vec::new();
         for i in 0..agents.len() {
             if !agents[i].alive {
                 continue;
@@ -750,23 +760,60 @@ fn main() {
                 // The body is a function of the gene list alone. A mutation outside the genes
                 // (most of them) gives the parent's body without developing it again.
                 let genes = parse_genes(&genome);
-                let body = if mate.is_none() && genes == parse_genes(&a.genome) { a.body.clone() } else { develop_genes(&genes, &laws) };
+                let gene_ids: Vec<u16> = genes.iter().map(Gene::key).collect();
+                let body = if gene_ids == a.gene_ids { Some(a.body.clone()) } else { cache.get(&gene_ids).cloned() };
                 let (cx, cy) = match rng.below(4) {
                     0 => (a.x, yn),
                     1 => (a.x, yp),
                     2 => (xp, a.y),
                     _ => (xn, a.y),
                 };
-                let alive = body.mass > 0;
-                if !alive {
-                    deaths[3] += 1;
-                }
                 next_id += 1;
-                newborn.push(Agent {
-                    id: next_id - 1, lineage: a.lineage, x: cx, y: cy, energy: a.energy, age: 0, plant: 0.0, meat: 0.0, alive,
-                    keys: sorted_keys(&genes), genome, body,
-                });
+                let keys = sorted_keys(&genes);
+                let todo = body.is_none().then_some(genes);
+                pending.push((Agent {
+                    id: next_id - 1, lineage: a.lineage, x: cx, y: cy, energy: a.energy, age: 0, plant: 0.0, meat: 0.0, alive: true,
+                    keys, gene_ids, genome, body: body.unwrap_or_else(|| Body { cells: [0; CELLS], mass: 0, kinds: [0; N_KINDS], attack: 0, policy: [0.0; N_POLICY], n_genes: 0 }),
+                }, todo));
             }
+        }
+        // Develop the children with a new gene list, one development per distinct list, on all
+        // cores. The children keep their birth order, so the result is the same as developing
+        // them one by one in the loop.
+        let mut jobs: Vec<(&[u16], &[Gene])> = Vec::new();
+        for (a, genes) in &pending {
+            if let Some(g) = genes {
+                if !jobs.iter().any(|(k, _)| *k == a.gene_ids.as_slice()) {
+                    jobs.push((&a.gene_ids, g));
+                }
+            }
+        }
+        develops += jobs.len() as u64;
+        let mut developed: Vec<Body> = Vec::with_capacity(jobs.len());
+        let n_threads = threads.min(jobs.len() / 2); // at least two developments per thread
+        if n_threads < 2 {
+            developed.extend(jobs.iter().map(|(_, g)| develop_genes(g, &laws)));
+        } else {
+            let chunk = jobs.len().div_ceil(n_threads);
+            let laws = &laws;
+            let parts: Vec<Vec<Body>> = std::thread::scope(|sc| {
+                let handles: Vec<_> = jobs.chunks(chunk).map(|c| sc.spawn(move || c.iter().map(|(_, g)| develop_genes(g, laws)).collect::<Vec<Body>>())).collect();
+                handles.into_iter().map(|h| h.join().unwrap()).collect()
+            });
+            developed.extend(parts.into_iter().flatten());
+        }
+        for ((k, _), b) in jobs.iter().zip(developed) {
+            cache.insert(k.to_vec(), b);
+        }
+        for (mut a, genes) in pending.drain(..) {
+            if genes.is_some() {
+                a.body = cache[&a.gene_ids].clone();
+            }
+            a.alive = a.body.mass > 0;
+            if !a.alive {
+                deaths[3] += 1;
+            }
+            newborn.push(a);
         }
         births += newborn.len() as u64;
         agents.append(&mut newborn);
@@ -784,6 +831,10 @@ fn main() {
             }
         });
 
+        if step % LINEAGE_INTERVAL == 0 {
+            let live: std::collections::HashSet<&[u16]> = agents.iter().map(|a| a.gene_ids.as_slice()).collect();
+            cache.retain(|k, _| live.contains(k.as_slice()));
+        }
         // Lineages: groups connected by possible mating (single linkage at distance D).
         if step % LINEAGE_INTERVAL == 0 {
             let n = agents.len();
@@ -1006,7 +1057,7 @@ fn main() {
             let sensor_agents = agents.iter().filter(|a| a.body.kinds[SENSOR] > 0).count() as f32 / pop;
             let (_, res_std) = mean_std(res.iter().copied());
             let res_above_half = res.iter().filter(|&&r| r > 0.5).count() as f32 / (w * h) as f32;
-            writeln!(log, ",{births_with_neighbor},{sexual_births},{},{top_lineage:.3},{no_lineage:.3},{sensor_agents:.3},{sense_decisions},{:.3},{res_std:.3},{res_above_half:.3},{:.2}",
+            writeln!(log, ",{births_with_neighbor},{sexual_births},{},{top_lineage:.3},{no_lineage:.3},{sensor_agents:.3},{sense_decisions},{:.3},{res_std:.3},{res_above_half:.3},{:.2},{develops}",
                 lineages.len(), if sense_decisions > 0 { sense_used as f64 / sense_decisions as f64 } else { 0.0 }, regrowth / LOG_INTERVAL as f64).unwrap();
             births = 0;
             sexual_births = 0;
@@ -1019,6 +1070,7 @@ fn main() {
             sense_decisions = 0;
             sense_used = 0;
             regrowth = 0.0;
+            develops = 0;
             if agents.is_empty() {
                 eprintln!("extinct at step {step}");
                 break;
