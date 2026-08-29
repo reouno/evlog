@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-08-30 (e009).
+Last updated: 2026-08-30 (e010).
 
 ## What the viewer should see
 
@@ -35,13 +35,14 @@ e007 (256x256 world with drifting food patches: islands, half the predation, thr
 lineages, and the first sensor lineage that lasted), e008 (prey worth eating: a prize for old bodies does not make meat pay; hunter lineages exist anyway, as
 booms; the lineage log now records diet), e009 (perception: inputs that say who can eat whom are non-zero once in a
 hundred decisions; eyes do not pay because there is nothing to see; the knockout shows e007's eyes were a passenger
-with a slight tailwind).
+with a slight tailwind), e010 (contact physics: every trait rule removed; the world stands, shape goes to the
+smallest corner of gut, teeth are profitable and were found once in twelve million births).
 
 Next, in this order (GitHub issue numbers):
-1. Make bodies biteable: the wall every experiment since e005 has hit is attack capped at 24 (three front rows
-   matched by muscle) against defense up to 32, with armor as cheap per block as gut. Change the wall (a bite that
-   can grow, or armor that costs more), then run counts and who again on the same world. Only when who is next
-   to you matters can an eye be tested, and only then is there an arms race to watch. (#11)
+1. Give size a reason in the world, not in the body (principles.md, 2): food that a small body cannot take (a cell
+   holding more than one bite, so that intake scales with digestive cells again) or places a small body cannot
+   cross. Watch whether bodies grow because the world rewards it, and whether teeth then have something to reach.
+   Running longer alone does not help (seed 1 to 2,000,000 steps: no second hunter). (#12)
 2. #4 Learning, growth, aging, health as a layer on top of birth traits.
 3. #5 3D bodies (same development, 8x8x8).
 
@@ -86,6 +87,17 @@ Next, in this order (GitHub issue numbers):
   a passenger with a slight tailwind. Predation is decided by the body plan and by move order (the eater moves
   first in 75% of kills; 15% of prey die before their first move). The who inputs stay in the code at zero
   cost; the world stays e007's (counts). The knockout is how an eye is tested from now on.
+- e010: the laws are now about materials and the world only. A cell costs what it holds (0.02 to build, 0.02
+  when eaten plus its share of the body's energy); a body pays 0.032 per step besides its cells (a world law, for
+  the population bound: regrowth / 0.032); force acts the way a body moves: a body moving into an occupied cell
+  pushes into the bodies there line by line, and the softer tip breaks if the pusher's muscle in that line exceeds
+  the tip's hardness (3 per contiguous hard cell, else 1). No attack, defense, gut, escape roll, kin exclusion,
+  or kill rule. Keep these laws and the measures (bite, shell, open lines). What they showed: bodies were full
+  squares only because defense counted hard blocks; without that, every seed goes to 3-4 digestive cells in a
+  corner (intake is capped by the food in one cell, cost is per cell). Teeth pay ten to one and appeared once in
+  twelve million births (seed 1, step 985,000; gone in 12,000 steps: a body that pushes with a tooth also breaks
+  its own children). Emergence here is a reachability problem: a hunter needs a tooth, a policy that moves into
+  occupied cells, and a way not to hurt kin, all at once.
 - e007 calibration: 128x128 (4 islands) matches 256x256 per island for what happens on an island (population,
   food, predation, body composition, rate of sensor lineages) but not between islands (lineages per island and
   lifetime move with the number of islands). Use 128 with more seeds for questions about bodies and behavior;
