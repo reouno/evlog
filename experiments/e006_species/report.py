@@ -405,7 +405,8 @@ VIEWER_JS = r"""
       ctx.fillStyle = color(lin); ctx.fillRect(x * S + 1, y * S + 1, S - 2, S - 2);
       if (st.attack > 0) { ctx.fillStyle = '#fff'; ctx.fillRect(x * S + S / 2 - 1.5, y * S + S / 2 - 1.5, 3, 3); }
       const dx = (x - zx + 64) & 63, dy = (y - zy + 64) & 63;
-      if (dx < ZN && dy < ZN) { zctx.fillStyle = color(lin); zctx.fillRect(dx * ZS + 1, dy * ZS + 1, ZS - 2, ZS - 2); zctx.drawImage(sprite(id), dx * ZS + 5, dy * ZS + 5, ZS - 10, ZS - 10); }
+      if (dx < ZN && dy < ZN) { zctx.fillStyle = color(lin); zctx.fillRect(dx * ZS + 1, dy * ZS + 1, ZS - 2, ZS - 2); zctx.drawImage(sprite(id), dx * ZS + 5, dy * ZS + 5, ZS - 10, ZS - 10);
+        if (st.attack > 0) { zctx.fillStyle = '#fff'; zctx.fillRect(dx * ZS + ZS / 2 - 3, dy * ZS + ZS / 2 - 3, 6, 6); } }
       counts[lin] = (counts[lin] || 0) + 1; teeth[lin] = (teeth[lin] || 0) + st.attack; armor[lin] = (armor[lin] || 0) + st.defense; n++;
     }
     zctx.strokeStyle = 'rgba(255,255,255,0.35)'; zctx.lineWidth = 1;
@@ -637,7 +638,7 @@ def main():
   <div class="bar"><input id="scrub" type="range" min="0" max="0" value="0"></div>
   <div class="bar" id="linlbl"></div>
   <div class="bar" id="legend">Blocks: {legend} <span class="sw dot"></span> can bite (attack &gt; 0)</div>
-  <div class="bar">Left: the whole world, each agent colored by its lineage (gray: none); a white dot marks an agent with attack above 0, so it can eat prey. Click to move the white box. Right: the box at 12x12 cells, bodies drawn on the lineage color. Green: food. Labels: agents per lineage, then the lineage's mean attack (teeth) and defense (armor). Sexual mode, seed 1.</div>
+  <div class="bar">Left: the whole world, each agent colored by its lineage (gray: none); a white dot marks an agent with attack above 0, so it can eat prey. Click to move the white box. Right: the box at 12x12 cells, bodies drawn on the lineage color, the same dot on the ones that can bite. Green: food. Labels: agents per lineage, then the lineage's mean attack (teeth) and defense (armor). Sexual mode, seed 1.</div>
 </div>
 <p>{text["viewer"]}</p>
 <div class="grid2">{charts["sps"]}</div>
