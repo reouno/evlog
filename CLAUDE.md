@@ -16,6 +16,11 @@ App, web, and monetization (ads) are ideas only. Do not build them now.
 - Do not program the fun directly. Change rules and selection pressure, then observe what emerges.
 - When a change adds compute cost, state why.
 
+## R&D stance
+
+- The key question is "what can be realized". Do not drift into side discussions or local optimization.
+- No unnecessary tuning or micro-optimization of algorithms or code. Complexity without a reason is a loss.
+
 ## Experiments
 
 Every experiment must state, before starting:
