@@ -254,6 +254,10 @@ details {{ margin: 8px 0; }} summary {{ cursor: pointer; color: var(--ink2); }}
 .verdict {{ display: inline-block; padding: 1px 8px; border-radius: 4px; font-size: 12.5px; font-weight: 600; background: rgba(12,163,12,0.12); color: #006300; }}
 :root[data-theme="dark"] .verdict {{ color: #0ca30c; }}
 @media (prefers-color-scheme: dark) {{ :root:not([data-theme="light"]) .verdict {{ color: #0ca30c; }} }}
+h3 {{ font-size: 16px; margin: 24px 0 8px; }}
+.diagram {{ margin: 12px 0; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px 8px; color: var(--ink); }}
+.diagram figcaption {{ color: var(--ink2); font-size: 13px; margin-top: 4px; }}
+.measures {{ columns: 2; column-gap: 24px; max-width: none; padding-left: 20px; }} .measures li {{ break-inside: avoid; }}
 dl {{ display: grid; grid-template-columns: max-content 1fr; gap: 4px 16px; max-width: 72ch; }}
 dt {{ font-weight: 600; }} dd {{ margin: 0; color: var(--ink2); }}
 """
@@ -288,6 +292,60 @@ document.querySelectorAll('.fig').forEach(fig => {
 });
 """
 
+    diagram = """
+<figure class="diagram">
+<svg viewBox="0 0 720 302" role="img" aria-label="One step for one agent: it eats from its cell, sees nearby food, its genome picks a move, and its energy decides whether it splits or dies." style="max-width:100%;height:auto;display:block">
+<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+<g fill="none" stroke="currentColor" stroke-width="1.2" font-size="12" font-family="system-ui, sans-serif">
+  <!-- cell -->
+  <rect x="20" y="100" width="150" height="58" rx="6"/>
+  <text x="95" y="122" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">Cell: food</text>
+  <text x="95" y="140" text-anchor="middle" fill="currentColor" stroke="none" opacity="0.75">0 to 1.0</text>
+  <path d="M60,100 C60,70 130,70 130,100" marker-end="url(#arr)"/>
+  <text x="95" y="72" text-anchor="middle" fill="currentColor" stroke="none" opacity="0.75">regrows +0.01 / step</text>
+  <!-- agent -->
+  <rect x="290" y="100" width="150" height="58" rx="6" stroke="var(--s1)" stroke-width="2"/>
+  <text x="365" y="122" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">Agent: energy</text>
+  <text x="365" y="140" text-anchor="middle" fill="currentColor" stroke="none" opacity="0.75">pays 0.05 / step</text>
+  <!-- eat -->
+  <line x1="170" y1="129" x2="288" y2="129" marker-end="url(#arr)"/>
+  <text x="229" y="122" text-anchor="middle" fill="currentColor" stroke="none">eats up to 0.2</text>
+  <!-- split / die -->
+  <rect x="540" y="30" width="160" height="58" rx="6"/>
+  <text x="620" y="52" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">Splits in two</text>
+  <text x="620" y="70" text-anchor="middle" fill="currentColor" stroke="none" opacity="0.75">child = copy + small noise</text>
+  <line x1="440" y1="112" x2="538" y2="66" marker-end="url(#arr)"/>
+  <text x="480" y="78" text-anchor="middle" fill="currentColor" stroke="none">energy &#8805; 10</text>
+  <rect x="540" y="110" width="160" height="38" rx="6"/>
+  <text x="620" y="134" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">Dies</text>
+  <line x1="440" y1="129" x2="538" y2="129" marker-end="url(#arr)"/>
+  <text x="489" y="122" text-anchor="middle" fill="currentColor" stroke="none">energy &#8804; 0</text>
+  <!-- genome / action -->
+  <rect x="290" y="215" width="150" height="50" rx="6"/>
+  <text x="365" y="236" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">Genome</text>
+  <text x="365" y="253" text-anchor="middle" fill="currentColor" stroke="none" opacity="0.75">35 numbers, inherited</text>
+  <line x1="365" y1="158" x2="365" y2="213" marker-end="url(#arr)"/>
+  <text x="375" y="190" fill="currentColor" stroke="none">sees food here + 4 neighbors,</text>
+  <text x="375" y="204" fill="currentColor" stroke="none">and own energy</text>
+  <!-- plus-shaped "what it sees" icon -->
+  <g transform="translate(300,170)">
+    <rect x="14" y="0" width="13" height="13"/><rect x="0" y="14" width="13" height="13"/>
+    <rect x="14" y="14" width="13" height="13" fill="var(--s1)" opacity="0.6"/>
+    <rect x="28" y="14" width="13" height="13"/><rect x="14" y="28" width="13" height="13"/>
+  </g>
+  <rect x="540" y="215" width="160" height="50" rx="6"/>
+  <text x="620" y="236" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">Action</text>
+  <text x="620" y="253" text-anchor="middle" fill="currentColor" stroke="none" opacity="0.75">stay / N / S / E / W</text>
+  <line x1="440" y1="240" x2="538" y2="240" marker-end="url(#arr)"/>
+  <text x="489" y="233" text-anchor="middle" fill="currentColor" stroke="none">picks one</text>
+  <path d="M700,240 C716,240 716,292 620,292 L95,292 C60,292 60,200 95,160" marker-end="url(#arr)" stroke-dasharray="4 3"/>
+  <text x="400" y="281" text-anchor="middle" fill="currentColor" stroke="none" opacity="0.75">moving costs 0.03 more and lands the agent on a new cell</text>
+</g>
+</svg>
+<figcaption>Figure 1. One step, one agent. Food is the only thing agents interact with; they never touch each other. Whatever eats well enough to split, spreads.</figcaption>
+</figure>
+"""
+
     page = f"""<!doctype html>
 <html lang="en">
 <head>
@@ -307,74 +365,70 @@ document.querySelectorAll('.fig').forEach(fig => {
 The catch: after about 100,000 steps the creatures all settle on one trick, "keep walking", and the world stops looking different. Next we need something that pushes the world into new shapes, such as creatures interacting with each other.</p>
 </section>
 
-<h2>What we built</h2>
-<p>A tiny world on a 64 x 64 grid that wraps around at the edges. Every cell grows food slowly, up to a limit.
-Small creatures ("agents") live on the grid. Each step, an agent eats some of the food where it stands, pays a small
-cost for being alive (and a little more if it moves), and then decides to stay or move one cell north, south, east, or west.</p>
-<p>Agents have no brain to speak of: a short list of 35 numbers (the "genome") decides how they react to the food around them and to their own hunger.
-When an agent has eaten enough, it splits in two. The child gets a slightly randomized copy of the parent's numbers. When an agent runs out of energy, it dies.
-Nobody tells the agents what to do. Whatever works, spreads.</p>
-
-<h2>What we wanted to know</h2>
+<h2>1. Question</h2>
+<p>Everything we plan to build sits on one loop: creatures eat, reproduce with small random changes, and die. Before adding anything, we need to know if that loop alone holds up. Three things to check:</p>
 <ol>
-  <li>Does the population survive a long run (1,000,000 steps) without dying out or growing without limit?</li>
-  <li>Does evolution keep going, or does everyone end up identical and stuck?</li>
-  <li>How fast is it? Is a long run cheap enough to be practical?</li>
+  <li><strong>Survival.</strong> Does the population last 1,000,000 steps without dying out or growing without limit?</li>
+  <li><strong>Ongoing evolution.</strong> Do the creatures keep changing, or do they all become identical and stuck?</li>
+  <li><strong>Cost.</strong> Is a long run cheap enough to be practical?</li>
 </ol>
-<p>We ran the world three times with different random starting points ("seed 1, 2, 3") and took a snapshot every 10,000 steps.</p>
 
-<h2>Summary</h2>
+<h2>2. The world</h2>
+<p>A 64 x 64 grid that wraps around at the edges. Each cell grows food. Creatures ("agents") stand on cells, and each step every agent goes through the loop in Figure 1.</p>
+{diagram}
+<p>Agents have no learning and no memory. The genome is a fixed list of 35 numbers that turns what the agent sees into one of five moves. A child gets the parent's numbers plus small random noise. Nobody tells the agents what to do; whatever works, spreads.</p>
+<p><strong>Runs.</strong> Three runs from different random starts (seed 1, 2, 3), 1,000,000 steps each, starting with 200 random agents. Every 10,000 steps we record:</p>
+<ul class="measures">
+  <li><strong>Population</strong> - agents alive.</li>
+  <li><strong>Energy</strong> - average fuel per agent (split at 10, die at 0).</li>
+  <li><strong>Food per cell</strong> - average, from 0 (bare) to 1 (full).</li>
+  <li><strong>Diversity</strong> - how different agents' genomes are from each other; 0 means all clones.</li>
+  <li><strong>Drift</strong> - how far the average genome moved since the last record; 0 means evolution stopped.</li>
+  <li><strong>Births</strong> per 10,000 steps (deaths match births almost exactly).</li>
+  <li><strong>Actions</strong> - share of stay / N / S / E / W.</li>
+  <li><strong>Speed</strong> - simulation steps per second.</li>
+</ul>
+
+<h2>3. Results</h2>
 <div class="tw"><table>
 <thead><tr><th>Seed</th><th>Population min / max / final</th><th>Diversity min / final</th><th>Drift min / median / max</th><th>Steps per second</th></tr></thead>
 <tbody>{summary(data)}</tbody></table></div>
 <ol class="verdicts">
-<li><span class="verdict">Yes</span> The population survived in all three runs and stayed between about 500 and 540.</li>
-<li><span class="verdict">Yes</span> Evolution never stopped: the average genome kept moving and diversity never collapsed.</li>
-<li><span class="verdict">Yes</span> About 100,000 simulation steps per second with ~500 agents. A million steps takes seconds.</li>
+<li><span class="verdict">Yes</span> Survival: all three runs stayed between about 500 and 540 agents.</li>
+<li><span class="verdict">Yes</span> Ongoing evolution: the average genome kept moving and diversity never collapsed.</li>
+<li><span class="verdict">Yes</span> Cost: about 100,000 steps per second with ~500 agents. A million steps takes seconds.</li>
 </ol>
 
-<h2>Charts</h2>
+<h3>3.1 The population is stable and the grid is eaten bare</h3>
 <div class="grid2">
 {"".join(charts[:2])}
-</div>
-<p>Population settles quickly at around 510 in every run. That number is set by how fast food regrows: the grid can only feed so many. Average energy hovers around 5, halfway to the splitting threshold of 10.</p>
-<div class="grid2">
 {"".join(charts[2:4])}
 </div>
-<p>Food stays near 0.05 out of a possible 1.0: the agents eat everything almost as soon as it grows. Diversity stays well above zero in all runs, so the agents never become clones of each other.</p>
+<p>Population settles at ~510 in every run; that number is set by how fast food regrows. Food sits near 0.05 out of 1.0: agents eat it almost as soon as it appears. Diversity stays well above zero.</p>
+
+<h3>3.2 Evolution slows but never stops, and agents live longer over time</h3>
 <div class="grid2">
 {"".join(charts[4:6])}
 </div>
-<p>Drift is large in the first checkpoint (the random starting genomes are quickly replaced), then stays clearly above zero for the whole run. Evolution slows down, but never stops. Births (and deaths, which match them) start at 10,000-19,000 per 10,000 steps and later fall to 3,000-7,000:
-agents live three to six times longer than at the start. In each run the drop happens when the population changes from "everyone walks the same way" to a mix of directions (see the next charts).</p>
+<p>Drift is large at first (the random starting genomes are quickly replaced) and then stays clearly above zero. Births fall from 10,000-19,000 per 10,000 steps to 3,000-7,000: agents end up living three to six times longer. In every run the drop lines up with the change in behavior shown next.</p>
+
+<h3>3.3 Everyone learns the same trick: keep walking</h3>
 <div class="grid2">
 {"".join(actions)}
 {charts[6]}
 </div>
-<p>This is the most telling chart. Within about 100,000 steps, "stay" disappears in every run. The winning strategy is to keep walking and eat whatever has regrown.
-In seed 1 almost everyone walks west. In seeds 2 and 3, several groups walking in different directions end up sharing the world.</p>
+<p>Within about 100,000 steps "stay" disappears. In seed 1 almost everyone walks west; in seeds 2 and 3, groups walking in different directions end up sharing the grid. The speed chart is for reference: the three runs shared one machine.</p>
 
-<h2>What it means</h2>
-<p>The simplest possible version of this world works: it does not die, it does not blow up, and it keeps evolving, at almost no computing cost.
-This loop is a solid foundation and we will keep it.</p>
-<p>But there is a catch. Once the agents discover "keep walking", nothing new happens. The genes keep drifting, but the world looks the same.
-The reason is simple: agents only interact with food, never with each other, so there is nothing to push the world into new shapes.
-The next experiment should add interaction between agents (competition, predators, or similar) or an environment that changes on its own,
-and check whether that produces change we can actually see.</p>
+<h2>4. Discussion</h2>
+<p>The loop works: no collapse, no explosion, evolution keeps going, and compute is not a concern. That is the result we needed, and this loop stays as the base.</p>
+<p>But the world is not interesting to watch. Once "keep walking" wins, the genes keep drifting while the world looks the same. The reason is visible in Figure 1: the only arrow into an agent comes from food. Agents never interact with each other, so nothing can push the world into a new shape. Genetic drift is not the same as visible change.</p>
+<p>One thing we did not expect: turnover drops several-fold when the population shifts from one shared direction to a mix of directions. We have not looked into why; it is noted here as a lead, not a finding.</p>
 
-<h2>Glossary</h2>
-<dl>
-<dt>Step</dt><dd>One tick of the world clock. Every agent acts once per step.</dd>
-<dt>Seed</dt><dd>The random starting point of a run. Different seeds give different starting agents.</dd>
-<dt>Population</dt><dd>Number of agents alive at the checkpoint.</dd>
-<dt>Energy</dt><dd>An agent's fuel. Eating adds to it, living and moving spend it. At 10 the agent splits; at 0 it dies.</dd>
-<dt>Food per cell</dt><dd>How much food is on an average cell, from 0 (bare) to 1 (full).</dd>
-<dt>Diversity</dt><dd>How spread out the agents' genomes are. 0 would mean all agents are identical.</dd>
-<dt>Drift</dt><dd>How far the average genome moved since the previous checkpoint. 0 would mean evolution has stopped.</dd>
-</dl>
+<h2>5. Conclusion and next step</h2>
+<p>Keep the minimal loop. Next, add something that lets the world change shape: interaction between agents (competition, predators) or an environment that changes on its own, and test whether that produces change we can actually see.</p>
 
-<h2>Data</h2>
-<p>Every 100,000th checkpoint is shown; the full data is in <code>results/seed*.csv</code>.</p>
+<h2>Appendix: data</h2>
+<p>Every 100,000th record is shown; the full data is in <code>results/seed*.csv</code>. Build this report with <code>python3 report.py</code>.</p>
 {table(data)}
 </main>
 <script>{js}</script>
