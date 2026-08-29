@@ -15,6 +15,7 @@ A world that evolves on its own, for people to watch. Research and development s
 | e002 | Can a DNA-like string produce traits that vary, mutate in small steps, and cannot be read by hand? | Yes. Caveat: every gene touches every trait. |
 | e003 | Can selection climb that genome map when traits have costs? | Yes, fast. But traits without a two-sided trade-off pin at the edge, and unrelated traits get dragged along. |
 | e004 | Can the gene network grow a body on a grid? | Yes: position fed in as morphogens gives connected, varied bodies at 0.2 ms each, heritable under mutation. Bodies are dense by default; mutations move regions, not blocks. |
+| e005 | Does shape-derived function plus one predation rule make a food web? | Yes, once the bite needs muscle behind it: armored grazers and omnivores with teeth coexist, predation is half of all deaths, and the world never settles. No pure carnivores yet; slow (1,500 steps/s). |
 
 ## Running
 
