@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-08-29.
+Last updated: 2026-08-29 (e008).
 
 ## What the viewer should see
 
@@ -32,15 +32,16 @@ predation, and species all come out of the genome and the world's rules.
 Done: e004 (shape from the genome), e005 (shape to function, predation), e006 (lineages, event log),
 #9 (viewer: a white dot on agents that can bite, block legend, teeth and armor per lineage label),
 e007 (256x256 world with drifting food patches: islands, half the predation, three times the
-lineages, and the first sensor lineage that lasted).
+lineages, and the first sensor lineage that lasted), e008 (prey worth eating: a prize for old bodies does not make meat pay; hunter lineages exist anyway, as
+booms; the lineage log now records diet).
 
 Next, in this order (GitHub issue numbers):
-1. #7 Make prey worth eating (energy stored in a body that grows). No pure carnivores so far.
-   Run it on the 256 patchy world.
-2. #8 Neighbor perception in the policy (prey vs threat as inputs), together with a sensor
-   knockout (same world, sense forced to 0) to tell an eye that pays from one that rides along.
-3. #4 Learning, growth, aging, health as a layer on top of birth traits.
-4. #5 3D bodies (same development, 8x8x8).
+1. #8 Neighbor perception in the policy (a neighbor input carries its attack and defense relative to
+   one's own, paid for by sensor blocks), together with a sensor knockout (same world, sense forced
+   to 0) to tell an eye that pays from one that rides along. On 128 patchy, three seeds. If predators
+   that can see still cannot eat, look at the attack cap (24) and the cost of armor.
+2. #4 Learning, growth, aging, health as a layer on top of birth traits.
+3. #5 3D bodies (same development, 8x8x8).
 
 ## Kept from earlier experiments
 
@@ -65,6 +66,15 @@ Next, in this order (GitHub issue numbers):
   a grazer lineage with 2-3 sensor cells for 880,000 steps, its sensor changing one move in five), but the eye
   is not shown to pay: intake per digestive block is the same with and without, and two sensor blocks cost 2%
   of a grazer's intake. Cost is linear in agents (400-700 steps/s at 256).
+- e008: what a kill is worth is not the lever. A prize of up to 30x for an old body (keep x the upkeep it paid)
+  doubles the energy per kill and leaves meat at 3-5% of intake: kills get fewer and stay on newborns (nine in ten),
+  because a catchable body next to a predator is eaten within a few dozen steps of appearing, so only the
+  uncatchable grow old. The population answers with armor (hard 32-38 to 41-48; attack is capped at 24 by the
+  body plan, defense goes to 32). Carnivore lineages (mean meat > plant) exist even in the control, and ten
+  appear at keep 1: hunters with 24 front hard and 20-25 muscle, 52-89% meat, up to 430,000 steps, as booms of
+  100-1,200 agents that armor ends. Every hunter also grazes (the gut for prey mass is the same organ). keep
+  stays 0. Keep the diet columns in the lineage log. Access (a bite that beats armor, seeing who is next to
+  you) is what limits carnivory, not the prize.
 - e007 calibration: 128x128 (4 islands) matches 256x256 per island for what happens on an island (population,
   food, predation, body composition, rate of sensor lineages) but not between islands (lineages per island and
   lifetime move with the number of islands). Use 128 with more seeds for questions about bodies and behavior;
