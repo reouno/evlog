@@ -38,6 +38,7 @@ Record seed, parameters, and results. Use `experiments/TEMPLATE.md`.
 
 Each experiment also ships a `report.html` in its folder: charts and a plain-English write-up
 for a reader who does not know the code or the algorithms. Self-contained (inline SVG, no external assets).
+It starts with a TL;DR: a few sentences with the answer and what comes next.
 
 ## Layout
 

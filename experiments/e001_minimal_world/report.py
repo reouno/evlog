@@ -219,6 +219,9 @@ h1 {{ font-size: 26px; margin: 0 0 4px; }}
 h2 {{ font-size: 19px; margin: 40px 0 8px; }}
 p, li {{ color: var(--ink); max-width: 72ch; }}
 .sub {{ color: var(--ink2); margin: 0 0 24px; }}
+.tldr {{ background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--s1); border-radius: 8px; padding: 12px 18px; }}
+.tldr h2 {{ margin: 0 0 6px; font-size: 15px; }}
+.tldr p {{ margin: 0; }}
 .grid2 {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 20px; }}
 .fig {{ margin: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 14px 8px; }}
 figcaption strong {{ display: block; font-size: 15px; }}
@@ -297,6 +300,12 @@ document.querySelectorAll('.fig').forEach(fig => {
 <main>
 <h1>e001: Does the simplest evolving world keep going?</h1>
 <p class="sub">Experiment report - 2026-08-29 - three runs of 1,000,000 steps each</p>
+
+<section class="tldr">
+<h2>TL;DR</h2>
+<p>The simplest world we could build (food on a grid, creatures that eat, split, and die, with random mutation) ran for a million steps without dying out or exploding, kept evolving, and cost almost nothing to compute. We will keep it as the base.
+The catch: after about 100,000 steps the creatures all settle on one trick, "keep walking", and the world stops looking different. Next we need something that pushes the world into new shapes, such as creatures interacting with each other.</p>
+</section>
 
 <h2>What we built</h2>
 <p>A tiny world on a 64 x 64 grid that wraps around at the edges. Every cell grows food slowly, up to a limit.
