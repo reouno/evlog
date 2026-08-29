@@ -40,6 +40,9 @@ const MUSCLE: usize = 2;
 const SENSOR: usize = 3;
 const DIGESTIVE: usize = 4;
 const N_MORPH: usize = 6;
+// Development runs the network once per cell plus once without position (for the policy).
+// All of these runs are independent, so they are settled together as one batch.
+const CTX: usize = CELLS + 1;
 
 // Policy: 10 inputs -> 5 actions, read from the same table (no position input).
 const N_IN: usize = 10;
@@ -72,6 +75,7 @@ impl Rng {
     }
 }
 
+#[derive(PartialEq)]
 struct Gene {
     tag: [u8; TAG_LEN],
     product: [u8; TAG_LEN],
@@ -80,7 +84,8 @@ struct Gene {
 struct Laws {
     morphogen: [[u8; TAG_LEN]; N_MORPH],
     table: Vec<[f32; K]>,
-    morph_level: [[f32; N_MORPH]; CELLS],
+    /// Morphogen level per context; the last context (the policy run) has no position.
+    morph_level: [[f32; CTX]; N_MORPH],
 }
 
 impl Laws {
@@ -100,18 +105,17 @@ impl Laws {
                 row
             })
             .collect();
-        let mut morph_level = [[0.0f32; N_MORPH]; CELLS];
+        let mut morph_level = [[0.0f32; CTX]; N_MORPH];
         let c = (SIDE as f32 - 1.0) / 2.0;
         let rmax = (2.0 * c * c).sqrt();
-        for (i, lv) in morph_level.iter_mut().enumerate() {
+        for i in 0..CELLS {
             let x = (i % SIDE) as f32 / (SIDE as f32 - 1.0);
             let y = (i / SIDE) as f32 / (SIDE as f32 - 1.0);
             let dx = (i % SIDE) as f32 - c;
             let dy = (i / SIDE) as f32 - c;
             let r = (dx * dx + dy * dy).sqrt() / rmax;
-            *lv = [x, 1.0 - x, y, 1.0 - y, r, 1.0 - r];
-            for v in lv.iter_mut() {
-                *v = 2.0 * *v - 1.0;
+            for (m, v) in [x, 1.0 - x, y, 1.0 - y, r, 1.0 - r].into_iter().enumerate() {
+                morph_level[m][i] = 2.0 * v - 1.0;
             }
         }
         Laws { morphogen, table, morph_level }
@@ -189,48 +193,60 @@ impl Body {
     }
 }
 
-/// Development (e004) for the cells, plus one run without position for the policy.
+/// Development (e004): the network settles once per cell (with position) and once without
+/// position (for the policy). All 65 runs are batched: `level` is gene-major, so the inner
+/// loops run over the contexts and vectorize. The order of floating point operations per
+/// context is the one of e004, so the bodies are the same.
 fn develop(genome: &[u8], laws: &Laws) -> Body {
-    let genes = parse_genes(genome);
+    develop_genes(&parse_genes(genome), laws)
+}
+
+fn develop_genes(genes: &[Gene], laws: &Laws) -> Body {
     let n = genes.len();
-    let mut w = vec![0.0f32; n * n];
-    let mut wm = vec![0.0f32; N_MORPH * n];
+    let mut w = vec![0.0f32; n * n]; // w[i * n + j]: gene j acting on gene i
+    let mut wm = vec![0.0f32; n * N_MORPH];
     for i in 0..n {
         for j in 0..n {
-            w[j * n + i] = bind(&genes[j].product, &genes[i].tag);
+            w[i * n + j] = bind(&genes[j].product, &genes[i].tag);
         }
         for m in 0..N_MORPH {
-            wm[m * n + i] = bind_morphogen(&laws.morphogen[m], &genes[i].tag);
+            wm[i * N_MORPH + m] = bind_morphogen(&laws.morphogen[m], &genes[i].tag);
         }
     }
     let rows: Vec<&[f32; K]> = genes.iter().map(|g| &laws.table[pattern_index(&g.product)]).collect();
 
-    let mut level = vec![0.0f32; n];
-    let mut next = vec![0.0f32; n];
-    let mut settle = |morph: &[f32; N_MORPH], level: &mut Vec<f32>| {
-        level.iter_mut().for_each(|l| *l = 0.5);
-        for _ in 0..T {
-            for i in 0..n {
-                let mut input = 0.0;
-                for j in 0..n {
-                    input += w[j * n + i] * level[j];
+    let mut level = vec![0.5f32; n * CTX]; // level[i * CTX + c]
+    let mut next = vec![0.0f32; n * CTX];
+    let mut acc = [0.0f32; CTX];
+    for _ in 0..T {
+        for i in 0..n {
+            acc.fill(0.0);
+            for j in 0..n {
+                let wij = w[i * n + j];
+                for (a, &l) in acc.iter_mut().zip(&level[j * CTX..(j + 1) * CTX]) {
+                    *a += wij * l;
                 }
-                for m in 0..N_MORPH {
-                    input += wm[m * n + i] * morph[m];
-                }
-                next[i] = sigmoid(3.0 * input - 1.0);
             }
-            std::mem::swap(level, &mut next);
+            for m in 0..N_MORPH {
+                let wim = wm[i * N_MORPH + m];
+                for (a, &l) in acc.iter_mut().zip(&laws.morph_level[m]) {
+                    *a += wim * l;
+                }
+            }
+            for (o, &a) in next[i * CTX..(i + 1) * CTX].iter_mut().zip(&acc) {
+                *o = sigmoid(3.0 * a - 1.0);
+            }
         }
-    };
+        std::mem::swap(&mut level, &mut next);
+    }
 
     let mut cells = [0u8; CELLS];
     let mut kinds = [0u8; N_KINDS];
     let mut front_hard = 0u8;
     for (c, cell) in cells.iter_mut().enumerate() {
-        settle(&laws.morph_level[c], &mut level);
         let mut score = [0.0f32; N_KINDS];
-        for (row, &lv) in rows.iter().zip(level.iter()) {
+        for (i, row) in rows.iter().enumerate() {
+            let lv = level[i * CTX + c];
             for k in 0..N_KINDS {
                 score[k] += row[k] * lv;
             }
@@ -247,9 +263,9 @@ fn develop(genome: &[u8], laws: &Laws) -> Body {
             front_hard += 1;
         }
     }
-    settle(&[0.0; N_MORPH], &mut level);
     let mut policy = [0.0f32; N_POLICY];
-    for (row, &lv) in rows.iter().zip(level.iter()) {
+    for (i, row) in rows.iter().enumerate() {
+        let lv = level[i * CTX + CELLS];
         for k in 0..N_POLICY {
             policy[k] += row[N_KINDS + k] * lv;
         }
@@ -525,7 +541,10 @@ fn main() {
                     let pos = rng.below(N);
                     genome[pos] = (genome[pos] + 1 + rng.below(3) as u8) % 4;
                 }
-                let body = develop(&genome, &laws);
+                // The body is a function of the gene list alone. A mutation outside the genes
+                // (most of them) gives the parent's body without developing it again.
+                let genes = parse_genes(&genome);
+                let body = if genes == parse_genes(&a.genome) { a.body.clone() } else { develop_genes(&genes, &laws) };
                 let (cx, cy) = match rng.below(4) {
                     0 => (a.x, yn),
                     1 => (a.x, yp),

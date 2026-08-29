@@ -129,3 +129,41 @@ What this changes:
 - Open: speed. Development at 0.22 ms per birth dominates. A cheaper sigmoid or a thread pool for
   births should bring the world back to tens of thousands of steps/s; do this before e006's longer runs.
 - The gene-count bias is back (+7 genes per genome over the run). Still watching.
+
+## Note added after the run: development cost (issue #6)
+
+Date: 2026-08-29. The world ran at 1,000-6,000 steps/s because every birth developed a body
+(64 cells x 40 network steps, 0.22 ms). Two changes to `develop()` and the split, both exact:
+
+1. **Batched settle.** The 65 network runs of one body (64 cells with position, one without for
+   the policy) are independent, so they settle together: `level` is gene-major and the inner loops
+   run over the 65 contexts, which the compiler vectorizes. The floating point operations per context
+   are done in the same order as before, so the numbers are bit-identical. 0.22 ms -> 0.08 ms per body.
+2. **Parent's body reused.** The body is a function of the gene list alone, and most of the 2 point
+   mutations per child fall outside the genes. A child whose parsed gene list equals its parent's
+   gets a clone of the parent's body. 60% of births in the first 100,000 steps of seed 1.
+
+Check: seeds 1-3, 1,000,000 steps, re-run with the new code. `log.csv` (apart from the
+`steps_per_sec` column), `agents.csv`, `bodies.jsonl`, `long.jsonl`, and `clip.jsonl` are byte-identical
+to the files of the original runs. The results above stand unchanged.
+
+Speed (steps/s over the 100 log windows of each 1M run; the original runs shared the machine three
+ways, seed 1 below ran alone, seeds 2 and 3 ran two at a time):
+
+| Seed | Before (min / median / max) | After (min / median / max) |
+|---|---|---|
+| 1 | 806 / 1,499 / 5,696 | 6,484 / 11,111 / 39,813 |
+| 2 | 800 / 1,519 / 3,009 | 6,316 / 11,031 / 22,521 |
+| 3 | 1,067 / 1,727 / 4,574 | 8,597 / 13,297 / 35,155 |
+
+Seed 1 alone: 92 s for 1M steps (was about 11 minutes). Of the remaining time, about 70% is still
+development; the exp() in the sigmoid is half of that and the weight loops the other half.
+
+Tried and rejected:
+- A polynomial exp (Cephes expf, relative error about 1e-7) in the sigmoid: 11% faster over 100,000
+  steps, and the run diverges from the original after 50,000 steps (a near-tie flipped). Not worth
+  losing bit-for-bit reproduction of the results above.
+- A thread pool for births: not needed at this speed, and it adds code.
+
+Tens of thousands of steps/s when the population is small, about 10,000 in the busiest windows of the
+run. Good enough for e006's long runs; revisit only if e006 needs more.
