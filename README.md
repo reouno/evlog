@@ -14,6 +14,7 @@ A world that evolves on its own, for people to watch. Research and development s
 | e001 | Does the simplest evolution loop survive a long run? | Yes, cheaply. But the world stops changing once one strategy wins. |
 | e002 | Can a DNA-like string produce traits that vary, mutate in small steps, and cannot be read by hand? | Yes. Caveat: every gene touches every trait. |
 | e003 | Can selection climb that genome map when traits have costs? | Yes, fast. But traits without a two-sided trade-off pin at the edge, and unrelated traits get dragged along. |
+| e004 | Can the gene network grow a body on a grid? | Yes: position fed in as morphogens gives connected, varied bodies at 0.2 ms each, heritable under mutation. Bodies are dense by default; mutations move regions, not blocks. |
 
 ## Running
 

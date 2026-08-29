@@ -27,7 +27,7 @@ predation, and species all come out of the genome and the world's rules.
 
 ## Order of work
 
-- e004: shape from the genome, on its own (variety, small mutational steps, cost; render bodies).
+- e004 (done): shape from the genome, on its own.
 - e005: shape to function, plus predation, in the world. Does a food web appear? Does change keep going?
 - e006: species: sexual reproduction, lineage detection, event log.
 - Later: learning, growth, aging, health as a layer on top of birth traits. Then 3D bodies (same development, 8x8x8).
@@ -37,3 +37,4 @@ predation, and species all come out of the genome and the world's rules.
 - e001: the minimal loop (food grid, energy, split, die) is stable and cheap. Keep.
 - e002: the genome map (promoter, tag + product, binding, settle, fixed table) is climbable and unreadable. Keep.
 - e003: traits need two-sided trade-offs; pleiotropy is real; snapshots plus a replay viewer are enough to watch.
+- e004: the e002 network grows bodies once position enters as morphogens (6 gradients in [-1, 1], binding on 2 of 4). Keep that rule as part of the laws. Bodies are dense by default and mutations move regions; let e005's upkeep act on both before changing the read-out.
