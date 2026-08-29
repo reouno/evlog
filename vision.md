@@ -41,7 +41,7 @@ Next, in this order (GitHub issue numbers):
 1. Make bodies biteable: the wall every experiment since e005 has hit is attack capped at 24 (three front rows
    matched by muscle) against defense up to 32, with armor as cheap per block as gut. Change the wall (a bite that
    can grow, or armor that costs more), then run counts and who again on the same world. Only when who is next
-   to you matters can an eye be tested, and only then is there an arms race to watch. (Issue to be filed.)
+   to you matters can an eye be tested, and only then is there an arms race to watch. (#11)
 2. #4 Learning, growth, aging, health as a layer on top of birth traits.
 3. #5 3D bodies (same development, 8x8x8).
 
