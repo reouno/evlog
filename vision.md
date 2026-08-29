@@ -21,15 +21,19 @@ predation, and species all come out of the genome and the world's rules.
 2. **Predation comes from one rule.** "You can eat what your attack beats and your digestion accepts."
    Herbivores, carnivores, and escape artists are outcomes, not roles. The predator-prey arms race
    is also the best-known way to keep a world from settling (the problem seen in e001).
-3. **Species are born, then detected.** Sexual reproduction with a compatibility limit (only similar
-   genomes can mate) makes real species boundaries. For display, lineages are clustered by genome
-   distance and named; births, splits, and extinctions of lineages are logged as events.
+3. **Species are born, then detected.** Lineages are groups of living agents linked by gene-list
+   distance (the same rule that would let genes flow between them); births, splits, merges, and
+   extinctions of lineages are logged as events. e006 found that the boundaries come from mutation and
+   drift, not from mating: sexual reproduction under the compatibility limit is in the code but does
+   not shape the lineages.
 
 ## Order of work
 
 - e004 (done): shape from the genome, on its own.
 - e005 (done): shape to function, plus predation, in the world.
-- e006: species: sexual reproduction, lineage detection, event log.
+- e006 (done): species: sexual reproduction, lineage detection, event log.
+- Next: prey worth eating and sensors that mean something (open since e005); the pace of lineages (60-100
+  generations each) as a question for the viewer.
 - Later: learning, growth, aging, health as a layer on top of birth traits. Then 3D bodies (same development, 8x8x8).
 
 ## Kept from earlier experiments
@@ -42,3 +46,9 @@ predation, and species all come out of the genome and the world's rules.
 - e005, after the run: development is batched (all 65 network runs of one body settle together) and a child whose
   gene list equals its parent's reuses the parent's body (60% of births). Results bit-identical, 8,000-40,000 steps/s
   instead of 1,000-6,000. A cheaper sigmoid was tried and rejected: 11% faster, results diverge.
+- e006: lineages are groups linked by gene-list distance (at most 6 genes apart, single linkage, at least 5 agents, kept
+  once they last 5,000 steps). This gives an event log a person can read (birth, split, merge, extinct; about one
+  event per 5,000 steps) and lineages of 60-100 generations with different bodies. Keep the detector, the log, and
+  the lineage-colored viewer. Sex under the compatibility limit changed nothing: a mate is in reach at 16-23% of
+  births and is a near-clone when found. Species boundaries here come from mutation, drift, and clonal sweeps; the
+  limit only names them. Mating stays in the code but is not a mechanism until it has a reason to exist.
