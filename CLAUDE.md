@@ -31,6 +31,13 @@ And must end with:
 
 Record seed, parameters, and results. Use `experiments/TEMPLATE.md`.
 
+## Layout
+
+Cargo workspace. Each experiment is its own crate: `experiments/eNNN_<name>/` with a `README.md` based on the template.
+Experiments are disposable. Shared code moves to a separate crate only after it survives several experiments.
+
+Run: `cargo run --release -p eNNN_<name>`
+
 ## Tech
 
 - Language: Rust (strong types, fast, portable to WASM and mobile)
