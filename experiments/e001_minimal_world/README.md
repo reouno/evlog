@@ -51,7 +51,7 @@ Run (from repo root): `cargo run --release -p e001_minimal_world -- <steps> <see
 
 (drift excludes the first window, which includes the initial random genomes)
 
-Charts and a plain-language write-up: `report.html` (build with `python3 report.py`).
+Charts and a plain-language write-up: `report.html` (build from the repo root with `uv run python experiments/e001_minimal_world/report.py`).
 
 Behavior: within ~100k steps, "stay" drops to ~0 in every seed. Agents keep moving in one direction
 (seed 1: 80% west at the end). This is a sweeping-grazer strategy: move constantly, eat what has regrown.
