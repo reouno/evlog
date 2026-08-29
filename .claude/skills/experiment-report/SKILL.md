@@ -34,7 +34,7 @@ Write in plain English. One idea per paragraph. Numbers where possible. Do not r
 - matplotlib, exported as SVG and inlined. Never hand-draw a chart.
 - Chart chrome in mid-gray `#898781`, transparent background, so one image reads in light and dark mode. The rcParams in the template do this.
 - Series colors in fixed slot order: `#2a78d6` blue, `#eb6834` orange, `#1baf7a` aqua, `#eda100` yellow, `#e87ba4` magenta. Same entity, same color across every chart.
-- Legend above the plot area (`legend_above` in the template), at most 4 y ticks, x axis labeled `step` with `k` formatting.
+- Legend above the plot area (`legend_above` in the template), at most 4 y ticks, x axis labeled with its unit (`step` for time series), `k` formatting for thousands. Helpers: `line_chart`, `stacked_area`, `hist_chart`.
 - Every chart has a title and a one-line subtitle saying how to read it (what a flat line or a zero would mean).
 - Two charts per row (`.grid2`). Put charts under the heading that states their claim.
 - One y axis per chart. Two measures of different scale are two charts.

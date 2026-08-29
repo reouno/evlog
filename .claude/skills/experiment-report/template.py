@@ -68,12 +68,27 @@ def to_svg(fig):
     return buf.getvalue()
 
 
-def new_axes():
+def new_axes(xlabel="step"):
     fig, ax = plt.subplots(figsize=(6.4, 2.6))
     ax.xaxis.set_major_formatter(kfmt)
-    ax.set_xlabel("step", loc="right")
+    ax.set_xlabel(xlabel, loc="right")
     ax.margins(x=0)
     return fig, ax
+
+
+def hist_chart(title, subtitle, series, bins, xlabel, density=False):
+    """series: list of (label, values, slot). Overlapping histograms with a surface gap."""
+    fig, ax = new_axes(xlabel)
+    ax.margins(x=0.02)
+    for label, values, slot in series:
+        ax.hist(values, bins=bins, color=SERIES[slot], alpha=0.75, label=label, density=density,
+                edgecolor="none", rwidth=0.9 if len(series) == 1 else 1.0)
+    ax.yaxis.set_major_locator(MaxNLocator(4))
+    ax.yaxis.set_major_formatter(kfmt)
+    if density:
+        ax.set_yticklabels([])  # heights are relative; the numbers mean nothing to a reader
+    legend_above(ax, len(series))
+    return figure(title, subtitle, to_svg(fig))
 
 
 def legend_above(ax, n):
@@ -155,6 +170,7 @@ p, li {{ color: var(--ink); max-width: 72ch; }}
 .tldr h2 {{ margin: 0 0 6px; font-size: 15px; }}
 .tldr p {{ margin: 0; }}
 .grid2 {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 20px; }}
+.grid2 > .fig:only-child {{ max-width: 470px; }}
 .fig {{ margin: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 14px 8px; }}
 .fig svg {{ width: 100%; height: auto; display: block; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }}
 figcaption strong {{ display: block; font-size: 15px; }}
