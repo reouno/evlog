@@ -11,6 +11,8 @@ The world exists and moves forward whether or not a user is present.
 
 1. **Watching is the main activity.** Users do not control the world. The world does not need user input to advance.
 2. **Do not script the fun.** Behavior and evolution emerge from simple rules and selection pressure. The author does not decide the outcome.
+   - **Laws are about materials and the world, never about traits.** We write what a block is (what it costs, how hard it is, what it can push or digest) and what the world is (where food grows, what a cell holds). We do not write what a creature can do. A bite, armor, an eye, a chase are not rules; they are things a body may turn out to be able to do because of its shape, its materials, and the world. If a rule names a trait (attack, defense, flee, hunt), it is written at the wrong level.
+   - **Progress is more freedom, not more rules.** Each step forward should widen what the world and the bodies can be (more shapes, more sizes, more kinds of place) at a bounded compute cost, and then let selection find what is possible. Adding a rule to get a result we want is the failure mode: e008 and e009 hit a wall that was one of our own rules (attack capped at 24 by "the front three rows").
 3. **Compute is finite.** The world runs on a device with limited resources. Each step has a bounded cost, and the user controls the load.
 4. **It must survive the long run.** Running for days or months must not lead to collapse, stagnation, or explosion. The world keeps changing instead of settling.
 5. **No individual belongs to anyone.** Selection happens. There is no user avatar. Attachment is to lineages and the world, not to individuals.
@@ -23,6 +25,7 @@ When unsure, ask in this order:
 1. Is it interesting to watch?
 2. Does it keep running in the long run?
 3. Does it add compute cost?
+4. Is it a rule about a trait, or about a material or the world? Only the second kind is allowed.
 
 ## Non-goals
 
