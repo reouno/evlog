@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-08-29 (e008).
+Last updated: 2026-08-30 (e009).
 
 ## What the viewer should see
 
@@ -33,13 +33,15 @@ Done: e004 (shape from the genome), e005 (shape to function, predation), e006 (l
 #9 (viewer: a white dot on agents that can bite, block legend, teeth and armor per lineage label),
 e007 (256x256 world with drifting food patches: islands, half the predation, three times the
 lineages, and the first sensor lineage that lasted), e008 (prey worth eating: a prize for old bodies does not make meat pay; hunter lineages exist anyway, as
-booms; the lineage log now records diet).
+booms; the lineage log now records diet), e009 (perception: inputs that say who can eat whom are non-zero once in a
+hundred decisions; eyes do not pay because there is nothing to see; the knockout shows e007's eyes were a passenger
+with a slight tailwind).
 
 Next, in this order (GitHub issue numbers):
-1. #8 Neighbor perception in the policy (a neighbor input carries its attack and defense relative to
-   one's own, paid for by sensor blocks), together with a sensor knockout (same world, sense forced
-   to 0) to tell an eye that pays from one that rides along. On 128 patchy, three seeds. If predators
-   that can see still cannot eat, look at the attack cap (24) and the cost of armor.
+1. Make bodies biteable: the wall every experiment since e005 has hit is attack capped at 24 (three front rows
+   matched by muscle) against defense up to 32, with armor as cheap per block as gut. Change the wall (a bite that
+   can grow, or armor that costs more), then run counts and who again on the same world. Only when who is next
+   to you matters can an eye be tested, and only then is there an arms race to watch. (Issue to be filed.)
 2. #4 Learning, growth, aging, health as a layer on top of birth traits.
 3. #5 3D bodies (same development, 8x8x8).
 
@@ -75,6 +77,15 @@ Next, in this order (GitHub issue numbers):
   100-1,200 agents that armor ends. Every hunter also grazes (the gut for prey mass is the same organ). keep
   stays 0. Keep the diet columns in the lineage log. Access (a bite that beats armor, seeing who is next to
   you) is what limits carnivory, not the prize.
+- e009: perception is not the lever. Given inputs that say, per direction, how many neighbors can eat me and
+  how many I can eat (the predation rule itself, times sense), those inputs are non-zero in 1% of the decisions
+  of agents with sensors: an armored grazer among armored kin is immune and bites nobody. Sensor blocks are
+  selected less with the inputs than without (16 sensor lineages vs 43 in four seeds), escapes and predation
+  are unchanged, grazers with eyes take in no more food. The knockout (sense forced to 0): the population mean
+  is the same, but sensor lineages drop to 6 and never reach a mean of 1, fewer in every seed; e007's eyes were
+  a passenger with a slight tailwind. Predation is decided by the body plan and by move order (the eater moves
+  first in 75% of kills; 15% of prey die before their first move). The who inputs stay in the code at zero
+  cost; the world stays e007's (counts). The knockout is how an eye is tested from now on.
 - e007 calibration: 128x128 (4 islands) matches 256x256 per island for what happens on an island (population,
   food, predation, body composition, rate of sensor lineages) but not between islands (lineages per island and
   lifetime move with the number of islands). Use 128 with more seeds for questions about bodies and behavior;
