@@ -64,4 +64,10 @@ Next, in this order (GitHub issue numbers):
   three times the splits, predation deaths per birth halved. Sensor blocks stayed for the first time (one seed:
   a grazer lineage with 2-3 sensor cells for 880,000 steps, its sensor changing one move in five), but the eye
   is not shown to pay: intake per digestive block is the same with and without, and two sensor blocks cost 2%
-  of a grazer's intake. Use the 256 patchy world for what comes next; cost is linear in agents (400-700 steps/s).
+  of a grazer's intake. Cost is linear in agents (400-700 steps/s at 256).
+- e007 calibration: 128x128 (4 islands) matches 256x256 per island for what happens on an island (population,
+  food, predation, body composition, rate of sensor lineages) but not between islands (lineages per island and
+  lifetime move with the number of islands). Use 128 with more seeds for questions about bodies and behavior;
+  use 256 for lineages across islands and for the world people watch. 1,000,000 steps: the uniform world's
+  statistics are stationary after 100,000 steps; the patchy world's are not (late sweeps and sensor lineages
+  after 500,000), so do not shorten runs on the patchy world without checking the conclusion at the cutoff.

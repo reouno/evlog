@@ -912,7 +912,10 @@ fn main() {
                 assigned.push((id, m));
             }
             seen.retain(|id, _| now.contains_key(id));
-            for (&id, &size) in &now {
+            let mut ids: Vec<u32> = now.keys().copied().collect();
+            ids.sort_unstable(); // HashMap order differs between processes; the log should not
+            for id in ids {
+                let size = now[&id];
                 let n = seen.entry(id).or_insert(0);
                 *n += 1;
                 if *n == LINEAGE_CONFIRM && !lineages.contains_key(&id) {

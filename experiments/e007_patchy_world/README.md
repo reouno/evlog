@@ -70,6 +70,48 @@ byte-identical (checked on seed 9, 20,000 steps).
 Outputs: `results/<size>_<food>_seed<seed>_{log,agents,events,lineages,dist}.csv` and
 `_{long,clip,bodies}.jsonl` (not committed; re-run to regenerate before building the report).
 
+## Calibration: is 128x128 (4 islands) a scale model of 256x256 (16 islands)?
+
+Added after the runs above, to decide whether later experiments can use the 4x cheaper world.
+
+**Purpose.** e007 found that the number of islands, not the area, does the work. If quantities that
+live on one island are the same per island at 4 and at 16 islands, questions about bodies and
+behavior can run on 128x128 with more seeds for the same compute, and 256x256 is kept for
+questions about lineages across islands.
+
+**Hypothesis.** Per-island quantities that live on an island match 256 patchy within the seed
+spread: population per island, body composition (hard, muscle, attack), predation deaths per
+birth, food actually added per island. Quantities that live between islands are lower at 4
+islands: lineages alive per island and events per 1,000 steps per island (64 patchy, one island,
+already showed 2-4 lineages and long lifetimes). Sensor lineages: the rate per island-step is the
+same, so 4 islands give a quarter of the chance per run.
+
+**Method.** `128 patchy`, seeds 1-3, 1,000,000 steps (4 patches, initial population 1,600). Same
+measures as above, divided by the number of islands (1, 4, 16 for 64, 128, 256 patchy), compared
+with the 64 and 256 patchy runs. Run: `cargo run --release -p e007_patchy_world -- 1000000 <seed> 128 patchy`.
+
+**Result** (`results/128_patchy_seed{1,2,3}`; per island = divided by 1 / 4 / 16 for 64 / 128 / 256;
+seeds 1 / 2 / 3):
+- On an island, 128 matches 256. Population per island 228 / 219 / 266 vs 217 / 228 / 242. Predation
+  deaths per birth 0.32 / 0.31 / 0.44 vs 0.31 / 0.39 / 0.44. Meat share 2.6-3.9% vs 2.9-4.3%. Food added
+  per step per island 40.5 both; food per cell 0.062-0.068 vs 0.056-0.065. Body: hard 32-38 vs 37-40,
+  attack 2.5-4.0 vs 2.0-2.7 (64: 2.3-4.5); within the spread, a little more attack at 128.
+- Between islands, the count matters. Lineages alive per island 1.6 / 1.3 / 1.8 at 4 islands vs
+  1.3 / 0.9 / 0.8 at 16 (and 4 / 3 / 2 at one island); median lifetime 19,000 / 14,500 / 15,500 vs
+  12,000 / 11,000 / 10,000 (one island: 13,000-34,000). Fewer islands, more isolation: each island
+  keeps its own lineage longer, and sweeps across islands are rarer. Events per 1,000 steps per
+  island 0.06-0.11 vs 0.04-0.09.
+- Sensor lineages per island are of the same order: 128 seed 3 has 2 (0.5 per island, sensor mean
+  above 1 for 140,000 steps); 256 has 0.5 and 2.3 per island in seeds 1 and 3. A quarter of the
+  islands, a quarter of the chances per run, as expected.
+- Speed: 3,100-4,200 steps/s with 4 threads each, three runs at once; 1,000,000 steps in 4-5 minutes.
+
+**Conclusion.** 128 is a scale model of 256 for what happens on an island (population, food,
+predation, body composition, the rate at which sensor lineages appear). It is not one for what
+happens between islands: lineages per island and lineage lifetime move with the number of islands.
+Use 128 with more seeds for questions about bodies and behavior (#7, the sensor knockout, #8);
+use 256 for questions about lineages across islands and for the world people watch.
+
 ## Result
 
 12 runs, 1,000,000 steps each (`results/{64,256}_{uniform,patchy}_seed{1,2,3}`), all twelve sharing a
