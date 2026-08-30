@@ -73,4 +73,6 @@ Reports had grown to the length of a paper by e011. Keep them short:
 Show them. For the lineages with the most agent-steps (or the longest life), draw the most common body of the
 lineage at its peak as an 8x8 grid of colored cells (block colors as the viewer), with one line of caption: world,
 seed, lineage id, lifetime, peak agents, mass, hard / muscle / digestive, meat share. Pick 6-8 that differ in shape.
-`e011`'s `report.py` has `gallery()` for this. A reader remembers shapes, not percentiles.
+Add one line saying what the shape does in the physics (where it has force, where it cannot be touched, what it
+reaches), so that the reader learns to read bodies. `e011`'s `report.py` has `gallery()` for this. A reader
+remembers shapes, not percentiles.

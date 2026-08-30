@@ -44,9 +44,19 @@ Next, in this order (GitHub issue numbers):
 1. A world with both kinds of place in one run: wide patches (e010's grass, where the smallest grazer wins) and narrow
    ones (e011's trees, where the crowd makes tortoises and hunters), so that both kinds of body exist in one world and
    lineages can move between places. One law, no compute added. (#13)
-2. #5 3D bodies (same development, 8x8x8), or a larger grid: the 90th percentile of mass is 64 at width 1; the
-   population is pressed against a limit we drew.
-3. #4 Learning, growth, aging, health as a layer on top of birth traits.
+2. Bodies face a direction and take up space (#15). e011's physics has four verbs a shape can address (eat, push,
+   resist, be untouchable) and four body kinds came out, one per verb: more kinds of shape need more verbs in the
+   world, not a bigger grid. Facing makes a tooth point somewhere (readable); space makes reach and blocking exist.
+3. Ground and friction (#16): moving costs by the cells that touch the ground, so a shape can be a leg.
+4. #5 3D bodies (same development, 8x8x8), or a larger grid: the 90th percentile of mass is 64 at width 1, and legs
+   and wings need resolution, but only once there is ground and air for them.
+5. Environments that differ by place (#14): plants, desert, warm and cold, sea, mountain, oxygen. A place selects among
+   the verbs the physics has; add verbs first.
+6. #4 Learning, growth, aging, health as a layer on top of birth traits.
+
+What we want the viewer to be able to do: look at a body and guess what it does, the way a fang, four legs, or a wing
+is read at a glance. That needs the physics the reader already knows (a front, ground, air), written as laws of
+materials and the world.
 
 ## Kept from earlier experiments
 
