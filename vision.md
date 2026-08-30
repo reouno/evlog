@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-08-30 (e012).
+Last updated: 2026-08-30 (e013).
 
 ## What the viewer should see
 
@@ -40,13 +40,18 @@ smallest corner of gut, teeth are profitable and were found once in twelve milli
 regrowth on fewer cells gives size a reason and starts the arms race; tortoises, hunters and corner bodies coexist; the 8x8
 grid is the wall now), e012 (two kinds of place: patches of two widths in one world; each place keeps its regime in every
 seed, grazers on the grass and the arms race on the trees; bodies cross and lineages straddle, hunters stay; one lineage
-with a different body on each place).
+with a different body on each place), e013 (facing and space at the cell level: bodies are readable and reach pays, but
+one body to a cell ends the crowd, and with it contact, teeth and the arms race, at every width; the world is a jam of
+small grazers).
 
 Next, in this order (GitHub issue numbers):
-1. Bodies face a direction and take up space (#15). e011's physics has four verbs a shape can address (eat, push,
-   resist, be untouchable) and four body kinds came out, one per verb: more kinds of shape need more verbs in the
-   world, not a bigger grid. Facing makes a tooth point somewhere (readable); space makes reach and blocking exist.
-2. Ground and friction (#16): moving costs by the cells that touch the ground, so a shape can be a leg.
+1. Space at the resolution of the body (new issue, from e013). Bodies occupy their own cells on a world drawn at
+   body-cell resolution (16 sub-cells per world cell), so that a small body is small, bodies pass each other, and
+   contact is the overlap of real cells; facing is kept. e013 showed that space at the cell level (a 3-cell body blocks
+   a 4x4 cell) jams the world and starves the arms race of contact. Also on the table: a full cell that spills food to
+   its neighbors (fruit falls), so that a tree is not one cell feeding one body.
+2. Ground and friction (#16): moving costs by the cells that touch the ground, so a shape can be a leg. After contact
+   is back: with nothing to bite, a leg has nothing to run from or after.
 3. #5 3D bodies (same development, 8x8x8), or a larger grid: the 90th percentile of mass is 64 at width 1, and legs
    and wings need resolution, but only once there is ground and air for them.
 4. Environments that differ by place (#14): plants, desert, warm and cold, sea, mountain, oxygen. A place selects among
@@ -131,6 +136,17 @@ materials and the world.
   grass, 8-12 on the trees). Lineages alive 9-13, e010's number, not the sum. The edge width (2) next to grass does not
   flip more often than alone, but once the edge's hunters held the grass for 400,000 steps and lost it. Use 128 with
   two patches of each kind for questions about places; 256 (eight and eight) is the world people watch.
+- e013: a body faces a direction (one number per body; the grid turns with it, only the front pushes, the policy sees
+  the world from the body: keep, it costs nothing and the viewer reads a front) and takes up space at the cell level
+  (one world cell per 4x4 quarter of the grid that holds a cell, no two bodies in one cell, a push into a taken cell
+  that succeeds only if the way clears, a child that needs room). The world stands and runs at 700-1,500 steps/s, and
+  reach pays: the winning grass body is 3-4 digestive cells at the center of the grid, one per quarter, eating from
+  four cells at once. But the arms race is gone at every patch width (1, 2, 4) in every seed: no bite, hard under
+  0.1, meat under 0.001%, no hunter lineage. The crowd was the premise of e011's arms race: with one body to a cell,
+  contact fell from 2-4 to 0.1-0.3 touches per body per step, a tooth breaks even at best, births fell 8-fold (a
+  child needs room), the trees feed one body per rich cell and half the regrowth is wasted, and 80-94% of moves are
+  blocked: each patch is a jammed disc of two or three lineages. Cell-level space is too coarse (a 3-cell body blocks a whole
+  cell, three in four blocked moves press on nothing); the next step is space at the resolution of the body.
 - e007 calibration: 128x128 (4 islands) matches 256x256 per island for what happens on an island (population,
   food, predation, body composition, rate of sensor lineages) but not between islands (lineages per island and
   lifetime move with the number of islands). Use 128 with more seeds for questions about bodies and behavior;
