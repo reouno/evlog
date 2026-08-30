@@ -202,7 +202,8 @@ def figure(title, subtitle, svg):
 def finish(ax, ymin, ymax, top, percent, n_legend):
     if ymin is not None:
         ax.set_ylim(ymin, max(ymax if ymax is not None else top * 1.12, ymin + 1e-9))
-    ax.yaxis.set_major_formatter((lambda y, _p: f"{y:.0%}") if percent else kfmt)
+    fine = percent and ax.get_ylim()[1] < 0.02
+    ax.yaxis.set_major_formatter((lambda y, _p: f"{y:.2%}" if fine else f"{y:.0%}") if percent else kfmt)
     ax.yaxis.set_major_locator(MaxNLocator(4))
     legend_above(ax, n_legend)
 
@@ -382,53 +383,68 @@ details {{ margin: 8px 0; }} summary {{ cursor: pointer; color: var(--ink2); }}
 
 DIAGRAM = """
 <figure class="diagram">
-<svg viewBox="0 0 800 372" role="img" aria-label="Two laws added to e012's world. Left: the 8x8 body grid lies over a 2x2 block of world cells, one world cell per 4x4 quarter of the grid; each quarter that holds a cell covers its world cell, and each digestive cell eats from the cell under it. An arrow marks the facing: the front row of the grid is the side that points where the body faces; turning left or right rotates the grid about its center. Right: moving forward enters the cells ahead of the footprint; if another body covers one of them, the front presses on it line by line where the lines meet in the world, the softer tip breaks if the push exceeds its hardness, and the move happens only if the way is clear afterwards; a push whose muscle exceeds the other's mass shoves it one cell." style="max-width:100%;height:auto;display:block">
+<svg viewBox="0 0 800 372" role="img" aria-label="The space law of e013 rewritten at the resolution of the body. Left: a block of world cells, each drawn as 4x4 sub-cells; three bodies hold exactly the sub-cells their grids fill, turned to their facing, and a small body stands inside the gap of a larger one; no two bodies share a sub-cell; each digestive cell eats from the world cell under it. Right: a move is one sub-cell along the facing; where a cell of the mover would enter a cell of another body the two faces meet: the softer face breaks if the mover's muscle in that line exceeds its hardness (3 per contiguous hard cell behind the face, else 1); the move happens only if the way is clear afterwards; a push whose muscle exceeds the other's mass shoves it one sub-cell." style="max-width:100%;height:auto;display:block">
 <g fill="none" stroke="currentColor" stroke-width="1.2" font-size="12" font-family="system-ui, sans-serif">
-  <text x="20" y="20" fill="currentColor" stroke="none" font-weight="600">a body faces a direction and covers world cells</text>
-  <rect x="40" y="46" width="160" height="160" stroke-dasharray="4 3"/>
-  <line x1="120" y1="46" x2="120" y2="206" stroke-dasharray="4 3"/>
-  <line x1="40" y1="126" x2="200" y2="126" stroke-dasharray="4 3"/>
-  <g stroke="none">
-    <rect x="70" y="46" width="20" height="10" fill="#2a78d6"/>
-    <rect x="70" y="56" width="20" height="20" fill="#eb6834"/>
-    <rect x="50" y="76" width="60" height="50" fill="#1baf7a"/>
-    <rect x="40" y="76" width="10" height="60" fill="#2a78d6"/><rect x="110" y="76" width="10" height="60" fill="#2a78d6"/>
-    <rect x="50" y="126" width="60" height="10" fill="#2a78d6"/>
+  <text x="20" y="20" fill="currentColor" stroke="none" font-weight="600">a body holds its own cells; the world is drawn at the body's resolution</text>
+  <!-- 3x3 world cells of 4x4 sub-cells, 10 px per sub-cell -->
+  <g stroke="currentColor" stroke-opacity="0.25">
+    <path d="M 40,46 v 120 M 50,46 v 120 M 60,46 v 120 M 70,46 v 120 M 80,46 v 120 M 90,46 v 120 M 100,46 v 120 M 110,46 v 120 M 120,46 v 120 M 130,46 v 120 M 140,46 v 120 M 150,46 v 120 M 160,46 v 120"/>
+    <path d="M 40,46 h 120 M 40,56 h 120 M 40,66 h 120 M 40,76 h 120 M 40,86 h 120 M 40,96 h 120 M 40,106 h 120 M 40,116 h 120 M 40,126 h 120 M 40,136 h 120 M 40,146 h 120 M 40,156 h 120 M 40,166 h 120"/>
   </g>
-  <path d="M 80,22 L 80,40" stroke="var(--s1)" stroke-width="2" marker-end="url(#arrow)"/>
-  <text x="96" y="40" fill="var(--s1)" stroke="none" font-weight="600">facing: the front row points here</text>
-  <text x="212" y="160" fill="currentColor" stroke="none">2 quarters hold cells: the body</text>
-  <text x="212" y="176" fill="currentColor" stroke="none">covers 2 world cells; each gut cell</text>
-  <text x="212" y="192" fill="currentColor" stroke="none">eats from the cell under it</text>
-  <text x="20" y="232" fill="currentColor" stroke="none">a world cell is 4x4 body cells; no two bodies cover the same cell</text>
-  <text x="20" y="250" fill="currentColor" stroke="none">turn left / right: the grid rotates about its center, if the quarters it would newly cover are free</text>
-  <text x="20" y="268" fill="currentColor" stroke="none">a child needs a free spot next to its parent, or it is lost</text>
+  <rect x="40" y="46" width="120" height="120" stroke-dasharray="4 3"/>
+  <line x1="80" y1="46" x2="80" y2="166" stroke-dasharray="4 3"/><line x1="120" y1="46" x2="120" y2="166" stroke-dasharray="4 3"/>
+  <line x1="40" y1="86" x2="160" y2="86" stroke-dasharray="4 3"/><line x1="40" y1="126" x2="160" y2="126" stroke-dasharray="4 3"/>
+  <g stroke="none">
+    <!-- a two-mouthed body: two corners of digestive cells six columns apart, one row of hard below the right one -->
+    <rect x="50" y="66" width="30" height="10" fill="#1baf7a"/><rect x="50" y="76" width="10" height="10" fill="#1baf7a"/>
+    <rect x="100" y="66" width="30" height="10" fill="#1baf7a"/><rect x="120" y="76" width="10" height="10" fill="#1baf7a"/>
+    <!-- a small body inside its gap -->
+    <rect x="80" y="76" width="20" height="10" fill="#eda100"/><rect x="90" y="86" width="10" height="10" fill="#eda100"/>
+    <!-- a tooth facing east, below -->
+    <rect x="60" y="126" width="10" height="10" fill="#2a78d6"/><rect x="40" y="126" width="20" height="10" fill="#eb6834"/><rect x="40" y="136" width="20" height="10" fill="#1baf7a"/>
+  </g>
+  <path d="M 66,58 L 66,64" stroke="var(--s1)" stroke-width="2" marker-end="url(#arrow)"/>
+  <path d="M 72,131 L 78,131" stroke="var(--s1)" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="176" y="72" fill="currentColor" stroke="none">a world cell is 4x4 sub-cells (dashed);</text>
+  <text x="176" y="88" fill="currentColor" stroke="none">a body fills the sub-cells its grid</text>
+  <text x="176" y="104" fill="currentColor" stroke="none">holds, turned to its facing (arrow)</text>
+  <text x="176" y="128" fill="currentColor" stroke="none">a small body is small: it stands in</text>
+  <text x="176" y="144" fill="currentColor" stroke="none">the gap of another; a gut cell eats</text>
+  <text x="176" y="160" fill="currentColor" stroke="none">from the world cell under it</text>
+  <text x="20" y="196" fill="currentColor" stroke="none">no two bodies share a sub-cell; a move is one sub-cell along the facing (a second with probability speed)</text>
+  <text x="20" y="214" fill="currentColor" stroke="none">turn left / right: the grid rotates about its center, if the sub-cells it would newly hold are free</text>
+  <text x="20" y="232" fill="currentColor" stroke="none">a child is placed where its cells find free sub-cells, one to eight from its parent, or it is lost</text>
 
-  <text x="430" y="20" fill="currentColor" stroke="none" font-weight="600">moving forward into a covered cell is a push</text>
-  <rect x="440" y="46" width="80" height="80" stroke-dasharray="4 3"/>
-  <rect x="440" y="126" width="80" height="80" stroke-dasharray="4 3"/>
-  <g stroke="none">
-    <rect x="460" y="136" width="10" height="10" fill="#2a78d6"/>
-    <rect x="460" y="146" width="10" height="30" fill="#eb6834"/>
-    <rect x="450" y="176" width="40" height="20" fill="#1baf7a"/>
-    <rect x="450" y="66" width="50" height="40" fill="#1baf7a"/>
-    <rect x="500" y="66" width="10" height="40" fill="#2a78d6"/>
+  <text x="430" y="20" fill="currentColor" stroke="none" font-weight="600">a move into another body's cell is a push, face to face</text>
+  <g stroke="currentColor" stroke-opacity="0.25">
+    <path d="M 440,46 v 80 M 450,46 v 80 M 460,46 v 80 M 470,46 v 80 M 480,46 v 80 M 490,46 v 80 M 500,46 v 80 M 510,46 v 80 M 520,46 v 80 M 530,46 v 80 M 540,46 v 80"/>
+    <path d="M 440,46 h 100 M 440,56 h 100 M 440,66 h 100 M 440,76 h 100 M 440,86 h 100 M 440,96 h 100 M 440,106 h 100 M 440,116 h 100 M 440,126 h 100"/>
   </g>
-  <path d="M 465,134 L 465,110" stroke="var(--s1)" stroke-width="2" marker-end="url(#arrow)"/>
-  <text x="536" y="66" fill="currentColor" stroke="none">line by line where the lines meet</text>
-  <text x="536" y="82" fill="currentColor" stroke="none">in the world: the softer tip breaks</text>
-  <text x="536" y="98" fill="currentColor" stroke="none">if the push (muscle in the line)</text>
-  <text x="536" y="114" fill="currentColor" stroke="none">exceeds its hardness</text>
-  <text x="536" y="146" fill="currentColor" stroke="none">the move happens only if the way</text>
-  <text x="536" y="162" fill="currentColor" stroke="none">is clear afterwards; muscle over</text>
-  <text x="536" y="178" fill="currentColor" stroke="none">the other's mass shoves it one cell</text>
-  <text x="20" y="292" fill="currentColor" stroke="none">only the front pushes: a tooth is a tooth when it points forward; the pusher pays the move whether or not it moves</text>
-  <text x="20" y="326" fill="currentColor" stroke="none">the policy sees the world from the body (food under it; food and bodies ahead, behind, left, right); actions: stay, forward, turn left / right</text>
-  <text x="20" y="344" fill="currentColor" stroke="none">everything else (two kinds of place, costs, materials, contact rule, mating, lineages) is e012's</text>
+  <g stroke="none">
+    <!-- mover: tooth facing east: hard tip at column 3, two muscle behind, gut below -->
+    <rect x="470" y="76" width="10" height="10" fill="#2a78d6"/><rect x="450" y="76" width="20" height="10" fill="#eb6834"/><rect x="450" y="86" width="30" height="10" fill="#1baf7a"/>
+    <!-- other: a soft gut body to the east, its cell right ahead of the tip -->
+    <rect x="480" y="66" width="30" height="30" fill="#1baf7a"/>
+    <!-- a hard wall body further east -->
+    <rect x="510" y="56" width="10" height="50" fill="#2a78d6"/><rect x="520" y="66" width="20" height="30" fill="#1baf7a"/>
+  </g>
+  <path d="M 462,70 L 478,70" stroke="var(--s1)" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="556" y="62" fill="currentColor" stroke="none">the tip's face meets the cell ahead:</text>
+  <text x="556" y="78" fill="currentColor" stroke="none">hardness 3 per contiguous hard cell</text>
+  <text x="556" y="94" fill="currentColor" stroke="none">behind a hard face, else 1; the softer</text>
+  <text x="556" y="110" fill="currentColor" stroke="none">face breaks if the muscle in the line</text>
+  <text x="556" y="126" fill="currentColor" stroke="none">exceeds its hardness (here 2 &gt; 1)</text>
+  <text x="440" y="150" fill="currentColor" stroke="none">the move happens only if every cell of the mover finds its</text>
+  <text x="440" y="166" fill="currentColor" stroke="none">next sub-cell free; muscle over the other's mass shoves it</text>
+  <text x="440" y="182" fill="currentColor" stroke="none">one sub-cell; the pusher pays the move whether or not it moves</text>
+  <text x="20" y="266" fill="currentColor" stroke="none">facing as in e013: only the front pushes; the policy sees the world from the body (food under it; food and crowd ahead, behind, left, right)</text>
+  <text x="20" y="284" fill="currentColor" stroke="none">at most 16 body cells fit in a world cell, so a cell feeds at most 16 gut cells (0.32 per step): e011's crowd of 45-77 bodies at a cell cannot return</text>
+  <text x="20" y="318" fill="currentColor" stroke="none">occupancy: one index per sub-cell (16 times e013's cells, 1 MB at 128), a count of held sub-cells per world cell (the crowd a body sees)</text>
+  <text x="20" y="336" fill="currentColor" stroke="none">everything else (two kinds of place, costs, materials, contact rule, mating, lineages) is e013's</text>
 </g>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="var(--s1)"/></marker></defs>
 </svg>
-<figcaption>Figure 1. The two laws added to e012. Left: a body's 8x8 grid lies over a 2x2 block of world cells; the quarters that hold a cell cover their world cell, and the front row of the grid points where the body faces. Right: a push is the same contact rule as e010, but only the front pushes, the lines meet where they are in the world, and the move happens only if the way clears. Nothing names a tooth, a front leg or a wall.</figcaption>
+<figcaption>Figure 1. e013's space law at the resolution of the body. Left: the world is drawn in sub-cells (4x4 per world cell) and a body holds exactly the sub-cells its grid fills, so a small body is small and stands in the gap of a larger one. Right: a push is e010's contact rule between the two faces that meet; the move happens only if the way clears. Nothing names a tooth or a wall.</figcaption>
 </figure>
 """
 
@@ -700,12 +716,17 @@ def main():
 
     def rplace(w, p, key):
         """A reference world's per-place value: median over seeds of the median over the second half."""
+        if key not in rplaces[w][1][p]:
+            return float("nan")
         return med([med(rplaces[w][s][p][key][len(rplaces[w][s][p][key]) // 2:]) for s in [1, 2, 3, 4]])
 
     def rsum(w, key):
+        if key not in rlogs[w][1]:
+            return float("nan")
         return med([med(half(rlogs[w][s], key)) for s in [1, 2, 3, 4]])
 
     R = "grass and trees, e012"
+    R13 = "grass and trees, e013"
     refs_hard = {"grass, e012": (rplace(R, 8, "hard"), PLACE_COLOR[8]), "trees, e012": (rplace(R, 1, "hard"), PLACE_COLOR[1])}
     refs_biters = {"grass, e012": (rplace(R, 8, "biters"), PLACE_COLOR[8]), "trees, e012": (rplace(R, 1, "biters"), PLACE_COLOR[1])}
     refs_mass = {"grass, e012": (rplace(R, 8, "mass"), PLACE_COLOR[8]), "trees, e012": (rplace(R, 1, "mass"), PLACE_COLOR[1])}
@@ -713,20 +734,23 @@ def main():
 
     narrow = ["grass and trees", "grass and edge", "grass and shrubs"]
     charts = {}
-    charts["hard"] = place_chart("Hard cells per body, by place", "Mean over the bodies standing on each kind of place (grass and trees, 128, one line per seed). Dashed: e012, the same world without the two laws.", places, MAIN, lambda d: d["hard"], refs=refs_hard)
+    charts["hard"] = place_chart("Hard cells per body, by place", "Mean over the bodies standing on each kind of place (grass and trees, 128, one line per seed). Dashed: e012, the same world without space.", places, MAIN, lambda d: d["hard"], refs=refs_hard)
     charts["biters"] = place_chart("Bodies with a bite, by place", "Share of bodies on each place with a hard tip and muscle behind it on the front. Dashed: e012 (a bite on any side).", places, MAIN, lambda d: d["biters"], refs=refs_biters, percent=True)
     charts["mass"] = place_chart("Mass per body, by place", "Mean cells per body on each place. Dashed: e012.", places, MAIN, lambda d: d["mass"], refs=refs_mass, ymax=66)
-    charts["pop"] = place_chart("Population by place", "Bodies standing on each kind of place. Dashed: e012, where 45-77 bodies could share one tree cell.", places, MAIN, lambda d: d["pop"], refs=refs_pop)
-    charts["cover"] = place_chart("Cover, by place", "Share of the place's cells under a body. 100% would be a place with no free cell.", places, MAIN, lambda d: d["cover"], percent=True, ymax=1.0)
-    charts["foot"] = place_chart("World cells per body, by place", "Mean cells a body covers (1 to 4). 1 would mean every body fits in one quarter of its grid, as e010's grazer did.", places, MAIN, lambda d: d["foot"], ymin=1, ymax=4)
+    charts["pop"] = place_chart("Population by place", "Bodies standing on each kind of place. Dashed: e012, where 45-77 bodies could share one tree cell; e013 held 41-65 on the trees.", places, MAIN, lambda d: d["pop"], refs=refs_pop)
+    charts["cover"] = place_chart("Cover, by place", "Share of the place's sub-cells held by a body. e013 counted whole cells (a body held 16 sub-cells per cell); here a body holds only its own.", places, MAIN, lambda d: d["cover"], percent=True, ymax=1.0)
+    charts["foot"] = place_chart("World cells under a body, by place", "Mean world cells a body's cells lie in (1 to 9). e013's winner lay over 1.4-2.1; a body at the four corners of its grid lies over four or five.", places, MAIN, lambda d: d["foot"], ymin=1, ymax=6)
     charts["narrow_hard"] = narrow_chart("Hard cells per body on the narrow place, three widths", "The narrow place of each 128 world (trees, edge, shrubs), one line per seed. Which width keeps an arms race once a cell holds one body.", places, narrow, lambda d: d["hard"])
     charts["narrow_biters"] = narrow_chart("Bodies with a bite on the narrow place, three widths", "Share of the bodies on the narrow place with a tooth on the front.", places, narrow, lambda d: d["biters"], percent=True)
     charts["narrow_pop"] = narrow_chart("Population on the narrow place, three widths", "Bodies standing on the narrow place of each world. e012's trees held 620-1,050.", places, narrow, lambda d: d["pop"])
     charts["narrow_meat"] = narrow_chart("Meat share of intake on the narrow place, three widths", "Energy from broken cells of other bodies over all energy eaten there, per window.", places, narrow, lambda d: [m / max(m + p, 1e-9) for m, p in zip(d["meat_intake"], d["plant_intake"])], percent=True)
-    charts["sides"] = sides_chart("Hardness of the front and the back, trees (128)", "Mean hardness of the touchable tips on the front row and the back row of the bodies standing on the trees; one line per seed and side. Equal lines: armor has no side.", places, MAIN, 1)
-    charts["blocked"] = world_chart("Moves that did not happen", "Share of forward actions blocked (the way stayed taken), median of the log window. 100% would be a jammed world.", logs, lambda l: l["blocked"], list(WORLDS), WORLD_COLOR, percent=True, ymax=1.0)
-    charts["actions"] = world_chart("Turning", "Share of decisions that are a turn (left or right). Turning is the only way to change direction.", logs, lambda l: [a + b for a, b in zip(l["left"], l["right"])], list(WORLDS), WORLD_COLOR, percent=True, ymax=1.0)
-    charts["lineages"] = world_chart("Lineages alive", "Confirmed lineages at each log step. e012: 9-13 at 128, 19-50 at 256.", logs, lambda l: l["lineages"], list(WORLDS), WORLD_COLOR)
+    charts["contacts"] = world_chart("Contacts per body per step", "Bodies pressed by a move, per body per step, per log window. e012: 2-4 with trees (a move into a tree cell pushed into dozens of bodies); e013: 0.1-0.3.", logs, lambda l: [c / max(p, 1) / 10_000 for c, p in zip(l["contacts"], l["pop"])], list(WORLDS), WORLD_COLOR)
+    charts["no_room"] = world_chart("Children lost for want of room", "Share of children that found no free sub-cells within eight of the parent and were lost. e013: 81-90%.", logs, lambda l: l["births_no_room"], list(WORLDS), WORLD_COLOR, percent=True, ymax=1.0)
+    charts["forward"] = world_chart("Forward actions", "Share of decisions that are a forward move (the only action that can touch another body). The rest is stay or turn.", logs, lambda l: l["forward"], list(WORLDS), WORLD_COLOR, percent=True, ymax=1.0)
+    charts["births"] = world_chart("Births per 10,000 steps", "Children born (with room). e013: 29,000-40,000; e012: 200,000-392,000.", logs, lambda l: l["births"], list(WORLDS), WORLD_COLOR)
+    charts["blocked"] = world_chart("Moves that did not happen", "Share of forward actions blocked (a cell of the mover found its next sub-cell taken). e013: 78-94%.", logs, lambda l: l["blocked"], list(WORLDS), WORLD_COLOR, percent=True, ymax=1.0)
+    charts["actions"] = world_chart("Turning", "Share of decisions that are a turn (left or right). A turn costs nothing and most do not happen.", logs, lambda l: [a + b for a, b in zip(l["left"], l["right"])], list(WORLDS), WORLD_COLOR, percent=True, ymax=1.0)
+    charts["lineages"] = world_chart("Lineages alive", "Confirmed lineages at each log step. e013: 1-8 at 128, 9-21 at 256; e012: 9-13 and 19-50.", logs, lambda l: l["lineages"], list(WORLDS), WORLD_COLOR)
     charts["crossers"] = world_chart("Crossers", "Share of living bodies standing in a kind of place other than the one they were born in. e012: 0.1-1.6%.", logs, lambda l: l["crossers"], list(WORLDS), WORLD_COLOR, percent=True)
 
     viewer_run = f"{WORLDS[VIEWER_WORLD][0]}_seed{VIEWER_SEED}"
@@ -756,10 +780,11 @@ def main():
     def row(label, key, fmt, refkey=None, by_place=False):
         """A row with one cell per world (grass / narrow when by_place) and one per reference world."""
         cells = "".join(f"<td>{rng(w, key + '_a', fmt)} / {rng(w, key + '_b', fmt)}</td>" if by_place else f"<td>{rng(w, key, fmt)}</td>" for w in WORLDS)
+        f_ = lambda v: "-" if v != v else fmt(v)
         if refkey and by_place:
-            refs = "".join(f"<td>{fmt(rplace(r, REFS[r][2][0], refkey))} / {fmt(rplace(r, REFS[r][2][1], refkey))}</td>" for r in REFS)
+            refs = "".join(f"<td>{f_(rplace(r, REFS[r][2][0], refkey))} / {f_(rplace(r, REFS[r][2][1], refkey))}</td>" for r in REFS)
         elif refkey:
-            refs = "".join(f"<td>{fmt(rsum(r, refkey))}</td>" for r in REFS)
+            refs = "".join(f"<td>{f_(rsum(r, refkey))}</td>" for r in REFS)
         else:
             refs = "".join("<td>-</td>" for r in REFS)
         return f"<tr><td>{label}</td>{cells}{refs}</tr>"
@@ -771,16 +796,18 @@ def main():
     summary = ("<thead><tr><th>Measure (range over seeds; grass / narrow where two)</th>" + "".join(f"<th>{w}</th>" for w in WORLDS) + "".join(f"<th>{r}</th>" for r in REFS) + "</tr></thead><tbody>"
                + row("Population, median", "pop", n0, "pop")
                + row("Population by place, median", "pop", n0, "pop", by_place=True)
-               + row("Cover by place (share of cells under a body), median", "cover", p0, by_place=True)
-               + row("World cells per body by place, median", "foot", d1, by_place=True)
+               + row("Cover by place (share of sub-cells held), median", "cover", p0, by_place=True)
+               + row("World cells under a body by place, median", "foot", d1, "foot", by_place=True)
+               + row("Contacts per body per step, median", "contacts", lambda v: f"{v:.2f}")
+               + row("Births per 10,000 steps, median", "births", n0, "births")
                + row("Mass per body by place, median", "mass", d1, "mass", by_place=True)
                + row("Hard cells per body by place, median", "hard", d1, "hard", by_place=True)
                + row("Bodies with a bite on the front by place, median share", "biters", p1, "biters", by_place=True)
                + "<tr><td>Hardness of the front / back, narrow place, median</td>" + "".join(f"<td>{rng(w, 'front_b', d1)} / {rng(w, 'back_b', d1)}</td>" for w in WORLDS) + "".join("<td>-</td>" for r in REFS) + "</tr>"
                + row("Meat share of intake by place, second half", "meat", p1, by_place=True)
-               + row("Moves blocked, median share of forward actions", "blocked", p0)
+               + row("Moves blocked, median share of forward actions", "blocked", p0, "blocked")
                + row("Shoves, median share of forward actions", "shoves", p1)
-               + row("Children lost for want of room, median share", "no_room", p0)
+               + row("Children lost for want of room, median share", "no_room", p0, "births_no_room")
                + row("Crossers, median share of all bodies", "crossers", p1, "crossers")
                + row("Lineages alive, median", "lineages", n0, "lineages")
                + row("Hunter lineages (front bite &ge; 2 for 20,000+ steps)", "hunters", n0)
@@ -798,13 +825,13 @@ def main():
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>e013 Facing and space - Report</title>
+<title>e014 Space at the resolution of the body - Report</title>
 <style>{CSS}</style>
 </head>
 <body>
 <main>
-<h1>e013: Bodies face a direction and take up space</h1>
-<p class="sub">Experiment report - 2026-08-30 - e012's world with two laws added: a body faces a direction and only its front pushes; a body covers world cells and no two bodies share one. Grass with trees, edge or shrubs at 128x128 (four seeds each), grass with trees and with the edge at 256x256; 1,000,000 steps</p>
+<h1>e014: Space at the resolution of the body</h1>
+<p class="sub">Experiment report - 2026-08-30 - e013's world with its space law rewritten: bodies hold their own cells on a world drawn at the resolution of the body cell (4x4 sub-cells per world cell), contact is the meeting of real cells, facing is kept. Grass with trees, edge or shrubs at 128x128 (four seeds each), grass with trees and with the edge at 256x256; 1,000,000 steps</p>
 
 <section class="tldr">
 <h2>TL;DR</h2>
@@ -814,9 +841,9 @@ def main():
 <h2>1. Question</h2>
 <p>{text["question"]}</p>
 <ol>
-  <li><strong>Fronts appear.</strong> Where bodies bite, the tooth is on the front: on the narrow place, over the second half, the share of bodies with a bite on the front is at least half the share with a bite on any side, and armor is not the same on every side (the mean hardness of the back differs from the front by 20% or more).</li>
-  <li><strong>Reach pays.</strong> On the grass, bodies cover more than one world cell (mean 1.2 or more) although e010's five-cell grazer fits in one quarter of its grid.</li>
-  <li><strong>The crowd becomes a queue and the arms race survives it.</strong> On at least one narrow width (1, 2 or 4) the arms race stands: hard above 5 per body and over 10% of bodies with a bite on the narrow place, second half, in at least two seeds of four.</li>
+  <li><strong>Contact comes back.</strong> On the narrow place, second half, bodies touch another body more than once per step on average (e012: 2-4 on the trees; e013: 0.1-0.3), in at least three seeds of four at width 1.</li>
+  <li><strong>The jam clears.</strong> Blocked moves below 50% of forward actions and children lost for want of room below 50% of births (e013: 78-94% and 81-90%), in every world.</li>
+  <li><strong>Teeth and armor return with contact, and point forward.</strong> On at least one narrow width (1, 2 or 4) the arms race stands: hard above 5 per body and over 10% of bodies with a bite on the narrow place, second half, in at least two seeds of four; and among bodies with a bite on any side, at least half have it on the front.</li>
   <li><strong>The world stands at a bounded cost.</strong> No extinction; population above 500; at least 300 steps per second with twelve runs sharing the machine.</li>
 </ol>
 
@@ -827,10 +854,10 @@ def main():
 <ul class="measures">
   <li><strong>Bite</strong>: the largest force (muscle in the line) behind a hard tip on the front; <strong>bite any</strong>: on any side (e012's bite).</li>
   <li><strong>Hardness of a side</strong>: mean hardness of the touchable tips on the front, the back, or the two sides of the body grid.</li>
-  <li><strong>Cells</strong> a body covers (1-4); <strong>long</strong>: covers a quarter ahead and one behind; <strong>wide</strong>: two quarters across.</li>
-  <li><strong>Cover</strong>: share of a place's cells under a body.</li>
-  <li><strong>Blocked</strong>: forward actions that did not move the body; <strong>shoves</strong>: bodies moved by a push; <strong>turns blocked</strong>; <strong>children lost</strong> for want of a free spot next to the parent.</li>
-  <li>e012's measures: per place (population, body means, intake, lineages, movers), crossers, lineages with members on each place, hunter lineages, snapshots (which now carry the facing).</li>
+  <li><strong>Cells</strong> a body lies over: world cells under its cells (1-9); <strong>long</strong> and <strong>wide</strong>: cells the body spans along and across the facing.</li>
+  <li><strong>Cover</strong>: share of a place's sub-cells held by a body. <strong>Contacts</strong>: bodies pressed per move, per body per step.</li>
+  <li><strong>Blocked</strong>: forward actions that did not move the body; <strong>shoves</strong>: bodies moved by a push; <strong>turns blocked</strong>; <strong>children lost</strong> for want of free sub-cells next to the parent.</li>
+  <li>e013's measures: bite on the front and on any side, hardness per side, per place (population, body means, intake, lineages, movers), crossers, hunter lineages, snapshots (position in sub-cells and facing).</li>
 </ul>
 
 <h2>3. Results</h2>
@@ -862,7 +889,10 @@ def main():
 
 <h3>3.3 {text["h3"]}</h3>
 <div class="grid2">
-{charts["sides"]}{charts["blocked"]}
+{charts["contacts"]}{charts["blocked"]}
+</div>
+<div class="grid2">
+{charts["forward"]}{charts["no_room"]}
 </div>
 {gallery(VIEWER_WORLD, VIEWER_SEED, GALLERY)}
 <p>{text["r3"]}</p>
@@ -883,10 +913,10 @@ def main():
   <div class="bar"><input id="scrub" type="range" min="0" max="0" value="0"></div>
   <div class="bar" id="linlbl"></div>
   <div class="bar" id="legend">Blocks: {legend} <span class="sw front"></span> the front (white edge) <span class="sw dot"></span> has a bite on the front</div>
-  <div class="bar">Left: the whole {vw}x{vw} world, every cell a body covers colored by its lineage (gray: none), a white dot on bodies with a bite. Green: food; dashed rings are the patches (blue: grass, width 8; aqua: trees, width 1; radius two widths). Click to move the white box. Right: the box at 24x24 cells, each body drawn over the 2x2 block it can cover, turned the way it faces, with a white edge on its front, damage included. Labels: agents per lineage, then mean mass, cells covered, bite, shell, and sensor cells (eyes). {VIEWER_WORLD}, seed {VIEWER_SEED}.</div>
+  <div class="bar">Left: the whole {vw}x{vw} world at the resolution of the body ({vw * 4}x{vw * 4} sub-cells), every cell a body holds colored by its lineage (gray: none), a white dot on bodies with a bite. Green: food; dashed rings are the patches (blue: grass, width 8; aqua: trees, width 1; radius two widths). Click to move the white box. Right: the box at 24x24 world cells, each body drawn cell by cell where it stands, turned the way it faces, with a white edge on its front, damage included. Labels: agents per lineage, then mean mass, cells spanned along x across the facing, bite, shell, and sensor cells (eyes). {VIEWER_WORLD}, seed {VIEWER_SEED}.</div>
 </div>
 <p>{text["viewer"]}</p>
-<div class="grid2">{charts["lineages"]}{charts["crossers"]}</div>
+<div class="grid2">{charts["lineages"]}{charts["births"]}</div>
 
 <h2>4. Discussion</h2>
 {text["discussion"]}
@@ -895,7 +925,7 @@ def main():
 <p>{text["conclusion"]}</p>
 
 <h2>Appendix: data</h2>
-<p>Every 100,000th record; full logs in <code>results/*_log.csv</code>, per place in <code>results/*_places.csv</code>, lineages in <code>results/*_lineages.csv</code>, events in <code>results/*_events.csv</code>, agents every 100,000 steps in <code>results/*_agents.csv</code>, snapshots in <code>results/*_{{long,clip,bodies}}.jsonl</code>. Reference runs are read from <code>../e012_two_places/results</code>. Build this report with <code>uv run python experiments/e013_facing_space/report.py</code>.</p>
+<p>Every 100,000th record; full logs in <code>results/*_log.csv</code>, per place in <code>results/*_places.csv</code>, lineages in <code>results/*_lineages.csv</code>, events in <code>results/*_events.csv</code>, agents every 100,000 steps in <code>results/*_agents.csv</code>, snapshots in <code>results/*_{{long,clip,bodies}}.jsonl</code>. Reference runs are read from <code>../e013_facing_space/results</code> and <code>../e012_two_places/results</code>. Build this report with <code>uv run python experiments/e014_body_space/report.py</code>.</p>
 {tables}
 </main>
 <script id="frames" type="application/octet-stream">{blob}</script>
@@ -911,34 +941,26 @@ def main():
 
 # Lineages that prospered in the viewer run: (lineage id, name, what the shape does). Filled after the runs.
 GALLERY = [
-    (289, "the straddler, grass", "Four digestive cells at the center of the grid, one in each quarter: four cells that eat from four world cells. The largest lineage of the run (3,755 agents at its peak) and the shape every seed ends on."),
-    (713, "the front pair, grass", "The same four cells at the front edge: two quarters across, two cells of food, and the whole body in the front row where a push lands."),
-    (88, "corner three, grass", "e010's grazer, three cells in one corner: one world cell, one cell of food, untouchable from two sides. Second on the grass, behind the straddler."),
-    (1312, "corner four, grass", "Three cells along the front edge and one below: still one world cell, but the front row is full, so every push from ahead meets it."),
-    (744, "the wedge, grass", "Ten cells in one quarter, a triangle against the front-left corner: one world cell, a gut twice the size, and a life of 116,000 steps; the grass regrows too slowly to feed it better than four cells in four quarters."),
-    (1570, "six in the back, trees", "Six cells in the back-right quarter of a body that lived only on the trees (100%): one rich cell feeds a gut this size, and the front is empty, so a push from ahead meets nothing."),
-    (1010, "corner eight, trees", "Eight cells in the front-right corner, 99% on the trees: the largest gut of a tree body (mass 8.6), on one world cell of 6.5 regrowth per step."),
-    (1654, "the edge line, grass", "Three cells in a column at the right edge of the front quarter: one world cell, the smallest body of the gallery (3.4 cells), 217,000 steps."),
 ]
 
 TEXT = {
-    "question": "e011's physics has four verbs a shape can address (eat, push, resist, be untouchable) and four body kinds came out, one per verb. More kinds of shape need more verbs in the world, written as laws of materials and the world, never as traits. The two cheapest are the ones that make a shape readable: a body has no front, so a tooth cannot be seen to point anywhere, and a body has no size in the world, so 45-77 bodies stand in one cell and nobody blocks or reaches. We add both and ask what selection does with them: do fronts appear (teeth forward, armor where the bites land), does reach pay, does the crowd of the trees become a queue and what does that do to the arms race, and does the world still stand.",
-    "world": "Everything is e012's (128x128 or 256x256 on a torus, drifting food patches of two widths, bodies of 8x8 cells in five kinds grown from the genome, e010's contact rule, a cell that costs what it holds, 0.032 per body per step) with two laws added (Figure 1). A body faces one of four directions; its grid is turned with it, so the front row of the grid points where it faces; moving is along the facing, turning is an action, and only the front pushes. A world cell is 4x4 body cells: each quarter of the grid that holds a cell covers one world cell, no two bodies cover the same cell, each digestive cell eats from the cell under it, and a move into a covered cell is a push that succeeds only if the way clears (the other lost the cells in the way or was shoved by a muscle larger than its mass). A child needs a free spot next to its parent or it is lost. The policy sees the world from the body: food under it, food and bodies ahead, behind, left and right, energy; four actions instead of five.",
-    "runs": "<strong>Runs.</strong> At 128x128, two patches of each kind: grass and trees (widths 8 and 1, e012's main world), grass and the edge (8 and 2) and grass and shrubs (8 and 4: with one body to a cell, which width keeps an arms race is open again), seeds 1-4 each, twelve runs at once on one machine, one thread each. At 256x256, eight patches of each kind: grass and trees (seeds 1-4) and grass and the edge (seeds 1-2), six at once on a second machine. 1,000,000 steps. Reference: e012's runs of the same worlds at 128 (seeds 1-4), without the two laws. We record e012's measures and:",
-    "tldr": "Two laws of the world added to e012, none of the bodies: a body faces a direction and only its front pushes; a body covers world cells (one per 4x4 quarter of its grid that holds a cell) and no two bodies share one. The world stands, and reach pays: the winning grass body is 3-4 digestive cells at the center of the grid, one per quarter, eating from 3-4 world cells at once. But the arms race is gone at every width, in every seed: no body has a bite, hard cells per body are under 0.1, meat is under 0.001% of the intake, and there is no hunter lineage (e012: 9-29 per seed). The crowd was the premise of the arms race, not an accident of it: with one body to a cell, a body touches another 0.1-0.3 times per step instead of 2-4, a tooth breaks even at best, and there are 8 times fewer births to find one with. The trees feed 40-65 bodies instead of 620-1,050 and half the regrowth is wasted; 80-94% of moves and 80-90% of children are blocked for want of room, and each patch is a jammed disc of two or three lineages. At 256 (eight patches of each kind) it is the same world eight times over: 4,700-5,400 bodies, no bite, 9-21 lineages. Next: space at the resolution of the body, not the cell, so that small bodies are small, bodies pass, and contact is the overlap of real cells.",
-    "c1": "no", "l1": "No", "v1": "Nothing bites, so nothing points. On every place of every run the share of bodies with a bite is 0% on the front and 0-0.1% on any side (second half; at most 0.1% at any log step), and the mean hardness of the front and the back are both 1.00-1.04 (a soft tip is 1). Hard cells per body: 0.00-0.10 on the narrow places, 0.00-0.06 on the grass (e012: 4.4-15.1 on the trees).",
-    "c2": "yes", "l2": "Yes", "v2": "On the grass a body covers 1.4-2.1 world cells (median over seeds 1.8-2.0) with 3.6-5.0 cells; the most common body at the end of the runs is 3-4 digestive cells at the center of the grid, one per quarter, eating from three or four cells at once. Intake per digestive cell is 0.013-0.015 per step against e012's 0.008: on the grass the cell's regrowth is the limit, not the gut, so four cells in four quarters beat four in one.",
-    "c3": "no", "l3": "No, at every width", "v3": "Trees (width 1), edge (2), shrubs (4): hard per body 0.00-0.10, bodies with a bite 0%, meat under 0.001% of the intake there, second half, in all twelve runs; no hunter lineage of 20,000+ steps in any run. The only hard bodies are the initial random ones (hard 8.5-9.0 on the trees at step 10,000, gone by 20,000) and single bodies later (hard 1-5 on a place of 20-50 bodies, without a bite). The trees hold 41-65 bodies (e012: 622-1,050), the edge 148-216 (e012: 693-1,180), the shrubs 424-442. At 256 the trees hold 154-230 bodies over eight patches (19-29 each), hard 0.07-0.17, no bite, meat 0.01% of the intake there; with the edge at 256 (seeds 1-2) the edge holds 618-741 bodies (cover 82-83%), hard 0.04, no bite, no hunter lineage.",
-    "c4": "yes", "l4": "Yes", "v4": "No extinction; population 1,170-1,600 at 128, never below 970; 710-1,550 steps per second with twelve runs on one machine (e012: 400-870; births are limited by room, so there are fewer newborn to feed and to develop). At 256: population 4,690-5,370 (never below 4,190), 360-440 steps/s with three threads per run.",
-    "h1": "Each patch is a jammed disc of small bodies; reach pays",
-    "r1": "The grass holds 1,100-1,320 bodies at 128 (e012: 1,620-1,680), half its cells covered, in one disc per patch that the viewer shows as a tile of two or three colors; the narrow places are full (cover 74-92%) and hold 41-65 bodies with trees, 148-216 with the edge, 424-442 with shrubs. 78-94% of forward actions do not move the body, 65-84% of turns do not happen (the turned grid would cover a taken cell), 81-90% of children find no free spot next to the parent and are lost, and no body is ever shoved (no body has muscle). A body moves once in 20-40 steps; it stays 1-18% of the time (e012: 38-78%): pushing costs the move and gains nothing, but so does staying. The body that wins on the grass is 3.6-5.0 cells covering 1.4-2.1 world cells: three or four digestive cells at the center of the grid, one per quarter, reaching three or four cells of food. The rich cells of the trees feed one body each (a cell holds 8, a quarter of 16 digestive cells eats 0.32 per step), so 83-88 of the 164 regrowth per step is wasted with trees, 69-79 with the edge, 49-55 with shrubs (e012: 0-5), and the population is half of e012's.",
-    "h2": "The arms race is gone at every width",
-    "r2": "No width keeps an arms race once a cell holds one body. With the crowd went the contact: a body touches another 0.08-0.32 times per step (e012: 2.0-3.7 on the trees), a broken cell of a grazer is worth 0.06-0.33 energy (windows with 50 or more breaks), and a tooth is three cells that do not eat (0.045 per step of gut intake forgone at 0.015 per cell): it breaks even at one touch in five steps at best. Births fell eight times (29,000-40,000 per 10,000 steps against 200,000-392,000: a child needs room), so there are eight times fewer tries to find a tooth with. What remains on the narrow places is a queue of grazers of 5.6-7.8 cells, a little larger than the grass's (a rich cell rewards a larger gut in the quarter over it), of a few lineages; 1-8 lineages are alive in the world (e012: 6-15).",
-    "h3": "Fronts have nothing to point; the viewer reads a body anyway",
-    "r3": "The hardness of the front and the back of a body are both 1.00-1.04 on every place: there is no armor, since nothing bites, and the fronts the viewer shows (a white edge on the block) point at the food, not at a prey. Moves that did not happen are 78-94% of the forward actions everywhere, and the share does not fall over the run: no policy learns to turn out of a jam, because the jam is everywhere a body would want to go. Figure 2 shows the bodies of the lineages that prospered in the 256 world: every one is a gut spread over the grid, front up, and the reader can tell at a glance how many cells it covers.",
-    "viewer": "Grass and trees, 256, seed 1. Each grass island is a disc of two or three lineages, packed to its edge; each tree island a dot of twenty bodies. The zoom shows the tiles: bodies over their 2x2 blocks, a few green cells each, white edges pointing every way, no white dot anywhere. Play the clip: almost nothing moves. ",
-    "discussion": "<p>The two laws did what they said: a body has a front the viewer can see, and a body has a size, so that a small gut spread over four quarters reaches four cells and a body in the way is in the way. What they took with them was the crowd, and the crowd was doing work we had not credited: it made contact free. In e011 and e012 every move into a tree cell was a push into dozens of bodies and every tooth found meat; here a move touches at most two bodies, only where their columns meet, and a grazer's cell is worth a few dozen steps of grazing. A tooth stopped paying, and with it went armor, hunters, tortoises and corner bodies: four body kinds down to one. No rule was written against them; the world just stopped rewarding them.</p><p>Space at the resolution of a world cell is too coarse for this. A three-cell body blocks a 4x4 cell, a turn needs a whole free quarter, a child needs a free 2x2 block, and three in four blocked moves press on a body whose cells are not even in the line of the push (the version that only counted real overlaps blocked as often and touched less). The result is a jam that no policy can leave, on every patch, in every seed. The trees add a second loss: a cell holds 8 and one body eats from it, so a tree that fed 600 bodies in a crowd feeds 50 in a queue and drops half the world's regrowth on the ground.</p><p>Two things follow. First, the crowd is not to be brought back as a crowd (bodies through each other was the thing space was meant to end), but contact must come back: the cheapest way is to draw the world at the resolution of the body, so that bodies occupy their own cells, a small body is small, bodies pass, and contact is the overlap of real cells; occupancy is 16 times more cells, still cheap. Second, food that a body cannot reach should not vanish: a full cell that spills to its neighbors (fruit falls) would spread a tree over more cells; it will not by itself bring teeth back. Facing stays: one number per body, and it costs nothing.</p>",
-    "conclusion": "Facing and space at the cell level make bodies readable (a front, a footprint) and give reach a reason (the winning grazer is 3-4 cells in four quarters, eating from four cells), but they end the arms race at every width and in every seed: the crowd was its premise, contact fell 15-fold, a tooth stopped paying, births fell 8-fold, and the trees now feed one body per cell and waste half the world's regrowth. The world is a jam of small grazers that stands and runs fast. Next: space at the resolution of the body (bodies occupy their own cells on a 16x finer occupancy grid, contact is the overlap of real cells), with facing kept; then ground and friction (#16) once there is something to run from.",
+    "question": "e013 gave bodies a front and a size in the world at the level of a world cell (one cell per 4x4 quarter of the grid that holds a cell, no two bodies in a cell). Bodies became readable and reach paid, but the world jammed: a 3-cell body blocked a whole cell, 78-94% of moves and 81-90% of children were blocked for want of room, and contact fell from 2-4 to 0.1-0.3 touches per body per step; with it went meat, teeth, armor and the arms race, at every width and in every seed. The crowd was the premise of the arms race. We keep space and facing and give space the resolution of the body: a body holds exactly the sub-cells its grid fills, a small body is small, bodies pass each other and nest, and contact is the meeting of real cells. Does contact come back where food is dense, does the jam clear, do teeth and armor return with it and point forward, and does the world still stand? One thing the resolution cannot give back: at most 16 body cells fit in a world cell, so a cell feeds at most 16 gut cells (0.32 per step); e011's crowd of 45-77 bodies at a tree cell is not possible in a world with size.",
+    "world": "Everything is e013's (128x128 or 256x256 on a torus, drifting food patches of two widths, bodies of 8x8 cells in five kinds grown from the genome, e010's contact rule, a cell that costs what it holds, 0.032 per body per step, a facing per body, only the front pushes, four actions: stay, forward, turn left, turn right) with the space law rewritten (Figure 1). Occupancy is kept per sub-cell (4x4 per world cell, 16 times e013's cells): a body anchored at a sub-cell holds the sub-cells its world-frame grid fills, and no two bodies share one. A move is one sub-cell along the facing (a second with probability speed). Every cell of the mover whose next sub-cell is held by another body meets the cell there face to face: the softer face breaks if the mover's muscle in that line exceeds its hardness (3 per contiguous hard cell behind the face, else 1); a body still in the way is shoved one sub-cell if the muscle on it exceeds its mass and it has room; the move happens if every cell of the mover finds its next sub-cell free. A turn happens if the rotated grid's cells find free sub-cells. A child is placed at the first anchor one to eight sub-cells from its parent's, in the four directions, where its cells find room, else it is lost. Food stays per world cell and a digestive cell eats from the cell under it. Moving costs 0.001 per block per body cell moved, whether or not the move happens; a world cell is four of them now. The policy's inputs are e013's, seen through the body's bounding box (food under it; food and crowd one and two cells ahead, behind, left, right; energy).",
+    "runs": "<strong>Runs.</strong> At 128x128, two patches of each kind: grass and trees (widths 8 and 1), grass and the edge (8 and 2), grass and shrubs (8 and 4), seeds 1-4 each, twelve runs at once on one machine, one thread each. At 256x256, eight patches of each kind: grass and trees (seeds 1-4) and grass and the edge (seeds 1-2), six at once. 1,000,000 steps. Reference: e013 (space at the cell level) and e012 (no space) on the same worlds and seeds at 128. We record e013's measures and:",
+    "tldr": "e013's space law, rewritten at the resolution of the body: a body holds exactly the sub-cells its grid fills (4x4 per world cell), a small body is small, bodies nest, and contact is the meeting of real cells. The world stands (1,380-2,510 bodies at 128, 290-430 steps/s), births are four times e013's, the narrow places hold three to four times e013's bodies, and still nobody touches anybody: 0.06-0.22 contacts per body per step at every width in every seed (e012: 2-4), no bite, no hard cell, no meat, no hunter lineage, 62-92% of moves blocked. The resolution was not the problem; the motive is. In e012 a move always succeeded and a push into fifty bodies was its free by-product; once bodies take up space, a push is a failed move that costs the mover, a body without a tooth gains nothing from it, and the winning policies stay and turn (forward is 7-15% of decisions). Selection keeps only reach, and reach alone makes plants: the body that wins everywhere is four to eight digestive cells at the four corners of its grid, a constellation lying over four or five world cells that hardly moves. 256: (filled from the runs). Next: charge a move by the distance moved (work is force times distance), folded into ground and friction (#16), so that pushing into a body is free to try and contact can again be a by-product of moving.",
+    "c1": "no", "l1": "No", "v1": "0.06-0.22 contacts per body per step on the whole world and no more on the narrow places (the log counts bodies pressed per move; forward actions are 7-15% of decisions, and 62-92% of them press on somebody, so nearly every contact is a blocked move). e013: 0.08-0.33; e012: 2.1-3.7 with trees.",
+    "c2": "no", "l2": "No", "v2": "Blocked moves 62-92% of forward actions (e013: 78-94%) in every world; children lost 47-63% (e013: 81-90%). Births are back, four to five times e013's (134,000-202,000 per 10,000 steps against 29,000-40,000; e012: 200,000-392,000), because a small child finds a spot where a 2x2 block did not; the moves are not, because the winning body is 7 cells wide and its every cell must find its next sub-cell free.",
+    "c3": "no", "l3": "No, at every width", "v3": "Trees (width 1), edge (2), shrubs (4): hard cells per body 0.00-0.14, bodies with a bite 0% on the front and 0-0.3% on any side, meat 0.000% of the intake, no hunter lineage, in all twelve runs; the front and the back of a body are equally soft (1.00-1.06). Cells broken: 0-24 per 10,000 steps (one window of 221 in seed 3 with trees, a passing body with muscle). 256: (filled from the runs).",
+    "c4": "yes", "l4": "Yes", "v4": "No extinction; population 1,380-2,510 at 128, never below 1,250; 290-430 steps per second with twelve runs on one machine (e013: 710-1,550; the sub-cell physics costs about twice per body and there are more bodies). 256: (filled from the runs).",
+    "h1": "A constellation over four world cells; the narrow places fill up",
+    "r1": "The grass holds 1,210-1,410 bodies at 128 (e013: 1,100-1,320) with 14-15% of its sub-cells held; the trees 169-192 (e013: 41-65; e012: 622-1,050) at 59-62%, the edge 540-636 (e013: 148-216), the shrubs 1,100-1,212 (e013: 424-442). Regrowth lost to the cap falls from 83-88 to 67-68 of the 164 per step with trees, from 69-79 to 41-42 with the edge, from 49-55 to 4 with shrubs: three or four times the bodies eat at a rich cell now. The body that wins, in all twelve runs, is 4-8 digestive cells at the four corners of its 8x8 grid (Figure 2): it spans 7x7 body cells with 6-9 of them, its four corners lie in four different world cells (3.9-5.2 world cells under a body; e013's winner lay over 1.4-2.1), and 1-24% of the bodies stand wholly inside another body's box. Intake per digestive cell is 0.008-0.010 per step (e013: 0.013-0.015): a corner shares its world cell with the corners of its neighbors, so reach no longer pays per cell, but the body with the most corners wins. Mass 6-9 (10th-90th percentile 2-12); sensor and muscle 0.00-0.05 cells per body.",
+    "h2": "No tooth at any width",
+    "r2": "No width keeps an arms race, as in e013 and for the same reason with the room taken away: a body presses on another 0.06-0.22 times per step. Nearly every forward action is a push, but a forward action is 7-15% of the decisions (e013: 6-22%): bodies stay 1-55% of the time and turn 30-90% (a turn is free and 46-92% of them do not happen, so turning is what a policy does instead of moving). A push costs the mover 0.001 per cell whether or not it moves, and without a tooth it gains nothing, so the policies that survive do not push; a tooth needs a hard tip, two muscle cells behind it and a policy that pushes into bodies, and none of the three is paid for alone. Births are four times e013's, so the tries were there (1.3-2.0 million per run) and none found it. The narrow places hold grazers of 4.3-5.5 cells (the grass 7.2-8.9): a rich cell feeds a smaller body with fewer corners. Lineages alive: 1-3 (e013: 1-8; e012: 6-15), peaks of 7-17, with 20-200 splits and as many extinctions per run: one shape sweeps, splits into near-clones and they replace each other.",
+    "h3": "Contact is a failed move; the viewer reads a constellation",
+    "r3": "The charts of contact, blocked moves, forward actions and children lost say one thing: bodies move little, and when they move they press on somebody, and nothing comes of it. Moves blocked do not fall over the run in any world (the winning body is seven cells wide), children lost stay at half, and shoves are zero (nobody has muscle). Figure 2 shows the bodies of the lineages that prospered in the 256 world: corners, and corners with a second cell, front up; the viewer reads a body as four dots of one color with other bodies standing between them.",
+    "viewer": "Grass and trees, 256, seed 1. (filled from the run.) ",
+    "discussion": "<p>The resolution did what it promised: a small body is small, a corner body holds three sub-cells instead of sixteen, bodies pass and nest, children find room four times as often, the narrow places hold three to four times the bodies and waste a third less regrowth. What it did not give back is the thing the arms race ran on. In e011 and e012 a body had no size, a move never failed, and every move into a rich cell was a push into fifty bodies: contact was a free by-product of moving, and a random tooth was paid on its first step. With space of any resolution, a push is a move that failed and cost the mover 0.001 per cell, a body without a tooth gains nothing from it, and the policies that win are the ones that do not push: forward is 7-15% of decisions, turning (free, and mostly blocked) takes the rest. A tooth needs three things at once (a hard tip, two muscle cells behind it, a policy that pushes into bodies) and no step of the way pays. Space and the arms race are in tension: contact must be sought, and nothing in the world rewards seeking it before the tooth exists.</p><p>What selection kept is reach, and reach alone makes plants. The body that wins in every run is four cells at the four corners of its grid, one in each of four world cells, a constellation 7 cells across that moves once in ten steps and is blocked eight times in ten when it does; other bodies stand between its cells. e013's winner was the same idea at the cell level (four cells in four quarters); here the grid is used to its edges. The world is a lawn of sessile grazers with far-flung mouths, and the viewer reads it: dots of one color in a square, not a body with a front.</p><p>The lever, then, is not the food (the spill would spread the trees over more cells and feed more corner bodies; it would not make one push) and not more room, but the cost law of moving. Charging a push that moves nothing as if it had moved is what makes pushing a losing action and turning a substitute for it. In the real world work is force times distance: a body pressing on another spends little until something gives. Charging the move by the distance moved is a law about the world, not about a trait; it makes pushing into a body free to try, and it tests whether contact as a by-product of moving, e011's engine, can exist in a world with space. It belongs with ground and friction (#16), where the cost of moving is rewritten anyway (by the cells that touch the ground). If contact comes back with it, the tooth has its first step paid; if it does not, the tension is deeper than a cost and the next question is what a body gains from another body without a tooth.</p>",
+    "conclusion": "Space at the resolution of the body keeps what e013 won (readable bodies, reach) and gives back room (births four times e013's, narrow places three to four times as full) but not contact: 0.06-0.22 touches per body per step at every width in every seed, no tooth, no armor, no hunter, one to three lineages alive. Contact is a failed move now, and a body without a tooth has no reason to fail one; selection keeps reach alone, and the winning body is four cells at the four corners of its grid, a constellation over four world cells that hardly moves. Next: charge a move by the distance moved, folded into ground and friction (#16), so that pushing into a body costs nothing until something gives; the spill (a full cell that feeds its neighbors) stays on the table for the trees' waste.",
 }
 
 if __name__ == "__main__":

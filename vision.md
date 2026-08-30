@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-08-30 (e013).
+Last updated: 2026-08-30 (e014).
 
 ## What the viewer should see
 
@@ -42,16 +42,18 @@ grid is the wall now), e012 (two kinds of place: patches of two widths in one wo
 seed, grazers on the grass and the arms race on the trees; bodies cross and lineages straddle, hunters stay; one lineage
 with a different body on each place), e013 (facing and space at the cell level: bodies are readable and reach pays, but
 one body to a cell ends the crowd, and with it contact, teeth and the arms race, at every width; the world is a jam of
-small grazers).
+small grazers), e014 (space at the resolution of the body: bodies hold their own cells, births and the narrow places
+fill up again, and still nobody touches anybody; contact is a failed move now, selection keeps reach alone, and the
+winning body is four cells at the four corners of its grid).
 
 Next, in this order (GitHub issue numbers):
-1. Space at the resolution of the body (new issue, from e013). Bodies occupy their own cells on a world drawn at
-   body-cell resolution (16 sub-cells per world cell), so that a small body is small, bodies pass each other, and
-   contact is the overlap of real cells; facing is kept. e013 showed that space at the cell level (a 3-cell body blocks
-   a 4x4 cell) jams the world and starves the arms race of contact. Also on the table: a full cell that spills food to
-   its neighbors (fruit falls), so that a tree is not one cell feeding one body.
-2. Ground and friction (#16): moving costs by the cells that touch the ground, so a shape can be a leg. After contact
-   is back: with nothing to bite, a leg has nothing to run from or after.
+1. Ground and friction (#16), with the cost of a move charged by the distance moved (work is force times distance): a
+   push that moves nothing costs nothing until something gives. e014 showed that with space of any resolution a push is a
+   failed move that costs the mover, so no policy pushes and no tooth is ever paid for; the question is whether contact
+   can again be a by-product of moving, e011's engine, in a world with space. If it cannot, the next question is what a
+   body gains from another body without a tooth.
+2. A full cell that spills food to its neighbors (fruit falls), so that a tree is not one cell feeding sixteen gut
+   cells: the trees waste 40% of their regrowth at any resolution. It spreads the trees; it does not make a push.
 3. #5 3D bodies (same development, 8x8x8), or a larger grid: the 90th percentile of mass is 64 at width 1, and legs
    and wings need resolution, but only once there is ground and air for them.
 4. Environments that differ by place (#14): plants, desert, warm and cold, sea, mountain, oxygen. A place selects among
@@ -147,6 +149,16 @@ materials and the world.
   child needs room), the trees feed one body per rich cell and half the regrowth is wasted, and 80-94% of moves are
   blocked: each patch is a jammed disc of two or three lineages. Cell-level space is too coarse (a 3-cell body blocks a whole
   cell, three in four blocked moves press on nothing); the next step is space at the resolution of the body.
+- e014: space at the resolution of the body (occupancy per sub-cell, 4x4 per world cell; a body holds exactly the
+  sub-cells its grid fills; a move is one sub-cell; a push meets face to face with e010's rule; a child needs room for its
+  cells). Keep it: it costs 16 times the cells and about twice the time per body, a small body is small, bodies pass and
+  nest, births are four times e013's and the narrow places hold three to four times e013's bodies. What it showed:
+  contact does not come back with room (0.06-0.22 touches per body per step at every width in every seed, no tooth, no
+  armor, 1-3 lineages). Contact is a failed move now, and a body without a tooth has no reason to fail one: forward is
+  7-15% of decisions, turning (free, mostly blocked) takes the rest, and a push costs the mover as if it had moved.
+  Selection keeps reach alone, and reach alone makes plants: the winning body everywhere is four to eight digestive
+  cells at the four corners of its grid, a constellation lying over four world cells that hardly moves; other bodies
+  stand between its cells. Space and the arms race are in tension until pushing into a body is free to try.
 - e007 calibration: 128x128 (4 islands) matches 256x256 per island for what happens on an island (population,
   food, predation, body composition, rate of sensor lineages) but not between islands (lineages per island and
   lifetime move with the number of islands). Use 128 with more seeds for questions about bodies and behavior;

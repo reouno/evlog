@@ -1,5 +1,5 @@
 #!/bin/bash
-# The six 256 runs of e014 (the world people watch), six at once on the 6-core machine, one thread each.
+# The six 256 runs of e014 (the world people watch), six at once, one thread each (run locally when the machine is free: the 6-core machine took 5 hours).
 #   nohup bash experiments/e014_body_space/run_256.sh > experiments/e014_body_space/results/run_256.log 2>&1 &
 set -e
 cargo build --release -p e014_body_space 2>&1 | tail -1
