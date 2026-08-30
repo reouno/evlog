@@ -86,8 +86,9 @@ and `len_side` (cells the body spans along and across the facing) replace `long`
 
 Runs (1,000,000 steps): 128x128 with widths "8,1", "8,2", "8,4" (grass and trees, edge, shrubs),
 seeds 1-4, twelve at once on one 12-core machine with one thread each (`run.sh`); 256x256 with
-"8,1" seeds 1-4 and "8,2" seeds 1-2 on the 6-core machine (`run_256.sh`). Reference: e013 and
-e012, the same worlds and seeds. The report compares the three.
+"8,1" seeds 1-4 and "8,2" seeds 1-2, six at once on the same machine once the 128 runs were done
+(`run_256.sh`; the 6-core machine managed 50 steps/s and was stopped). Reference: e013 and e012,
+the same worlds and seeds. The report compares the three.
 
     cargo run --release -p e014_body_space -- <steps> <seed> <size> <widths>
     uv run python experiments/e014_body_space/report.py
@@ -133,7 +134,18 @@ The report (`report.html`) has the charts, the per-run tables and the viewer.
 - **Fewer lineages than ever.** 1-3 alive (e013: 1-8; e012: 6-15), peaks of 7-17; 20-200 splits
   and as many extinctions per run: one shape sweeps, splits into near-clones, and they replace
   each other. Crossers 0.0-1.2%.
-- **256 (eight patches of each kind).** (filled below from `results/256_*`)
+- **256 (eight patches of each kind).** The same world eight times over. Grass and trees
+  (seeds 1-4): population 5,550-6,370 (e013: 4,690-5,370; e012: 7,570-11,060), never below
+  4,840; contacts 0.08-0.16 per body per step; blocked 78-80%; children lost 48-53%; births
+  541,000-574,000 per 10,000 steps; hard 0.01-0.06, no bite (0% on the front, 0-0.1% on any
+  side), meat 0.000%, no hunter lineage; the trees hold 718-784 bodies over eight patches
+  (90-98 each; e013: 19-29) at cover 61%, mass 4.8-5.2; the grass 4,830-5,230, mass 7.7-8.6;
+  271 of the 655 regrowth per step wasted (e013: 331-350); 2-7 lineages alive (peaks 25-43;
+  e013: 9-21); 106-147 steps/s with six runs on one machine, one thread each. Grass and the
+  edge (seeds 1-2): population 7,560-7,920, the edge 2,360-2,440 bodies (e013: 618-741) at cover
+  52-53%, mass 4.4-4.5, hard 0.01, no bite; 169-172 of the regrowth wasted; 4 lineages alive.
+  The most common body of the run people watch (seed 1) is the constellation: six digestive
+  cells at the four corners, born at step 14,000, alive at 1,000,000, 5,839 bodies at its peak.
 
 ## Conclusion
 
