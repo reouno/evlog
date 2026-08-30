@@ -27,6 +27,23 @@ When unsure, ask in this order:
 3. Does it add compute cost?
 4. Is it a rule about a trait, or about a material or the world? Only the second kind is allowed.
 
+## Where new laws come from
+
+The world will keep needing new laws: a new material, a new kind of place, a new kind of food.
+When we look for one, we think in metaphors of the real world.
+
+- **Ask the real world why.** If the world lacks something (large bodies, hunters, eyes), ask why
+  the real world has it. Why did elephants, giraffes, whales, and dinosaurs appear and thrive?
+  From the answer, extract the simplest premise (food so concentrated that a small mouth cannot
+  keep up with it; a cost that falls with size; leaves out of reach of a short body) and write
+  it as a law about the world or a material, never about a trait (principle 2).
+- **Name the stage the world is at.** e010's five-cell grazers are a world of microbes, or a world
+  of mice; the picture tells us what the real world had at that stage that ours does not, and
+  which premise is missing.
+- **The metaphor is a source, not a target.** evlog is a virtual world. It does not have to follow
+  the real one, and it should not only imitate it: what can exist here and nowhere else is part of
+  what makes it worth watching. Take the premise, not the outcome, and let selection decide.
+
 ## Non-goals
 
 - Game elements such as winning, clearing, or scores

@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-08-30 (e010).
+Last updated: 2026-08-30 (e011).
 
 ## What the viewer should see
 
@@ -36,15 +36,17 @@ lineages, and the first sensor lineage that lasted), e008 (prey worth eating: a 
 booms; the lineage log now records diet), e009 (perception: inputs that say who can eat whom are non-zero once in a
 hundred decisions; eyes do not pay because there is nothing to see; the knockout shows e007's eyes were a passenger
 with a slight tailwind), e010 (contact physics: every trait rule removed; the world stands, shape goes to the
-smallest corner of gut, teeth are profitable and were found once in twelve million births).
+smallest corner of gut, teeth are profitable and were found once in twelve million births), e011 (rich cells: the same
+regrowth on fewer cells gives size a reason and starts the arms race; tortoises, hunters and specks coexist; the 8x8
+grid is the wall now).
 
 Next, in this order (GitHub issue numbers):
-1. Give size a reason in the world, not in the body (principles.md, 2): food that a small body cannot take (a cell
-   holding more than one bite, so that intake scales with digestive cells again) or places a small body cannot
-   cross. Watch whether bodies grow because the world rewards it, and whether teeth then have something to reach.
-   Running longer alone does not help (seed 1 to 2,000,000 steps: no second hunter). (#12)
-2. #4 Learning, growth, aging, health as a layer on top of birth traits.
-3. #5 3D bodies (same development, 8x8x8).
+1. A world with both kinds of place in one run: wide patches (e010's grass, where the smallest grazer wins) and narrow
+   ones (e011's trees, where the crowd makes tortoises and hunters), so that both kinds of body exist in one world and
+   lineages can move between places. One law, no compute added. (#13)
+2. #5 3D bodies (same development, 8x8x8), or a larger grid: the 90th percentile of mass is 64 at width 1; the
+   population is pressed against a limit we drew.
+3. #4 Learning, growth, aging, health as a layer on top of birth traits.
 
 ## Kept from earlier experiments
 
@@ -98,6 +100,17 @@ Next, in this order (GitHub issue numbers):
   twelve million births (seed 1, step 985,000; gone in 12,000 steps: a body that pushes with a tooth also breaks
   its own children). Emergence here is a reachability problem: a hunter needs a tooth, a policy that moves into
   occupied cells, and a way not to hurt kin, all at once.
+- e011: the width of a food patch is a law of the world from here on (the total regrowth is fixed, so a narrower patch
+  puts the same food on fewer cells). Width 8 (e010) makes five-cell grazers; width 4 seven-cell ones; width 2 is the
+  edge (two seeds of four go to the arms race); width 1 (6.5 regrowth per cell per step, 45-77 bodies to a cell) goes
+  there in every seed: hard 6-26 per body, 12-24% of bodies with a bite, meat 9-19% of intake, 26-50 hunter lineages
+  per seed lasting up to 483,000 steps, shell 2.3-8. Three body kinds coexist: the tortoise (a full square, a two-cell
+  wall of hard around a 4x4 gut, no muscle), the hunter (hard tip, muscle behind it, 26-85% meat), and the speck (2-4
+  digestive cells in the corners of the grid only, where the middle-row muscle of a hunter has no force: hiding as a
+  shape). The gut is not the reason for size (it stays at 10-16 cells: bodies crowd and share the cell, 0.005-0.009
+  per digestive cell per step in every world); armor is. What a cell can hold (the cap) does nothing: a crowded cell
+  never fills. Lineages are fewer (1-13 alive) with one holder per island at a time. Fewer, larger bodies run faster
+  (585-846 steps/s at width 1).
 - e007 calibration: 128x128 (4 islands) matches 256x256 per island for what happens on an island (population,
   food, predation, body composition, rate of sensor lineages) but not between islands (lineages per island and
   lifetime move with the number of islands). Use 128 with more seeds for questions about bodies and behavior;
