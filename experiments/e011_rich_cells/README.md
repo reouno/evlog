@@ -115,7 +115,8 @@ little); e010's numbers are its twelve seeds. Report: `report.html`.
   humps: 3-27% of bodies have at most 4 cells, 3-28% have 60 or more. The most common bodies
   (width 1, seed 4, step 1,000,000): a full square with a two-cell wall of hard around a 4x4 gut
   (28 hard, 16 digestive; 186 agents), and 2-4 digestive cells sitting only in the corners of the
-  grid (65 agents). A hunter's muscle is in the middle rows, so its force is in lines 2-5; a cell
+  grid (65 agents); the largest lineage of width 1 (seed 3, lineage 2, alive the whole run, 2,179 agents
+  at its peak) is three digestive cells in each of the four corners. A hunter's muscle is in the middle rows, so its force is in lines 2-5; a cell
   in line 0 or 7 is never in a line where a tooth has force. The corner is a shape that cannot be
   bitten; nobody wrote it.
 - **The arms race starts.** At width 1 in every seed, hard is above 1 per body from step 10,000;
@@ -135,7 +136,7 @@ little); e010's numbers are its twelve seeds. Report: `report.html`.
 
 1. Gut follows the world: partly. Right order, wrong proportion: the bodies crowd and share the
    cell, so the gut goes 5 to 10-16, not to 20-330. Mass passes 16 only at width 1.
-2. Sizes coexist: yes at width 2 and 1. Specks, tortoises and hunters on one island.
+2. Sizes coexist: yes at width 2 and 1. Corner bodies, tortoises and hunters on one island.
 3. The world stands at a bounded cost: yes.
 4. Teeth have something to reach: partly. Hunter lineages in 6 of 8 concentrated seeds (all four
    at width 1), lasting up to 483,000 steps; deaths by damage per birth above 0.01 in only two,

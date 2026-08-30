@@ -57,3 +57,20 @@ Write in plain English. One idea per paragraph. Numbers where possible. Do not r
 - Playback must be slow by default: 600 ms per frame in the long view, 250 ms in the clip, with a
   Slow / Normal / Fast selector (1x / 2x / 4x) next to Play. The user asked for this; do not speed it up again.
 - Keep the marks: lineage color, white dot on agents that can bite, block legend, per-lineage label with teeth / armor / eyes.
+
+## Length (from e012 on)
+
+Reports had grown to the length of a paper by e011. Keep them short:
+
+- TL;DR: at most 5 sentences. Question: one paragraph. Discussion: at most 3 paragraphs. Conclusion: one paragraph.
+- Only charts that carry a claim. Aim for 6-8 charts in total, not 16. If two charts say the same thing, keep one.
+- One paragraph of prose per results heading, and no restating of the summary table: give the number once.
+- The summary table: at most 15 rows. Rare measures go to the appendix tables.
+- Method: the mechanism diagram, the runs in one paragraph, the measures as one list. Do not repeat the README.
+
+## Bodies of the lineages that prospered
+
+Show them. For the lineages with the most agent-steps (or the longest life), draw the most common body of the
+lineage at its peak as an 8x8 grid of colored cells (block colors as the viewer), with one line of caption: world,
+seed, lineage id, lifetime, peak agents, mass, hard / muscle / digestive, meat share. Pick 6-8 that differ in shape.
+`e011`'s `report.py` has `gallery()` for this. A reader remembers shapes, not percentiles.

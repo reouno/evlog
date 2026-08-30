@@ -37,7 +37,7 @@ booms; the lineage log now records diet), e009 (perception: inputs that say who 
 hundred decisions; eyes do not pay because there is nothing to see; the knockout shows e007's eyes were a passenger
 with a slight tailwind), e010 (contact physics: every trait rule removed; the world stands, shape goes to the
 smallest corner of gut, teeth are profitable and were found once in twelve million births), e011 (rich cells: the same
-regrowth on fewer cells gives size a reason and starts the arms race; tortoises, hunters and specks coexist; the 8x8
+regrowth on fewer cells gives size a reason and starts the arms race; tortoises, hunters and corner bodies coexist; the 8x8
 grid is the wall now).
 
 Next, in this order (GitHub issue numbers):
@@ -105,7 +105,7 @@ Next, in this order (GitHub issue numbers):
   edge (two seeds of four go to the arms race); width 1 (6.5 regrowth per cell per step, 45-77 bodies to a cell) goes
   there in every seed: hard 6-26 per body, 12-24% of bodies with a bite, meat 9-19% of intake, 26-50 hunter lineages
   per seed lasting up to 483,000 steps, shell 2.3-8. Three body kinds coexist: the tortoise (a full square, a two-cell
-  wall of hard around a 4x4 gut, no muscle), the hunter (hard tip, muscle behind it, 26-85% meat), and the speck (2-4
+  wall of hard around a 4x4 gut, no muscle), the hunter (hard tip, muscle behind it, 26-85% meat), and the corner body (2-12
   digestive cells in the corners of the grid only, where the middle-row muscle of a hunter has no force: hiding as a
   shape). The gut is not the reason for size (it stays at 10-16 cells: bodies crowd and share the cell, 0.005-0.009
   per digestive cell per step in every world); armor is. What a cell can hold (the cap) does nothing: a crowded cell
