@@ -320,13 +320,11 @@ fn sigmoid(x: f32) -> f32 {
     1.0 / (1.0 + (-x).exp())
 }
 
-/// One line of a body seen from one side: the tip cell (its index), how deep it sits from the
-/// edge of the grid, how hard it is, and the force behind it. Hardness 0 means the line is
-/// empty on that side: nothing to touch.
+/// One line of a body seen from one side: the tip cell (its index), how hard the tip is, and
+/// the force behind it. Hardness 0 means the line is empty on that side: nothing to touch.
 #[derive(Clone, Copy, Default)]
 struct Tip {
     pos: u8,
-    depth: u8,
     hardness: u8,
     force: u8,
 }
@@ -355,7 +353,7 @@ fn tips_of(cells: &[u8; CELLS]) -> [[Tip; SIDE]; 4] {
                 } else {
                     1
                 };
-                tip = Tip { pos: at(k0) as u8, depth: k0 as u8, hardness, force };
+                tip = Tip { pos: at(k0) as u8, hardness, force };
             }
             tips[side][line] = tip;
         }
@@ -640,18 +638,18 @@ struct Counters {
 
 /// Body i moves in direction d into a cell held by body j: its front presses on the side of j
 /// that faces it, line by line where the lines meet in the world (the grids are offset by whole
-/// cells, so line c of i meets line c + 4 dx of j). Two tips touch if, after a move of one cell,
-/// the pusher's tip would reach the other's: depth + depth + 4 (cells between the anchors) <= 7.
-/// In a touching line the softer tip breaks if the push exceeds its hardness (e010's rule);
-/// a broken cell is gone and its matter and share of energy go to the other if it can digest.
+/// cells, so line c of i meets line c + 4 dx of j), as e010's push into a shared cell: in every
+/// line where both have a cell the softer tip breaks if the push exceeds its hardness. A broken
+/// cell is gone and its matter and share of energy go to the other if it can digest.
 /// Returns the pusher's force against j: the muscle in the lines of i that press on lines of j.
+/// (A first version touched only where the tips would overlap after the move; then three of
+/// four blocked moves pressed on nothing and no tooth could open the way.)
 fn contact(agents: &mut [Agent], i: usize, j: usize, d: usize, g: Grid, occ: &mut [u32], place: &[u8], c: &mut Counters) -> u8 {
     let opp = opposite(d);
     let (ax, ay, bx, by) = (agents[i].x, agents[i].y, agents[j].x, agents[j].y);
-    let (nx, ny) = g.step(ax, ay, d, 1);
-    let (shift, delta) = match d {
-        NORTH | SOUTH => (QUAD as isize * Grid::wrap(ax, bx, g.w), Grid::wrap(ny, by, g.h).abs()),
-        _ => (QUAD as isize * Grid::wrap(ay, by, g.h), Grid::wrap(nx, bx, g.w).abs()),
+    let shift = match d {
+        NORTH | SOUTH => QUAD as isize * Grid::wrap(ax, bx, g.w),
+        _ => QUAD as isize * Grid::wrap(ay, by, g.h),
     };
     let mut force = 0u8;
     let mut touched = false;
@@ -666,9 +664,6 @@ fn contact(agents: &mut [Agent], i: usize, j: usize, d: usize, g: Grid, occ: &mu
             continue;
         }
         force = force.saturating_add(ta.force);
-        if (ta.depth + tb.depth) as isize + QUAD as isize * delta > SIDE as isize - 1 {
-            continue;
-        }
         touched = true;
         if tb.hardness < ta.hardness && ta.force > tb.hardness {
             breaks.push((j, tb.pos));

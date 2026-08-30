@@ -1,0 +1,944 @@
+#!/usr/bin/env python3
+"""Build report.html for e013.
+
+Charts: matplotlib, exported as SVG and inlined. Diagram: hand-written SVG.
+Run from the repo root: uv run python experiments/e013_facing_space/report.py
+"""
+import base64
+import csv
+import gzip
+import html
+import io
+import json
+import os
+import statistics
+from collections import Counter, defaultdict
+
+import matplotlib
+import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator
+
+matplotlib.use("svg")
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+SERIES = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4"]  # fixed slot order
+LINEAGE_PALETTE = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#7b61ff", "#00a3c4", "#c94c4c", "#6aa84f", "#b8860b", "#8e44ad", "#e67e22"]
+NONE_COLOR = "#898781"
+
+INK = "#898781"
+plt.rcParams.update({
+    "svg.fonttype": "none",
+    "font.family": "sans-serif",
+    "font.size": 9,
+    "text.color": INK,
+    "axes.edgecolor": INK,
+    "axes.labelcolor": INK,
+    "axes.facecolor": "none",
+    "axes.spines.top": False,
+    "axes.spines.right": False,
+    "axes.spines.left": False,
+    "axes.grid": True,
+    "axes.grid.axis": "y",
+    "grid.color": INK,
+    "grid.alpha": 0.25,
+    "grid.linewidth": 0.8,
+    "xtick.color": INK,
+    "ytick.color": INK,
+    "ytick.left": False,
+    "legend.frameon": False,
+    "legend.fontsize": 9,
+    "figure.facecolor": "none",
+    "savefig.transparent": True,
+})
+
+E012 = os.path.join(HERE, "..", "e012_two_places")
+# Worlds of this experiment: label -> (run prefix, world size, widths, seeds). Places are named by their width.
+WORLDS = {
+    "grass and trees": ("128_sigma8-1", 128, (8, 1), [1, 2, 3, 4]),
+    "grass and edge": ("128_sigma8-2", 128, (8, 2), [1, 2, 3, 4]),
+    "grass and shrubs": ("128_sigma8-4", 128, (8, 4), [1, 2, 3, 4]),
+    "grass and trees, 256": ("256_sigma8-1", 256, (8, 1), [1, 2, 3, 4]),
+    "grass and edge, 256": ("256_sigma8-2", 256, (8, 2), [1, 2]),
+}
+# The same worlds without the two laws (e012, seeds 1-4): label -> (run prefix, folder, widths).
+REFS = {
+    "grass and trees, e012": ("128_sigma8-1", E012, (8, 1)),
+    "grass and edge, e012": ("128_sigma8-2", E012, (8, 2)),
+}
+PLACE_NAME = {8: "grass (width 8)", 4: "shrubs (width 4)", 2: "edge (width 2)", 1: "trees (width 1)", 0: "beyond the patches"}
+PLACE_COLOR = {8: SERIES[0], 4: SERIES[3], 2: SERIES[1], 1: SERIES[2], 0: INK}
+WORLD_COLOR = {"grass and trees": SERIES[2], "grass and edge": SERIES[1], "grass and shrubs": SERIES[3], "grass and trees, 256": SERIES[4], "grass and edge, 256": SERIES[0]}
+KIND_COLOR = {1: SERIES[0], 2: SERIES[1], 3: SERIES[3], 4: SERIES[2]}
+CONFIRM_STEPS = 5000
+MAIN = "grass and trees"
+VIEWER_WORLD = "grass and trees, 256"
+VIEWER_SEED = 1
+if os.environ.get("E013_SMOKE"):  # build against the 128 runs only, to test the script before the 256 runs finish
+    WORLDS["grass and trees, 256"] = ("128_sigma8-1", 128, (8, 1), [1, 2, 3, 4])
+    WORLDS["grass and edge, 256"] = ("128_sigma8-2", 128, (8, 2), [1, 2])
+LAST_STEP = 1_000_000
+
+
+def seeds_of(w):
+    return WORLDS[w][3]
+
+
+# ---------- data ----------
+
+def load_csv(path, folder=HERE):
+    with open(os.path.join(folder, path)) as f:
+        rows = list(csv.DictReader(f))
+    return {k: [float(r[k]) for r in rows] for k in rows[0]}
+
+
+def load_rows(path, folder=HERE):
+    with open(os.path.join(folder, path)) as f:
+        return list(csv.DictReader(f))
+
+
+def load_places(run, folder=HERE):
+    """places.csv split by place: {width: {column: [values]}}."""
+    rows = load_rows(f"results/{run}_places.csv", folder)
+    out = {}
+    for r in rows:
+        p = int(float(r["place"]))
+        d = out.setdefault(p, defaultdict(list))
+        for k, v in r.items():
+            d[k].append(float(v))
+    return out
+
+
+def lineage_rows(run, folder=HERE):
+    by = defaultdict(list)
+    for r in load_rows(f"results/{run}_lineages.csv", folder):
+        by[int(r["lineage"])].append(r)
+    return by
+
+
+def lineage_stats(run, folder=HERE):
+    """Per lineage: first and last step seen as a group, max size."""
+    first, last, size = {}, {}, defaultdict(int)
+    for r in load_rows(f"results/{run}_lineages.csv", folder):
+        i, s = int(r["lineage"]), int(r["step"])
+        first.setdefault(i, s)
+        last[i] = s
+        size[i] = max(size[i], int(r["size"]))
+    return first, last, size
+
+
+def home_of(r):
+    """The kind of place most of a lineage's members stand in at one detection: 0 (first width), 1 (second), or None."""
+    p0, p1 = int(r["p0"]), int(r["p1"])
+    if p0 + p1 == 0:
+        return None
+    return 0 if p0 >= p1 else 1
+
+
+def lineage_places(run):
+    """Per lineage: detections with home in the first kind, in the second kind, and with both kinds holding
+    at least 10% of the members. A lineage that moved home has 20+ detections (20,000 steps) of each home;
+    a shared one has 20+ detections with both."""
+    out = {}
+    for lid, rows in lineage_rows(run).items():
+        h0 = sum(1 for r in rows if home_of(r) == 0)
+        h1 = sum(1 for r in rows if home_of(r) == 1)
+        both = sum(1 for r in rows if min(int(r["p0"]), int(r["p1"])) >= 0.1 * int(r["size"]))
+        out[lid] = dict(h0=h0, h1=h1, both=both, moved=h0 >= 20 and h1 >= 20, shared=both >= 20,
+                        steps=int(rows[-1]["step"]) - int(rows[0]["step"]) + CONFIRM_STEPS, agent_steps=sum(int(r["size"]) for r in rows))
+    return out
+
+
+def hunter_lineages(run, folder=HERE, min_steps=20_000, min_bite=2.0, key="bite"):
+    out = []
+    for lid, rows in lineage_rows(run, folder).items():
+        h = [r for r in rows if float(r[key]) >= min_bite]
+        if not h:
+            continue
+        span = int(h[-1]["step"]) - int(h[0]["step"]) + CONFIRM_STEPS
+        if span < min_steps:
+            continue
+        peak = max(h, key=lambda r: int(r["size"]))
+        m, p = float(peak["meat"]), float(peak["plant"])
+        out.append(dict(id=lid, span=span, size=int(peak["size"]), mass=float(peak["mass"]), bite=float(peak["bite"]), diet=m / (m + p) if m + p > 0 else 0.0,
+                        front=float(peak.get("shell_front", 0)), back=float(peak.get("shell_back", 0))))
+    out.sort(key=lambda d: -d["span"])
+    return out
+
+
+# ---------- chart helpers ----------
+
+def kfmt(x, _pos):
+    return f"{x/1000:g}k" if abs(x) >= 1000 else f"{x:g}"
+
+
+def to_svg(fig):
+    buf = io.StringIO()
+    fig.savefig(buf, format="svg", bbox_inches="tight", pad_inches=0.05)
+    plt.close(fig)
+    return buf.getvalue()
+
+
+def new_axes(xlabel="step", size=(6.4, 2.6)):
+    fig, ax = plt.subplots(figsize=size)
+    ax.xaxis.set_major_formatter(kfmt)
+    ax.set_xlabel(xlabel, loc="right")
+    ax.margins(x=0)
+    return fig, ax
+
+
+def legend_above(ax, n):
+    ax.legend(loc="lower left", bbox_to_anchor=(0, 1.0), ncols=n, handlelength=1.2, borderaxespad=0, columnspacing=1.2)
+
+
+def figure(title, subtitle, svg):
+    return f"""
+<figure class="fig">
+  <figcaption><strong>{html.escape(title)}</strong><span>{html.escape(subtitle)}</span></figcaption>
+  {svg}
+</figure>"""
+
+
+def finish(ax, ymin, ymax, top, percent, n_legend):
+    if ymin is not None:
+        ax.set_ylim(ymin, max(ymax if ymax is not None else top * 1.12, ymin + 1e-9))
+    ax.yaxis.set_major_formatter((lambda y, _p: f"{y:.0%}") if percent else kfmt)
+    ax.yaxis.set_major_locator(MaxNLocator(4))
+    legend_above(ax, n_legend)
+
+
+def place_chart(title, subtitle, places, world, key_fn, refs=None, ymin=0, ymax=None, percent=False):
+    """One thin line per seed and place, colored by place, for one world. refs: {label: (value, color)} as dashed lines."""
+    fig, ax = new_axes()
+    top = 0
+    for p in WORLDS[world][2]:
+        for k, s in enumerate(seeds_of(world)):
+            d = places[world][s][p]
+            ys = key_fn(d)
+            top = max(top, max(ys))
+            ax.plot(d["step"], ys, color=PLACE_COLOR[p], linewidth=1.1, alpha=0.85, label=PLACE_NAME[p] if k == 0 else None)
+    for label, (v, color) in (refs or {}).items():
+        ax.axhline(v, color=color, linestyle="--", linewidth=1, label=label)
+        top = max(top, v)
+    finish(ax, ymin, ymax, top, percent, 2)
+    return figure(title, subtitle, to_svg(fig))
+
+
+def narrow_chart(title, subtitle, places, worlds, key_fn, ymin=0, ymax=None, percent=False, refs=None):
+    """The narrow place of several worlds on one chart: one thin line per seed, colored by world."""
+    fig, ax = new_axes()
+    top = 0
+    for w in worlds:
+        p = WORLDS[w][2][1]
+        for k, s in enumerate(seeds_of(w)):
+            d = places[w][s][p]
+            ys = key_fn(d)
+            top = max(top, max(ys))
+            ax.plot(d["step"], ys, color=WORLD_COLOR[w], linewidth=1.1, alpha=0.85, label=f"{PLACE_NAME[p].split(' (')[0]} (width {p})" if k == 0 else None)
+    for label, (v, color) in (refs or {}).items():
+        ax.axhline(v, color=color, linestyle="--", linewidth=1, label=label)
+        top = max(top, v)
+    finish(ax, ymin, ymax, top, percent, 2)
+    return figure(title, subtitle, to_svg(fig))
+
+
+def world_chart(title, subtitle, logs, key_fn, worlds, colors, ymin=0, ymax=None, percent=False):
+    """One thin line per seed, colored by world; one legend entry per world."""
+    fig, ax = new_axes()
+    top = 0
+    for w in worlds:
+        for k, s in enumerate(seeds_of(w)):
+            ys = key_fn(logs[w][s])
+            if ys is None:
+                continue
+            top = max(top, max(ys))
+            ax.plot(logs[w][s]["step"], ys, color=colors[w], linewidth=1.1, alpha=0.85, label=w if k == 0 else None)
+    finish(ax, ymin, ymax, top, percent, 3)
+    return figure(title, subtitle, to_svg(fig))
+
+
+def sides_chart(title, subtitle, places, world, place):
+    """Hardness of the front, the back and the sides on one place, one line per seed and side."""
+    fig, ax = new_axes()
+    top = 0
+    for key, color, label in (("shell_front", SERIES[1], "front"), ("shell_back", SERIES[0], "back")):
+        for k, s in enumerate(seeds_of(world)):
+            d = places[world][s][place]
+            ys = d[key]
+            top = max(top, max(ys))
+            ax.plot(d["step"], ys, color=color, linewidth=1.1, alpha=0.85, label=label if k == 0 else None)
+    finish(ax, 0, None, top, False, 2)
+    return figure(title, subtitle, to_svg(fig))
+
+
+def color_slots(run):
+    first, _, _ = lineage_stats(run)
+    return {lid: k % len(LINEAGE_PALETTE) for k, lid in enumerate(sorted(first, key=first.get))}
+
+
+def timeline_chart(title, subtitle, run, events):
+    """Every lineage as a band: size over time, colored by confirmation order. Events as marks."""
+    slot = color_slots(run)
+    by = lineage_rows(run)
+    fig, ax = new_axes(size=(13, 3.6))
+    ax.set_ylabel("agents in the lineage")
+    for lid, rows in by.items():
+        xs = [int(r["step"]) for r in rows]
+        ys = [int(r["size"]) for r in rows]
+        ax.fill_between(xs, 0, ys, color=LINEAGE_PALETTE[slot[lid]], alpha=0.35, linewidth=0)
+        ax.plot(xs, ys, color=LINEAGE_PALETTE[slot[lid]], linewidth=1.0)
+    marks = {"split": ("v", SERIES[1]), "merge": ("^", SERIES[2]), "extinct": ("x", SERIES[3]), "birth": ("o", SERIES[0])}
+    for ev, (m, c) in marks.items():
+        xs = [int(r["step"]) for r in events if r["event"] == ev]
+        ys = [int(r["size"]) for r in events if r["event"] == ev]
+        if xs:
+            ax.scatter(xs, ys, marker=m, s=18, color=c, label=f"{ev} ({len(xs)})", zorder=3, linewidths=1)
+    ax.set_ylim(0, None)
+    ax.yaxis.set_major_locator(MaxNLocator(4))
+    ax.yaxis.set_major_formatter(kfmt)
+    legend_above(ax, 4)
+    return figure(title, subtitle, to_svg(fig))
+
+
+def data_table(cols, rows_by_name, every=10):
+    out = []
+    for name, d in rows_by_name.items():
+        cols = [c for c in cols if c in d]
+        rows = "".join(
+            "<tr>" + "".join(f"<td>{d[c][i]:g}</td>" for c in cols) + "</tr>"
+            for i in range(0, len(d[cols[0]]), every)
+        )
+        out.append(f"<details><summary>{html.escape(name)}</summary><div class='tw'><table><thead><tr>"
+                   + "".join(f"<th>{c}</th>" for c in cols) + f"</tr></thead><tbody>{rows}</tbody></table></div></details>")
+    return "\n".join(out)
+
+
+# ---------- page ----------
+
+CSS = f"""
+:root {{
+  --surface: #fcfcfb; --page: #f9f9f7; --ink: #0b0b0b; --ink2: #52514e; --grid: #e1e0d9; --border: rgba(11,11,11,0.10);
+  --s1: {SERIES[0]}; --cell: #f1f0ea;
+}}
+@media (prefers-color-scheme: dark) {{
+  :root:not([data-theme="light"]) {{
+    --surface: #1a1a19; --page: #0d0d0d; --ink: #ffffff; --ink2: #c3c2b7; --grid: #2c2c2a; --border: rgba(255,255,255,0.10);
+    --s1: #3987e5; --cell: #262624;
+  }}
+}}
+:root[data-theme="dark"] {{
+  --surface: #1a1a19; --page: #0d0d0d; --ink: #ffffff; --ink2: #c3c2b7; --grid: #2c2c2a; --border: rgba(255,255,255,0.10);
+  --s1: #3987e5; --cell: #262624;
+}}
+* {{ box-sizing: border-box; }}
+body {{ margin: 0; background: var(--page); color: var(--ink); font: 15px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }}
+main {{ max-width: 960px; margin: 0 auto; padding: 32px 20px 64px; }}
+h1 {{ font-size: 26px; margin: 0 0 4px; }}
+h2 {{ font-size: 19px; margin: 40px 0 8px; }}
+h3 {{ font-size: 16px; margin: 24px 0 8px; }}
+p, li {{ color: var(--ink); max-width: 72ch; }}
+.sub {{ color: var(--ink2); margin: 0 0 24px; }}
+.tldr {{ background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--s1); border-radius: 8px; padding: 12px 18px; }}
+.tldr h2 {{ margin: 0 0 6px; font-size: 15px; }}
+.tldr p {{ margin: 0; }}
+.grid2 {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 20px; }}
+.grid2 > .fig:only-child {{ max-width: 470px; }}
+.fig {{ margin: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 14px 8px; }}
+.fig svg {{ width: 100%; height: auto; display: block; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }}
+figcaption strong {{ display: block; font-size: 15px; }}
+figcaption span {{ display: block; color: var(--ink2); font-size: 13px; min-height: 2.6em; margin-bottom: 6px; }}
+.wide {{ margin: 12px 0; }}
+.diagram {{ margin: 12px 0; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px 8px; color: var(--ink); }}
+.diagram figcaption {{ color: var(--ink2); font-size: 13px; margin-top: 4px; }}
+.cards {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(215px, 1fr)); gap: 14px; margin: 6px 0 10px; }}
+.card {{ margin: 0; display: flex; gap: 10px; align-items: flex-start; }} .card svg {{ flex: none; }} .card figcaption {{ font-size: 12.5px; line-height: 1.4; color: var(--ink2); }} .card strong {{ color: var(--ink); }}
+.measures {{ columns: 2; column-gap: 24px; max-width: none; padding-left: 20px; }} .measures li {{ break-inside: avoid; }}
+table {{ border-collapse: collapse; font-size: 13.5px; font-variant-numeric: tabular-nums; }}
+th, td {{ padding: 6px 12px; text-align: right; border-bottom: 1px solid var(--grid); }}
+th:first-child, td:first-child {{ text-align: left; }}
+th {{ color: var(--ink2); font-weight: 600; }}
+.tw {{ overflow-x: auto; }}
+details {{ margin: 8px 0; }} summary {{ cursor: pointer; color: var(--ink2); }}
+.verdicts {{ list-style: none; padding: 0; margin: 12px 0 0; }} .verdicts li {{ margin: 4px 0; }}
+.verdict {{ display: inline-block; padding: 1px 8px; border-radius: 4px; font-size: 12.5px; font-weight: 600; background: rgba(12,163,12,0.12); color: #006300; }}
+.verdict.no {{ background: rgba(208,59,59,0.12); color: #a12b2b; }}
+.verdict.partly {{ background: rgba(250,178,25,0.15); color: #8a5a00; }}
+:root[data-theme="dark"] .verdict.partly {{ color: #fab219; }}
+@media (prefers-color-scheme: dark) {{ :root:not([data-theme="light"]) .verdict.partly {{ color: #fab219; }} }}
+:root[data-theme="dark"] .verdict {{ color: #0ca30c; }} :root[data-theme="dark"] .verdict.no {{ color: #e66767; }}
+@media (prefers-color-scheme: dark) {{ :root:not([data-theme="light"]) .verdict {{ color: #0ca30c; }} :root:not([data-theme="light"]) .verdict.no {{ color: #e66767; }} }}
+.viewer {{ background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px; display: grid; grid-template-columns: 1fr; gap: 10px; }}
+.viewer .canvases {{ display: grid; grid-template-columns: 2fr 1fr; gap: 10px; align-items: start; }}
+.viewer canvas {{ width: 100%; height: auto; image-rendering: pixelated; border-radius: 4px; }}
+.viewer .bar {{ display: flex; gap: 10px; align-items: center; font-size: 13px; color: var(--ink2); flex-wrap: wrap; }}
+.viewer input[type=range] {{ flex: 1; }}
+.viewer button, .viewer select {{ font: inherit; font-size: 13px; padding: 2px 10px; }}
+.viewer .lin {{ display: inline-block; padding: 0 6px; border-radius: 3px; color: #fff; font-size: 12px; margin-right: 4px; }}
+.viewer .sw {{ display: inline-block; width: 11px; height: 11px; border-radius: 2px; vertical-align: -1px; margin: 0 3px 0 6px; }}
+.viewer .sw.dot {{ background: #666; position: relative; }} .viewer .sw.dot::after {{ content: ""; position: absolute; left: 4px; top: 4px; width: 3px; height: 3px; background: #fff; }}
+.viewer .sw.front {{ background: #666; border-top: 2px solid #fff; }}
+@media (max-width: 700px) {{ .viewer .canvases {{ grid-template-columns: 1fr; }} }}
+"""
+
+DIAGRAM = """
+<figure class="diagram">
+<svg viewBox="0 0 720 300" role="img" aria-label="Two laws added to e012's world. Left: the 8x8 body grid lies over a 2x2 block of world cells, one world cell per 4x4 quarter of the grid; each quarter that holds a cell covers its world cell, and each digestive cell eats from the cell under it. An arrow marks the facing: the front row of the grid is the side that points where the body faces; turning left or right rotates the grid about its center. Right: moving forward enters the cells ahead of the footprint; if another body covers one of them, the front presses on it line by line where the lines meet in the world, the softer tip breaks if the push exceeds its hardness, and the move happens only if the way is clear afterwards; a push whose muscle exceeds the other's mass shoves it one cell." style="max-width:100%;height:auto;display:block">
+<g fill="none" stroke="currentColor" stroke-width="1.2" font-size="12" font-family="system-ui, sans-serif">
+  <text x="20" y="20" fill="currentColor" stroke="none" font-weight="600">a body faces a direction and covers world cells</text>
+  <!-- 2x2 block of world cells, 80px each -->
+  <rect x="40" y="40" width="160" height="160" stroke-dasharray="4 3"/>
+  <line x1="120" y1="40" x2="120" y2="200" stroke-dasharray="4 3"/>
+  <line x1="40" y1="120" x2="200" y2="120" stroke-dasharray="4 3"/>
+  <!-- body cells, 10px each, in the grid: a hunter with a tooth in front -->
+  <g stroke="none">
+    <rect x="70" y="40" width="10" height="10" fill="#2a78d6"/><rect x="80" y="40" width="10" height="10" fill="#2a78d6"/>
+    <rect x="70" y="50" width="10" height="10" fill="#eb6834"/><rect x="80" y="50" width="10" height="10" fill="#eb6834"/>
+    <rect x="70" y="60" width="10" height="10" fill="#eb6834"/><rect x="80" y="60" width="10" height="10" fill="#eb6834"/>
+    <rect x="50" y="70" width="60" height="50" fill="#1baf7a"/>
+    <rect x="40" y="70" width="10" height="50" fill="#2a78d6"/><rect x="110" y="70" width="10" height="50" fill="#2a78d6"/>
+    <rect x="50" y="120" width="60" height="10" fill="#2a78d6"/>
+    <rect x="40" y="120" width="10" height="10" fill="#2a78d6"/><rect x="110" y="120" width="10" height="10" fill="#2a78d6"/>
+  </g>
+  <path d="M 80,20 L 80,34" stroke="var(--s1)" stroke-width="2" marker-end="url(#arrow)" transform="translate(0,6)"/>
+  <text x="96" y="34" fill="var(--s1)" stroke="none" font-weight="600">facing: the front row points here</text>
+  <text x="128" y="150" fill="currentColor" stroke="none">2 quarters hold cells:</text>
+  <text x="128" y="166" fill="currentColor" stroke="none">the body covers 2 world cells;</text>
+  <text x="128" y="182" fill="currentColor" stroke="none">each gut cell eats from the cell under it</text>
+  <text x="40" y="222" fill="currentColor" stroke="none">turn left / right: the grid rotates about its center (if the quarters it would newly cover are free)</text>
+  <text x="40" y="240" fill="currentColor" stroke="none">a world cell is 4x4 body cells; no two bodies cover the same cell; a child needs a free spot next to its parent or it is lost</text>
+
+  <text x="400" y="20" fill="currentColor" stroke="none" font-weight="600">moving forward into a covered cell is a push</text>
+  <rect x="420" y="40" width="80" height="80" stroke-dasharray="4 3"/>
+  <rect x="420" y="120" width="80" height="80" stroke-dasharray="4 3"/>
+  <rect x="500" y="40" width="80" height="80" stroke-dasharray="4 3"/>
+  <rect x="500" y="120" width="80" height="80" stroke-dasharray="4 3"/>
+  <g stroke="none">
+    <!-- pusher, facing north, in the lower cells: tooth in column 2 -->
+    <rect x="440" y="130" width="10" height="10" fill="#2a78d6"/>
+    <rect x="440" y="140" width="10" height="30" fill="#eb6834"/>
+    <rect x="430" y="170" width="40" height="20" fill="#1baf7a"/>
+    <!-- other body, facing east, in the cell above: soft gut on its south side -->
+    <rect x="430" y="60" width="50" height="40" fill="#1baf7a"/>
+    <rect x="480" y="60" width="10" height="40" fill="#2a78d6"/>
+  </g>
+  <path d="M 445,128 L 445,104" stroke="var(--s1)" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="592" y="70" fill="currentColor" stroke="none">line by line where the lines meet:</text>
+  <text x="592" y="86" fill="currentColor" stroke="none">the softer tip breaks if the push</text>
+  <text x="592" y="102" fill="currentColor" stroke="none">(muscle in the line) exceeds its hardness</text>
+  <text x="592" y="130" fill="currentColor" stroke="none">the move happens only if the way</text>
+  <text x="592" y="146" fill="currentColor" stroke="none">is clear afterwards; muscle over</text>
+  <text x="592" y="162" fill="currentColor" stroke="none">the other's mass shoves it one cell</text>
+  <text x="420" y="222" fill="currentColor" stroke="none">only the front pushes: a tooth is a tooth when it points forward</text>
+  <text x="420" y="240" fill="currentColor" stroke="none">the pusher pays the move whether or not it moves</text>
+  <text x="40" y="272" fill="currentColor" stroke="none">the policy sees the world from the body: food under it, food and bodies ahead, behind, left, right; actions: stay, forward, turn left, turn right.</text>
+  <text x="40" y="290" fill="currentColor" stroke="none">everything else (two kinds of place, costs, materials, contact rule, mating, lineages) is e012's.</text>
+</g>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="var(--s1)"/></marker></defs>
+</svg>
+<figcaption>Figure 1. The two laws added to e012. Left: a body's 8x8 grid lies over a 2x2 block of world cells; the quarters that hold a cell cover their world cell, and the front row of the grid points where the body faces. Right: a push is the same contact rule as e010, but only the front pushes, the lines meet where they are in the world, and the move happens only if the way clears. Nothing names a tooth, a front leg or a wall.</figcaption>
+</figure>
+"""
+
+
+def read_frames(path):
+    with open(os.path.join(HERE, path)) as f:
+        for line in f:
+            yield json.loads(line)
+
+
+def load_bodies(run):
+    out = {}
+    with open(os.path.join(HERE, f"results/{run}_bodies.jsonl")) as f:
+        for line in f:
+            d = json.loads(line)
+            out[d["id"]] = d["cells"]
+    return out
+
+
+def pack_frames(path, confirmed_at, data, every=1, limit=None):
+    """Frames packed small into `data`: food as 4-bit nibbles; agents as x, y, body id (3 bytes), lineage (2 bytes), facing (1 byte).
+    Returns one index entry per frame (step, patches, offsets and lengths into `data`).
+    A lineage id is written only once the lineage is confirmed (else 0)."""
+    out = []
+    used = set()
+    n = 0
+    for i, fr in enumerate(read_frames(path)):
+        if i % every:
+            continue
+        food = fr["food"]
+        nib = bytes((food[j] << 4) | food[j + 1] for j in range(0, len(food), 2))
+        ag = bytearray()
+        for x, y, b, _d, lin, f in fr["agents"]:
+            lin = lin if confirmed_at.get(lin, 10**12) <= fr["step"] else 0
+            ag += bytes((x, y, b & 255, (b >> 8) & 255, b >> 16, lin & 255, lin >> 8, f))  # 3-byte body id: a run can have 100,000+ distinct (damaged) bodies
+            used.add(b)
+        out.append({"s": fr["step"], "p": fr["patches"], "fo": len(data), "fl": len(nib), "ao": len(data) + len(nib), "al": len(ag)})
+        data += nib
+        data += ag
+        n += 1
+        if limit and n >= limit:
+            break
+    return out, used
+
+
+VIEWER_JS = r"""
+(async function(){
+  // One gzip'd blob: 4-byte header length, JSON header, then the frame bytes (a 256x256 world is 50 KB per frame raw).
+  const raw = Uint8Array.from(atob(document.getElementById('frames').textContent), c => c.charCodeAt(0));
+  const all = new Uint8Array(await new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer());
+  const hlen = all[0] | (all[1] << 8) | (all[2] << 16) | (all[3] << 24);
+  const data = JSON.parse(new TextDecoder().decode(all.subarray(4, 4 + hlen)));
+  const bytes = all.subarray(4 + hlen);
+  const bodies = data.bodies, KC = data.kindColors, PAL = data.palette, NONE = data.none;
+  const cv = document.getElementById('world'), ctx = cv.getContext('2d');
+  const zv = document.getElementById('zoom'), zctx = zv.getContext('2d');
+  const W = data.w, H = data.h, S = cv.width / W, ZN = 24, ZS = zv.width / ZN;
+  const off = document.createElement('canvas'); off.width = W; off.height = H;
+  const octx = off.getContext('2d'), img = octx.createImageData(W, H);
+  ctx.imageSmoothingEnabled = false; zctx.imageSmoothingEnabled = false;
+  const slider = document.getElementById('scrub'), stepLbl = document.getElementById('steplbl'), linLbl = document.getElementById('linlbl');
+  const playBtn = document.getElementById('play'), mode = document.getElementById('mode');
+  let frames = data.long, i = 0, timer = null, zx = (W / 2 - ZN / 2) | 0, zy = (H / 2 - ZN / 2) | 0;
+  const sprites = {}, stats = {}, rotated = {};
+  function color(lin){ return lin ? PAL[data.slots[lin] || 0] : NONE; }
+  // The body grid in the world frame: the front row (row 0) turned to point where the body faces (0 north, 1 south, 2 east, 3 west).
+  function toWorld(k, f){ const r = k >> 3, c = k & 7, m = 7; let r2, c2;
+    if (f === 0) { r2 = r; c2 = c; } else if (f === 1) { r2 = m - r; c2 = m - c; } else if (f === 2) { r2 = c; c2 = m - r; } else { r2 = m - c; c2 = r; }
+    return r2 * 8 + c2; }
+  function rot(id, f){ const key = id + ':' + f; if (rotated[key]) return rotated[key];
+    const cells = bodies[id] || '', out = new Array(64).fill(0);
+    for (let k = 0; k < 64; k++) out[toWorld(k, f)] = cells.charCodeAt(k) - 48;
+    return rotated[key] = out; }
+  // Same rules as the simulation, in the body frame: per side, per line, the tip is the outermost cell; a hard tip has hardness 3 per
+  // contiguous hard cell; force is the muscle in the line. Bite = largest force behind a hard tip on the front (side 0); shell = mean
+  // hardness of touchable tips; quarters = which 4x4 quarters hold a cell.
+  function stat(id){
+    if (stats[id]) return stats[id];
+    const cells = bodies[id] || ''; let mass = 0, sensor = 0, bite = 0, hsum = 0, hn = 0; const q = [false, false, false, false];
+    for (let k = 0; k < 64; k++) { const v = cells.charCodeAt(k) - 48; if (v > 0) { mass++; q[((k >> 3) >> 2) * 2 + ((k & 7) >> 2)] = true; } if (v === 3) sensor++; }
+    const at = (side, line, k) => side === 0 ? k * 8 + line : side === 1 ? (7 - k) * 8 + line : side === 2 ? line * 8 + (7 - k) : line * 8 + k;
+    for (let side = 0; side < 4; side++) for (let line = 0; line < 8; line++) {
+      let force = 0, k0 = -1;
+      for (let k = 0; k < 8; k++) { const v = cells.charCodeAt(at(side, line, k)) - 48; if (v === 2) force++; if (v > 0 && k0 < 0) k0 = k; }
+      if (k0 < 0) continue;
+      let h = 1;
+      if (cells.charCodeAt(at(side, line, k0)) - 48 === 1) { h = 0; for (let k = k0; k < 8 && cells.charCodeAt(at(side, line, k)) - 48 === 1; k++) h += 3; }
+      hsum += h; hn++;
+      if (side === 0 && h > 1 && force > bite) bite = force;
+    }
+    return stats[id] = { mass: mass, bite: bite, shell: hn ? hsum / hn : 0, sensor: sensor, foot: q.filter(Boolean).length };
+  }
+  function sprite(id, f){
+    const key = id + ':' + f; if (sprites[key]) return sprites[key];
+    const c = document.createElement('canvas'); c.width = 8; c.height = 8; const x = c.getContext('2d');
+    const cells = rot(id, f);
+    for (let k = 0; k < 64; k++) { const v = cells[k]; if (v > 0) { x.fillStyle = KC[v]; x.fillRect(k % 8, (k / 8) | 0, 1, 1); } }
+    return sprites[key] = c;
+  }
+  // The world cells a body covers: its anchor is its north-west cell; quarter q covers (x + (q & 1), y + (q >> 1)).
+  function quarters(id, f){ const cells = rot(id, f); const q = [false, false, false, false];
+    for (let k = 0; k < 64; k++) if (cells[k] > 0) q[((k >> 3) >> 2) * 2 + ((k & 7) >> 2)] = true; return q; }
+  function foodAt(food, c){ return (c % 2 === 0) ? (food[c >> 1] >> 4) : (food[c >> 1] & 15); }
+  function paintFood(target, food, x0, y0, n, cell){
+    for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
+      const c = ((y0 + y) % H) * W + ((x0 + x) % W);
+      const g = 40 + foodAt(food, c) * 12;
+      target.fillStyle = 'rgb(' + (g * 0.35 | 0) + ',' + g + ',' + (g * 0.45 | 0) + ')';
+      target.fillRect(x * cell, y * cell, cell, cell);
+    }
+  }
+  // Each patch as a ring of radius 2 sigma around its center (on the torus: drawn up to 4 times when it wraps). Wide: blue; narrow: aqua.
+  function paintPatches(fr){
+    for (const [px, py, sg] of fr.p) {
+      ctx.strokeStyle = sg >= 4 ? '#2a78d6' : '#1baf7a'; ctx.lineWidth = 1.5; ctx.setLineDash([4, 4]);
+      const r = Math.max(2 * sg, 1.5) * S;
+      for (const ox of [0, -W, W]) for (const oy of [0, -H, H]) {
+        const cx = (px + 0.5 + ox) * S, cy = (py + 0.5 + oy) * S;
+        if (cx + r < 0 || cy + r < 0 || cx - r > cv.width || cy - r > cv.height) continue;
+        ctx.beginPath(); ctx.arc(cx, cy, r, 0, 2 * Math.PI); ctx.stroke();
+      }
+      ctx.setLineDash([]);
+    }
+  }
+  function draw(){
+    const fr = frames[i]; const food = bytes.subarray(fr.fo, fr.fo + fr.fl), ag = bytes.subarray(fr.ao, fr.ao + fr.al);
+    const px = img.data;
+    for (let c = 0; c < W * H; c++) {
+      const g = 40 + foodAt(food, c) * 12;
+      px[c * 4] = g * 0.35; px[c * 4 + 1] = g; px[c * 4 + 2] = g * 0.45; px[c * 4 + 3] = 255;
+    }
+    octx.putImageData(img, 0, 0);
+    ctx.drawImage(off, 0, 0, cv.width, cv.height);
+    paintPatches(fr);
+    paintFood(zctx, food, zx, zy, ZN, ZS);
+    const counts = {}, teeth = {}, armor = {}, eyes = {}, masses = {}, feet = {}; let n = 0;
+    const inZoom = [];
+    for (let k = 0; k < ag.length; k += 8) {
+      const x = ag[k], y = ag[k + 1], id = ag[k + 2] | (ag[k + 3] << 8) | (ag[k + 4] << 16), lin = ag[k + 5] | (ag[k + 6] << 8), f = ag[k + 7];
+      const st = stat(id), q = quarters(id, f);
+      ctx.fillStyle = color(lin);
+      for (let j = 0; j < 4; j++) if (q[j]) ctx.fillRect(((x + (j & 1)) % W) * S, ((y + (j >> 1)) % H) * S, S, S);
+      if (st.bite > 0) { ctx.fillStyle = '#fff'; ctx.fillRect(x * S + S - 1, y * S + S - 1, 2, 2); }
+      const dx = (x - zx + W) % W, dy = (y - zy + H) % H;
+      if (dx < ZN && dy < ZN) inZoom.push([dx, dy, id, lin, f, st, q]);
+      counts[lin] = (counts[lin] || 0) + 1; teeth[lin] = (teeth[lin] || 0) + st.bite; armor[lin] = (armor[lin] || 0) + st.shell; eyes[lin] = (eyes[lin] || 0) + st.sensor; masses[lin] = (masses[lin] || 0) + st.mass; feet[lin] = (feet[lin] || 0) + st.foot; n++;
+    }
+    // The zoom: the covered cells on the lineage color, the body grid over its 2x2 block turned to its facing, a white edge on the front.
+    for (const [dx, dy, id, lin, f, st, q] of inZoom) {
+      zctx.fillStyle = color(lin);
+      for (let j = 0; j < 4; j++) if (q[j]) zctx.fillRect((dx + (j & 1)) * ZS + 1, (dy + (j >> 1)) * ZS + 1, ZS - 2, ZS - 2);
+      zctx.drawImage(sprite(id, f), dx * ZS + 2, dy * ZS + 2, 2 * ZS - 4, 2 * ZS - 4);
+      const x0 = dx * ZS + 1, y0 = dy * ZS + 1, L = 2 * ZS - 2;
+      zctx.fillStyle = '#fff';
+      if (f === 0) zctx.fillRect(x0, y0, L, 2); else if (f === 1) zctx.fillRect(x0, y0 + L - 2, L, 2); else if (f === 2) zctx.fillRect(x0 + L - 2, y0, 2, L); else zctx.fillRect(x0, y0, 2, L);
+      if (st.bite > 0) { const cx = x0 + L / 2, cy = y0 + L / 2; zctx.fillRect(cx - 2, cy - 2, 4, 4); }
+    }
+    zctx.strokeStyle = 'rgba(255,255,255,0.35)'; zctx.lineWidth = 1;
+    for (let k = 0; k <= ZN; k++) { zctx.beginPath(); zctx.moveTo(k * ZS, 0); zctx.lineTo(k * ZS, zv.height); zctx.stroke(); zctx.beginPath(); zctx.moveTo(0, k * ZS); zctx.lineTo(zv.width, k * ZS); zctx.stroke(); }
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.strokeRect(zx * S, zy * S, ZN * S, ZN * S);
+    stepLbl.textContent = 'step ' + fr.s.toLocaleString() + ' - ' + n + ' agents';
+    const keys = Object.keys(counts).map(Number).sort((a, b) => counts[b] - counts[a]).slice(0, 12);
+    linLbl.innerHTML = keys.map(l => '<span class="lin" style="background:' + color(l) + '">' + (l ? 'lineage ' + l : 'none') + ': ' + counts[l]
+      + ' (mass ' + (masses[l] / counts[l]).toFixed(0) + ', cells ' + (feet[l] / counts[l]).toFixed(1) + ', bite ' + (teeth[l] / counts[l]).toFixed(1) + ', shell ' + (armor[l] / counts[l]).toFixed(1) + ', eyes ' + (eyes[l] / counts[l]).toFixed(1) + ')</span>').join('');
+  }
+  function densest(){ // start the zoom where the agents are, not in the desert
+    const ag = bytes.subarray(frames[0].ao, frames[0].ao + frames[0].al); const n = {};
+    for (let k = 0; k < ag.length; k += 8) { const key = ((ag[k] / ZN) | 0) + ',' + ((ag[k + 1] / ZN) | 0); n[key] = (n[key] || 0) + 1; }
+    const best = Object.keys(n).sort((a, b) => n[b] - n[a])[0]; if (!best) return;
+    zx = +best.split(',')[0] * ZN; zy = +best.split(',')[1] * ZN;
+  }
+  function setMode(){ frames = data[mode.value]; i = 0; slider.max = frames.length - 1; densest(); draw(); }
+  function tick(){ i = (i + 1) % frames.length; draw(); }
+  const speed = document.getElementById('speed');
+  function interval(){ return (mode.value === 'clip' ? 250 : 600) / +speed.value; }
+  playBtn.onclick = function(){ if (timer) { clearInterval(timer); timer = null; playBtn.textContent = 'Play'; } else { timer = setInterval(tick, interval()); playBtn.textContent = 'Pause'; } };
+  speed.onchange = function(){ if (timer) { clearInterval(timer); timer = setInterval(tick, interval()); } };
+  slider.oninput = function(){ i = +slider.value; draw(); };
+  mode.onchange = function(){ if (timer) playBtn.onclick(); setMode(); };
+  cv.onclick = function(e){ const r = cv.getBoundingClientRect(); zx = (Math.floor((e.clientX - r.left) / r.width * W - ZN / 2) + W) % W; zy = (Math.floor((e.clientY - r.top) / r.height * H - ZN / 2) + H) % H; draw(); };
+  setMode();
+})();
+"""
+
+
+def gallery(world, seed, picks):
+    """picks: [(lineage id, name, what the shape does)]. The most common body of each lineage at its peak, on the 8x8 grid, front up."""
+    run = f"{WORLDS[world][0]}_seed{seed}"
+    widths = WORLDS[world][2]
+    by = lineage_rows(run)
+    bodies = load_bodies(run)
+    frames = list(read_frames(f"results/{run}_long.jsonl"))
+    cards = []
+    for lid, name, what in picks:
+        rows = by[lid]
+        peak = max(rows, key=lambda r: int(r["size"]))
+        span = int(rows[-1]["step"]) - int(rows[0]["step"]) + CONFIRM_STEPS
+        frame = min(frames, key=lambda fr: abs(fr["step"] - int(peak["step"])))
+        c = Counter(a[2] for a in frame["agents"] if a[4] == lid)
+        cells = bodies[c.most_common(1)[0][0]]
+        rects = "".join(f'<rect x="{(i % 8) * 11}" y="{(i // 8) * 11}" width="10" height="10" fill="{KIND_COLOR[int(k)]}"/>' for i, k in enumerate(cells) if k != "0")
+        m, pl = float(peak["meat"]), float(peak["plant"])
+        meat = m / (m + pl) if m + pl > 0 else 0
+        p0, p1 = sum(int(r["p0"]) for r in rows), sum(int(r["p1"]) for r in rows)
+        home = f"{p0 / max(p0 + p1, 1):.0%} on {PLACE_NAME[widths[0]].split(' (')[0]}"
+        cards.append(f"""<figure class="card"><svg viewBox="-1 -1 89 89" width="120" height="120" role="img" aria-label="{html.escape(name)}"><rect x="-1" y="-1" width="89" height="89" fill="var(--cell)"/>{rects}<line x1="-1" y1="-0.5" x2="88" y2="-0.5" stroke="var(--ink2)" stroke-width="1.5" stroke-dasharray="3 2"/></svg>
+<figcaption><strong>{html.escape(name)}</strong><br>lineage {lid}: {span:,} steps, {int(peak["size"]):,} agents at its peak, {home}<br>mass {float(peak["mass"]):.0f} on {float(peak["foot"]):.1f} cells: hard {float(peak["hard"]):.0f}, muscle {float(peak["muscle"]):.0f}, digestive {float(peak["digestive"]):.0f}; bite {float(peak["bite"]):.1f}, front {float(peak["shell_front"]):.1f} / back {float(peak["shell_back"]):.1f}; meat {meat:.0%}<br>{html.escape(what)}</figcaption></figure>""")
+    return f"""<figure class="diagram"><div class="cards">{"".join(cards)}</div>
+<figcaption>Figure 2. Bodies of lineages that prospered in {world}, seed {seed}: the most common body of the lineage at its peak, on the 8x8 grid a body grows on, front up (the dashed edge). Blue: hard, orange: muscle, green: digestive, yellow: sensor. "Cells" is the world cells the body covers; "front / back" the mean hardness of the tips on those sides.</figcaption></figure>"""
+
+
+def main():
+    logs, events, places = {}, {}, {}
+    for w, (run, _, _, seeds) in WORLDS.items():
+        logs[w] = {s: load_csv(f"results/{run}_seed{s}_log.csv") for s in seeds}
+        events[w] = {s: load_rows(f"results/{run}_seed{s}_events.csv") for s in seeds}
+        places[w] = {s: load_places(f"{run}_seed{s}") for s in seeds}
+    rlogs = {w: {s: load_csv(f"results/{run}_seed{s}_log.csv", folder) for s in [1, 2, 3, 4]} for w, (run, folder, _) in REFS.items()}
+    rplaces = {w: {s: load_places(f"{run}_seed{s}", folder) for s in [1, 2, 3, 4]} for w, (run, folder, _) in REFS.items()}
+
+    def med(x):
+        x = [v for v in x if v == v]
+        return statistics.median(x) if x else float("nan")
+
+    def half(d, key):
+        n = len(d["step"])
+        return d[key][n // 2:]
+
+    def summarize(w, s):
+        log = logs[w][s]
+        run = f"{WORLDS[w][0]}_seed{s}"
+        widths = WORLDS[w][2]
+        pl = places[w][s]
+        first, last, _ = lineage_stats(run)
+        life = [last[i] - first[i] + CONFIRM_STEPS for i in first]
+        per_step = Counter(int(r["step"]) for r in load_rows(f"results/{run}_lineages.csv"))
+        last_step = int(log["step"][-1])
+        lp = lineage_places(run)
+        hunters = hunter_lineages(run)
+        hunters_any = hunter_lineages(run, key="bite_any")
+        d = dict(pop=med(log["pop"]), pop_min=min(log["pop"]), extinct=last_step < LAST_STEP, sps=med(log["steps_per_sec"]), sps_min=min(log["steps_per_sec"]),
+                 crossers=med(half(log, "crossers")), crossers_max=max(log["crossers"]), pop_none=med(half(log, "pop_none")),
+                 lineages=med([per_step.get(t, 0) for t in range(1000, last_step + 1, 1000)]), ids=len(first), life=med(life) if life else 0,
+                 moved=sum(1 for v in lp.values() if v["moved"]), shared=sum(1 for v in lp.values() if v["shared"]),
+                 hunters=len(hunters), hunters_any=len(hunters_any), hunter_span=hunters[0]["span"] if hunters else 0,
+                 meat=sum(log["meat_intake"]) / max(sum(log["plant_intake"]) + sum(log["meat_intake"]), 1),
+                 blocked=med(half(log, "blocked")), shoves=med(half(log, "shoves")), turns_blocked=med(half(log, "turns_blocked")), no_room=med(half(log, "births_no_room")),
+                 foot=med(half(log, "foot_mean")), long=med(half(log, "long_share")), wide=med(half(log, "wide_share")), cover=med(half(log, "cover")),
+                 forward=med(half(log, "forward")), turns=med([a + b for a, b in zip(half(log, "left"), half(log, "right"))]), stay=med(half(log, "stay")),
+                 biters=med(half(log, "biters_share")), biters_any=med(half(log, "biters_any_share")), wasted=med(half(log, "wasted")))
+        for k, p in (("a", widths[0]), ("b", widths[1])):
+            q = pl[p]
+            n = len(q["step"])
+            h = slice(n // 2, n)
+            d[f"pop_{k}"] = med(q["pop"][h])
+            d[f"pop_{k}_min"] = min(q["pop"])
+            d[f"mass_{k}"] = med(q["mass"][h])
+            d[f"hard_{k}"] = med(q["hard"][h])
+            d[f"hard_{k}_max"] = max(q["hard"])
+            d[f"muscle_{k}"] = med(q["muscle"][h])
+            d[f"digestive_{k}"] = med(q["digestive"][h])
+            d[f"biters_{k}"] = med(q["biters"][h])
+            d[f"biters_{k}_max"] = max(q["biters"])
+            d[f"meat_{k}"] = sum(q["meat_intake"][h]) / max(sum(q["plant_intake"][h]) + sum(q["meat_intake"][h]), 1)
+            d[f"movers_{k}"] = med([m / max(p_, 1) for m, p_ in zip(q["movers"][h], q["pop"][h])])
+            d[f"lineages_{k}"] = med(q["lineages"][h])
+            d[f"cover_{k}"] = med(q["cover"][h])
+            d[f"foot_{k}"] = med(q["foot"][h])
+            d[f"front_{k}"] = med(q["shell_front"][h])
+            d[f"back_{k}"] = med(q["shell_back"][h])
+        return d
+
+    S = {w: {s: summarize(w, s) for s in seeds_of(w)} for w in WORLDS}
+
+    def rplace(w, p, key):
+        """A reference world's per-place value: median over seeds of the median over the second half."""
+        return med([med(rplaces[w][s][p][key][len(rplaces[w][s][p][key]) // 2:]) for s in [1, 2, 3, 4]])
+
+    def rsum(w, key):
+        return med([med(half(rlogs[w][s], key)) for s in [1, 2, 3, 4]])
+
+    R = "grass and trees, e012"
+    refs_hard = {"grass, e012": (rplace(R, 8, "hard"), PLACE_COLOR[8]), "trees, e012": (rplace(R, 1, "hard"), PLACE_COLOR[1])}
+    refs_biters = {"grass, e012": (rplace(R, 8, "biters"), PLACE_COLOR[8]), "trees, e012": (rplace(R, 1, "biters"), PLACE_COLOR[1])}
+    refs_mass = {"grass, e012": (rplace(R, 8, "mass"), PLACE_COLOR[8]), "trees, e012": (rplace(R, 1, "mass"), PLACE_COLOR[1])}
+    refs_pop = {"grass, e012": (rplace(R, 8, "pop"), PLACE_COLOR[8]), "trees, e012": (rplace(R, 1, "pop"), PLACE_COLOR[1])}
+
+    narrow = ["grass and trees", "grass and edge", "grass and shrubs"]
+    charts = {}
+    charts["hard"] = place_chart("Hard cells per body, by place", "Mean over the bodies standing on each kind of place (grass and trees, 128, one line per seed). Dashed: e012, the same world without the two laws.", places, MAIN, lambda d: d["hard"], refs=refs_hard)
+    charts["biters"] = place_chart("Bodies with a bite, by place", "Share of bodies on each place with a hard tip and muscle behind it on the front. Dashed: e012 (a bite on any side).", places, MAIN, lambda d: d["biters"], refs=refs_biters, percent=True)
+    charts["mass"] = place_chart("Mass per body, by place", "Mean cells per body on each place. Dashed: e012.", places, MAIN, lambda d: d["mass"], refs=refs_mass, ymax=66)
+    charts["pop"] = place_chart("Population by place", "Bodies standing on each kind of place. Dashed: e012, where 45-77 bodies could share one tree cell.", places, MAIN, lambda d: d["pop"], refs=refs_pop)
+    charts["cover"] = place_chart("Cover, by place", "Share of the place's cells under a body. 100% would be a place with no free cell.", places, MAIN, lambda d: d["cover"], percent=True, ymax=1.0)
+    charts["foot"] = place_chart("World cells per body, by place", "Mean cells a body covers (1 to 4). 1 would mean every body fits in one quarter of its grid, as e010's grazer did.", places, MAIN, lambda d: d["foot"], ymin=1, ymax=4)
+    charts["narrow_hard"] = narrow_chart("Hard cells per body on the narrow place, three widths", "The narrow place of each 128 world (trees, edge, shrubs), one line per seed. Which width keeps an arms race once a cell holds one body.", places, narrow, lambda d: d["hard"])
+    charts["narrow_biters"] = narrow_chart("Bodies with a bite on the narrow place, three widths", "Share of the bodies on the narrow place with a tooth on the front.", places, narrow, lambda d: d["biters"], percent=True)
+    charts["narrow_pop"] = narrow_chart("Population on the narrow place, three widths", "Bodies standing on the narrow place of each world. e012's trees held 620-1,050.", places, narrow, lambda d: d["pop"])
+    charts["narrow_meat"] = narrow_chart("Meat share of intake on the narrow place, three widths", "Energy from broken cells of other bodies over all energy eaten there, per window.", places, narrow, lambda d: [m / max(m + p, 1e-9) for m, p in zip(d["meat_intake"], d["plant_intake"])], percent=True)
+    charts["sides"] = sides_chart("Hardness of the front and the back, trees (128)", "Mean hardness of the touchable tips on the front row and the back row of the bodies standing on the trees; one line per seed and side. Equal lines: armor has no side.", places, MAIN, 1)
+    charts["blocked"] = world_chart("Moves that did not happen", "Share of forward actions blocked (the way stayed taken), median of the log window. 100% would be a jammed world.", logs, lambda l: l["blocked"], list(WORLDS), WORLD_COLOR, percent=True, ymax=1.0)
+    charts["actions"] = world_chart("Turning", "Share of decisions that are a turn (left or right). Turning is the only way to change direction.", logs, lambda l: [a + b for a, b in zip(l["left"], l["right"])], list(WORLDS), WORLD_COLOR, percent=True, ymax=1.0)
+    charts["lineages"] = world_chart("Lineages alive", "Confirmed lineages at each log step. e012: 9-13 at 128, 19-50 at 256.", logs, lambda l: l["lineages"], list(WORLDS), WORLD_COLOR)
+    charts["crossers"] = world_chart("Crossers", "Share of living bodies standing in a kind of place other than the one they were born in. e012: 0.1-1.6%.", logs, lambda l: l["crossers"], list(WORLDS), WORLD_COLOR, percent=True)
+
+    viewer_run = f"{WORLDS[VIEWER_WORLD][0]}_seed{VIEWER_SEED}"
+    timeline = timeline_chart(f"Lineages over time ({VIEWER_WORLD}, seed {VIEWER_SEED})", "Each colored band is one lineage, height = agents in it; marks are events at the size they were logged with.", viewer_run, events[VIEWER_WORLD][VIEWER_SEED])
+
+    first, _, _ = lineage_stats(viewer_run)
+    bodies = load_bodies(viewer_run)
+    data = bytearray()
+    long_frames, used_l = pack_frames(f"results/{viewer_run}_long.jsonl", first, data, every=4)
+    clip_frames, used_c = pack_frames(f"results/{viewer_run}_clip.jsonl", first, data, every=4, limit=50)
+    legend = " ".join(f'<span class="sw" style="background:{KIND_COLOR[k]}"></span>{name}' for k, name in ((1, "hard"), (2, "muscle"), (3, "sensor"), (4, "digestive")))
+    vw = WORLDS[VIEWER_WORLD][1]
+    viewer_data = {"w": vw, "h": vw, "long": long_frames, "clip": clip_frames, "bodies": {str(b): bodies[b] for b in used_l | used_c},
+                   "kindColors": {str(k): v for k, v in KIND_COLOR.items()}, "palette": LINEAGE_PALETTE, "none": NONE_COLOR,
+                   "slots": {str(k): v for k, v in color_slots(viewer_run).items()}}
+    header = json.dumps(viewer_data, separators=(",", ":")).encode()
+    blob = base64.b64encode(gzip.compress(len(header).to_bytes(4, "little") + header + bytes(data), 9)).decode()
+
+    def rng(w, key, fmt):
+        vals = [S[w][s][key] for s in seeds_of(w)]
+        vals = [v for v in vals if v == v]
+        if not vals:
+            return "-"
+        lo, hi = min(vals), max(vals)
+        return fmt(lo) if fmt(lo) == fmt(hi) else f"{fmt(lo)}-{fmt(hi)}"
+
+    def row(label, key, fmt, refkey=None, by_place=False):
+        """A row with one cell per world (grass / narrow when by_place) and one per reference world."""
+        cells = "".join(f"<td>{rng(w, key + '_a', fmt)} / {rng(w, key + '_b', fmt)}</td>" if by_place else f"<td>{rng(w, key, fmt)}</td>" for w in WORLDS)
+        if refkey and by_place:
+            refs = "".join(f"<td>{fmt(rplace(r, REFS[r][2][0], refkey))} / {fmt(rplace(r, REFS[r][2][1], refkey))}</td>" for r in REFS)
+        elif refkey:
+            refs = "".join(f"<td>{fmt(rsum(r, refkey))}</td>" for r in REFS)
+        else:
+            refs = "".join("<td>-</td>" for r in REFS)
+        return f"<tr><td>{label}</td>{cells}{refs}</tr>"
+
+    n0 = lambda v: f"{v:,.0f}"
+    d1 = lambda v: f"{v:.1f}"
+    p1 = lambda v: f"{v:.1%}"
+    p0 = lambda v: f"{v:.0%}"
+    summary = ("<thead><tr><th>Measure (range over seeds; grass / narrow where two)</th>" + "".join(f"<th>{w}</th>" for w in WORLDS) + "".join(f"<th>{r}</th>" for r in REFS) + "</tr></thead><tbody>"
+               + row("Population, median", "pop", n0, "pop")
+               + row("Population by place, median", "pop", n0, "pop", by_place=True)
+               + row("Cover by place (share of cells under a body), median", "cover", p0, by_place=True)
+               + row("World cells per body by place, median", "foot", d1, by_place=True)
+               + row("Mass per body by place, median", "mass", d1, "mass", by_place=True)
+               + row("Hard cells per body by place, median", "hard", d1, "hard", by_place=True)
+               + row("Bodies with a bite on the front by place, median share", "biters", p1, "biters", by_place=True)
+               + "<tr><td>Hardness of the front / back, narrow place, median</td>" + "".join(f"<td>{rng(w, 'front_b', d1)} / {rng(w, 'back_b', d1)}</td>" for w in WORLDS) + "".join("<td>-</td>" for r in REFS) + "</tr>"
+               + row("Meat share of intake by place, second half", "meat", p1, by_place=True)
+               + row("Moves blocked, median share of forward actions", "blocked", p0)
+               + row("Shoves, median share of forward actions", "shoves", p1)
+               + row("Children lost for want of room, median share", "no_room", p0)
+               + row("Crossers, median share of all bodies", "crossers", p1, "crossers")
+               + row("Lineages alive, median", "lineages", n0, "lineages")
+               + row("Hunter lineages (front bite &ge; 2 for 20,000+ steps)", "hunters", n0)
+               + row("Steps per second, median", "sps", n0, "steps_per_sec")
+               + "</tbody>")
+
+    tables = data_table(["step", "place", "pop", "mass", "hard", "muscle", "digestive", "bite", "shell", "biters", "cover", "foot", "shell_front", "shell_back", "plant_intake", "meat_intake", "lineages", "movers"],
+                        {f"{w}, seed {s}, {PLACE_NAME[p]} (every 100,000 steps)": places[w][s][p] for w in WORLDS for s in seeds_of(w) for p in WORLDS[w][2]}, every=10)
+    tables += data_table(["step", "pop", "births", "deaths_broken", "cells_broken", "mass_mean", "hard_mean", "biters_share", "biters_any_share", "blocked", "shoves", "turns_blocked", "births_no_room", "foot_mean", "long_share", "wide_share", "cover", "wasted", "meat_intake", "plant_intake", "crossers", "lineages", "steps_per_sec"],
+                         {f"{w}, seed {s}, whole world (every 100,000 steps)": logs[w][s] for w in WORLDS for s in seeds_of(w)}, every=10)
+
+    text = TEXT
+    page = f"""<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>e013 Facing and space - Report</title>
+<style>{CSS}</style>
+</head>
+<body>
+<main>
+<h1>e013: Bodies face a direction and take up space</h1>
+<p class="sub">Experiment report - 2026-08-30 - e012's world with two laws added: a body faces a direction and only its front pushes; a body covers world cells and no two bodies share one. Grass with trees, edge or shrubs at 128x128 (four seeds each), grass with trees and with the edge at 256x256; 1,000,000 steps</p>
+
+<section class="tldr">
+<h2>TL;DR</h2>
+<p>{text["tldr"]}</p>
+</section>
+
+<h2>1. Question</h2>
+<p>{text["question"]}</p>
+<ol>
+  <li><strong>Fronts appear.</strong> Where bodies bite, the tooth is on the front: on the narrow place, over the second half, the share of bodies with a bite on the front is at least half the share with a bite on any side, and armor is not the same on every side (the mean hardness of the back differs from the front by 20% or more).</li>
+  <li><strong>Reach pays.</strong> On the grass, bodies cover more than one world cell (mean 1.2 or more) although e010's five-cell grazer fits in one quarter of its grid.</li>
+  <li><strong>The crowd becomes a queue and the arms race survives it.</strong> On at least one narrow width (1, 2 or 4) the arms race stands: hard above 5 per body and over 10% of bodies with a bite on the narrow place, second half, in at least two seeds of four.</li>
+  <li><strong>The world stands at a bounded cost.</strong> No extinction; population above 500; at least 300 steps per second with twelve runs sharing the machine.</li>
+</ol>
+
+<h2>2. The world</h2>
+<p>{text["world"]}</p>
+{DIAGRAM}
+<p>{text["runs"]}</p>
+<ul class="measures">
+  <li><strong>Bite</strong>: the largest force (muscle in the line) behind a hard tip on the front; <strong>bite any</strong>: on any side (e012's bite).</li>
+  <li><strong>Hardness of a side</strong>: mean hardness of the touchable tips on the front, the back, or the two sides of the body grid.</li>
+  <li><strong>Cells</strong> a body covers (1-4); <strong>long</strong>: covers a quarter ahead and one behind; <strong>wide</strong>: two quarters across.</li>
+  <li><strong>Cover</strong>: share of a place's cells under a body.</li>
+  <li><strong>Blocked</strong>: forward actions that did not move the body; <strong>shoves</strong>: bodies moved by a push; <strong>turns blocked</strong>; <strong>children lost</strong> for want of a free spot next to the parent.</li>
+  <li>e012's measures: per place (population, body means, intake, lineages, movers), crossers, lineages with members on each place, hunter lineages, snapshots (which now carry the facing).</li>
+</ul>
+
+<h2>3. Results</h2>
+<div class="tw"><table>{summary}</table></div>
+<ol class="verdicts">
+<li><span class="verdict {text["c1"]}">{text["l1"]}</span> {text["v1"]}</li>
+<li><span class="verdict {text["c2"]}">{text["l2"]}</span> {text["v2"]}</li>
+<li><span class="verdict {text["c3"]}">{text["l3"]}</span> {text["v3"]}</li>
+<li><span class="verdict {text["c4"]}">{text["l4"]}</span> {text["v4"]}</li>
+</ol>
+
+<h3>3.1 {text["h1"]}</h3>
+<div class="grid2">
+{charts["pop"]}{charts["cover"]}
+</div>
+<div class="grid2">
+{charts["mass"]}{charts["foot"]}
+</div>
+<p>{text["r1"]}</p>
+
+<h3>3.2 {text["h2"]}</h3>
+<div class="grid2">
+{charts["narrow_hard"]}{charts["narrow_biters"]}
+</div>
+<div class="grid2">
+{charts["narrow_pop"]}{charts["narrow_meat"]}
+</div>
+<p>{text["r2"]}</p>
+
+<h3>3.3 {text["h3"]}</h3>
+<div class="grid2">
+{charts["sides"]}{charts["blocked"]}
+</div>
+{gallery(VIEWER_WORLD, VIEWER_SEED, GALLERY)}
+<p>{text["r3"]}</p>
+
+<h3>3.4 Watching the world</h3>
+<div class="wide">{timeline}</div>
+<div class="viewer">
+  <div class="canvases">
+    <canvas id="world" width="1024" height="1024"></canvas>
+    <canvas id="zoom" width="480" height="480"></canvas>
+  </div>
+  <div class="bar">
+    <button id="play">Play</button>
+    <select id="mode"><option value="long">Long view: every 20,000 steps</option><option value="clip">Clip: every 4th step from 600,000</option></select>
+    <select id="speed"><option value="1">Slow</option><option value="2">Normal</option><option value="4">Fast</option></select>
+    <span id="steplbl"></span>
+  </div>
+  <div class="bar"><input id="scrub" type="range" min="0" max="0" value="0"></div>
+  <div class="bar" id="linlbl"></div>
+  <div class="bar" id="legend">Blocks: {legend} <span class="sw front"></span> the front (white edge) <span class="sw dot"></span> has a bite on the front</div>
+  <div class="bar">Left: the whole {vw}x{vw} world, every cell a body covers colored by its lineage (gray: none), a white dot on bodies with a bite. Green: food; dashed rings are the patches (blue: grass, width 8; aqua: trees, width 1; radius two widths). Click to move the white box. Right: the box at 24x24 cells, each body drawn over the 2x2 block it can cover, turned the way it faces, with a white edge on its front, damage included. Labels: agents per lineage, then mean mass, cells covered, bite, shell, and sensor cells (eyes). {VIEWER_WORLD}, seed {VIEWER_SEED}.</div>
+</div>
+<p>{text["viewer"]}</p>
+<div class="grid2">{charts["lineages"]}{charts["crossers"]}</div>
+
+<h2>4. Discussion</h2>
+{text["discussion"]}
+
+<h2>5. Conclusion and next step</h2>
+<p>{text["conclusion"]}</p>
+
+<h2>Appendix: data</h2>
+<p>Every 100,000th record; full logs in <code>results/*_log.csv</code>, per place in <code>results/*_places.csv</code>, lineages in <code>results/*_lineages.csv</code>, events in <code>results/*_events.csv</code>, agents every 100,000 steps in <code>results/*_agents.csv</code>, snapshots in <code>results/*_{{long,clip,bodies}}.jsonl</code>. Reference runs are read from <code>../e012_two_places/results</code>. Build this report with <code>uv run python experiments/e013_facing_space/report.py</code>.</p>
+{tables}
+</main>
+<script id="frames" type="application/octet-stream">{blob}</script>
+<script>{VIEWER_JS}</script>
+</body>
+</html>
+"""
+    out = os.path.join(HERE, "report.html")
+    with open(out, "w") as f:
+        f.write(page)
+    print(f"wrote {out} ({os.path.getsize(out)//1024} KB)")
+
+
+# Lineages that prospered in the viewer run: (lineage id, name, what the shape does). Filled after the runs.
+GALLERY = []
+
+TEXT = {
+    "tldr": "TODO",
+    "question": "TODO",
+    "world": "TODO",
+    "runs": "TODO",
+    "c1": "partly", "l1": "TODO", "v1": "TODO",
+    "c2": "partly", "l2": "TODO", "v2": "TODO",
+    "c3": "partly", "l3": "TODO", "v3": "TODO",
+    "c4": "partly", "l4": "TODO", "v4": "TODO",
+    "h1": "TODO", "r1": "TODO",
+    "h2": "TODO", "r2": "TODO",
+    "h3": "TODO", "r3": "TODO",
+    "viewer": "TODO",
+    "discussion": "<p>TODO</p>",
+    "conclusion": "TODO",
+}
+
+if __name__ == "__main__":
+    main()
