@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-08-30 (e011).
+Last updated: 2026-08-30 (e012).
 
 ## What the viewer should see
 
@@ -38,21 +38,21 @@ hundred decisions; eyes do not pay because there is nothing to see; the knockout
 with a slight tailwind), e010 (contact physics: every trait rule removed; the world stands, shape goes to the
 smallest corner of gut, teeth are profitable and were found once in twelve million births), e011 (rich cells: the same
 regrowth on fewer cells gives size a reason and starts the arms race; tortoises, hunters and corner bodies coexist; the 8x8
-grid is the wall now).
+grid is the wall now), e012 (two kinds of place: patches of two widths in one world; each place keeps its regime in every
+seed, grazers on the grass and the arms race on the trees; bodies cross and lineages straddle, hunters stay; one lineage
+with a different body on each place).
 
 Next, in this order (GitHub issue numbers):
-1. A world with both kinds of place in one run: wide patches (e010's grass, where the smallest grazer wins) and narrow
-   ones (e011's trees, where the crowd makes tortoises and hunters), so that both kinds of body exist in one world and
-   lineages can move between places. One law, no compute added. (#13)
-2. Bodies face a direction and take up space (#15). e011's physics has four verbs a shape can address (eat, push,
+1. Bodies face a direction and take up space (#15). e011's physics has four verbs a shape can address (eat, push,
    resist, be untouchable) and four body kinds came out, one per verb: more kinds of shape need more verbs in the
    world, not a bigger grid. Facing makes a tooth point somewhere (readable); space makes reach and blocking exist.
-3. Ground and friction (#16): moving costs by the cells that touch the ground, so a shape can be a leg.
-4. #5 3D bodies (same development, 8x8x8), or a larger grid: the 90th percentile of mass is 64 at width 1, and legs
+2. Ground and friction (#16): moving costs by the cells that touch the ground, so a shape can be a leg.
+3. #5 3D bodies (same development, 8x8x8), or a larger grid: the 90th percentile of mass is 64 at width 1, and legs
    and wings need resolution, but only once there is ground and air for them.
-5. Environments that differ by place (#14): plants, desert, warm and cold, sea, mountain, oxygen. A place selects among
-   the verbs the physics has; add verbs first.
-6. #4 Learning, growth, aging, health as a layer on top of birth traits.
+4. Environments that differ by place (#14): plants, desert, warm and cold, sea, mountain, oxygen. A place selects among
+   the verbs the physics has; add verbs first. e012 is the first place law and shows the pattern works: two places, two
+   regimes, in one run, at no compute cost.
+5. #4 Learning, growth, aging, health as a layer on top of birth traits.
 
 What we want the viewer to be able to do: look at a body and guess what it does, the way a fang, four legs, or a wing
 is read at a glance. That needs the physics the reader already knows (a front, ground, air), written as laws of
@@ -121,6 +121,16 @@ materials and the world.
   per digestive cell per step in every world); armor is. What a cell can hold (the cap) does nothing: a crowded cell
   never fills. Lineages are fewer (1-13 alive) with one holder per island at a time. Fewer, larger bodies run faster
   (585-846 steps/s at width 1).
+- e012: the patches of one world can have different widths (patch k has the k-th width of a list, cycling), a law of the
+  world from here on; the cap on what a cell holds is a constant 8. Grass (width 8) and trees (width 1) in one world
+  keep their regimes in every seed: 6-cell grazers with no armor on the grass, bodies of 16-32 cells with 4-15 hard
+  cells, 12-34% with a bite and meat 14-18% of the intake on the trees, each place at the population its single-kind
+  world had per patch. Bodies cross (0.1-0.7% stand in the other kind of place, up to 6%): small grazers walk into the
+  trees, tortoises walk out onto the grass, hunters never leave; 2-4 lineages per seed straddle both places for 20,000+
+  steps, and one lived 978,000 steps with half its members on each place and a different body on each (4 cells on the
+  grass, 8-12 on the trees). Lineages alive 9-13, e010's number, not the sum. The edge width (2) next to grass does not
+  flip more often than alone, but once the edge's hunters held the grass for 400,000 steps and lost it. Use 128 with
+  two patches of each kind for questions about places; 256 (eight and eight) is the world people watch.
 - e007 calibration: 128x128 (4 islands) matches 256x256 per island for what happens on an island (population,
   food, predation, body composition, rate of sensor lineages) but not between islands (lineages per island and
   lifetime move with the number of islands). Use 128 with more seeds for questions about bodies and behavior;
