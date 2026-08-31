@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-09-01 (e020).
+Last updated: 2026-09-01 (e021).
 
 ## What the viewer should see
 
@@ -79,30 +79,39 @@ and twice a second lineage holding the thin valleys: the first place effect on b
 grading, not a split; half the breath to the air is the richest world of the series, both stores, 103-109 eaten,
 nothing wasted but shading, and no place differs from another: a closed world trades productivity against
 difference; rain everywhere alike rebuilds the flat lawn, because the store sits wherever the draw is capped and
-the population's own shading is cap enough).
+the population's own shading is cap enough), e021 (the tall plant takes the light: the matter standing on a cell is
+a column, and a taller column takes, from every cell within its height in cells, a share of that cell's sun equal
+to the height difference less the distance, times its own room over the cap - a full crown intercepts nothing, and
+a column under a body neither grows nor claims; the world grows standing trees of 50-400 bites where no cell could
+hold half of one, and has two states, an orchard of 6-24 trees in nine runs of twelve and a forest of 165-1,405 in
+three, entered and left as booms; the forest doubles contact (0.093 per body per step) and harvests 6.5% of the
+intake from the trees; the canopy raises the closed world's income to its record (112.9 eaten on the flat lawn,
+e020: 100-103) by taking the light the bodies' own shadow was wasting; lineages alive reach 3-5 in four runs and
+two lineages coexist 921,000 steps, the deepest coexistence since e012, with the heaviest winner of the series
+(mass 10.3) standing in the thickest forest - but no tooth: a tree is silenced by the body that eats it, feeding
+one gut at a time).
 
 Next, in this order (GitHub issue numbers):
-1. Environments that differ by place (#14, continued). e020 wrote the first law on the height coordinate and the
-   pattern held: an income that differs in amount (rain by height) grades the bodies - mass sorts by height, second
-   lineages hold the lower ground - but does not split them; one kind of body still wins everything. The next law
-   should make the high ground differ in kind, not amount. Candidates on the height axis, in order: the canopy (a
-   plant that stands ungrazed grows tall and takes its neighbors' sun - the only way a cell in a closed world can
-   hold more than one bite, and the high ground can now keep plants; this is the closed-world form of e011's rich
-   cells, the premise that made teeth pay), cold by height (a cell face exposed to the air loses heat, faster the
-   higher: compactness and huddling as outcomes, a reason for bodies to touch), the slope itself (standing on a
-   slope takes grip: muscle per mass as an outcome). Seasons (by time) belong here too and need a material that
-   stores, since a body's reserve is about 60 steps. Laws about the world only, as ever.
-2. A full cell that spills food to its neighbors (fruit falls), so that a tree is not one cell feeding sixteen gut
-   cells. Small now: with bodies moving, 0-4 of 164 regrowth per step is lost to the cap (e015: 67-68 with trees).
-3. #5 3D bodies (same development, 8x8x8), with the ground half of #16 (friction by the cells that touch the ground, an
+1. The spill (#14 continued, absorbing old step 2: fruit falls). e021's canopy makes trees and forests, and shows
+   exactly what stops the crowd: a body eating a tree stands on it, and a held cell neither grows nor claims, so a
+   tree is silent precisely while it is eaten and feeds one gut at a time - e011's rich cells fed 45-77 bodies on
+   one cell at once. The next law: a full crown keeps catching the light it stands in and drops what it cannot
+   hold as fruit on the cells around it (pilot 2 of e021 showed that flow as a famine, because the hoard was
+   destroyed; sent to the forest floor as food it is a rich place with a radius). Then a tree feeds a crowd that
+   never touches it, which is the crowd-and-teeth premise rebuilt inside the closed world. Other laws still open
+   on the height axis: cold by height (exposed faces lose heat, huddling as an outcome - stronger once crowds
+   exist), slope grip (muscle per mass to stand), seasons (need a material that stores; a body's reserve is about
+   60 steps, but a tree is a store now). Laws about the world only, as ever.
+2. #5 3D bodies (same development, 8x8x8), with the ground half of #16 (friction by the cells that touch the ground, an
    overhang has to be held up): legs and wings need a vertical axis, and the top-view grid has none. The 90th percentile
    of mass is 64 at width 1.
-4. #4 Learning, growth, aging, health as a layer on top of birth traits.
+3. #4 Learning, growth, aging, health as a layer on top of birth traits.
 
-How we judge whether a law worked (#19): count the winners. e013-e020 end with one body winning every run and 1-5
+How we judge whether a law worked (#19): count the winners. e013-e021 end with one body winning every run and 1-5
 lineages alive (e018's closed cycle: 1-3, fewer than the open world's 4, so a law can also lose by this rule; e019's
 terrain: 1-2; e020's rain: 1-2, but graded by height for the first time, with second lineages holding the low ground
-for 300,000-520,000 steps); a world with one optimum is
+for 300,000-520,000 steps; e021's canopy: 1-5, with two lineages coexisting 921,000 steps and the winners sorted by
+state as well as height - kin of one winner still, not other kinds); a world with one optimum is
 reached fast and is dull to watch. A wider genome or more parts would only
 make the one optimum slower to reach; what makes several winners is more pressures (places, seasons, matter that
 cycles), so every law is judged by how many different bodies prosper at once, not by how many are possible.
@@ -241,6 +250,20 @@ materials and the world.
   here: drawn patches over a terrain put the sun where the soil is not, and the world dies of it. The soil is an f64 (an
   f32 soil drifted up to 1.8% of the matter over a million steps; f64 holds 0.0003%). Places under the uniform sun are
   read by height band (thirds of the cells): keep that in the per-place log.
+- e020: the breath to the air with the rain by height is a law of the world from here on: what a body burns rises
+  to one pool of air, and the air rains on every cell at most the sun's worth per step times height over relief.
+  It is the high ground's income (soil runs off it), the closed world's second store, and the first place effect
+  on bodies under a uniform sun. Half the breath is the richest world and has no places: productivity trades
+  against difference.
+- e021: the canopy is a law of the world from here on, at rate 2: a taller column takes a shorter one's light, as
+  far as it is tall (the height difference less the distance, over the cap), times its own room over the cap
+  (saturation - a full crown intercepts nothing; without it the hoarded light of full columns starves the world
+  dead, and without the reach a tree gathers less than one body's upkeep and nothing changes). A column under a
+  body neither grows nor claims. It gives standing stores of 50-400 bites, a second state (orchard and forest,
+  entered and left as booms), the closed world's record income (the canopy takes back light the bodies' shadow
+  wasted), and the deepest coexistence since e012 - at half the speed (178-212 steps/s against 429-492). The
+  terrain's mean height is normalized to half the relief from here on (geography, not a law): every seed's rain
+  then adds up to the same income, and e020's 73-94 spread collapses to 83.2-83.8.
 - e007 calibration: 128x128 (4 islands) matches 256x256 per island for what happens on an island (population,
   food, predation, body composition, rate of sensor lineages) but not between islands (lineages per island and
   lifetime move with the number of islands). Use 128 with more seeds for questions about bodies and behavior;
