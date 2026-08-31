@@ -770,10 +770,13 @@ struct Counters {
 
 /// Matter on the ground: what a cell holds as food (`res`), how much of that is dead matter
 /// (`carrion`, at most `res`), and the soil of the cell (`soil`), which a plant grows out of.
+/// The soil is an f64: it takes and gives 0.001-sized amounts every step, and as an f32 it
+/// drifted by up to 1.8% of the world's matter over a million steps (e019's runs); an f64
+/// holds it to 0.0003% (added after the runs; the runs used the f32).
 struct Food {
     res: Vec<f32>,
     carrion: Vec<f32>,
-    soil: Vec<f32>,
+    soil: Vec<f64>,
 }
 
 /// What one cell did in one step of regrowth.
@@ -794,24 +797,24 @@ impl Food {
         let rot = self.carrion[c] * DECAY;
         self.carrion[c] -= rot;
         self.res[c] -= rot;
-        self.soil[c] += rot;
+        self.soil[c] += rot as f64;
         let lit = if held { 0.0 } else { sun };
         let room = lit.min((cap - self.res[c]).max(0.0));
-        let added = room.min(self.soil[c]);
-        self.soil[c] -= added;
+        let added = room.min(self.soil[c] as f32);
+        self.soil[c] -= added as f64;
         self.res[c] += added;
         Regrown { added, shaded: sun - lit, wasted: lit - room, barren: room - added, rot }
     }
     /// What a body spends falls to the soil of the cell under it.
     fn spend(&mut self, c: usize, e: f32) {
-        self.soil[c] += e;
+        self.soil[c] += e as f64;
     }
     /// Soil runs downhill. The surface of a cell is its height plus its soil; a cell gives
     /// `rate` of its soil to the four neighbors whose surface is lower, split by the drop to
     /// each, and never more than LEVEL of a drop (so that pooled soil levels out and does not
     /// slosh). All cells move at once from the surfaces at the start of the step; `delta` is
     /// scratch. Returns the soil moved.
-    fn flow(&mut self, g: Grid, height: &[f32], rate: f32, delta: &mut [f32]) -> f32 {
+    fn flow(&mut self, g: Grid, height: &[f32], rate: f32, delta: &mut [f64]) -> f32 {
         delta.iter_mut().for_each(|d| *d = 0.0);
         let mut moved = 0.0f64;
         for y in 0..g.h {
@@ -821,12 +824,12 @@ impl Food {
                 if s <= 0.0 {
                     continue;
                 }
-                let h = height[c] + s;
+                let h = height[c] as f64 + s;
                 let nb = [g.idx(x, (y + g.h - 1) % g.h), g.idx(x, (y + 1) % g.h), g.idx((x + 1) % g.w, y), g.idx((x + g.w - 1) % g.w, y)];
-                let mut drop = [0.0f32; 4];
-                let mut total = 0.0f32;
+                let mut drop = [0.0f64; 4];
+                let mut total = 0.0f64;
                 for (k, &n) in nb.iter().enumerate() {
-                    let d = h - (height[n] + self.soil[n]);
+                    let d = h - (height[n] as f64 + self.soil[n]);
                     if d > 0.0 {
                         drop[k] = d;
                         total += d;
@@ -837,10 +840,10 @@ impl Food {
                 }
                 for (k, &n) in nb.iter().enumerate() {
                     if drop[k] > 0.0 {
-                        let give = (rate * s * drop[k] / total).min(drop[k] * LEVEL);
+                        let give = (rate as f64 * s * drop[k] / total).min(drop[k] * LEVEL as f64);
                         delta[c] -= give;
                         delta[n] += give;
-                        moved += give as f64;
+                        moved += give;
                     }
                 }
             }
@@ -1133,7 +1136,7 @@ impl Snapshots {
                 if i > 0 {
                     f.write_all(b",").unwrap();
                 }
-                write!(f, "{}", ((1.0 + s).ln() * 4.0).round().min(15.0) as u8).unwrap();
+                write!(f, "{}", ((1.0 + *s as f32).ln() * 4.0).round().min(15.0) as u8).unwrap();
             }
         }
         write!(f, "],\"patches\":[").unwrap();
@@ -1239,7 +1242,7 @@ fn main() {
     let mut places_csv = open("places.csv");
     writeln!(places_csv, "step,place,pop,mass,hard,muscle,sensor,digestive,bite,shell,biters,cover,plant_intake,meat_intake,lineages,movers,foot,shell_front,shell_back,dead,carrion,soil,barren,regrowth,cells").unwrap();
 
-    let mut food = Food { res: vec![matter0.min(cap); w * h], carrion: vec![0.0; w * h], soil: vec![(matter0 - cap).max(0.0); w * h] };
+    let mut food = Food { res: vec![matter0.min(cap); w * h], carrion: vec![0.0; w * h], soil: vec![(matter0 - cap).max(0.0) as f64; w * h] };
     let mut next_id = 0u64;
     // Occupancy per sub-cell: the index of the body holding it (u32::MAX: none), kept current
     // by every move, turn, break, birth and death, and relabeled when the list of bodies is
@@ -1325,7 +1328,7 @@ fn main() {
     let mut rot = 0.0f64; // dead matter returned to the soil
     let mut spent = 0.0f64; // what living bodies returned to the soil (upkeep and the work of moving)
     let mut flowed = 0.0f64; // soil that ran downhill, summed over the log interval
-    let mut delta = vec![0.0f32; w * h]; // scratch for the flow
+    let mut delta = vec![0.0f64; w * h]; // scratch for the flow
     let mut last_time = std::time::Instant::now();
 
     for step in 1..=steps {
@@ -1867,7 +1870,8 @@ fn main() {
         }
         if step % AGENT_DUMP_INTERVAL == 0 {
             let list = |v: &[f32]| v.iter().map(|x| format!("{x:.2}")).collect::<Vec<_>>().join(",");
-            writeln!(soil_jsonl, "{{\"step\":{step},\"soil\":[{}],\"plant\":[{}]}}", list(&food.soil), list(&food.res)).unwrap();
+            let soil32: Vec<f32> = food.soil.iter().map(|&x| x as f32).collect();
+            writeln!(soil_jsonl, "{{\"step\":{step},\"soil\":[{}],\"plant\":[{}]}}", list(&soil32), list(&food.res)).unwrap();
             for a in &agents {
                 let k = &a.body.kinds;
                 let b = &a.body;
@@ -1994,19 +1998,19 @@ fn main() {
             // The closed cycle: matter in the soil, the total (soil, plants, dead matter, bodies:
             // energy and cells), regrowth lost for want of soil, dead matter rotted into the
             // soil and what bodies returned to it, per step.
-            let soil_stock = food.soil.iter().map(|&s| s as f64).sum::<f64>();
+            let soil_stock = food.soil.iter().sum::<f64>();
             let mut soil_at = [0.0f64; N_PLACES + 1];
             let mut cells_at = [0usize; N_PLACES + 1];
             for (c, &p) in patches.place.iter().enumerate() {
-                soil_at[p as usize] += food.soil[c] as f64;
+                soil_at[p as usize] += food.soil[c];
                 cells_at[p as usize] += 1;
             }
             let in_bodies = agents.iter().map(|a| a.energy.max(0.0) as f64 + cell_energy as f64 * a.body.mass as f64).sum::<f64>();
             let matter = soil_stock + food.res.iter().map(|&r| r as f64).sum::<f64>() + in_bodies;
             // The flow: soil moved per step, cells with a step of sun's worth of soil (0.01) and
             // with a full plant's worth (the cap).
-            let soil_cells = food.soil.iter().filter(|&&s| s >= RES_GROWTH).count() as f32 / (w * h) as f32;
-            let deep = food.soil.iter().filter(|&&s| s >= cap).count() as f32 / (w * h) as f32;
+            let soil_cells = food.soil.iter().filter(|&&s| s >= RES_GROWTH as f64).count() as f32 / (w * h) as f32;
+            let deep = food.soil.iter().filter(|&&s| s >= cap as f64).count() as f32 / (w * h) as f32;
             writeln!(log, ",{:.3},{:.5},{:.2},{:.4},{:.2},{soil_stock:.1},{matter:.1},{:.3},{:.4},{:.3},{:.3},{soil_cells:.3},{deep:.3}", pushes as f64 / tried, move_spent / LOG_INTERVAL as f64 / pop as f64, shaded / LOG_INTERVAL as f64,
                 cc.dead / LOG_INTERVAL as f64, carrion_stock, barren / LOG_INTERVAL as f64, rot / LOG_INTERVAL as f64, spent / LOG_INTERVAL as f64, flowed / LOG_INTERVAL as f64).unwrap();
             for p in 0..=N_PLACES as u8 {
@@ -2155,7 +2159,7 @@ mod tests {
     fn a_dead_body_is_food_where_it_lies() {
         let g = Grid::new(8, 8);
         let place = vec![NO_PLACE; g.cells()];
-        let mut food = Food { res: vec![0.0; g.cells()], carrion: vec![0.0; g.cells()], soil: vec![0.0; g.cells()] };
+        let mut food = Food { res: vec![0.0; g.cells()], carrion: vec![0.0; g.cells()], soil: vec![0.0f64; g.cells()] };
         let mut c = Counters::default();
         // Three cells anchored at sub-cell (7, 4): sub-cells (7,4), (8,4) and (7,5), in world
         // cells (1,1), (2,1) and (1,1).
@@ -2188,11 +2192,11 @@ mod tests {
 
     #[test]
     fn a_plant_grows_out_of_the_soil_and_the_dead_rot_into_it() {
-        let mut food = Food { res: vec![0.0; 4], carrion: vec![0.0; 4], soil: vec![0.05, 0.0, 1.0, 1.0] };
+        let mut food = Food { res: vec![0.0; 4], carrion: vec![0.0; 4], soil: vec![0.05f64, 0.0, 1.0, 1.0] };
         let cap = 8.0;
         // Soil 0.05 under a sun of 0.1: the plant grows 0.05 and the other 0.05 of sun is barren.
         assert_eq!(food.regrow(0, 0.1, false, cap), Regrown { added: 0.05, barren: 0.05, ..Default::default() });
-        assert_eq!((food.res[0], food.soil[0]), (0.05, 0.0));
+        assert!((food.res[0] - 0.05).abs() < 1e-6 && food.soil[0] < 1e-9);
         // No soil: the whole sun is barren.
         assert_eq!(food.regrow(1, 0.1, false, cap), Regrown { barren: 0.1, ..Default::default() });
         // A body on the cell: shaded, nothing moves.
@@ -2208,48 +2212,48 @@ mod tests {
         let r = food.regrow(3, 0.1, false, cap);
         assert!((r.rot - 0.02).abs() < 1e-6 && (r.added - 0.1).abs() < 1e-6);
         assert!((food.carrion[3] - 1.98).abs() < 1e-6 && (food.res[3] - 2.08).abs() < 1e-6 && (food.soil[3] - 0.92).abs() < 1e-6);
-        assert!((food.res[3] + food.soil[3] - 3.0).abs() < 1e-6);
+        assert!((food.res[3] as f64 + food.soil[3] - 3.0).abs() < 1e-6);
         // What a body spends falls to the soil.
         food.spend(1, 0.05);
-        assert_eq!(food.soil[1], 0.05);
+        assert!((food.soil[1] - 0.05).abs() < 1e-6);
     }
 
     #[test]
     fn soil_runs_downhill_and_levels_where_it_pools() {
         let g = Grid::new(4, 1);
-        let mut delta = vec![0.0f32; 4];
+        let mut delta = vec![0.0f64; 4];
         // A slope: heights 3, 2, 1, 0 (the torus joins cell 3 back to cell 0, a wall of 3).
         // Soil on the top cell runs to the one cell below it (the other neighbors are higher or
         // itself): a share `rate` per step, capped at an eighth of the drop.
         let height = vec![3.0, 2.0, 1.0, 0.0];
-        let mut food = Food { res: vec![0.0; 4], carrion: vec![0.0; 4], soil: vec![1.0, 0.0, 0.0, 0.0] };
+        let mut food = Food { res: vec![0.0; 4], carrion: vec![0.0; 4], soil: vec![1.0f64, 0.0, 0.0, 0.0] };
         let moved = food.flow(g, &height, 0.5, &mut delta);
         // The drop to cell 1 is 2 (surface 4 against 2), to cell 3 it is 4 (surface 0): 0.5 of
         // the soil split 1:2, 0.167 and 0.333, both under an eighth of their drop.
         assert!((moved - 0.5).abs() < 1e-6);
         assert!((food.soil[0] - 0.5).abs() < 1e-6 && (food.soil[1] - 1.0 / 6.0).abs() < 1e-6 && (food.soil[3] - 1.0 / 3.0).abs() < 1e-6);
-        assert!((food.soil.iter().sum::<f32>() - 1.0).abs() < 1e-6);
+        assert!((food.soil.iter().sum::<f64>() - 1.0).abs() < 1e-6);
         // Flat ground: soil piled on one cell spreads to its neighbors and levels; no cell gives
         // more than an eighth of the drop, so nothing overshoots.
         let flat = vec![0.0; 4];
-        let mut food = Food { res: vec![0.0; 4], carrion: vec![0.0; 4], soil: vec![8.0, 0.0, 0.0, 0.0] };
+        let mut food = Food { res: vec![0.0; 4], carrion: vec![0.0; 4], soil: vec![8.0f64, 0.0, 0.0, 0.0] };
         for _ in 0..200 {
             food.flow(g, &flat, 1.0, &mut delta);
-            let max = food.soil.iter().copied().fold(0.0f32, f32::max);
+            let max = food.soil.iter().copied().fold(0.0f64, f64::max);
             assert!(food.soil.iter().all(|&s| s >= 0.0) && max <= 8.0);
         }
         assert!(food.soil.iter().all(|&s| (s - 2.0).abs() < 1e-3), "{:?}", food.soil);
-        assert!((food.soil.iter().sum::<f32>() - 8.0).abs() < 1e-4);
+        assert!((food.soil.iter().sum::<f64>() - 8.0).abs() < 1e-4);
         // A basin: heights 2, 0, 0, 2. Two of soil on one low cell levels over the two low cells
         // (1 each, surface 1) and none climbs the rims (surface 2).
         let basin = vec![2.0, 0.0, 0.0, 2.0];
-        let mut food = Food { res: vec![0.0; 4], carrion: vec![0.0; 4], soil: vec![0.0, 2.0, 0.0, 0.0] };
+        let mut food = Food { res: vec![0.0; 4], carrion: vec![0.0; 4], soil: vec![0.0f64, 2.0, 0.0, 0.0] };
         for _ in 0..200 {
             food.flow(g, &basin, 1.0, &mut delta);
         }
         assert!((food.soil[1] - 1.0).abs() < 1e-3 && (food.soil[2] - 1.0).abs() < 1e-3 && food.soil[0] == 0.0 && food.soil[3] == 0.0, "{:?}", food.soil);
         // At a small rate the soil creeps: the share per step, whatever the drop.
-        let mut food = Food { res: vec![0.0; 4], carrion: vec![0.0; 4], soil: vec![1.0, 0.0, 0.0, 0.0] };
+        let mut food = Food { res: vec![0.0; 4], carrion: vec![0.0; 4], soil: vec![1.0f64, 0.0, 0.0, 0.0] };
         let moved = food.flow(g, &height, 0.01, &mut delta);
         assert!((moved - 0.01).abs() < 1e-6);
     }
@@ -2276,7 +2280,7 @@ mod tests {
         occ.claim(g, &agents[1], 1);
         let place = vec![NO_PLACE; g.cells()];
         let mut c = Counters::default();
-        let mut food = Food { res: vec![0.0; g.cells()], carrion: vec![0.0; g.cells()], soil: vec![0.0; g.cells()] };
+        let mut food = Food { res: vec![0.0; g.cells()], carrion: vec![0.0; g.cells()], soil: vec![0.0f64; g.cells()] };
         let pressed = push(&mut agents, 0, EAST, g, &mut occ, &place, &mut food, CELL_ENERGY, &mut c);
         // One body pressed with force 2 (two muscle cells in the line); the soft cell broke and
         // was eaten by nobody (the hunter has no digestive cell): it lies on the world cell it
