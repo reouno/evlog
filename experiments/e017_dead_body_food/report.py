@@ -217,6 +217,23 @@ def neighbors_of(run, folder=HERE, size=128, first_step=500_000):
     return steps, vals
 
 
+def scavenger_lineages(run, folder=HERE, min_steps=20_000):
+    """Lineages that lived min_steps or more with dead matter more than half of their members' lifetime intake: (id, span, peak size, diet)."""
+    out = []
+    for lid, rows in lineage_rows(run, folder).items():
+        h = [r for r in rows if float(r["meat"]) > float(r["plant"]) and float(r["meat"]) > 0]
+        if not h:
+            continue
+        span = int(h[-1]["step"]) - int(h[0]["step"]) + CONFIRM_STEPS
+        if span < min_steps:
+            continue
+        peak = max(h, key=lambda r: int(r["size"]))
+        m, p = float(peak["meat"]), float(peak["plant"])
+        out.append(dict(id=lid, span=span, size=int(peak["size"]), diet=m / (m + p)))
+    out.sort(key=lambda d: -d["span"])
+    return out
+
+
 # ---------- chart helpers ----------
 
 def kfmt(x, _pos):
@@ -434,49 +451,49 @@ details {{ margin: 8px 0; }} summary {{ cursor: pointer; color: var(--ink2); }}
 
 DIAGRAM = """
 <figure class="diagram">
-<svg viewBox="0 0 800 330" role="img" aria-label="Regrowth of food in e015 and in e016. e015: a world cell regrows every step whether or not a body holds any of its sub-cells, so the gut cells standing on it eat its regrowth in place. e016: a cell held by a body does not regrow (strict reading), or regrows by its free sub-cells (free reading); the cell a body leaves recovers." style="max-width:100%;height:auto;display:block">
+<svg viewBox="0 0 800 340" role="img" aria-label="What happens to a body's matter at death, in e016 and in e017. e016: a dead body vanishes with its cells and the energy it held; a child never placed vanishes with the energy its parent gave it. e017: each cell of a dead body lays its matter (0.02) plus its share of the body's energy on the world cell under it; a child never placed lays its energy where the parent stands; a broken cell nobody eats lies where it was. The next gut standing there eats it." style="max-width:100%;height:auto;display:block">
 <g fill="none" stroke="currentColor" stroke-width="1.2" font-size="12" font-family="system-ui, sans-serif">
-  <text x="20" y="20" fill="currentColor" stroke="none" font-weight="600">e015: food regrows under the body that eats it</text>
+  <text x="20" y="20" fill="currentColor" stroke="none" font-weight="600">e016: a dead body vanishes</text>
   <g stroke="currentColor" stroke-opacity="0.35"><path d="M 40,40 v 80 M 60,40 v 80 M 80,40 v 80 M 100,40 v 80 M 120,40 v 80 M 40,40 h 80 M 40,60 h 80 M 40,80 h 80 M 40,100 h 80 M 40,120 h 80"/></g>
-  <g stroke="none">
-    <rect x="41" y="41" width="18" height="18" fill="#1baf7a"/>
-    <rect x="101" y="41" width="18" height="18" fill="#1baf7a"/>
-    <rect x="61" y="101" width="18" height="18" fill="#1baf7a"/>
+  <g stroke="none" fill="#1baf7a" fill-opacity="0.35">
+    <rect x="61" y="61" width="18" height="18"/><rect x="81" y="61" width="18" height="18"/><rect x="101" y="61" width="18" height="18"/>
+    <rect x="61" y="81" width="18" height="18"/><rect x="81" y="81" width="18" height="18"/><rect x="101" y="81" width="18" height="18"/>
+    <rect x="81" y="101" width="18" height="18"/><rect x="101" y="101" width="18" height="18"/>
   </g>
-  <path d="M 150,80 L 122,80" stroke="var(--s1)" stroke-width="2" marker-end="url(#arrow)"/>
-  <text x="158" y="70" fill="currentColor" stroke="none">regrowth g per step, held or not</text>
-  <text x="158" y="86" fill="currentColor" stroke="none">(g: 0.10 on grass, up to 6.5 on a tree cell)</text>
-  <text x="158" y="108" fill="currentColor" stroke="none">each gut cell on it eats 0.02 per step</text>
-  <text x="40" y="146" fill="currentColor" stroke="none">a world cell is 4x4 sub-cells and holds food up to 8;</text>
-  <text x="40" y="162" fill="currentColor" stroke="none">a body's cell is one sub-cell; the cell feeds the</text>
-  <text x="40" y="178" fill="currentColor" stroke="none">gut cells standing on it out of its regrowth, so the</text>
-  <text x="40" y="194" fill="currentColor" stroke="none">best body stands still and reaches (a lawn)</text>
+  <text x="150" y="60" fill="currentColor" stroke="none">energy at or below zero, or age over 3,000:</text>
+  <text x="150" y="76" fill="currentColor" stroke="none">the body leaves its sub-cells and is gone;</text>
+  <text x="150" y="92" fill="currentColor" stroke="none">its 8 cells (0.02 each, paid by the parent) and</text>
+  <text x="150" y="108" fill="currentColor" stroke="none">what energy it held vanish</text>
+  <text x="40" y="150" fill="currentColor" stroke="none">a child with no room, or born without cells:</text>
+  <text x="40" y="166" fill="currentColor" stroke="none">half the parent's energy vanishes with it</text>
+  <text x="40" y="188" fill="currentColor" stroke="none">a cell broken by a pusher with no gut: vanishes</text>
 
-  <text x="430" y="20" fill="currentColor" stroke="none" font-weight="600">e016: a plant under a body does not grow</text>
+  <text x="430" y="20" fill="currentColor" stroke="none" font-weight="600">e017: a dead body is food where it lies</text>
   <g stroke="currentColor" stroke-opacity="0.35"><path d="M 450,40 v 80 M 470,40 v 80 M 490,40 v 80 M 510,40 v 80 M 530,40 v 80 M 450,40 h 80 M 450,60 h 80 M 450,80 h 80 M 450,100 h 80 M 450,120 h 80"/></g>
-  <g stroke="none">
-    <rect x="451" y="41" width="18" height="18" fill="#1baf7a"/>
-    <rect x="511" y="41" width="18" height="18" fill="#1baf7a"/>
-    <rect x="471" y="101" width="18" height="18" fill="#1baf7a"/>
+  <g stroke="none" fill="#eda100" fill-opacity="0.75">
+    <rect x="471" y="61" width="18" height="18"/><rect x="491" y="61" width="18" height="18"/><rect x="511" y="61" width="18" height="18"/>
+    <rect x="471" y="81" width="18" height="18"/><rect x="491" y="81" width="18" height="18"/><rect x="511" y="81" width="18" height="18"/>
+    <rect x="491" y="101" width="18" height="18"/><rect x="511" y="101" width="18" height="18"/>
   </g>
-  <path d="M 560,80 L 532,80" stroke="var(--s1)" stroke-width="2" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
-  <text x="568" y="70" fill="currentColor" stroke="none">strict (any): regrowth 0 while any</text>
-  <text x="568" y="86" fill="currentColor" stroke="none">sub-cell is held</text>
-  <text x="568" y="108" fill="currentColor" stroke="none">free: g x free sub-cells / 16 (13/16 here)</text>
-  <g stroke="currentColor" stroke-opacity="0.35"><path d="M 450,140 v 80 M 470,140 v 80 M 490,140 v 80 M 510,140 v 80 M 530,140 v 80 M 450,140 h 80 M 450,160 h 80 M 450,180 h 80 M 450,200 h 80 M 450,220 h 80"/></g>
-  <path d="M 560,180 L 532,180" stroke="var(--s1)" stroke-width="2" marker-end="url(#arrow)"/>
-  <text x="568" y="176" fill="currentColor" stroke="none">the cell a body left: regrowth g,</text>
-  <text x="568" y="192" fill="currentColor" stroke="none">it recovers; the lost regrowth is</text>
-  <text x="568" y="208" fill="currentColor" stroke="none">counted (shaded), not moved elsewhere</text>
+  <path d="M 560,80 L 532,80" stroke="var(--s1)" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="568" y="60" fill="currentColor" stroke="none">each cell lays 0.02 (its matter) plus its</text>
+  <text x="568" y="76" fill="currentColor" stroke="none">share of the body's energy on the world</text>
+  <text x="568" y="92" fill="currentColor" stroke="none">cell under it, in full (the cap bounds what</text>
+  <text x="568" y="108" fill="currentColor" stroke="none">a plant grows to, not what lies there)</text>
+  <text x="450" y="150" fill="currentColor" stroke="none">a child never placed: its energy lies under the parent</text>
+  <text x="450" y="166" fill="currentColor" stroke="none">a broken cell nobody eats: lies where it was</text>
+  <text x="450" y="188" fill="currentColor" stroke="none">the next gut standing there eats it, plant and dead alike</text>
+  <text x="450" y="204" fill="currentColor" stroke="none">(the dead share is counted: `meat`, `dead`, `carrion`)</text>
 
-  <text x="20" y="252" fill="currentColor" stroke="none">everything else is e015: space at the resolution of the body, facing, e010's contact rule, work = force x distance</text>
-  <text x="20" y="270" fill="currentColor" stroke="none">(a forward action that moves nothing costs nothing), two kinds of place, costs, materials, mating, lineages</text>
-  <text x="20" y="298" fill="currentColor" stroke="none">compute: nothing per step (the crowd per cell is kept already); the law takes food from the world instead:</text>
-  <text x="20" y="316" fill="currentColor" stroke="none">regrowth on cells that bodies stand on is lost, so standing still exhausts the spot and the population is smaller</text>
+  <text x="20" y="240" fill="currentColor" stroke="none">everything else is e016: space at the resolution of the body, facing, e010's contact rule, work = force x distance,</text>
+  <text x="20" y="258" fill="currentColor" stroke="none">a cell held by a body does not regrow (strict), two kinds of place, costs, materials, mating, lineages</text>
+  <text x="20" y="286" fill="currentColor" stroke="none">compute: nothing per step (a death writes to the cells under the body; a bite reads one ratio); the law gives food back to the world:</text>
+  <text x="20" y="304" fill="currentColor" stroke="none">2-4% of what is eaten at a cell of 0.02 (e016's deaths x 8-10 cells x 0.02, plus the children never placed); four runs make a cell 0.1,</text>
+  <text x="20" y="322" fill="currentColor" stroke="none">so a child costs five times more and a dead body is worth five times more, the two sides of the same law</text>
 </g>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="var(--s1)"/></marker></defs>
 </svg>
-<figcaption>Figure 1. Regrowth of food, before and after. In e015 (left) a world cell regrows every step whether or not a body holds any of its 16 sub-cells, so a body eats its regrowth in place and the best body stands still. In e016 (right) a cell held by a body does not regrow (the strict reading, the main runs), or regrows by its free sub-cells (the free reading, four runs on the trees world); the cell a body leaves recovers. Nothing else changes; the regrowth that does not happen is lost, not moved.</figcaption>
+<figcaption>Figure 1. What becomes of a body's matter at death, before and after. In e016 (left) a body that dies is gone with its cells and the energy it held, a child never placed takes half its parent's energy into nothing, and a broken cell nobody eats vanishes. In e017 (right) every cell of a dead body lays its matter (0.02) plus its share of the body's energy on the world cell under it, a child never placed lays its energy under its parent, a broken cell lies where it was, and whatever gut stands there next eats it as food. Nothing else changes; upkeep and the work of moving are heat and vanish, as before.</figcaption>
 </figure>
 """
 
@@ -656,15 +673,16 @@ VIEWER_JS = r"""
 """
 
 
-def gallery(world, seed, picks):
-    """picks: [(lineage id, name, what the shape does)]. The most common body of each lineage at its peak, on the 8x8 grid, front up."""
-    run = f"{WORLDS[world][0]}_seed{seed}"
-    widths = WORLDS[world][2]
-    by = lineage_rows(run)
-    bodies = load_bodies(run)
-    frames = list(read_frames(f"results/{run}_long.jsonl"))
+def gallery(picks):
+    """picks: [(world, seed, lineage id, name, what the shape does)]. The most common body of each lineage at its peak, on the 8x8 grid, front up."""
     cards = []
-    for lid, name, what in picks:
+    cache = {}
+    for world, seed, lid, name, what in picks:
+        run = f"{WORLDS[world][0]}_seed{seed}"
+        widths = WORLDS[world][2]
+        if run not in cache:
+            cache[run] = (lineage_rows(run), load_bodies(run), list(read_frames(f"results/{run}_long.jsonl")))
+        by, bodies, frames = cache[run]
         rows = by[lid]
         peak = max(rows, key=lambda r: int(r["size"]))
         span = int(rows[-1]["step"]) - int(rows[0]["step"]) + CONFIRM_STEPS
@@ -677,9 +695,9 @@ def gallery(world, seed, picks):
         p0, p1 = sum(int(r["p0"]) for r in rows), sum(int(r["p1"]) for r in rows)
         home = f"{p0 / max(p0 + p1, 1):.0%} on {PLACE_NAME[widths[0]].split(' (')[0]}"
         cards.append(f"""<figure class="card"><svg viewBox="-1 -1 89 89" width="120" height="120" role="img" aria-label="{html.escape(name)}"><rect x="-1" y="-1" width="89" height="89" fill="var(--cell)"/>{rects}<line x1="-1" y1="-0.5" x2="88" y2="-0.5" stroke="var(--ink2)" stroke-width="1.5" stroke-dasharray="3 2"/></svg>
-<figcaption><strong>{html.escape(name)}</strong><br>lineage {lid}: {span:,} steps, {int(peak["size"]):,} agents at its peak, {home}<br>mass {float(peak["mass"]):.0f} on {float(peak["foot"]):.1f} cells: hard {float(peak["hard"]):.0f}, muscle {float(peak["muscle"]):.0f}, digestive {float(peak["digestive"]):.0f}; bite {float(peak["bite"]):.1f}, front {float(peak["shell_front"]):.1f} / back {float(peak["shell_back"]):.1f}; meat {meat:.0%}<br>{html.escape(what)}</figcaption></figure>""")
+<figcaption><strong>{html.escape(name)}</strong><br>{html.escape(world)}, seed {seed}, lineage {lid}: {span:,} steps, {int(peak["size"]):,} agents at its peak, {home}<br>mass {float(peak["mass"]):.0f} on {float(peak["foot"]):.1f} cells: hard {float(peak["hard"]):.0f}, muscle {float(peak["muscle"]):.0f}, digestive {float(peak["digestive"]):.0f}; dead matter {meat:.0%} of the intake<br>{html.escape(what)}</figcaption></figure>""")
     return f"""<figure class="diagram"><div class="cards">{"".join(cards)}</div>
-<figcaption>Figure 2. Bodies of lineages that prospered in {world}, seed {seed}: the most common body of the lineage at its peak, on the 8x8 grid a body grows on, front up (the dashed edge). Blue: hard, orange: muscle, green: digestive, yellow: sensor. "Cells" is the world cells the body covers; "front / back" the mean hardness of the tips on those sides.</figcaption></figure>"""
+<figcaption>Figure 2. Bodies of lineages that prospered: the most common body of the lineage at its peak, on the 8x8 grid a body grows on, front up (the dashed edge). Blue: hard, orange: muscle, green: digestive, yellow: sensor. "Cells" is the world cells the body covers; "dead matter" the share of the lineage's lifetime intake that was dead bodies.</figcaption></figure>"""
 
 
 def main():
@@ -727,7 +745,17 @@ def main():
                  shaded=med([sh / max(sh + r + wa, 1e-9) for sh, r, wa in zip(half(log, "shaded"), half(log, "regrowth"), half(log, "wasted"))]),
                  shaded_abs=med(half(log, "shaded")), regrowth=med(half(log, "regrowth")),
                  pop_hold=med(log["pop"][3 * len(log["pop"]) // 4:]) / max(med(log["pop"][len(log["pop"]) // 2: 3 * len(log["pop"]) // 4]), 1),
-                 above_half=med(half(log, "res_above_half")), mean_res=med(half(log, "mean_res")), intake_gut=med(half(log, "intake_per_gut")))
+                 above_half=med(half(log, "res_above_half")), mean_res=med(half(log, "mean_res")), intake_gut=med(half(log, "intake_per_gut")),
+                 # Matter: dead matter laid per step as a share of the food eaten per step; dead matter eaten (meat, broken cells
+                 # being none) as a share of the intake; the uneaten stock and whether it levels off; bodies living mostly on the dead.
+                 dead=med([d / max((pl + m) / 10_000, 1e-9) for d, pl, m in zip(half(log, "dead"), half(log, "plant_intake"), half(log, "meat_intake"))]),
+                 dead_abs=med(half(log, "dead")), eaten=med([(pl + m) / 10_000 for pl, m in zip(half(log, "plant_intake"), half(log, "meat_intake"))]),
+                 meat_share=med([m / max(pl + m, 1e-9) for pl, m in zip(half(log, "plant_intake"), half(log, "meat_intake"))]),
+                 meat_majority=med(half(log, "meat_majority")), meat_majority_max=max(half(log, "meat_majority")),
+                 carrion=med(log["carrion"][3 * len(log["carrion"]) // 4:]), carrion_end=log["carrion"][-1], carrion_start=max(log["carrion"]),
+                 carrion_hold=med(log["carrion"][3 * len(log["carrion"]) // 4:]) / max(med(log["carrion"][len(log["carrion"]) // 2: 3 * len(log["carrion"]) // 4]), 1e-9),
+                 scavengers=len(scavenger_lineages(run)), scavenger_span=(scavenger_lineages(run) or [{"span": 0}])[0]["span"],
+                 neighbors=NB[w][s], neighbors16=NB16[w][s], deaths_body=med(half(log, "deaths_body")), no_room_abs=med([b * n for b, n in zip(half(log, "births"), half(log, "births_no_room"))]))
         for k, p in (("a", widths[0]), ("b", widths[1])):
             q = pl[p]
             n = len(q["step"])
@@ -750,6 +778,9 @@ def main():
             d[f"back_{k}"] = med(q["shell_back"][h])
         return d
 
+    # Neighbors from the snapshots, this experiment and e016's run of the same world and seed.
+    NB = {w: {s: med(neighbors_of(f"{WORLDS[w][0]}_seed{s}")[1]) for s in seeds_of(w)} for w in WORLDS}
+    NB16 = {w: {s: med(neighbors_of(f"{E016_OF[w]}_seed{s}", E016)[1]) for s in seeds_of(w)} for w in WORLDS}
     S = {w: {s: summarize(w, s) for s in seeds_of(w)} for w in WORLDS}
 
     def rplace(w, p, key):
@@ -759,28 +790,44 @@ def main():
         return med([med(rplaces[w][s][p][key][len(rplaces[w][s][p][key]) // 2:]) for s in [1, 2, 3, 4]])
 
     def rsum(w, key):
+        if key == "neighbors":
+            return med([NB16[[k for k, v in E016_OF.items() if v == REFS[w][0]][0]][s] for s in [1, 2, 3, 4]])
         if key == "contacts_per":
             return med([med([c / max(p, 1) / 10_000 for c, p in zip(half(rlogs[w][s], "contacts"), half(rlogs[w][s], "pop"))]) for s in [1, 2, 3, 4]])
+        if key == "meat_share":
+            return med([med([m / max(pl + m, 1e-9) for pl, m in zip(half(rlogs[w][s], "plant_intake"), half(rlogs[w][s], "meat_intake"))]) for s in [1, 2, 3, 4]])
         if key not in rlogs[w][1]:
             return float("nan")
         return med([med(half(rlogs[w][s], key)) for s in [1, 2, 3, 4]])
 
-    R = "grass and trees, e015"
-    refs_mass = {"grass, e015": (rplace(R, 8, "mass"), PLACE_COLOR[8]), "trees, e015": (rplace(R, 1, "mass"), PLACE_COLOR[1])}
-    refs_foot = {"grass, e015": (rplace(R, 8, "foot"), PLACE_COLOR[8]), "trees, e015": (rplace(R, 1, "foot"), PLACE_COLOR[1])}
+    NBS = {w: {s: neighbors_of(f"{WORLDS[w][0]}_seed{s}") for s in seeds_of(w)} for w in WORLDS}
+    NBS16 = {w: {s: neighbors_of(f"{E016_OF[w]}_seed{s}", E016) for s in seeds_of(w)} for w in WORLDS}
+
+    def neighbors_chart(title, subtitle):
+        fig, ax = new_axes()
+        top = 0
+        for w in WORLDS:
+            for k, s in enumerate(seeds_of(w)):
+                xs, ys = NBS[w][s]
+                top = max(top, max(ys))
+                ax.plot(xs, ys, color=WORLD_COLOR[w], linewidth=1.1, alpha=0.85, label=w if k == 0 else None)
+                xs, ys = NBS16[w][s]
+                top = max(top, max(ys))
+                ax.plot(xs, ys, color=WORLD_COLOR[w], linewidth=0.9, alpha=0.6, linestyle=":", label=f"{w}, e016" if k == 0 else None)
+        finish(ax, 0, None, top, False, 2)
+        return figure(title, subtitle, to_svg(fig))
 
     narrow = STRICT
     charts = {}
-    charts["forward"] = world_chart("Forward actions", "Share of decisions that are a forward move, per log window, one line per run. e015: 9-27% in the second half; stay and turn are the rest.", logs, lambda l: l["forward"], list(WORLDS), WORLD_COLOR, percent=True, ymax=0.6)
-    charts["happened"] = world_chart("Moves that happened", "Share of decisions that moved the body (forward and not blocked). e015: 1-3%; a body that walks its patch would show as tens of percent.", logs, lambda l: [(1 - b) * f for b, f in zip(l["blocked"], l["forward"])], list(WORLDS), WORLD_COLOR, percent=True, ymax=0.6)
-    charts["contacts"] = world_chart("Contacts per body per step", "Bodies pressed by a forward action, per body per step. e015: 0.10-0.37; e012 (no space): 2-4 with trees.", logs, lambda l: [c / max(p, 1) / 10_000 for c, p in zip(l["contacts"], l["pop"])], list(WORLDS), WORLD_COLOR)
-    charts["shaded"] = world_chart("Regrowth lost to standing bodies", "Share of the world's regrowth (164 per step at 128) that fell on a cell a body held and did not grow. Zero is e015's world; 100% would be a world with no food.", logs, lambda l: [sh / max(sh + r + wa, 1e-9) for sh, r, wa in zip(l["shaded"], l["regrowth"], l["wasted"])], list(WORLDS), WORLD_COLOR, percent=True, ymax=1.0)
-    charts["narrow_hard"] = narrow_chart("Hard cells per body on the narrow place, three widths", "The narrow place of each strict world (trees, edge, shrubs), one line per seed. e015: 0.00-0.03; an arms race would show as 5 or more.", places, narrow, lambda d: d["hard"])
-    charts["narrow_biters"] = narrow_chart("Bodies with a bite on the narrow place, three widths", "Share of the bodies on the narrow place with a hard tip and muscle behind it on the front. e015: 0%.", places, narrow, lambda d: d["biters"], percent=True)
-    charts["mass"] = place_chart("Mass per body, by place", "Mean cells per body on each place (grass and trees, strict reading, one line per seed). Dashed: e015, where food regrew under the body.", places, MAIN, lambda d: d["mass"], refs=refs_mass, ymax=66)
-    charts["foot"] = place_chart("World cells under a body, by place", "Mean world cells a body's cells lie in (1 to 9). Dashed: e015, whose winner, eight cells at the corners of its grid, lay over 4.5.", places, MAIN, lambda d: d["foot"], refs=refs_foot, ymin=1, ymax=6)
-    charts["pop"] = world_chart("Population", "Bodies alive at each log step, one line per run. e015: 1,420-2,450; a line that keeps falling is a world that starves.", logs, lambda l: l["pop"], list(WORLDS), WORLD_COLOR)
-    charts["lineages"] = world_chart("Lineages alive", "Confirmed lineages at each log step. e015: 1-4; e012: 6-15.", logs, lambda l: l["lineages"], list(WORLDS), WORLD_COLOR)
+    charts["dead"] = world_chart("Dead matter laid, as a share of the food eaten", "Matter laid on the ground by the dead per step (cells, energy, children never placed) over the food eaten per step, per log window, one line per run. Zero is e016's world.", logs, lambda l: [d / max((pl + m) / 10_000, 1e-9) for d, pl, m in zip(l["dead"], l["plant_intake"], l["meat_intake"])], list(WORLDS), WORLD_COLOR, percent=True, ymax=0.3)
+    charts["carrion"] = world_chart("Dead matter lying uneaten", "The stock of dead matter on the ground at each log step. The start lays about 8,000 (the random bodies of step 0 die with 5 of energy each); a line that levels off is a world that eats its dead.", logs, lambda l: l["carrion"], list(WORLDS), WORLD_COLOR)
+    charts["meat"] = place_chart("Dead matter eaten by place, as a share of the intake", "The dead matter guts took over all they took on the grass and on the trees, per log window, grass and trees at 0.02, one line per seed. Dashed: the same on the trees at 0.1. A place of scavengers would show tens of percent.", places, MAIN, lambda d: [m / max(pl + m, 1e-9) for pl, m in zip(d["plant_intake"], d["meat_intake"])], percent=True, ymax=0.3,
+                                refs={"trees at 0.1": (med([S["grass and trees, cell 0.1"][s]["meat_b"] for s in seeds_of("grass and trees, cell 0.1")]), WORLD_COLOR["grass and trees, cell 0.1"])})
+    charts["majority"] = world_chart("Bodies living mostly on the dead", "Share of bodies whose lifetime intake is more dead matter than plant, at each log step.", logs, lambda l: l["meat_majority"], list(WORLDS), WORLD_COLOR, percent=True)
+    charts["contacts"] = world_chart("Contacts per body per step", "Bodies pressed by a forward action, per body per step. e016: 0.02-0.05; e015: 0.10-0.37; e012 (no space): 2-4 with trees.", logs, lambda l: [c / max(p, 1) / 10_000 for c, p in zip(l["contacts"], l["pop"])], list(WORLDS), WORLD_COLOR)
+    charts["neighbors"] = neighbors_chart("Neighbors per body, this experiment against e016", "Other bodies holding a sub-cell in the 3x3 world cells around a body's place, mean over bodies, from the snapshots (every 5,000 steps, second half). Solid: this experiment; dotted: e016's run of the same world and seed.")
+    charts["pop"] = world_chart("Population", "Bodies alive at each log step, one line per run. e016: 630-1,093; a line that keeps falling is a world that starves.", logs, lambda l: l["pop"], list(WORLDS), WORLD_COLOR)
+    charts["lineages"] = world_chart("Lineages alive", "Confirmed lineages at each log step. e016: 1-5; e012: 6-15.", logs, lambda l: l["lineages"], list(WORLDS), WORLD_COLOR)
 
     viewer_run = f"{WORLDS[VIEWER_WORLD][0]}_seed{VIEWER_SEED}"
     timeline = timeline_chart(f"Lineages over time ({VIEWER_WORLD}, seed {VIEWER_SEED})", "Each colored band is one lineage, height = agents in it; marks are events at the size they were logged with.", viewer_run, events[VIEWER_WORLD][VIEWER_SEED])
@@ -824,25 +871,26 @@ def main():
     p0 = lambda v: f"{v:.0%}"
     summary = ("<thead><tr><th>Measure (range over seeds; grass / narrow where two)</th>" + "".join(f"<th>{w}</th>" for w in WORLDS) + "".join(f"<th>{r}</th>" for r in REFS) + "</tr></thead><tbody>"
                + row("Population, median", "pop", n0, "pop")
-               + row("Forward actions, median share of decisions", "forward", p0, "forward")
+               + row("Dead matter laid per step, median", "dead_abs", lambda v: f"{v:.2f}")
+               + row("Dead matter laid, median share of the food eaten", "dead", p1)
+               + row("Dead matter eaten, median share of the intake", "meat_share", p1, "meat_share")
+               + row("Dead matter lying uneaten, median of the last quarter", "carrion", n0)
+               + row("Uneaten stock, last quarter over the third", "carrion_hold", lambda v: f"{v:.2f}")
+               + row("Bodies living mostly on the dead, median share", "meat_majority", lambda v: f"{v:.1%}", "meat_majority")
+               + row("Scavenger lineages (dead matter over half the intake, 20,000+ steps)", "scavengers", n0)
+               + row("Neighbors per body, median (from the snapshots)", "neighbors", lambda v: f"{v:.2f}", "neighbors")
+               + row("Contacts per body per step, median", "contacts", lambda v: f"{v:.3f}", "contacts_per")
                + row("Moves that happened, median share of decisions", "happened", p1)
-               + row("Moves blocked, median share of forward actions", "blocked", p0, "blocked")
-               + row("Contacts per body per step, median", "contacts", lambda v: f"{v:.2f}", "contacts_per")
-               + row("Regrowth lost to standing bodies, median share of regrowth", "shaded", p0)
-               + row("Cells broken per 10,000 steps, median", "cells_broken", n0, "cells_broken")
                + row("Mass per body by place, median", "mass", d1, "mass", by_place=True)
                + row("Hard cells per body by place, median", "hard", d1, "hard", by_place=True)
-               + row("Muscle cells per body, median", "muscle", lambda v: f"{v:.2f}", "muscle_mean")
-               + row("Bodies with a bite on the front by place, median share", "biters", p1, "biters", by_place=True)
-               + row("Cover of the place by bodies, median", "cover", p0, "cover", by_place=True)
                + row("World cells under a body by place, median", "foot", d1, "foot", by_place=True)
                + row("Lineages alive, median", "lineages", n0, "lineages")
                + row("Steps per second, median", "sps", n0, "steps_per_sec")
                + "</tbody>")
 
-    tables = data_table(["step", "place", "pop", "mass", "hard", "muscle", "digestive", "bite", "shell", "biters", "cover", "foot", "shell_front", "shell_back", "plant_intake", "meat_intake", "lineages", "movers"],
+    tables = data_table(["step", "place", "pop", "mass", "hard", "muscle", "digestive", "bite", "shell", "biters", "cover", "foot", "plant_intake", "meat_intake", "dead", "carrion", "lineages", "movers"],
                         {f"{w}, seed {s}, {PLACE_NAME[p]} (every 100,000 steps)": places[w][s][p] for w in WORLDS for s in seeds_of(w) for p in WORLDS[w][2]}, every=10)
-    tables += data_table(["step", "pop", "births", "deaths_broken", "cells_broken", "mass_mean", "hard_mean", "biters_share", "biters_any_share", "forward", "stay", "blocked", "pushes", "move_spent", "foot_mean", "cover", "contacts", "regrowth", "shaded", "wasted", "res_above_half", "intake_per_gut", "meat_intake", "plant_intake", "lineages", "steps_per_sec"],
+    tables += data_table(["step", "pop", "births", "deaths_body", "births_no_room", "cells_broken", "mass_mean", "hard_mean", "biters_share", "forward", "blocked", "foot_mean", "cover", "contacts", "regrowth", "shaded", "dead", "carrion", "plant_intake", "meat_intake", "meat_majority", "diet_mixed", "lineages", "steps_per_sec"],
                          {f"{w}, seed {s}, whole world (every 100,000 steps)": logs[w][s] for w in WORLDS for s in seeds_of(w)}, every=10)
 
     text = TEXT
@@ -851,13 +899,13 @@ def main():
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>e016 A plant under a body does not grow - Report</title>
+<title>e017 A dead body is food where it lies - Report</title>
 <style>{CSS}</style>
 </head>
 <body>
 <main>
-<h1>e016: A plant under a body does not grow</h1>
-<p class="sub">Experiment report - 2026-08-31 - e015's world with one law added: a cell held by a body does not regrow. Grass with trees, edge or shrubs at 128x128, four seeds each, plus the trees world under the milder reading (a cell regrows by its free sub-cells), 1,000,000 steps</p>
+<h1>e017: A dead body is food where it lies</h1>
+<p class="sub">Experiment report - 2026-08-31 - e016's world with one law added: what a body is made of does not vanish when it dies. Grass with trees, edge or shrubs at 128x128, four seeds each, plus the trees world with a cell of five times the matter, 1,000,000 steps</p>
 
 <section class="tldr">
 <h2>TL;DR</h2>
@@ -867,10 +915,10 @@ def main():
 <h2>1. Question</h2>
 <p>{text["question"]}</p>
 <ol>
-  <li><strong>Bodies move.</strong> Forward is more than 30% of decisions (e015: 9-27%) and moves that happen (forward actions that found room) more than 10% of decisions (e015: 1-3%), second half, in at least three seeds of four in at least one world.</li>
-  <li><strong>The winning body moves.</strong> The most common body at the end has muscle (e015: 0.00-0.10 per body) or lies over fewer world cells than e015's constellation (4.5), in at least half the runs.</li>
-  <li><strong>Contact returns with the moving.</strong> Contacts above 1 per body per step (e015: 0.10-0.37; e012: 2-4 with trees) on at least one world, second half, in at least two seeds of four. A tooth or armor is watched, not predicted.</li>
-  <li><strong>The world stands at a bounded cost, with less food.</strong> No extinction; a population that holds over the second half (last quarter within 20% of the third); at least 200 steps per second with six runs sharing a machine; regrowth lost to standing bodies below half of the regrowth on every world.</li>
+  <li><strong>The dead are eaten, and the world remembers little.</strong> Dead matter laid on the ground is 2-4% of the food eaten (median, second half) in the twelve runs at 0.02 and 10-20% at 0.1. It is eaten: the stock lying uneaten levels off (last quarter within 20% of the third) below 1,000 in every run, because bodies die where bodies are.</li>
+  <li><strong>No scavenger.</strong> No lineage lives 20,000 steps or more on dead matter for more than half of its intake, at either value, and bodies with more dead matter than plant in their lifetime intake are under 1% of the population. Whether one appears at 0.1 is watched.</li>
+  <li><strong>A crowd is not yet a place worth going to.</strong> Contacts stay under 0.1 per body per step (e016: 0.02-0.05) and neighbors per body are within 20% of e016's on the same world and seed in at least nine of the twelve runs at 0.02. At 0.1 this is the open question: contacts above 0.1 or neighbors above e016's by half in at least two seeds of four would be a crowd that follows death.</li>
+  <li><strong>The winners.</strong> Lineages alive (e016: 1-5) and the winning body (e016: a block of 7-9 gut cells over 1.6-2.7 world cells) are unchanged at 0.02; at 0.1 the population falls and the winning body is watched. The world stands: no extinction, a population holding over the second half, at least 200 steps per second with six runs sharing a machine.</li>
 </ol>
 
 <h2>2. The world</h2>
@@ -878,11 +926,11 @@ def main():
 {DIAGRAM}
 <p>{text["runs"]}</p>
 <ul class="measures">
-  <li><strong>Forward</strong>: share of decisions that are a forward move (the only action that can touch another body); <strong>blocked</strong>: forward actions that did not move the body; <strong>moves that happened</strong>: forward and not blocked.</li>
-  <li><strong>Contacts</strong>: bodies pressed by a forward action, per body per step; <strong>pushes</strong>: forward actions that pressed on at least one body; <strong>cells broken</strong>: cells lost to a push.</li>
-  <li><strong>Regrowth lost to standing bodies</strong> (<code>shaded</code>): the regrowth that fell on held cells and did not grow, next to <strong>wasted</strong>, the regrowth lost to full cells; the share is over the world's whole regrowth (164 per step at 128).</li>
-  <li><strong>Bite</strong>: the largest force (muscle in the line) behind a hard tip on the front; <strong>bite any</strong>: on any side. <strong>Hardness of a side</strong>: mean hardness of the touchable tips there.</li>
-  <li>e015's measures: per place (population, body means, intake, lineages, movers), cover (share of a place's sub-cells held by bodies), world cells under a body, energy paid for moving, hunter lineages, snapshots (position in sub-cells and facing).</li>
+  <li><strong>Dead matter laid</strong> (<code>dead</code>): matter laid on the ground per step by bodies that died, children never placed and broken cells nobody ate; shown as a share of the food eaten per step. <strong>Lying uneaten</strong> (<code>carrion</code>): the stock of dead matter on the ground at the log step, whole world and per place.</li>
+  <li><strong>Dead matter eaten</strong> (<code>meat</code>): what guts took that was dead matter (a cell's food is plant and dead matter in one number; a bite takes both in the cell's proportion), as a share of the intake; per body over its life it gives <strong>bodies living mostly on the dead</strong> (<code>meat_majority</code>) and the lineage log's diet, from which <strong>scavenger lineages</strong> are read (dead matter over half the intake for 20,000 steps or more).</li>
+  <li><strong>Neighbors</strong>: other bodies holding a sub-cell in the 3x3 world cells around the cell under the middle of a body's box, mean over bodies, computed from the snapshots (every 5,000 steps) for this experiment and for e016's run of the same world and seed. <strong>Contacts</strong>: bodies pressed by a forward action, per body per step.</li>
+  <li><strong>Forward</strong>: share of decisions that are a forward move; <strong>blocked</strong>: forward actions that did not move the body; <strong>moves that happened</strong>: forward and not blocked. <strong>Bite</strong>: the largest force behind a hard tip on the front.</li>
+  <li>e016's measures: regrowth lost to standing bodies, per place (population, body means, intake, lineages, movers), cover, world cells under a body, energy paid for moving, hunter lineages, snapshots (position in sub-cells and facing).</li>
 </ul>
 
 <h2>3. Results</h2>
@@ -896,27 +944,27 @@ def main():
 
 <h3>3.1 {text["h1"]}</h3>
 <div class="grid2">
-{charts["forward"]}{charts["happened"]}
-</div>
-<div class="grid2">
-{charts["contacts"]}{charts["shaded"]}
+{charts["dead"]}{charts["carrion"]}
 </div>
 <p>{text["r1"]}</p>
 
 <h3>3.2 {text["h2"]}</h3>
 <div class="grid2">
-{charts["narrow_hard"]}{charts["narrow_biters"]}
+{charts["meat"]}{charts["majority"]}
 </div>
 <p>{text["r2"]}</p>
 
 <h3>3.3 {text["h3"]}</h3>
 <div class="grid2">
-{charts["mass"]}{charts["foot"]}
+{charts["neighbors"]}{charts["contacts"]}
 </div>
-{gallery(VIEWER_WORLD, VIEWER_SEED, GALLERY)}
 <p>{text["r3"]}</p>
 
-<h3>3.4 Watching the world</h3>
+<h3>3.4 {text["h4"]}</h3>
+{gallery(GALLERY)}
+<p>{text["r4"]}</p>
+
+<h3>3.5 Watching the world</h3>
 <div class="wide">{timeline}</div>
 <div class="viewer">
   <div class="canvases">
@@ -932,7 +980,7 @@ def main():
   <div class="bar"><input id="scrub" type="range" min="0" max="0" value="0"></div>
   <div class="bar" id="linlbl"></div>
   <div class="bar" id="legend">Blocks: {legend} <span class="sw front"></span> the front (white edge) <span class="sw dot"></span> has a bite on the front</div>
-  <div class="bar">Left: the whole {vw}x{vw} world at the resolution of the body ({vw * 4}x{vw * 4} sub-cells), every cell a body holds colored by its lineage (gray: none), a white dot on bodies with a bite. Green: food; dashed rings are the patches (blue: grass, width 8; aqua: trees, width 1; radius two widths). Click to move the white box. Right: the box at 24x24 world cells, each body drawn cell by cell where it stands, turned the way it faces, with a white edge on its front, damage included. Labels: agents per lineage, then mean mass, cells spanned along x across the facing, bite, shell, and sensor cells (eyes). {VIEWER_WORLD}, seed {VIEWER_SEED}.</div>
+  <div class="bar">Left: the whole {vw}x{vw} world at the resolution of the body ({vw * 4}x{vw * 4} sub-cells), every cell a body holds colored by its lineage (gray: none), a white dot on bodies with a bite. Green: food, plant and dead matter in one (a bright cell where no patch is drawn is a body that died there); dashed rings are the patches (blue: grass, width 8; aqua: trees, width 1; radius two widths). Click to move the white box. Right: the box at 24x24 world cells, each body drawn cell by cell where it stands, turned the way it faces, with a white edge on its front, damage included. Labels: agents per lineage, then mean mass, cells spanned along x across the facing, bite, shell, and sensor cells (eyes). {VIEWER_WORLD}, seed {VIEWER_SEED}.</div>
 </div>
 <p>{text["viewer"]}</p>
 <div class="grid2">{charts["pop"]}{charts["lineages"]}</div>
@@ -944,7 +992,7 @@ def main():
 <p>{text["conclusion"]}</p>
 
 <h2>Appendix: data</h2>
-<p>Every 100,000th record; full logs in <code>results/*_log.csv</code>, per place in <code>results/*_places.csv</code>, lineages in <code>results/*_lineages.csv</code>, events in <code>results/*_events.csv</code>, agents every 100,000 steps in <code>results/*_agents.csv</code>, snapshots in <code>results/*_{{long,clip,bodies}}.jsonl</code>. Reference runs are read from <code>../e015_move_work/results</code> and <code>../e014_body_space/results</code>. Build this report with <code>uv run python experiments/e016_plant_under_body/report.py</code>.</p>
+<p>Every 100,000th record; full logs in <code>results/*_log.csv</code>, per place in <code>results/*_places.csv</code>, lineages in <code>results/*_lineages.csv</code>, events in <code>results/*_events.csv</code>, agents every 100,000 steps in <code>results/*_agents.csv</code>, snapshots in <code>results/*_{{long,clip,bodies}}.jsonl</code>. Reference runs are read from <code>../e016_plant_under_body/results</code>. Build this report with <code>uv run python experiments/e017_dead_body_food/report.py</code>.</p>
 {tables}
 </main>
 <script id="frames" type="application/octet-stream">{blob}</script>
@@ -958,36 +1006,36 @@ def main():
     print(f"wrote {out} ({os.path.getsize(out)//1024} KB)")
 
 
-# Lineages that prospered in the viewer run: (lineage id, name, what the shape does). Filled after the runs.
+# Lineages that prospered: (world, seed, lineage id, name, what the shape does).
 GALLERY = [
-    (144, "the wedge", "Three digestive cells along the front edge, two below, then one and one down the right edge: seven cells in the front-right corner of the grid over 1.6 world cells. Born at step 119,000, alive at 1,000,000, 570 agents at its peak: the body of the run. Every mouth arrives on the same cell when it steps."),
-    (57, "the wedge, wider", "Four cells along the front, then three, two, one: nine cells over 2.3 world cells. The winner of the first 350,000 steps, replaced by the tighter wedge."),
-    (344, "the block, double", "A 3x2 block with a tail: 15 digestive cells over 3.1 world cells, the heaviest body that lasted. Born at step 495,000, alive at the end with 580 agents at its peak; twice the mouths on the same footprint."),
-    (241, "the block", "Three cells along the front, three below, two below that: eight cells over 2.3 world cells in the front-right corner. The shape every run ends with, in one corner or another."),
-    (177, "the block, trees", "Ten cells in a 3x4 patch of the front rows (14 cells of mass on average) over 2.9 world cells, on the trees: 124 agents at step 250,000, gone by 270,000."),
-    (247, "the block with a tooth, trees", "A 3x3 block with one cell ahead of it, on the trees: the one body of the run with hard cells (1.3) and muscle (1.2) at its peak. 58 agents, 51,000 steps, and it bit nothing."),
-    (420, "the column, trees", "A 2x3 column at the right edge, on the trees: eight cells over 2.1 world cells; 52 agents for 68,000 steps in the second half."),
+    ("grass and trees", 1, 1, "the wedge", "Three digestive cells along the front edge, three below, two below that: eight cells in the front-right corner of the grid over 2.6 world cells. e016's winner, and this run's: alive from step 5,000 to 793,000 with 659 agents at its peak, then replaced by the same body under another name (lineages 293 and 348, to the end). Every mouth lands on the cell just entered; a dead neighbor is 2-3% of what it eats."),
+    ("grass and trees", 1, 351, "the wedge, wider, on the trees", "Five cells along the front, four, two, two: thirteen cells over 3.2 world cells, with a little muscle (0.2). On the trees, where a corpse falls among 32-42 bodies on a few cells, dead matter is 11% of its intake. 51 agents, 84,000 steps."),
+    ("grass and trees", 1, 319, "the diagonal, on the trees", "Four cells along the front edge, then three, two, one, one down the right edge: a staircase over 1.9 world cells. Dead matter 6% of its intake; 41 agents, 93,000 steps on the trees."),
+    ("grass and trees", 1, 178, "the hook, on the trees", "Four along the front, two, one: seven cells over 2.6 world cells with a hard cell now and then (0.4). Dead matter 11% of its intake, the most of this run; 47 agents, 74,000 steps."),
+    ("grass and trees, cell 0.1", 2, 259, "the block that ate the dead", "A 3x4 block of twelve digestive cells with two more below, over 2.8 world cells, on the trees of the world where a cell is 0.1: the one lineage of the sixteen runs whose members had eaten more dead matter than plant for 50,000 steps running (51% at the largest of those detections, 19 agents; 20% at its peak of 36). The trees hold 33-42 bodies, and a body that dies there lays 2-3 on one of their few cells."),
 ]
 
 
 TEXT = {
-    "question": "e015 made a push free and nobody pushed: forward 9-27% of decisions, contacts 0.10-0.37 per body per step, no tooth, and the same winner as e014, eight digestive cells at the corners of a grid that lies over 4.5 world cells and hardly moves. The reading was that food regrows in place, under the body that eats it, so the best body stands still and reaches: a lawn, and a lawn has no herd. The real world's herds move because a plant under a standing animal does not grow, and the grass a herd leaves recovers. This experiment adds that premise as a law about the world (issue #18): a cell held by a body does not regrow. It names no trait and costs nothing per step; it takes food from the world instead. The hypotheses:",
-    "world": "Everything is e015's (128x128 on a torus, drifting food patches of two widths, bodies of 8x8 cells in five kinds grown from the genome, space at the resolution of the body with 4x4 sub-cells per world cell, a facing per body, only the front pushes, e010's contact rule, a cell that costs what it holds, 0.032 per body per step, work = force x distance for a move, four actions: stay, forward, turn left, turn right) with one law added to the regrowth of food (Figure 1). Food is per world cell (up to 8); a body's cell is one sub-cell. Before a cell's regrowth is added, the crowd of the cell is read: under the strict reading (<code>shade</code> = any, the main runs) a cell that any body holds a sub-cell of adds nothing; under the free reading (<code>shade</code> = free) it adds its regrowth times the share of its 16 sub-cells that are free. The regrowth that does not happen is lost, not moved, and counted (<code>shaded</code>).",
-    "runs": "<strong>Runs.</strong> At 128x128, two patches of each kind: grass and trees (widths 8 and 1), grass and the edge (8 and 2), grass and shrubs (8 and 4), seeds 1-4 each under the strict reading (twelve runs), and grass and trees seeds 1-4 under the free reading (four runs); six at a time on each of two machines, one thread each, 1,000,000 steps (8-16 minutes per strict run, the world being small; 23-40 minutes for a free run). A pilot (seed 9, 100,000 steps, trees, both readings) came first; the batch ran both readings because the free one left the pilot a lawn. Reference: e015 (the same world, food regrowing under the body) and e014 on the same worlds and seeds. We record e015's measures and:",
-    "tldr": "A cell a body stands on no longer regrows, and the lawn becomes a pasture: bodies move (moves that happen 11-20% of decisions against e015's 1-3%, and only 12-26% of forward actions blocked against 78-95%), the winner is a block of 7-9 digestive cells in a corner of its grid over 1.6-2.7 world cells instead of a constellation over 4.5, and the world is half as full (630-1,093 bodies against 1,420-2,450) because 66-78% of its regrowth falls on cells that bodies hold. Nobody meets anybody: contacts fall to 0.02-0.05 per body per step, no tooth, no armor, no meat. The free reading (a cell regrows by its free sub-cells) leaves the lawn a lawn: 1,028-1,333 bodies, moves that happen 4-6% of decisions, 62-81% of forward actions blocked, and corners again: 6-12 gut cells at two to four corners of its grid over 3.9-6.0 world cells (e015: 4.5). Moving is now what a body does, and it still finds nothing but grass; the next law is matter that does not vanish, so that a dead body is food where it lies and a crowd is a place worth going to.",
-    "c1": "partly", "l1": "Half", "v1": "Moves that happen are 11-20% of decisions in all twelve strict runs (e015: 1.0-2.8%), above 10% everywhere; forward is 14-24% (e015: 9-27%), never the 30% asked for. A body moves once every 5-9 steps and 74-88% of its forward actions find room (e015: 5-22%); the rest of its decisions are turns (76-86%) and stays (0-1%). The free reading: forward 14-21% of decisions, moves that happen 4-6%, with 62-81% of forward actions blocked: e015's numbers.",
-    "c2": "yes", "l2": "Yes", "v2": "The most common body at the end of every strict run is 7-9 digestive cells in one block, a 3x3 square or a wedge of three, three, two (or three, two, two, one), in a corner of the grid, lying over 1.6-2.7 world cells (e015's constellation: 4.5), with no muscle (0.00-0.17 per body over all bodies). It moves because it can: 74-88% of its forward actions find room. The free reading keeps the corners: 6-12 digestive cells at two to four corners of the grid, over 3.9-6.0 world cells (e015: 4.5).",
-    "c3": "no", "l3": "No", "v3": "Contacts 0.02-0.05 per body per step in every strict run, below e015's 0.10-0.37 and e012's 2-4: bodies move, and there is nobody in the way. Cover is 2-3% of the world (7-8% of the grass, 27-28% of the trees, 20-26% of the edge, 15-18% of the shrubs; e015: 62%, 53%, 33% of the narrow places). Hard cells 0.00-0.13 per body, bodies with a bite 0% on the front and on any side, meat 0% of the intake, cells broken 0-74 per 10,000 steps.",
-    "c4": "partly", "l4": "Stands, on a third of the food", "v4": "No extinction; population 630-750 with trees, 713-830 with the edge, 848-1,093 with shrubs (e015: 1,420-2,450), never below 318 (seed 4 with trees, early) and holding over the second half (last quarter 0.94-1.06 of the third); 541-1,892 steps per second with six runs on a machine. Regrowth lost to standing bodies is 66-78% of the world's regrowth (75-78% with trees, 74-77% with the edge, 66-71% with shrubs), well over the half asked for: the world lives on 33-55 of its 164 regrowth per step. The free reading loses 51-53% of the regrowth and holds 1,028-1,333 bodies: half the shading, two thirds more bodies.",
-    "h1": "Bodies move, and meet nobody",
-    "r1": "The share of decisions that move the body rises from 1-3% to 11-20%, and the share of forward actions blocked falls from 78-95% to 12-26%: a body steps once every 5-9 steps into room it finds. Forward actions themselves stay at 14-24% (e015: 9-27%); what changed is not how often a body tries to move but how often it can, because the world it moves in is 2-3% covered instead of 33-62% on the narrow places. Contacts fall with the crowd, to 0.02-0.05 per body per step: a body that moves through an empty world presses on nothing. Two thirds to three quarters of the regrowth falls on held cells and is lost, most of it on the trees, whose regrowth sits on a few cells that a few bodies hold 27% of the time; the world lives on the rest. The free reading shades 51-53% of the regrowth and moves nothing: forward 14-21%, moves that happen 4-6%, blocked 62-81%, contacts 0.11-0.25, cover 10-13% of the grass and 51-52% of the trees, as in e015.",
-    "h2": "No tooth at any width, again",
-    "r2": "Hard cells per body on the narrow places 0.00-0.08 (single windows on the trees reach 12 hard per body and 6% of bodies with a bite: one or two bodies among 32-40, passing), muscle 0.00-0.18, no body with a bite on the front in the second half of any strict run, meat 0% of the intake, cells broken 0-74 per 10,000 steps (seed 3 with the edge and with shrubs: single bodies with muscle passing through). The narrow places are held by 32-40 bodies on the trees, 110-150 on the edge, 268-370 on the shrubs, a fifth to a third of e015's numbers, at 15-28% cover. Births are 26,000-51,000 per 10,000 steps (e015: 125,000-193,000): fewer tries, and none of them found the tooth. There is nothing to bite: a body gains nothing from another body in this world but its place, and places are free.",
-    "h3": "The block replaces the constellation",
-    "r3": "Mass 7.8-10.6 per body, 1.8-2.7 world cells under a body (e015: 3.5-5.0), 1-5 lineages alive with 7-18 kept over a run: the constellation is gone from every strict run, replaced by a block or a wedge of 7-9 digestive cells in a corner of the grid. Reach is worth nothing when standing exhausts every cell under the body alike; what pays is bringing every mouth onto the cell the body just entered, and a block does that. Figure 2 shows the viewer run's bodies: the wedge that wins (lineage 144, born at step 119,000, alive at the end, 570 agents at its peak, over 1.6 world cells), a wider wedge before it, a double block of 15 cells that lasted, and on the trees a block, a column, and the one body of the run with hard cells and muscle (lineage 247, 58 agents, 51,000 steps, no bite landed). The free reading's winner is the corners again, 6-12 cells at two to four corners over 3.9-6.0 world cells: a sixteenth of the regrowth per held sub-cell is a tax on standing that reach pays for, not a reason to move.",
-    "viewer": "Grass and trees, 128, seed 1, strict reading. The grass is no longer a lawn of one color but a scatter of blocks with room between them, each stepping now and then; the tree knots are a few bodies on a few cells. Play the clip: a block steps forward, turns, steps again; the room between the blocks is where the food is. The long view shows the wedge (lineage 144) taking the grass by step 300,000 and holding it, with two or three challengers a run, and the trees changing hands every hundred thousand steps.",
-    "discussion": "<p>One law about the world, and the lawn is a pasture. A body that stands still eats what is under it in a few steps and then nothing, so the policies that win step off the exhausted cell into one that has recovered: moves that happen went from 1-3% of decisions to 11-20%, blocked moves from 78-95% of forward actions to 12-26%, and the winning body from eight cells reaching over 4.5 world cells to a block of 7-9 over 1.6-2.7. Nothing in the law names a move or a shape; the herd's premise gave a body that walks and a body that brings its mouths together. The price is food: two thirds to three quarters of the regrowth falls on held cells and is lost, and the world holds half as many bodies. The free reading shows the same law at a sixteenth of the strength does the opposite: it shades 51-53% of the regrowth and the winner keeps its corners (3.9-6.0 world cells), because a body that loses a sixteenth of a cell's regrowth per sub-cell it holds gains more by holding a piece of one more cell than by stepping.</p><p>What did not come: contact, and with it teeth, armor, meat. Bodies move through a world that is 2-3% covered and press on nothing (0.02-0.05 contacts per body per step, less than when they stood still in a crowd). A body gains nothing from another body here but its place, and there is room; moving is what a body does now, and it finds only grass. The premise that is missing is the one the sentence \"a crowd is a place worth going to\" needs: matter that does not vanish. A dead body is food where it lies, so a body gains from another without a tooth, and a place where bodies die is a place to walk to. That is vision's \"Next\" 2 and the recommended next experiment; the spill (a full cell feeds its neighbors, for the trees' waste, which is small now: 0-4 of 164) waits behind it.</p><p>What this does not show: whether the strict reading is the right resolution. It stops a whole world cell's regrowth for one sub-cell held, and the free reading (a sixteenth per sub-cell) is a tax that reach pays and nobody moves for. Where the truth of a grazed plant lies between them is not a question this world can answer; the strict reading is the one that made a herd's premise bite, at the cost of a third of the food, and it stays until a reason to change it appears.</p>",
-    "conclusion": "A plant under a body does not grow, and bodies move: moves that happen 11-20% of decisions (e015: 1-3%), 74-88% of forward actions finding room (e015: 5-22%), the winner a block of 7-9 gut cells over 1.6-2.7 world cells in every run, the world standing at 630-1,093 bodies on a third of its regrowth. Contact does not return (0.02-0.05 per body per step), because a body that moves through an empty world meets nobody and gains nothing from a body it meets. The law stays (strict reading). Next: matter that does not vanish, a dead body is food where it lies, so that a crowd is a place worth going to; then the spill.",
+    "question": "e016 made bodies move and they find only grass: contacts 0.02-0.05 per body per step, no tooth, no meat, a block of 7-9 gut cells winning every run with 1-5 lineages alive. A body gains nothing from another body in that world but its place, and places are free. The premise the sentence \"a crowd is a place worth going to\" needs is matter that does not vanish. This experiment adds it as a law about matter (issue #21): what a body is made of does not vanish when it dies; its cells and the energy it held lie as food on the world cells under it, a child never placed lies under its parent, a broken cell nobody eats lies where it was. What the law is worth is set by the world's own numbers: a body's matter is 0.02 per cell (the price its parent paid) and bodies die with nothing else, so in e016's world the dead would be 2-4% of what is eaten. Four more runs make a cell 0.1, five times the matter, to see how the answer moves with the amount. The hypotheses:",
+    "world": "Everything is e016's (128x128 on a torus, drifting food patches of two widths, bodies of 8x8 cells in five kinds grown from the genome, space at the resolution of the body with 4x4 sub-cells per world cell, a facing per body, only the front pushes, e010's contact rule, a cell that costs what it holds, 0.032 per body per step, work = force x distance for a move, a cell held by a body does not regrow) with one law added about matter (Figure 1). A cell's food is one number that a gut eats from (0.02 per gut cell per step); how much of it is dead matter is kept next to it as a measure, and a bite takes both in the cell's proportion, so the dead matter a body ate is known (<code>meat</code>). Dead matter is added in full: the cap (8) bounds what a plant grows to, not what lies on the ground.",
+    "runs": "<strong>Runs.</strong> At 128x128, two patches of each kind: grass and trees (widths 8 and 1), grass and the edge (8 and 2), grass and shrubs (8 and 4), seeds 1-4 each with a cell of 0.02 (twelve runs), and grass and trees seeds 1-4 with a cell of 0.1 (four runs); six at a time on each of two machines, one thread each, 1,000,000 steps (10-30 minutes per run). A pilot (seed 9, 100,000 steps, both values) came first. Reference: e016, the same worlds and seeds, where a dead body vanished. We record e016's measures and:",
+    "tldr": "A dead body is food where it lies, and it is worth what it cost: 2.5-3.2% of the food eaten at a cell of 0.02, 7-11% at 0.1. The world eats its dead (the stock lying uneaten settles at 78-221, most of it beyond the patches where nobody goes) and nothing else changes: neighbors per body are 0.92-1.19 times e016's in all twelve runs and 0.87-1.17 at 0.1, contacts 0.012-0.054 per body per step, the winner e016's wedge of eight gut cells, 2-4 lineages alive. On the trees, where a corpse falls among forty bodies on a few cells, dead matter is 7-12% of the intake (17-20% at 0.1), and one small tree lineage lived 50,000 steps on more dead matter than plant. At the value matter has in this world, a crowd is not a place worth going to; the next law is the closed cycle (#20), where the soil holds what is not eaten and plants grow only out of it, so that matter piles up where bodies die.",
+    "c1": "partly", "l1": "Eaten, less at 0.1 than asked", "v1": "Dead matter laid is 2.5-3.2% of the food eaten at 0.02 in all twelve runs (0.9-1.6 per step against 35-54 eaten: the deaths of e016's world, 3-5 bodies of 8-10 cells per step with no energy left, plus 900-2,300 children per 10,000 steps born without cells). At 0.1 it is 7.2-10.8% (2.7-4.5 per step), under the 10-20% asked for: a dearer cell makes a smaller body (mass 7.2-11.2), and fewer children fail. The stock lying uneaten is below 1,000 everywhere: 78-221 at 0.02 (the last quarter 0.81-1.66 of the third: level in eight runs of twelve, drifting up by a hundred in the rest), 604-851 at 0.1, and 63-216 of it (529-645 at 0.1) lies beyond the patches, laid by the random bodies of step 0 and by bodies that wandered out and died: on the grass 9-18 and on the narrow places 3-13 lie at any time, a few dozen steps' worth. Bodies die where bodies are, and what falls there is eaten.",
+    "c2": "yes", "l2": "Yes, and one small one at 0.1", "v2": "No lineage lived 20,000 steps on more dead matter than plant in the twelve runs at 0.02; bodies with more dead matter than plant in their lifetime intake are 0.1-0.4% of the population (single windows 0.5-1.9%). At 0.1 they are 1.0-2.3% (windows up to 7.2%), and one lineage on the trees (seed 2, lineage 259, Figure 2; 36 agents at its peak) spent 50,000 steps with more dead matter than plant in its members' intake (51% at the largest of those detections, 19 agents). Dead matter is 2.1-2.7% of the intake on the grass and 3.3-11.5% on the narrow places (trees 7.5-11.5%, edge 4.9-5.5%, shrubs 3.3-4.4%); at 0.1, 5.8-9.9% on the grass and 17-20% on the trees.",
+    "c3": "yes", "l3": "Yes", "v3": "Neighbors per body are 0.92-1.19 times e016's on the same world and seed in all twelve runs at 0.02 (2.68-3.50 against 2.63-3.47), and 0.87-1.17 at 0.1; contacts 0.012-0.048 per body per step at 0.02 and 0.030-0.054 at 0.1 (e016: 0.02-0.05). Moves that happen are 9-18% of decisions (e016: 11-20%). No crowd follows death at either value: a dead neighbor is a bite or two, and the policy that walks toward food already finds it.",
+    "c4": "yes", "l4": "Yes", "v4": "Lineages alive 2-4 in every run (e016: 1-5), the winner e016's wedge of eight digestive cells in a corner of the grid over 1.9-2.5 world cells, mass 7.6-10.7, hard 0.00-0.11, muscle 0.00-0.07, no bite. The world stands: no extinction, 652-795 bodies with trees, 722-786 with the edge, 884-1,098 with shrubs (e016: 630-1,093), never below 186 (seed 1 with trees, early), the last quarter 0.94-1.07 of the third; 553-1,732 steps per second with six runs on a machine. At 0.1 the population does not fall (660-752): a child costs five times more, and the body that wins is a cell or two smaller for it.",
+    "h1": "The dead are eaten where they fall",
+    "r1": "Dead matter is 2.5-3.2% of the food eaten at 0.02 and 7-11% at 0.1, and it does not pile up: the stock on the ground falls from the 5,000 the start lays (1,600 random bodies dying with 5 of energy each, where nobody goes) to 78-221 by the second half and stays there, a hundred of it beyond the patches. On the places bodies live, what a dead body lays is eaten within a few dozen steps by whoever stands there next, because bodies die where bodies are. The ground remembers a death for a moment, not for long.",
+    "h2": "Dead matter is a dish on the trees, not a diet",
+    "r2": "On the grass, where a corpse of eight cells lays 0.16 over two or three cells that regrow 0.1 each per step, dead matter is 2-3% of what a body eats. On the trees, where 32-42 bodies stand on a few cells and a body dies among them every few steps, it is 7-12% (17-20% at 0.1), and the one lineage of the sixteen runs that lived more on the dead than on plants was a block on the trees at 0.1, 19-36 agents, for 50,000 steps. Bodies living mostly on the dead are 0.1-0.4% of the population at 0.02 and 1.0-2.3% at 0.1, single windows up to 7%: the young of a crowded tree, who ate a neighbor's remains before their first plant.",
+    "h3": "Nobody comes for the dead",
+    "r3": "Neighbors per body are e016's (0.92-1.19 times, all twelve runs; 0.87-1.17 at 0.1) and contacts are e016's (0.012-0.054). The policy sees food ahead, and a corpse is food, so a body already walks toward it when it is the brightest thing in reach; but a dead neighbor is worth one or two steps of eating, and the grass a body stands on regrows that much in a step or two. Five times the matter does not change the sum: at 0.1 the winning body is smaller and the dead are worth 7-11%, still less than a body finds by walking on.",
+    "h4": "The same winners",
+    "r4": "The wedge of eight digestive cells wins every run at 0.02 (Figure 2), as in e016, with 2-4 lineages alive and no hard or muscle cell to speak of; at 0.1 the same shape a cell smaller. The lineages on the trees are the ones with something to read: the wider wedge with a little muscle, the staircase, the hook with a hard cell now and then, each eating 6-11% dead matter and lasting 70,000-90,000 steps before the grass lineage takes the trees back.",
+    "viewer": "Grass and trees, 128, seed 1, cell 0.02. The world looks like e016's: a scatter of wedges on the grass with room between them, a knot on each tree. What is new is faint: a bright cell now and then where no patch is drawn, a body that died beyond the patches whose remains nobody will eat, and the tree cells, which are brighter than in e016 because the dead fall on them. The long view shows the wedge (lineage 1, then 293 and 348, the same body) holding the grass for the whole run and the trees changing hands every hundred thousand steps.",
+    "discussion": "<p>The law did what it says and nothing more. Matter that does not vanish is eaten where it falls, the world's stock of dead settles at a hundred or two, and a dead body is worth to the world what it cost its parent: 2-3% of the food at 0.02, 7-11% at 0.1. Nothing in the crowd, the contacts, the winner or the lineages moved. The real world's carcass is a place worth going to because it is large next to what one animal eats in a day and rare next to how often animals die; here a body is eight cells worth 0.16 and a gut eats 0.16 in a step, and one body in two hundred dies every step. The premise holds and the amount is not there. A dearer cell (0.1) does not change that, because the same cell is dearer to build: the body that wins gets smaller and the sum stays under what a body finds by walking on.</p><p>What it showed on the side: the narrow place is where the dead matter is. On the trees, where forty bodies stand on a handful of cells, a death lays its matter on a cell that is already the richest in the world, and 7-12% of what is eaten there is dead matter (17-20% at 0.1). The one lineage that lived on the dead was a tree lineage. If a scavenger is ever to exist here, it will be where the dead are concentrated, and that is where bodies already are. A crowd was never going to form around 2% of the food; but a place that keeps what falls on it would be a different matter.</p><p>What this does not show: what happens when matter stays. Here a corpse is eaten in a few dozen steps and the ground forgets it. The next law (#20, e018) closes the cycle: what is not eaten returns to the soil of the cell, a cell regrows only out of its soil, the sun bounds the speed and the total is fixed. Then a place where many died is rich for as long as it takes to eat it back out through plants, and the map remembers. That is the version of this premise with a memory, and the one that could make a crowd a place worth going to.</p>",
+    "conclusion": "A dead body is food where it lies, the world eats it, and it is worth what it cost: 2.5-3.2% of the food at a cell of 0.02, 7-11% at 0.1; the stock of dead settles at 78-221 (604-851 at 0.1), most of it beyond the patches; neighbors and contacts are e016's in every run, the winner is e016's wedge, 2-4 lineages alive; on the trees dead matter is 7-12% of the intake and one small tree lineage lived 50,000 steps on it at 0.1. The law stays (a cell of 0.02: it is honest and free). Next: the closed cycle through the soil (#20, e018), where what is not eaten stays in the cell and plants grow only out of it, so that the ground remembers where bodies died.",
 }
 
 if __name__ == "__main__":

@@ -109,8 +109,66 @@ byte-identical across machines). Reference: e016, the same worlds and seeds.
 
 ## Result
 
-(after the runs)
+All numbers are medians over the second half of the run unless said otherwise; ranges are over
+the twelve runs at 0.02 (`results/128_sigma8-{1,2,4}_seed{1-4}`), the four at 0.1 apart
+(`results/128_sigma8-1-cell0.1_seed{1-4}`). The report (`report.html`) has the charts, the
+per-run tables, the bodies that prospered and the viewer. Runs were split between the two
+machines (seeds 1-2 local, 3-4 on the Ubuntu box).
+
+- **The dead are eaten where they fall.** Dead matter laid is 0.9-1.6 per step, 2.5-3.2% of the
+  35-54 eaten per step, in all twelve runs at 0.02; 2.7-4.5 per step, 7.2-10.8%, at 0.1 (less
+  than five times: a dearer cell makes a smaller body, mass 7.2-11.2, and fewer children
+  fail). The stock lying uneaten falls from the 5,000 the start lays to 78-221 (last quarter;
+  604-851 at 0.1) and is level in eight runs of twelve (last quarter 0.81-1.66 of the third);
+  63-216 of it (529-645 at 0.1) lies beyond the patches, where the random bodies of step 0 and
+  bodies that wandered out died; on the grass 9-18 and on the narrow places 3-13 lie at any
+  time, a few dozen steps' worth.
+- **Dead matter is a dish on the trees, not a diet.** It is 2.1-2.7% of the intake on the
+  grass and 3.3-11.5% on the narrow places (trees 7.5-11.5%, edge 4.9-5.5%, shrubs 3.3-4.4%);
+  at 0.1, 5.8-9.9% on the grass and 17-20% on the trees. Bodies with more dead matter than
+  plant in their lifetime intake are 0.1-0.4% of the population at 0.02 (single windows
+  0.5-1.9%) and 1.0-2.3% at 0.1 (windows up to 7.2%). No lineage at 0.02 lived 20,000 steps
+  on more dead matter than plant; at 0.1 one did (seed 2, lineage 259, a 3x4 block of gut
+  cells on the trees, 36 agents at its peak, 50,000 steps with more dead matter than plant in
+  its members' intake, 51% at the largest of those detections).
+- **Nobody comes for the dead.** Neighbors per body (other bodies within the 3x3 world cells
+  around a body's place, from the snapshots) are 2.68-3.50 against e016's 2.63-3.47 on the
+  same world and seed, 0.92-1.19 times, in all twelve runs; 0.87-1.17 at 0.1. Contacts
+  0.012-0.048 per body per step at 0.02 and 0.030-0.054 at 0.1 (e016: 0.02-0.05). Moves that
+  happen 9-18% of decisions (e016: 11-20%).
+- **The same winners.** The most common body at the end of every run at 0.02 is e016's wedge,
+  eight digestive cells (three, three, two) in a corner of the grid over 1.9-2.5 world cells,
+  mass 7.6-10.7, hard 0.00-0.11, muscle 0.00-0.07, no bite; lineages alive 2-4 (e016: 1-5).
+  At 0.1 the same shape a cell smaller (mass 7.2-11.2), lineages 2-3.
+- **The world stands.** No extinction; population 652-795 with trees, 722-786 with the edge,
+  884-1,098 with shrubs (e016: 630-1,093), never below 186, the last quarter 0.94-1.07 of the
+  third; at 0.1, 660-752 (it does not fall: the dearer cell is paid for by the smaller body).
+  553-1,732 steps/s with six runs on a machine (10-30 minutes per run).
 
 ## Conclusion
 
-(after the runs)
+1. The dead are eaten, and the world remembers little: partly. Laid 2.5-3.2% at 0.02 (as
+   asked) and 7-11% at 0.1 (under the 10-20% asked); the stock is below 1,000 everywhere
+   and level in eight runs of twelve, and most of it lies where nobody goes.
+2. No scavenger: yes at 0.02 (0.1-0.4%, no lineage); at 0.1 one small tree lineage for
+   50,000 steps and 1.0-2.3% of bodies.
+3. A crowd is not yet a place worth going to: yes, at both values. Neighbors within 20% of
+   e016's in all twelve runs, contacts under 0.1.
+4. The winners: yes. e016's wedge, 2-4 lineages, the world standing at e016's numbers.
+
+What it changes: the law stays (a cell of 0.02; it is honest, free, and part 1 of the closed
+cycle). It did what it says and nothing more: a dead body is worth to the world what it cost
+its parent, 2-3% of the food, and it is eaten within a few dozen steps by whoever stands there
+next. The real world's carcass is a place worth going to because it is large next to what one
+animal eats in a day and rare next to how often animals die; here a body of eight cells is
+worth 0.16 and a gut eats 0.16 in a step, and one body in two hundred dies every step. Five
+times the matter does not change the sum, because the same cell is dearer to build and the
+winning body gets smaller. What it showed on the side: the dead matter is where the crowd is.
+On the trees, where forty bodies stand on a handful of cells, 7-12% of what is eaten is dead
+matter (17-20% at 0.1), and the one lineage that lived on the dead was a tree lineage.
+
+What it does not show: what happens when matter stays. Here the ground forgets a death in a
+few dozen steps. The next law (#20, e018) closes the cycle: what is not eaten returns to the
+soil of the cell, a cell regrows only out of its soil, the sun bounds the speed, the total is
+fixed. Then a place where many died is rich for as long as it takes to eat it back out through
+plants, and the map remembers. That is the version of this premise with a memory.

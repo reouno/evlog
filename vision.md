@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-08-30 (e014).
+Last updated: 2026-08-31 (e017).
 
 ## What the viewer should see
 
@@ -52,31 +52,36 @@ body does not grow: a cell held by a body does not regrow, and the lawn is a pas
 decisions against 1-3%, 74-88% of forward actions find room, the winner is a block of 7-9 gut cells over 1.6-2.7 world
 cells in place of the constellation over 4.5; the world lives on a third of its regrowth and holds half the bodies;
 contact falls to 0.02-0.05 per body per step because a body moving through an empty world meets nobody; the milder
-reading, regrowth by the free sub-cells, is a tax that reach pays for and keeps the lawn).
+reading, regrowth by the free sub-cells, is a tax that reach pays for and keeps the lawn), e017 (a dead body is food
+where it lies: every cell of a dead body lays its matter and its share of the body's energy on the world cell under it,
+a child never placed lies under its parent, a broken cell nobody eats lies where it was; the world eats its dead and a
+body is worth what it cost, 2.5-3.2% of the food at a cell of 0.02 and 7-11% at 0.1; neighbors and contacts stay e016's
+in every run, the same wedge wins, 2-4 lineages; on the trees dead matter is 7-12% of the intake and one small tree
+lineage lived 50,000 steps on it at 0.1: the dead matter is where the crowd is, and the ground forgets it in a few
+dozen steps).
 
 Next, in this order (GitHub issue numbers):
-1. #21 Matter that does not vanish, part 1: a dead body is food where it lies, so a crowd is a place worth going to and
-   a body gains from another body without a tooth. e016 made bodies move and they find only grass; this is the premise
-   "a crowd is a place worth going to" needs. A law about matter, not a trait; whether it gives scavengers, a crowd that
-   follows death, or a tooth is for the run to show.
-2. #20 Matter that does not vanish, part 2: a closed cycle. What is not eaten returns to the soil of the cell, and a cell
+1. #20 Matter that does not vanish, part 2: a closed cycle. What is not eaten returns to the soil of the cell, and a cell
    regrows only out of the soil's matter; the sun (today's regrowth rate) bounds the speed, the soil bounds the amount,
-   and the total is fixed. What it can give: a place where many died is rich, so plants grow there and crowds follow
-   death; the map remembers (principle 6); boom and bust instead of a fixed carrying capacity (watch principle 4: the
-   soil must give back slowly enough); and the rich places we draw today (the patches) may emerge from where matter
-   piles up. What it risks: matter spreading flat, in which case a spill or diffusion law is next. One f32 per cell.
-3. Environments that differ by place (#14) and by time (seasons): plants, desert, warm and cold, sea, mountain, oxygen.
+   and the total is fixed. e017 showed the premise without a memory: a dead body is eaten where it fell within a few
+   dozen steps and is worth 2-3% of the food; the dead matter is where the crowd is (7-12% of the intake on the trees).
+   What the cycle can give: a place where many died is rich for as long as it takes to eat it back out through plants,
+   so crowds may follow death; the map remembers (principle 6); boom and bust instead of a fixed carrying capacity
+   (watch principle 4: the soil must give back slowly enough); and the rich places we draw today (the patches) may
+   emerge from where matter piles up. What it risks: matter spreading flat, in which case a spill or diffusion law is
+   next. One f32 per cell.
+2. Environments that differ by place (#14) and by time (seasons): plants, desert, warm and cold, sea, mountain, oxygen.
    This is the answer to #19's "many pressures": a place selects among the verbs the physics has; add verbs first. e012
    is the first place law and shows the pattern works: two places, two regimes, in one run, at no compute cost. New
    materials (a cell that stores, for a world where food comes and goes) are added when a premise calls for one.
-4. A full cell that spills food to its neighbors (fruit falls), so that a tree is not one cell feeding sixteen gut
+3. A full cell that spills food to its neighbors (fruit falls), so that a tree is not one cell feeding sixteen gut
    cells. Small now: with bodies moving, 0-4 of 164 regrowth per step is lost to the cap (e015: 67-68 with trees).
-5. #5 3D bodies (same development, 8x8x8), with the ground half of #16 (friction by the cells that touch the ground, an
+4. #5 3D bodies (same development, 8x8x8), with the ground half of #16 (friction by the cells that touch the ground, an
    overhang has to be held up): legs and wings need a vertical axis, and the top-view grid has none. The 90th percentile
    of mass is 64 at width 1.
-6. #4 Learning, growth, aging, health as a layer on top of birth traits.
+5. #4 Learning, growth, aging, health as a layer on top of birth traits.
 
-How we judge whether a law worked (#19): count the winners. e013-e016 end with one body winning every run and 1-5
+How we judge whether a law worked (#19): count the winners. e013-e017 end with one body winning every run and 1-5
 lineages alive; a world with one optimum is reached fast and is dull to watch. A wider genome or more parts would only
 make the one optimum slower to reach; what makes several winners is more pressures (places, seasons, matter that
 cycles), so every law is judged by how many different bodies prosper at once, not by how many are possible.
@@ -179,6 +184,21 @@ materials and the world.
   Selection keeps reach alone, and reach alone makes plants: the winning body everywhere is four to eight digestive
   cells at the four corners of its grid, a constellation lying over four world cells that hardly moves; other bodies
   stand between its cells. Space and the arms race are in tension until pushing into a body is free to try.
+- e016: a cell held by a body does not regrow (the strict reading: no regrowth while any of its 16 sub-cells is held), a
+  law of the world from here on. It makes bodies move (moves that happen 11-20% of decisions, 74-88% of forward actions
+  find room) and brings the mouths together (a block or wedge of 7-9 gut cells over 1.6-2.7 world cells wins every
+  run); the price is two thirds of the regrowth and half the bodies. The free reading (regrowth by the free sub-cells)
+  is a tax that reach pays for and keeps e015's lawn. Contact does not return: 0.02-0.05 per body per step.
+- e017: what a body is made of does not vanish when it dies (every cell lays CELL_ENERGY plus its share of the body's
+  energy on the world cell under it; a child never placed lies under its parent; a broken cell nobody eats lies where it
+  was; added in full, the cap bounds only what a plant grows to), a law of the world from here on, at a cell of 0.02.
+  The dead matter of a cell is kept next to its food as a measure (`carrion`), so what a body ate of the dead is known
+  (`meat`). It is free and honest, and it changes nothing by itself: a body is worth what it cost (2.5-3.2% of the food
+  at 0.02, 7-11% at 0.1, where the winning body is a cell smaller because a cell is dearer to build), it is eaten within
+  a few dozen steps where it fell, neighbors per body (from the snapshots, a measure to keep) and contacts are e016's
+  in all sixteen runs, and the same wedge wins. The dead are where the crowd is: 7-12% of the intake on the trees, one
+  small tree lineage living on the dead for 50,000 steps at 0.1. A crowd will not form around 2% of the food; a place
+  that keeps what falls on it (the closed cycle, #20) is the version of the premise with a memory.
 - e007 calibration: 128x128 (4 islands) matches 256x256 per island for what happens on an island (population,
   food, predation, body composition, rate of sensor lineages) but not between islands (lineages per island and
   lifetime move with the number of islands). Use 128 with more seeds for questions about bodies and behavior;
