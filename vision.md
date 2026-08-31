@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-08-31 (e018).
+Last updated: 2026-08-31 (e019).
 
 ## What the viewer should see
 
@@ -64,30 +64,35 @@ tenth of the cells holding 43-87% of the soil, the trails of the patches and of 
 world eats what its bodies spend, 23-26 per step of 164 of sun, a third of the sun falls on empty cells, the trees lose
 their bodies, the population swings 2-5x, lineages fall to 1-3 against e017's 4, three scarce worlds of four die, and
 under a uniform sun the soil weaves into the walks and the food supply falls through the run; 70% of the matter lies
-beyond the patches where no sun is).
+beyond the patches where no sun is), e019 (matter that flows: a height per cell and soil that runs to lower neighbors,
+its own height counting, so that it pools level; the closed world stands for the first time, food eaten steady to 1%
+and the population to 1-3% in all twelve uniform-sun runs; the soil pools into a level lake over the low ground that
+holds 100% of the soil and 99-100% of the bodies, bare ridges above it, the soil map the terrain upside down; but a
+lake is one place, the same bar of 6-10 gut cells wins it as wins the flat lawn, lineages stay at 1-2, and the terrain
+costs the world the ridges' share of the sun; over the drawn sun the terrain is fatal, two worlds of four die as the
+patches drift off the lake: a rich place in a closed world is where the sun and the soil meet).
 
 Next, in this order (GitHub issue numbers):
-1. #22 Matter that flows: a terrain the soil runs down. e018 showed what a closed world does when matter moves only
-   inside a body: the sun becomes a pump that empties each cell once, the world lives on what its bodies return, the
-   rich places are the places the sun drains fastest, and most of the matter lies where no sun is. The real world's
-   ground moves matter on its own (water downhill, a delta rich because a continent drains into it) and the sun shines
-   everywhere. A height per cell and soil that spills to lower neighbors at a rate; the sun uniform; the places are the
-   valleys, drawn by the water. One f32 per cell and one pass per step. What to watch: whether valleys become e011's
-   trees (rich cells, big bodies, contact) without a drawn patch, whether the closed world stands (principle 4), how
-   many lineages it holds (#19). Whether the cycle stays closed is decided there.
-2. Environments that differ by place (#14) and by time (seasons): plants, desert, warm and cold, sea, mountain, oxygen.
-   This is the answer to #19's "many pressures": a place selects among the verbs the physics has; add verbs first. e012
-   is the first place law and shows the pattern works: two places, two regimes, in one run, at no compute cost. New
-   materials (a cell that stores, for a world where food comes and goes) are added when a premise calls for one.
-3. A full cell that spills food to its neighbors (fruit falls), so that a tree is not one cell feeding sixteen gut
+1. Environments that differ by place (#14). e019 leaves every cell with a coordinate the real world's places vary
+   along: height. The lake is one place and the ridges are a desert nobody enters, because nothing is there for a body;
+   the next law says what the high ground has that the lake does not (warm and cold, wet and dry, the plants that grow
+   there), as a law about the world, not a stronger sun up there (that is a patch again). The sun is uniform from here
+   and the shape of the world comes from the ground.
+   Seasons (by time) belong here too. This is the answer to #19's "many pressures": a place selects among the verbs
+   the physics has; add verbs first. e012 is the first place law and shows the pattern works: two places, two regimes,
+   in one run, at no compute cost. New materials (a cell that stores, for a world where food comes and goes) are added
+   when a premise calls for one.
+2. A full cell that spills food to its neighbors (fruit falls), so that a tree is not one cell feeding sixteen gut
    cells. Small now: with bodies moving, 0-4 of 164 regrowth per step is lost to the cap (e015: 67-68 with trees).
-4. #5 3D bodies (same development, 8x8x8), with the ground half of #16 (friction by the cells that touch the ground, an
+3. #5 3D bodies (same development, 8x8x8), with the ground half of #16 (friction by the cells that touch the ground, an
    overhang has to be held up): legs and wings need a vertical axis, and the top-view grid has none. The 90th percentile
    of mass is 64 at width 1.
-5. #4 Learning, growth, aging, health as a layer on top of birth traits.
+4. #4 Learning, growth, aging, health as a layer on top of birth traits.
 
-How we judge whether a law worked (#19): count the winners. e013-e018 end with one body winning every run and 1-5
-lineages alive (e018's closed cycle: 1-3, fewer than the open world's 4, so a law can also lose by this rule); a world with one optimum is reached fast and is dull to watch. A wider genome or more parts would only
+How we judge whether a law worked (#19): count the winners. e013-e019 end with one body winning every run and 1-5
+lineages alive (e018's closed cycle: 1-3, fewer than the open world's 4, so a law can also lose by this rule; e019's
+terrain: 1-2, level with e018, while being the first closed world to pass principle 4); a world with one optimum is
+reached fast and is dull to watch. A wider genome or more parts would only
 make the one optimum slower to reach; what makes several winners is more pressures (places, seasons, matter that
 cycles), so every law is judged by how many different bodies prosper at once, not by how many are possible.
 
@@ -215,6 +220,16 @@ materials and the world.
   reserve swings, so principle 4 has to be checked by the population's swing, not only by extinction. Matter is
   conserved to 0.01% (f32 rounding at 0.8% with 2,000 bodies); the leak (a parent paying for a child's cells with energy
   it does not have) is under 0.02%.
+- e019: the flow (the surface of a cell is its height plus its soil; each step a cell gives a tenth of its soil to the
+  neighbors whose surface is lower, split by the drop, never more than an eighth of a drop) is a law of the world from
+  here on, with or without a terrain: it is what makes the closed cycle stand (every cell with soil grows, a trail
+  spreads as fast as it is laid; food eaten steady to 1%, population to 1-3%, over a million steps in twelve runs of
+  twelve). The rate hardly matters (0.01, 0.1 and 1 give the same world; the volume of soil and the shape of the ground
+  set the lake). The terrain (smooth noise from the seed, a relief in soil units) is kept as the source of the world's
+  shape: a level lake in the low ground, a shore, a desert above; the viewer gets it as a layer. The sun is uniform from
+  here: drawn patches over a terrain put the sun where the soil is not, and the world dies of it. The soil is an f64 (an
+  f32 soil drifted up to 1.8% of the matter over a million steps; f64 holds 0.0003%). Places under the uniform sun are
+  read by height band (thirds of the cells): keep that in the per-place log.
 - e007 calibration: 128x128 (4 islands) matches 256x256 per island for what happens on an island (population,
   food, predation, body composition, rate of sensor lineages) but not between islands (lineages per island and
   lifetime move with the number of islands). Use 128 with more seeds for questions about bodies and behavior;
