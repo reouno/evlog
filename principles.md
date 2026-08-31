@@ -40,6 +40,10 @@ When we look for one, we think in metaphors of the real world.
 - **Name the stage the world is at.** e010's five-cell grazers are a world of microbes, or a world
   of mice; the picture tells us what the real world had at that stage that ours does not, and
   which premise is missing.
+- **Pressures, not parts.** When one body wins every run, the space of bodies is not too small;
+  the world has one optimum. More kinds of parts or a wider genome make that optimum slower to
+  reach, not less alone. Add a pressure (a place, a season, matter that cycles) and count how many
+  different bodies prosper at once; that count is how a law is judged.
 - **The metaphor is a source, not a target.** evlog is a virtual world. It does not have to follow
   the real one, and it should not only imitate it: what can exist here and nowhere else is part of
   what makes it worth watching. Take the premise, not the outcome, and let selection decide.

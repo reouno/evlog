@@ -55,19 +55,31 @@ contact falls to 0.02-0.05 per body per step because a body moving through an em
 reading, regrowth by the free sub-cells, is a tax that reach pays for and keeps the lawn).
 
 Next, in this order (GitHub issue numbers):
-1. Matter that does not vanish: a dead body is food where it lies, so a crowd is a place worth going to and a body gains
-   from another body without a tooth. e016 made bodies move and they find only grass; this is the premise "a crowd is a
-   place worth going to" needs. A law about matter, not a trait; whether it gives scavengers, a crowd that follows death,
-   or a tooth is for the run to show.
-2. A full cell that spills food to its neighbors (fruit falls), so that a tree is not one cell feeding sixteen gut
-   cells. Smaller now: with bodies moving, 0-4 of 164 regrowth per step is lost to the cap (e015: 67-68 with trees).
-3. #5 3D bodies (same development, 8x8x8), with the ground half of #16 (friction by the cells that touch the ground, an
+1. #21 Matter that does not vanish, part 1: a dead body is food where it lies, so a crowd is a place worth going to and
+   a body gains from another body without a tooth. e016 made bodies move and they find only grass; this is the premise
+   "a crowd is a place worth going to" needs. A law about matter, not a trait; whether it gives scavengers, a crowd that
+   follows death, or a tooth is for the run to show.
+2. #20 Matter that does not vanish, part 2: a closed cycle. What is not eaten returns to the soil of the cell, and a cell
+   regrows only out of the soil's matter; the sun (today's regrowth rate) bounds the speed, the soil bounds the amount,
+   and the total is fixed. What it can give: a place where many died is rich, so plants grow there and crowds follow
+   death; the map remembers (principle 6); boom and bust instead of a fixed carrying capacity (watch principle 4: the
+   soil must give back slowly enough); and the rich places we draw today (the patches) may emerge from where matter
+   piles up. What it risks: matter spreading flat, in which case a spill or diffusion law is next. One f32 per cell.
+3. Environments that differ by place (#14) and by time (seasons): plants, desert, warm and cold, sea, mountain, oxygen.
+   This is the answer to #19's "many pressures": a place selects among the verbs the physics has; add verbs first. e012
+   is the first place law and shows the pattern works: two places, two regimes, in one run, at no compute cost. New
+   materials (a cell that stores, for a world where food comes and goes) are added when a premise calls for one.
+4. A full cell that spills food to its neighbors (fruit falls), so that a tree is not one cell feeding sixteen gut
+   cells. Small now: with bodies moving, 0-4 of 164 regrowth per step is lost to the cap (e015: 67-68 with trees).
+5. #5 3D bodies (same development, 8x8x8), with the ground half of #16 (friction by the cells that touch the ground, an
    overhang has to be held up): legs and wings need a vertical axis, and the top-view grid has none. The 90th percentile
    of mass is 64 at width 1.
-4. Environments that differ by place (#14): plants, desert, warm and cold, sea, mountain, oxygen. A place selects among
-   the verbs the physics has; add verbs first. e012 is the first place law and shows the pattern works: two places, two
-   regimes, in one run, at no compute cost.
-5. #4 Learning, growth, aging, health as a layer on top of birth traits.
+6. #4 Learning, growth, aging, health as a layer on top of birth traits.
+
+How we judge whether a law worked (#19): count the winners. e013-e016 end with one body winning every run and 1-5
+lineages alive; a world with one optimum is reached fast and is dull to watch. A wider genome or more parts would only
+make the one optimum slower to reach; what makes several winners is more pressures (places, seasons, matter that
+cycles), so every law is judged by how many different bodies prosper at once, not by how many are possible.
 
 What we want the viewer to be able to do: look at a body and guess what it does, the way a fang, four legs, or a wing
 is read at a glance. That needs the physics the reader already knows (a front, ground, air), written as laws of
