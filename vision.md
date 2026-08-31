@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-08-31 (e019).
+Last updated: 2026-09-01 (e020).
 
 ## What the viewer should see
 
@@ -70,18 +70,28 @@ and the population to 1-3% in all twelve uniform-sun runs; the soil pools into a
 holds 100% of the soil and 99-100% of the bodies, bare ridges above it, the soil map the terrain upside down; but a
 lake is one place, the same bar of 6-10 gut cells wins it as wins the flat lawn, lineages stay at 1-2, and the terrain
 costs the world the ridges' share of the sun; over the drawn sun the terrain is fatal, two worlds of four die as the
-patches drift off the lake: a rich place in a closed world is where the sun and the soil meet).
+patches drift off the lake: a rich place in a closed world is where the sun and the soil meet), e020 (the breath rises and the rain falls on
+the mountains: what a body burns goes to the air, one pool for the world, and the air rains on every cell at most
+the sun's rate times height over relief; the high ground lives, 658-670 bodies on ridges that held 0-14, the world
+eats 73-94 per step, steady, with its store in the air and rivers of soil running from under the crowds to the
+valley floor; the bodies sort by height, mass at birth rising valley to ridge in all four seeds, the small variants
+and twice a second lineage holding the thin valleys: the first place effect on bodies under a uniform sun, a
+grading, not a split; half the breath to the air is the richest world of the series, both stores, 103-109 eaten,
+nothing wasted but shading, and no place differs from another: a closed world trades productivity against
+difference; rain everywhere alike rebuilds the flat lawn, because the store sits wherever the draw is capped and
+the population's own shading is cap enough).
 
 Next, in this order (GitHub issue numbers):
-1. Environments that differ by place (#14). e019 leaves every cell with a coordinate the real world's places vary
-   along: height. The lake is one place and the ridges are a desert nobody enters, because nothing is there for a body;
-   the next law says what the high ground has that the lake does not (warm and cold, wet and dry, the plants that grow
-   there), as a law about the world, not a stronger sun up there (that is a patch again). The sun is uniform from here
-   and the shape of the world comes from the ground.
-   Seasons (by time) belong here too. This is the answer to #19's "many pressures": a place selects among the verbs
-   the physics has; add verbs first. e012 is the first place law and shows the pattern works: two places, two regimes,
-   in one run, at no compute cost. New materials (a cell that stores, for a world where food comes and goes) are added
-   when a premise calls for one.
+1. Environments that differ by place (#14, continued). e020 wrote the first law on the height coordinate and the
+   pattern held: an income that differs in amount (rain by height) grades the bodies - mass sorts by height, second
+   lineages hold the lower ground - but does not split them; one kind of body still wins everything. The next law
+   should make the high ground differ in kind, not amount. Candidates on the height axis, in order: the canopy (a
+   plant that stands ungrazed grows tall and takes its neighbors' sun - the only way a cell in a closed world can
+   hold more than one bite, and the high ground can now keep plants; this is the closed-world form of e011's rich
+   cells, the premise that made teeth pay), cold by height (a cell face exposed to the air loses heat, faster the
+   higher: compactness and huddling as outcomes, a reason for bodies to touch), the slope itself (standing on a
+   slope takes grip: muscle per mass as an outcome). Seasons (by time) belong here too and need a material that
+   stores, since a body's reserve is about 60 steps. Laws about the world only, as ever.
 2. A full cell that spills food to its neighbors (fruit falls), so that a tree is not one cell feeding sixteen gut
    cells. Small now: with bodies moving, 0-4 of 164 regrowth per step is lost to the cap (e015: 67-68 with trees).
 3. #5 3D bodies (same development, 8x8x8), with the ground half of #16 (friction by the cells that touch the ground, an
@@ -89,9 +99,10 @@ Next, in this order (GitHub issue numbers):
    of mass is 64 at width 1.
 4. #4 Learning, growth, aging, health as a layer on top of birth traits.
 
-How we judge whether a law worked (#19): count the winners. e013-e019 end with one body winning every run and 1-5
+How we judge whether a law worked (#19): count the winners. e013-e020 end with one body winning every run and 1-5
 lineages alive (e018's closed cycle: 1-3, fewer than the open world's 4, so a law can also lose by this rule; e019's
-terrain: 1-2, level with e018, while being the first closed world to pass principle 4); a world with one optimum is
+terrain: 1-2; e020's rain: 1-2, but graded by height for the first time, with second lineages holding the low ground
+for 300,000-520,000 steps); a world with one optimum is
 reached fast and is dull to watch. A wider genome or more parts would only
 make the one optimum slower to reach; what makes several winners is more pressures (places, seasons, matter that
 cycles), so every law is judged by how many different bodies prosper at once, not by how many are possible.
