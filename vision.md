@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-08-31 (e017).
+Last updated: 2026-08-31 (e018).
 
 ## What the viewer should see
 
@@ -58,18 +58,23 @@ a child never placed lies under its parent, a broken cell nobody eats lies where
 body is worth what it cost, 2.5-3.2% of the food at a cell of 0.02 and 7-11% at 0.1; neighbors and contacts stay e016's
 in every run, the same wedge wins, 2-4 lineages; on the trees dead matter is 7-12% of the intake and one small tree
 lineage lived 50,000 steps on it at 0.1: the dead matter is where the crowd is, and the ground forgets it in a few
-dozen steps).
+dozen steps), e018 (a closed cycle through the soil: a plant grows out of its own cell's soil at most the sun's rate, what
+a body spends falls to the soil under it, the dead rot into it; matter is conserved and the map remembers, the richest
+tenth of the cells holding 43-87% of the soil, the trails of the patches and of the bodies visible in the maps; but the
+world eats what its bodies spend, 23-26 per step of 164 of sun, a third of the sun falls on empty cells, the trees lose
+their bodies, the population swings 2-5x, lineages fall to 1-3 against e017's 4, three scarce worlds of four die, and
+under a uniform sun the soil weaves into the walks and the food supply falls through the run; 70% of the matter lies
+beyond the patches where no sun is).
 
 Next, in this order (GitHub issue numbers):
-1. #20 Matter that does not vanish, part 2: a closed cycle. What is not eaten returns to the soil of the cell, and a cell
-   regrows only out of the soil's matter; the sun (today's regrowth rate) bounds the speed, the soil bounds the amount,
-   and the total is fixed. e017 showed the premise without a memory: a dead body is eaten where it fell within a few
-   dozen steps and is worth 2-3% of the food; the dead matter is where the crowd is (7-12% of the intake on the trees).
-   What the cycle can give: a place where many died is rich for as long as it takes to eat it back out through plants,
-   so crowds may follow death; the map remembers (principle 6); boom and bust instead of a fixed carrying capacity
-   (watch principle 4: the soil must give back slowly enough); and the rich places we draw today (the patches) may
-   emerge from where matter piles up. What it risks: matter spreading flat, in which case a spill or diffusion law is
-   next. One f32 per cell.
+1. #22 Matter that flows: a terrain the soil runs down. e018 showed what a closed world does when matter moves only
+   inside a body: the sun becomes a pump that empties each cell once, the world lives on what its bodies return, the
+   rich places are the places the sun drains fastest, and most of the matter lies where no sun is. The real world's
+   ground moves matter on its own (water downhill, a delta rich because a continent drains into it) and the sun shines
+   everywhere. A height per cell and soil that spills to lower neighbors at a rate; the sun uniform; the places are the
+   valleys, drawn by the water. One f32 per cell and one pass per step. What to watch: whether valleys become e011's
+   trees (rich cells, big bodies, contact) without a drawn patch, whether the closed world stands (principle 4), how
+   many lineages it holds (#19). Whether the cycle stays closed is decided there.
 2. Environments that differ by place (#14) and by time (seasons): plants, desert, warm and cold, sea, mountain, oxygen.
    This is the answer to #19's "many pressures": a place selects among the verbs the physics has; add verbs first. e012
    is the first place law and shows the pattern works: two places, two regimes, in one run, at no compute cost. New
@@ -81,8 +86,8 @@ Next, in this order (GitHub issue numbers):
    of mass is 64 at width 1.
 5. #4 Learning, growth, aging, health as a layer on top of birth traits.
 
-How we judge whether a law worked (#19): count the winners. e013-e017 end with one body winning every run and 1-5
-lineages alive; a world with one optimum is reached fast and is dull to watch. A wider genome or more parts would only
+How we judge whether a law worked (#19): count the winners. e013-e018 end with one body winning every run and 1-5
+lineages alive (e018's closed cycle: 1-3, fewer than the open world's 4, so a law can also lose by this rule); a world with one optimum is reached fast and is dull to watch. A wider genome or more parts would only
 make the one optimum slower to reach; what makes several winners is more pressures (places, seasons, matter that
 cycles), so every law is judged by how many different bodies prosper at once, not by how many are possible.
 
@@ -199,6 +204,17 @@ materials and the world.
   in all sixteen runs, and the same wedge wins. The dead are where the crowd is: 7-12% of the intake on the trees, one
   small tree lineage living on the dead for 50,000 steps at 0.1. A crowd will not form around 2% of the food; a place
   that keeps what falls on it (the closed cycle, #20) is the version of the premise with a memory.
+- e018: the soil (one f32 per cell: what was spent and died on the cell, drawn out by the sun into the plant) is kept as
+  the world's memory and as a layer in the viewer; the maps of it are the history of a run. The closed cycle as e018 ran
+  it (a plant grows only out of its own cell's soil, nothing moves matter but a body) is not kept as it stands: the world
+  eats what its bodies spend (regrowth = spent, 23-26 per step of 164 of sun), the trees lose their bodies (a tree cell's
+  6.5 of sun empties its soil in a step), the population swings 2-5x, lineages fall to 1-3, three scarce worlds of four
+  die, and under a uniform sun the soil weaves into the bodies' trails (one cell wide) and the food supply falls through
+  the run. Two lessons: a cell in a closed world can be rich only if matter flows into it from elsewhere, so rich places
+  need a flow law (water, #22), not a sun law; and a closed loop with a delay (rot at 1% per step, the sun's rate) and no
+  reserve swings, so principle 4 has to be checked by the population's swing, not only by extinction. Matter is
+  conserved to 0.01% (f32 rounding at 0.8% with 2,000 bodies); the leak (a parent paying for a child's cells with energy
+  it does not have) is under 0.02%.
 - e007 calibration: 128x128 (4 islands) matches 256x256 per island for what happens on an island (population,
   food, predation, body composition, rate of sensor lineages) but not between islands (lineages per island and
   lifetime move with the number of islands). Use 128 with more seeds for questions about bodies and behavior;
