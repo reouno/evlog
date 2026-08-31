@@ -47,25 +47,27 @@ fill up again, and still nobody touches anybody; contact is a failed move now, s
 winning body is four cells at the four corners of its grid), e015 (work is force times distance: a move costs by the mass
 moved times the distance and a push that moves nothing costs nothing; pushing is free and nobody pushes, forward 9-27% of
 decisions, contacts 0.10-0.37 per body per step, no tooth; the winning body is the same constellation; the world is a lawn
-because food regrows under the body that eats it, so the best body stands still and reaches).
+because food regrows under the body that eats it, so the best body stands still and reaches), e016 (a plant under a
+body does not grow: a cell held by a body does not regrow, and the lawn is a pasture; moves that happen 11-20% of
+decisions against 1-3%, 74-88% of forward actions find room, the winner is a block of 7-9 gut cells over 1.6-2.7 world
+cells in place of the constellation over 4.5; the world lives on a third of its regrowth and holds half the bodies;
+contact falls to 0.02-0.05 per body per step because a body moving through an empty world meets nobody; the milder
+reading, regrowth by the free sub-cells, is a tax that reach pays for and keeps the lawn).
 
 Next, in this order (GitHub issue numbers):
-1. A plant under a body does not grow: a cell regrows by its free sub-cells (or not at all while a body holds any). The
-   premise that makes a herd: standing still exhausts the spot and the grass a herd leaves recovers. e015 showed that no
-   cost law makes a body move in a world where food regrows under it; this is the missing premise, not a cost. It costs
-   nothing (the crowd per cell is kept already) and names no trait; whether what moves is a herd, a jostling crowd, or a
-   world that starves is for the run to show.
-2. Matter that does not vanish: a dead body is food where it lies, so a crowd is a place worth going to and a body gains
-   from another body without a tooth.
-3. A full cell that spills food to its neighbors (fruit falls), so that a tree is not one cell feeding sixteen gut
-   cells: the trees waste 40% of their regrowth at any resolution. It spreads the trees; it does not make a push.
-4. #5 3D bodies (same development, 8x8x8), with the ground half of #16 (friction by the cells that touch the ground, an
+1. Matter that does not vanish: a dead body is food where it lies, so a crowd is a place worth going to and a body gains
+   from another body without a tooth. e016 made bodies move and they find only grass; this is the premise "a crowd is a
+   place worth going to" needs. A law about matter, not a trait; whether it gives scavengers, a crowd that follows death,
+   or a tooth is for the run to show.
+2. A full cell that spills food to its neighbors (fruit falls), so that a tree is not one cell feeding sixteen gut
+   cells. Smaller now: with bodies moving, 0-4 of 164 regrowth per step is lost to the cap (e015: 67-68 with trees).
+3. #5 3D bodies (same development, 8x8x8), with the ground half of #16 (friction by the cells that touch the ground, an
    overhang has to be held up): legs and wings need a vertical axis, and the top-view grid has none. The 90th percentile
    of mass is 64 at width 1.
-5. Environments that differ by place (#14): plants, desert, warm and cold, sea, mountain, oxygen. A place selects among
+4. Environments that differ by place (#14): plants, desert, warm and cold, sea, mountain, oxygen. A place selects among
    the verbs the physics has; add verbs first. e012 is the first place law and shows the pattern works: two places, two
    regimes, in one run, at no compute cost.
-6. #4 Learning, growth, aging, health as a layer on top of birth traits.
+5. #4 Learning, growth, aging, health as a layer on top of birth traits.
 
 What we want the viewer to be able to do: look at a body and guess what it does, the way a fang, four legs, or a wing
 is read at a glance. That needs the physics the reader already knows (a front, ground, air), written as laws of

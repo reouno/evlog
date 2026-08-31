@@ -58,7 +58,9 @@ WORLDS = {
     "grass and trees": ("128_sigma8-1", 128, (8, 1), [1, 2, 3, 4]),
     "grass and edge": ("128_sigma8-2", 128, (8, 2), [1, 2, 3, 4]),
     "grass and shrubs": ("128_sigma8-4", 128, (8, 4), [1, 2, 3, 4]),
+    "grass and trees, free sub-cells": ("128_sigma8-1-free", 128, (8, 1), [1, 2, 3, 4]),
 }
+STRICT = ["grass and trees", "grass and edge", "grass and shrubs"]  # the strict reading (a held cell does not regrow)
 # The same world where food regrows under a body (e015: work = force x distance; e014: a blocked move costs the move), seeds 1-4: label -> (run prefix, folder, widths).
 REFS = {
     "grass and trees, e015": ("128_sigma8-1", E015, (8, 1)),
@@ -66,7 +68,7 @@ REFS = {
 }
 PLACE_NAME = {8: "grass (width 8)", 4: "shrubs (width 4)", 2: "edge (width 2)", 1: "trees (width 1)", 0: "beyond the patches"}
 PLACE_COLOR = {8: SERIES[0], 4: SERIES[3], 2: SERIES[1], 1: SERIES[2], 0: INK}
-WORLD_COLOR = {"grass and trees": SERIES[2], "grass and edge": SERIES[1], "grass and shrubs": SERIES[3]}
+WORLD_COLOR = {"grass and trees": SERIES[2], "grass and edge": SERIES[1], "grass and shrubs": SERIES[3], "grass and trees, free sub-cells": SERIES[0]}
 KIND_COLOR = {1: SERIES[0], 2: SERIES[1], 3: SERIES[3], 4: SERIES[2]}
 CONFIRM_STEPS = 5000
 MAIN = "grass and trees"
@@ -378,59 +380,49 @@ details {{ margin: 8px 0; }} summary {{ cursor: pointer; color: var(--ink2); }}
 
 DIAGRAM = """
 <figure class="diagram">
-<svg viewBox="0 0 800 340" role="img" aria-label="The cost of a move in e014 and in e015. e014: a forward action costs 0.001 per cell of mass whether the body moved or not, so a push that moves nothing costs as much as a move. e015: work is force times distance; the mover pays 0.001 per cell of mass per sub-cell it moved, and the same for each body it shoved; a forward action that moves nothing costs nothing." style="max-width:100%;height:auto;display:block">
+<svg viewBox="0 0 800 330" role="img" aria-label="Regrowth of food in e015 and in e016. e015: a world cell regrows every step whether or not a body holds any of its sub-cells, so the gut cells standing on it eat its regrowth in place. e016: a cell held by a body does not regrow (strict reading), or regrows by its free sub-cells (free reading); the cell a body leaves recovers." style="max-width:100%;height:auto;display:block">
 <g fill="none" stroke="currentColor" stroke-width="1.2" font-size="12" font-family="system-ui, sans-serif">
-  <text x="20" y="20" fill="currentColor" stroke="none" font-weight="600">e014: a forward action costs the move, moved or not</text>
-  <g stroke="currentColor" stroke-opacity="0.25">
-    <path d="M 40,40 v 60 M 50,40 v 60 M 60,40 v 60 M 70,40 v 60 M 80,40 v 60 M 90,40 v 60 M 100,40 v 60 M 110,40 v 60 M 120,40 v 60 M 130,40 v 60 M 140,40 v 60 M 150,40 v 60 M 160,40 v 60"/>
-    <path d="M 40,40 h 120 M 40,50 h 120 M 40,60 h 120 M 40,70 h 120 M 40,80 h 120 M 40,90 h 120 M 40,100 h 120"/>
-  </g>
+  <text x="20" y="20" fill="currentColor" stroke="none" font-weight="600">e015: food regrows under the body that eats it</text>
+  <g stroke="currentColor" stroke-opacity="0.35"><path d="M 40,40 v 80 M 60,40 v 80 M 80,40 v 80 M 100,40 v 80 M 120,40 v 80 M 40,40 h 80 M 40,60 h 80 M 40,80 h 80 M 40,100 h 80 M 40,120 h 80"/></g>
   <g stroke="none">
-    <!-- a soft mover (mass 4) pressing east on a soft body -->
-    <rect x="50" y="60" width="20" height="20" fill="#1baf7a"/>
-    <rect x="70" y="50" width="30" height="40" fill="#1baf7a" fill-opacity="0.55"/>
-    <!-- a free mover further right -->
-    <rect x="120" y="60" width="20" height="20" fill="#1baf7a"/>
+    <rect x="41" y="41" width="18" height="18" fill="#1baf7a"/>
+    <rect x="101" y="41" width="18" height="18" fill="#1baf7a"/>
+    <rect x="61" y="101" width="18" height="18" fill="#1baf7a"/>
   </g>
-  <path d="M 62,54 L 70,54" stroke="var(--s1)" stroke-width="2" marker-end="url(#arrow)"/>
-  <path d="M 132,54 L 148,54" stroke="var(--s1)" stroke-width="2" marker-end="url(#arrow)"/>
-  <text x="176" y="58" fill="currentColor" stroke="none">blocked: the faces meet, nothing gives,</text>
-  <text x="176" y="74" fill="currentColor" stroke="none">the body stays and pays 0.001 x mass</text>
-  <text x="176" y="96" fill="currentColor" stroke="none">moved one sub-cell: pays 0.001 x mass</text>
-  <text x="40" y="126" fill="currentColor" stroke="none">a push is a failed move that costs as much as a move;</text>
-  <text x="40" y="142" fill="currentColor" stroke="none">a body without a tooth gains nothing from it, so the</text>
-  <text x="40" y="158" fill="currentColor" stroke="none">winning policies stay and turn (turning is free)</text>
+  <path d="M 150,80 L 122,80" stroke="var(--s1)" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="158" y="70" fill="currentColor" stroke="none">regrowth g per step, held or not</text>
+  <text x="158" y="86" fill="currentColor" stroke="none">(g: 0.10 on grass, up to 6.5 on a tree cell)</text>
+  <text x="158" y="108" fill="currentColor" stroke="none">each gut cell on it eats 0.02 per step</text>
+  <text x="40" y="146" fill="currentColor" stroke="none">a world cell is 4x4 sub-cells and holds food up to 8;</text>
+  <text x="40" y="162" fill="currentColor" stroke="none">a body's cell is one sub-cell; the cell feeds the</text>
+  <text x="40" y="178" fill="currentColor" stroke="none">gut cells standing on it out of its regrowth, so the</text>
+  <text x="40" y="194" fill="currentColor" stroke="none">best body stands still and reaches (a lawn)</text>
 
-  <text x="430" y="20" fill="currentColor" stroke="none" font-weight="600">e015: work is force times distance</text>
-  <g stroke="currentColor" stroke-opacity="0.25">
-    <path d="M 450,40 v 60 M 460,40 v 60 M 470,40 v 60 M 480,40 v 60 M 490,40 v 60 M 500,40 v 60 M 510,40 v 60 M 520,40 v 60 M 530,40 v 60 M 540,40 v 60 M 550,40 v 60 M 560,40 v 60 M 570,40 v 60"/>
-    <path d="M 450,40 h 120 M 450,50 h 120 M 450,60 h 120 M 450,70 h 120 M 450,80 h 120 M 450,90 h 120 M 450,100 h 120"/>
-  </g>
+  <text x="430" y="20" fill="currentColor" stroke="none" font-weight="600">e016: a plant under a body does not grow</text>
+  <g stroke="currentColor" stroke-opacity="0.35"><path d="M 450,40 v 80 M 470,40 v 80 M 490,40 v 80 M 510,40 v 80 M 530,40 v 80 M 450,40 h 80 M 450,60 h 80 M 450,80 h 80 M 450,100 h 80 M 450,120 h 80"/></g>
   <g stroke="none">
-    <rect x="460" y="60" width="20" height="20" fill="#1baf7a"/>
-    <rect x="480" y="50" width="30" height="40" fill="#1baf7a" fill-opacity="0.55"/>
-    <rect x="530" y="60" width="20" height="20" fill="#1baf7a"/>
+    <rect x="451" y="41" width="18" height="18" fill="#1baf7a"/>
+    <rect x="511" y="41" width="18" height="18" fill="#1baf7a"/>
+    <rect x="471" y="101" width="18" height="18" fill="#1baf7a"/>
   </g>
-  <path d="M 472,54 L 480,54" stroke="var(--s1)" stroke-width="2" marker-end="url(#arrow)"/>
-  <path d="M 542,54 L 558,54" stroke="var(--s1)" stroke-width="2" marker-end="url(#arrow)"/>
-  <text x="586" y="58" fill="currentColor" stroke="none">blocked: the faces meet, the softer</text>
-  <text x="586" y="74" fill="currentColor" stroke="none">breaks if muscle exceeds it; pays 0</text>
-  <text x="586" y="96" fill="currentColor" stroke="none">moved k sub-cells: 0.001 x mass x k</text>
-  <text x="450" y="126" fill="currentColor" stroke="none">a shove adds the shoved body's mass (one sub-cell)</text>
-  <text x="450" y="142" fill="currentColor" stroke="none">to the work; pressing on a body is free to try, and</text>
-  <text x="450" y="158" fill="currentColor" stroke="none">every try runs the contact rule</text>
+  <path d="M 560,80 L 532,80" stroke="var(--s1)" stroke-width="2" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
+  <text x="568" y="70" fill="currentColor" stroke="none">strict (any): regrowth 0 while any</text>
+  <text x="568" y="86" fill="currentColor" stroke="none">sub-cell is held</text>
+  <text x="568" y="108" fill="currentColor" stroke="none">free: g x free sub-cells / 16 (13/16 here)</text>
+  <g stroke="currentColor" stroke-opacity="0.35"><path d="M 450,140 v 80 M 470,140 v 80 M 490,140 v 80 M 510,140 v 80 M 530,140 v 80 M 450,140 h 80 M 450,160 h 80 M 450,180 h 80 M 450,200 h 80 M 450,220 h 80"/></g>
+  <path d="M 560,180 L 532,180" stroke="var(--s1)" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="568" y="176" fill="currentColor" stroke="none">the cell a body left: regrowth g,</text>
+  <text x="568" y="192" fill="currentColor" stroke="none">it recovers; the lost regrowth is</text>
+  <text x="568" y="208" fill="currentColor" stroke="none">counted (shaded), not moved elsewhere</text>
 
-  <text x="20" y="196" fill="currentColor" stroke="none">everything else is e014: space at the resolution of the body (4x4 sub-cells per world cell, a body holds its own</text>
-  <text x="20" y="214" fill="currentColor" stroke="none">cells), facing, e010's contact rule (a face breaks if the muscle behind the other exceeds its hardness: 3 per</text>
-  <text x="20" y="232" fill="currentColor" stroke="none">contiguous hard cell, else 1), two kinds of place, costs, materials, mating, lineages</text>
-  <text x="20" y="260" fill="currentColor" stroke="none">the other half of #16, friction by the cells that touch the ground, needs a vertical axis: the body grid is a top</text>
-  <text x="20" y="278" fill="currentColor" stroke="none">view here, every cell touches the ground, and the friction of a body is its mass, which is this law already</text>
-  <text x="20" y="306" fill="currentColor" stroke="none">compute: nothing changes per step; if pushing becomes common the contact rule runs more often</text>
-  <text x="20" y="324" fill="currentColor" stroke="none">(at most 64 sub-cells per push)</text>
+  <text x="20" y="252" fill="currentColor" stroke="none">everything else is e015: space at the resolution of the body, facing, e010's contact rule, work = force x distance</text>
+  <text x="20" y="270" fill="currentColor" stroke="none">(a forward action that moves nothing costs nothing), two kinds of place, costs, materials, mating, lineages</text>
+  <text x="20" y="298" fill="currentColor" stroke="none">compute: nothing per step (the crowd per cell is kept already); the law takes food from the world instead:</text>
+  <text x="20" y="316" fill="currentColor" stroke="none">regrowth on cells that bodies stand on is lost, so standing still exhausts the spot and the population is smaller</text>
 </g>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="var(--s1)"/></marker></defs>
 </svg>
-<figcaption>Figure 1. The cost of a move, before and after. e014 charged a forward action as a move of one sub-cell whether or not the body moved (left). e015 charges what was moved times how far (right): a forward action that moves nothing costs nothing, a move costs per sub-cell, a shove adds the other body's mass. The contact rule is the same in both; only the charge moves.</figcaption>
+<figcaption>Figure 1. Regrowth of food, before and after. In e015 (left) a world cell regrows every step whether or not a body holds any of its 16 sub-cells, so a body eats its regrowth in place and the best body stands still. In e016 (right) a cell held by a body does not regrow (the strict reading, the main runs), or regrows by its free sub-cells (the free reading, four runs on the trees world); the cell a body leaves recovers. Nothing else changes; the regrowth that does not happen is lost, not moved.</figcaption>
 </figure>
 """
 
@@ -665,7 +657,7 @@ def main():
         lp = lineage_places(run)
         hunters = hunter_lineages(run)
         hunters_any = hunter_lineages(run, key="bite_any")
-        d = dict(pop=med(log["pop"]), pop_min=min(log["pop"]), extinct=last_step < LAST_STEP, sps=med(log["steps_per_sec"]), sps_min=min(log["steps_per_sec"]),
+        d = dict(pop=med(half(log, "pop")), pop_min=min(log["pop"]), extinct=last_step < LAST_STEP, sps=med(log["steps_per_sec"]), sps_min=min(log["steps_per_sec"]),
                  crossers=med(half(log, "crossers")), crossers_max=max(log["crossers"]), pop_none=med(half(log, "pop_none")),
                  lineages=med([per_step.get(t, 0) for t in range(1000, last_step + 1, 1000)]), ids=len(first), life=med(life) if life else 0,
                  moved=sum(1 for v in lp.values() if v["moved"]), shared=sum(1 for v in lp.values() if v["shared"]),
@@ -677,7 +669,11 @@ def main():
                  forward=med(half(log, "forward")), turns=med([a + b for a, b in zip(half(log, "left"), half(log, "right"))]), stay=med(half(log, "stay")),
                  biters=med(half(log, "biters_share")), biters_any=med(half(log, "biters_any_share")), wasted=med(half(log, "wasted")),
                  pushes=med(half(log, "pushes")), move_spent=med(half(log, "move_spent")), muscle=med(half(log, "muscle_mean")), hard=med(half(log, "hard_mean")),
-                 cells_broken=med(half(log, "cells_broken")), happened=med([(1 - b) * f for b, f in zip(half(log, "blocked"), half(log, "forward"))]))
+                 cells_broken=med(half(log, "cells_broken")), happened=med([(1 - b) * f for b, f in zip(half(log, "blocked"), half(log, "forward"))]),
+                 shaded=med([sh / max(sh + r + wa, 1e-9) for sh, r, wa in zip(half(log, "shaded"), half(log, "regrowth"), half(log, "wasted"))]),
+                 shaded_abs=med(half(log, "shaded")), regrowth=med(half(log, "regrowth")),
+                 pop_hold=med(log["pop"][3 * len(log["pop"]) // 4:]) / max(med(log["pop"][len(log["pop"]) // 2: 3 * len(log["pop"]) // 4]), 1),
+                 above_half=med(half(log, "res_above_half")), mean_res=med(half(log, "mean_res")), intake_gut=med(half(log, "intake_per_gut")))
         for k, p in (("a", widths[0]), ("b", widths[1])):
             q = pl[p]
             n = len(q["step"])
@@ -715,24 +711,22 @@ def main():
             return float("nan")
         return med([med(half(rlogs[w][s], key)) for s in [1, 2, 3, 4]])
 
-    R = "grass and trees, e012"
-    refs_hard = {"grass, e012": (rplace(R, 8, "hard"), PLACE_COLOR[8]), "trees, e012": (rplace(R, 1, "hard"), PLACE_COLOR[1])}
-    refs_biters = {"grass, e012": (rplace(R, 8, "biters"), PLACE_COLOR[8]), "trees, e012": (rplace(R, 1, "biters"), PLACE_COLOR[1])}
-    refs_mass = {"grass, e012": (rplace(R, 8, "mass"), PLACE_COLOR[8]), "trees, e012": (rplace(R, 1, "mass"), PLACE_COLOR[1])}
-    refs_pop = {"grass, e012": (rplace(R, 8, "pop"), PLACE_COLOR[8]), "trees, e012": (rplace(R, 1, "pop"), PLACE_COLOR[1])}
+    R = "grass and trees, e015"
+    refs_mass = {"grass, e015": (rplace(R, 8, "mass"), PLACE_COLOR[8]), "trees, e015": (rplace(R, 1, "mass"), PLACE_COLOR[1])}
+    refs_foot = {"grass, e015": (rplace(R, 8, "foot"), PLACE_COLOR[8]), "trees, e015": (rplace(R, 1, "foot"), PLACE_COLOR[1])}
 
-    narrow = ["grass and trees", "grass and edge", "grass and shrubs"]
+    narrow = STRICT
     charts = {}
-    charts["forward"] = world_chart("Forward actions", "Share of decisions that are a forward move, per log window, one line per run. e014: 7-15% in the second half; stay and turn are the rest.", logs, lambda l: l["forward"], list(WORLDS), WORLD_COLOR, percent=True, ymax=1.0)
-    charts["contacts"] = world_chart("Contacts per body per step", "Bodies pressed by a forward action, per body per step. e012: 2-4 with trees (a move into a tree cell pushed into dozens of bodies); e014: 0.06-0.22.", logs, lambda l: [c / max(p, 1) / 10_000 for c, p in zip(l["contacts"], l["pop"])], list(WORLDS), WORLD_COLOR)
-    charts["narrow_hard"] = narrow_chart("Hard cells per body on the narrow place, three widths", "The narrow place of each world (trees, edge, shrubs), one line per seed. e014: 0.00-0.14; an arms race would show as 5 or more.", places, narrow, lambda d: d["hard"])
-    charts["narrow_biters"] = narrow_chart("Bodies with a bite on the narrow place, three widths", "Share of the bodies on the narrow place with a hard tip and muscle behind it on the front. e014: 0%.", places, narrow, lambda d: d["biters"], percent=True)
-    charts["blocked"] = world_chart("Moves that did not happen", "Share of forward actions blocked (a cell of the mover found its next sub-cell taken); each of these now costs nothing. e014: 62-92%.", logs, lambda l: l["blocked"], list(WORLDS), WORLD_COLOR, percent=True, ymax=1.0)
-    charts["spent"] = world_chart("Energy paid for moving", "Per body per step, per log window. Upkeep is 0.002 per cell plus 0.032 per body (about 0.05 for the winning body); a flat line near zero means bodies hardly move.", logs, lambda l: l["move_spent"], list(WORLDS), WORLD_COLOR)
-    charts["mass"] = place_chart("Mass per body, by place", "Mean cells per body on each place (grass and trees, one line per seed). Dashed: e012, the same world without space.", places, MAIN, lambda d: d["mass"], refs=refs_mass, ymax=66)
-    charts["foot"] = place_chart("World cells under a body, by place", "Mean world cells a body's cells lie in (1 to 9). e014's winner, four cells at the four corners of its grid, lay over four or five.", places, MAIN, lambda d: d["foot"], ymin=1, ymax=6)
-    charts["lineages"] = world_chart("Lineages alive", "Confirmed lineages at each log step. e014: 1-3 at 128; e012: 6-15.", logs, lambda l: l["lineages"], list(WORLDS), WORLD_COLOR)
-    charts["births"] = world_chart("Births per 10,000 steps", "Children born (with room). e014: 134,000-202,000.", logs, lambda l: l["births"], list(WORLDS), WORLD_COLOR)
+    charts["forward"] = world_chart("Forward actions", "Share of decisions that are a forward move, per log window, one line per run. e015: 9-27% in the second half; stay and turn are the rest.", logs, lambda l: l["forward"], list(WORLDS), WORLD_COLOR, percent=True, ymax=0.6)
+    charts["happened"] = world_chart("Moves that happened", "Share of decisions that moved the body (forward and not blocked). e015: 1-3%; a body that walks its patch would show as tens of percent.", logs, lambda l: [(1 - b) * f for b, f in zip(l["blocked"], l["forward"])], list(WORLDS), WORLD_COLOR, percent=True, ymax=0.6)
+    charts["contacts"] = world_chart("Contacts per body per step", "Bodies pressed by a forward action, per body per step. e015: 0.10-0.37; e012 (no space): 2-4 with trees.", logs, lambda l: [c / max(p, 1) / 10_000 for c, p in zip(l["contacts"], l["pop"])], list(WORLDS), WORLD_COLOR)
+    charts["shaded"] = world_chart("Regrowth lost to standing bodies", "Share of the world's regrowth (164 per step at 128) that fell on a cell a body held and did not grow. Zero is e015's world; 100% would be a world with no food.", logs, lambda l: [sh / max(sh + r + wa, 1e-9) for sh, r, wa in zip(l["shaded"], l["regrowth"], l["wasted"])], list(WORLDS), WORLD_COLOR, percent=True, ymax=1.0)
+    charts["narrow_hard"] = narrow_chart("Hard cells per body on the narrow place, three widths", "The narrow place of each strict world (trees, edge, shrubs), one line per seed. e015: 0.00-0.03; an arms race would show as 5 or more.", places, narrow, lambda d: d["hard"])
+    charts["narrow_biters"] = narrow_chart("Bodies with a bite on the narrow place, three widths", "Share of the bodies on the narrow place with a hard tip and muscle behind it on the front. e015: 0%.", places, narrow, lambda d: d["biters"], percent=True)
+    charts["mass"] = place_chart("Mass per body, by place", "Mean cells per body on each place (grass and trees, strict reading, one line per seed). Dashed: e015, where food regrew under the body.", places, MAIN, lambda d: d["mass"], refs=refs_mass, ymax=66)
+    charts["foot"] = place_chart("World cells under a body, by place", "Mean world cells a body's cells lie in (1 to 9). Dashed: e015, whose winner, eight cells at the corners of its grid, lay over 4.5.", places, MAIN, lambda d: d["foot"], refs=refs_foot, ymin=1, ymax=6)
+    charts["pop"] = world_chart("Population", "Bodies alive at each log step, one line per run. e015: 1,420-2,450; a line that keeps falling is a world that starves.", logs, lambda l: l["pop"], list(WORLDS), WORLD_COLOR)
+    charts["lineages"] = world_chart("Lineages alive", "Confirmed lineages at each log step. e015: 1-4; e012: 6-15.", logs, lambda l: l["lineages"], list(WORLDS), WORLD_COLOR)
 
     viewer_run = f"{WORLDS[VIEWER_WORLD][0]}_seed{VIEWER_SEED}"
     timeline = timeline_chart(f"Lineages over time ({VIEWER_WORLD}, seed {VIEWER_SEED})", "Each colored band is one lineage, height = agents in it; marks are events at the size they were logged with.", viewer_run, events[VIEWER_WORLD][VIEWER_SEED])
@@ -780,13 +774,13 @@ def main():
                + row("Moves that happened, median share of decisions", "happened", p1)
                + row("Moves blocked, median share of forward actions", "blocked", p0, "blocked")
                + row("Contacts per body per step, median", "contacts", lambda v: f"{v:.2f}", "contacts_per")
-               + row("Energy paid for moving per body per step, median", "move_spent", lambda v: f"{v:.5f}")
+               + row("Regrowth lost to standing bodies, median share of regrowth", "shaded", p0)
                + row("Cells broken per 10,000 steps, median", "cells_broken", n0, "cells_broken")
                + row("Mass per body by place, median", "mass", d1, "mass", by_place=True)
                + row("Hard cells per body by place, median", "hard", d1, "hard", by_place=True)
                + row("Muscle cells per body, median", "muscle", lambda v: f"{v:.2f}", "muscle_mean")
                + row("Bodies with a bite on the front by place, median share", "biters", p1, "biters", by_place=True)
-               + row("Meat share of intake by place, second half", "meat", p1, by_place=True)
+               + row("Cover of the place by bodies, median", "cover", p0, "cover", by_place=True)
                + row("World cells under a body by place, median", "foot", d1, "foot", by_place=True)
                + row("Lineages alive, median", "lineages", n0, "lineages")
                + row("Steps per second, median", "sps", n0, "steps_per_sec")
@@ -794,7 +788,7 @@ def main():
 
     tables = data_table(["step", "place", "pop", "mass", "hard", "muscle", "digestive", "bite", "shell", "biters", "cover", "foot", "shell_front", "shell_back", "plant_intake", "meat_intake", "lineages", "movers"],
                         {f"{w}, seed {s}, {PLACE_NAME[p]} (every 100,000 steps)": places[w][s][p] for w in WORLDS for s in seeds_of(w) for p in WORLDS[w][2]}, every=10)
-    tables += data_table(["step", "pop", "births", "deaths_broken", "cells_broken", "mass_mean", "hard_mean", "biters_share", "biters_any_share", "forward", "blocked", "pushes", "move_spent", "shoves", "births_no_room", "foot_mean", "len_fwd", "len_side", "cover", "contacts", "wasted", "meat_intake", "plant_intake", "lineages", "steps_per_sec"],
+    tables += data_table(["step", "pop", "births", "deaths_broken", "cells_broken", "mass_mean", "hard_mean", "biters_share", "biters_any_share", "forward", "stay", "blocked", "pushes", "move_spent", "foot_mean", "cover", "contacts", "regrowth", "shaded", "wasted", "res_above_half", "intake_per_gut", "meat_intake", "plant_intake", "lineages", "steps_per_sec"],
                          {f"{w}, seed {s}, whole world (every 100,000 steps)": logs[w][s] for w in WORLDS for s in seeds_of(w)}, every=10)
 
     text = TEXT
@@ -809,7 +803,7 @@ def main():
 <body>
 <main>
 <h1>e016: A plant under a body does not grow</h1>
-<p class="sub">Experiment report - 2026-08-30 - e014's world with the cost of a move rewritten: the mover pays for what it moved times how far, and a forward action that moves nothing costs nothing. Grass with trees, edge or shrubs at 128x128, four seeds each, 1,000,000 steps</p>
+<p class="sub">Experiment report - 2026-08-31 - e015's world with one law added: a cell held by a body does not regrow. Grass with trees, edge or shrubs at 128x128, four seeds each, plus the trees world under the milder reading (a cell regrows by its free sub-cells), 1,000,000 steps</p>
 
 <section class="tldr">
 <h2>TL;DR</h2>
@@ -819,10 +813,10 @@ def main():
 <h2>1. Question</h2>
 <p>{text["question"]}</p>
 <ol>
-  <li><strong>Pushing returns.</strong> Forward is more than 30% of decisions (e014: 7-15%) and a body presses on another more than once per step on average (e014: 0.06-0.22; e012: 2-4 on the trees) on the narrow place, second half, in at least three seeds of four at width 1.</li>
-  <li><strong>Teeth and armor return with contact, and point forward.</strong> On at least one narrow width (1, 2 or 4) the arms race stands: hard above 5 per body and over 10% of bodies with a bite on the narrow place, second half, in at least two seeds of four; and among bodies with a bite on any side, at least half have it on the front.</li>
-  <li><strong>The winning body moves.</strong> The most common body at the end has muscle (e014: 0.00-0.05 per body) or the share of moves that happen rises above 50% (e014: 8-38%), in at least half the runs.</li>
-  <li><strong>The world stands at a bounded cost.</strong> No extinction; population above 500; at least 200 steps per second with twelve runs sharing the machine (e014: 290-430).</li>
+  <li><strong>Bodies move.</strong> Forward is more than 30% of decisions (e015: 9-27%) and moves that happen (forward actions that found room) more than 10% of decisions (e015: 1-3%), second half, in at least three seeds of four in at least one world.</li>
+  <li><strong>The winning body moves.</strong> The most common body at the end has muscle (e015: 0.00-0.10 per body) or lies over fewer world cells than e015's constellation (4.5), in at least half the runs.</li>
+  <li><strong>Contact returns with the moving.</strong> Contacts above 1 per body per step (e015: 0.10-0.37; e012: 2-4 with trees) on at least one world, second half, in at least two seeds of four. A tooth or armor is watched, not predicted.</li>
+  <li><strong>The world stands at a bounded cost, with less food.</strong> No extinction; a population that holds over the second half (last quarter within 20% of the third); at least 200 steps per second with six runs sharing a machine; regrowth lost to standing bodies below half of the regrowth on every world.</li>
 </ol>
 
 <h2>2. The world</h2>
@@ -832,9 +826,9 @@ def main():
 <ul class="measures">
   <li><strong>Forward</strong>: share of decisions that are a forward move (the only action that can touch another body); <strong>blocked</strong>: forward actions that did not move the body; <strong>moves that happened</strong>: forward and not blocked.</li>
   <li><strong>Contacts</strong>: bodies pressed by a forward action, per body per step; <strong>pushes</strong>: forward actions that pressed on at least one body; <strong>cells broken</strong>: cells lost to a push.</li>
-  <li><strong>Energy paid for moving</strong>: the new cost, per body per step (e014 has no such record; there it was 0.001 per cell of mass per forward action).</li>
+  <li><strong>Regrowth lost to standing bodies</strong> (<code>shaded</code>): the regrowth that fell on held cells and did not grow, next to <strong>wasted</strong>, the regrowth lost to full cells; the share is over the world's whole regrowth (164 per step at 128).</li>
   <li><strong>Bite</strong>: the largest force (muscle in the line) behind a hard tip on the front; <strong>bite any</strong>: on any side. <strong>Hardness of a side</strong>: mean hardness of the touchable tips there.</li>
-  <li>e014's measures: per place (population, body means, intake, lineages, movers), cover, world cells under a body, hunter lineages, snapshots (position in sub-cells and facing).</li>
+  <li>e015's measures: per place (population, body means, intake, lineages, movers), cover (share of a place's sub-cells held by bodies), world cells under a body, energy paid for moving, hunter lineages, snapshots (position in sub-cells and facing).</li>
 </ul>
 
 <h2>3. Results</h2>
@@ -848,10 +842,10 @@ def main():
 
 <h3>3.1 {text["h1"]}</h3>
 <div class="grid2">
-{charts["forward"]}{charts["contacts"]}
+{charts["forward"]}{charts["happened"]}
 </div>
 <div class="grid2">
-{charts["blocked"]}{charts["spent"]}
+{charts["contacts"]}{charts["shaded"]}
 </div>
 <p>{text["r1"]}</p>
 
@@ -887,7 +881,7 @@ def main():
   <div class="bar">Left: the whole {vw}x{vw} world at the resolution of the body ({vw * 4}x{vw * 4} sub-cells), every cell a body holds colored by its lineage (gray: none), a white dot on bodies with a bite. Green: food; dashed rings are the patches (blue: grass, width 8; aqua: trees, width 1; radius two widths). Click to move the white box. Right: the box at 24x24 world cells, each body drawn cell by cell where it stands, turned the way it faces, with a white edge on its front, damage included. Labels: agents per lineage, then mean mass, cells spanned along x across the facing, bite, shell, and sensor cells (eyes). {VIEWER_WORLD}, seed {VIEWER_SEED}.</div>
 </div>
 <p>{text["viewer"]}</p>
-<div class="grid2">{charts["lineages"]}{charts["births"]}</div>
+<div class="grid2">{charts["pop"]}{charts["lineages"]}</div>
 
 <h2>4. Discussion</h2>
 {text["discussion"]}
@@ -912,35 +906,34 @@ def main():
 
 # Lineages that prospered in the viewer run: (lineage id, name, what the shape does). Filled after the runs.
 GALLERY = [
-    (205, "the constellation", "Three corners with a second cell beside each and a lone fourth corner: eight digestive cells over 4.5 world cells, one gut cell in each corner's cell. Born at step 74,000, alive at 1,000,000, 1,581 agents at its peak: the body of the run, as in e014."),
-    (201, "four corners", "The four corners with a cell beside two of them: nine cells over 5.4 world cells, the widest reach of any body. 331,000 steps on the grass, replaced by lineage 205."),
-    (12, "two corners, right", "Two corners on the same side of the grid, three cells each: over two world cells apart, the shape of the first 150,000 steps before the corners spread to four."),
-    (41, "the front row", "Seven cells along the front edge and two below the right corner: reach along one line, 3.1 world cells; 817 agents at step 33,000 and gone by 100,000."),
-    (18, "four dots, trees", "One cell at each corner, 98% on the trees: four mouths on 3.1 world cells with nothing between them, a body that other bodies stand inside."),
-    (531, "the block, trees", "A 2x2 block of digestive cells at the center of the grid, 99% on the trees: one rich cell feeds it and it fits in the gap of any constellation; the longest-lived tree body of the second half."),
-    (277, "the bottom row, trees", "Five cells along the back edge, 100% on the trees: 1.9 world cells; a bar that lies across the tree cell and its neighbor."),
-    (517, "the column, trees", "Four cells in one column at the right edge, 100% on the trees: 1.7 world cells; a line along the facing, the closest thing to a tail in the run."),
+    (144, "the wedge", "Three digestive cells along the front edge, two below, then one and one down the right edge: seven cells in the front-right corner of the grid over 1.6 world cells. Born at step 119,000, alive at 1,000,000, 570 agents at its peak: the body of the run. Every mouth arrives on the same cell when it steps."),
+    (57, "the wedge, wider", "Four cells along the front, then three, two, one: nine cells over 2.3 world cells. The winner of the first 350,000 steps, replaced by the tighter wedge."),
+    (344, "the block, double", "A 3x2 block with a tail: 15 digestive cells over 3.1 world cells, the heaviest body that lasted. Born at step 495,000, alive at the end with 580 agents at its peak; twice the mouths on the same footprint."),
+    (241, "the block", "Three cells along the front, three below, two below that: eight cells over 2.3 world cells in the front-right corner. The shape every run ends with, in one corner or another."),
+    (177, "the block, trees", "Ten cells in a 3x4 patch of the front rows (14 cells of mass on average) over 2.9 world cells, on the trees: 124 agents at step 250,000, gone by 270,000."),
+    (247, "the block with a tooth, trees", "A 3x3 block with one cell ahead of it, on the trees: the one body of the run with hard cells (1.3) and muscle (1.2) at its peak. 58 agents, 51,000 steps, and it bit nothing."),
+    (420, "the column, trees", "A 2x3 column at the right edge, on the trees: eight cells over 2.1 world cells; 52 agents for 68,000 steps in the second half."),
 ]
 
 
 TEXT = {
-    "question": "e014 gave space the resolution of the body and contact still did not come back: 0.06-0.22 touches per body per step at every patch width, no tooth, no armor, and a winning body of four digestive cells at the four corners of its grid that hardly moves. The reading was that the problem is motive, not room: once bodies take up space a push is a move that failed, and e014 charged it as if the body had moved (0.001 per cell of mass, a sixth of the upkeep of the winning body), so a body without a tooth gains nothing from pressing on another and pays for it, and the policies that win stay and turn. Here the cost law is the honest one, work is force times distance: the mover pays for the mass it moved (its own and what it shoved) times the sub-cells it moved them, and a forward action that moves nothing costs nothing. A law about the world, not about a body. Does pushing return when it is free to try, do teeth follow, does the winning body move, and does the world stand? The other half of #16, friction by the cells that touch the ground, needs a vertical axis the top-view grid does not have (every cell touches the ground, and a body's friction is its mass, which is this law already); legs wait for 3D bodies (#5).",
-    "world": "Everything is e014's (128x128 on a torus, drifting food patches of two widths, bodies of 8x8 cells in five kinds grown from the genome, space at the resolution of the body with 4x4 sub-cells per world cell, a facing per body, only the front pushes, e010's contact rule between the faces that meet, a cell that costs what it holds, 0.032 per body per step, four actions: stay, forward, turn left, turn right) with the cost of a move rewritten (Figure 1). A forward action moves the body one sub-cell along its facing (a second with probability speed) if every cell of the mover finds its next sub-cell free; where a cell would enter another body's cell the faces meet, and the softer breaks if the muscle behind the other exceeds its hardness; a body still in the way is shoved one sub-cell if the muscle on it exceeds its mass. The mover pays 0.001 per cell of mass per sub-cell it moved, and the same for each body it shoved; nothing moved, nothing paid. A turn is free, as in e014.",
-    "runs": "<strong>Runs.</strong> At 128x128, two patches of each kind: grass and trees (widths 8 and 1), grass and the edge (8 and 2), grass and shrubs (8 and 4), seeds 1-4 each, twelve runs at once on one machine, one thread each, 1,000,000 steps (74 minutes). The 256 runs were not made: in e014 they were the 128 world eight times over, and the 128 result here gives them nothing to show. Reference: e014 (the same world, a blocked move charged as a move) and e012 (no space) on the same worlds and seeds. We record e014's measures and:",
-    "tldr": "A move now costs by what was moved and how far, so pressing on a body is free to try; and nobody presses. Forward is 9-27% of decisions (e014: 7-15%), contacts 0.10-0.37 per body per step (e014: 0.06-0.22; e012: 2-4), moves that happen 1-3% of decisions, no tooth, no hard cell, no meat, 1-4 lineages alive, and the same winning body as e014: eight digestive cells at the corners of the grid, lying over 4.5 world cells, with no muscle. The world stands (1,420-2,450 bodies, 276-496 steps/s) and spends 0.2-0.6% of its energy on moving. The price of a push was never what stopped it: a forward action that finds room moves the body off the cells its corners eat from, into a world grazed down to its regrowth everywhere (0.3-0.6% of cells above half full), and pays for the distance; reproduction spreads a lineage over a patch better than walking does. The world is a lawn because food regrows under a standing body; the premise that makes a herd, a plant under a body does not grow, is the next law to try.",
-    "c1": "no", "l1": "No", "v1": "Forward 9-27% of decisions (e014: 7-15%); contacts 0.10-0.37 per body per step over the whole world, 0.17-0.37 with trees (e014: 0.06-0.22; e012: 2.1-3.7). Pushing is free (78-95% of forward actions press on a body and 78-95% are blocked; a push costs 0), a little more common, and still rare: the most a run pushed was seed 4 with trees, forward 27%, contacts 0.37.",
-    "c2": "no", "l2": "No, at every width", "v2": "Trees, edge, shrubs: hard cells per body 0.00-0.06 (at most 0.4-4.5 in any window on any narrow place), bodies with a bite 0% on the front and 0% on any side (at most 0.1-1.0% in any window), meat at most 0.001% of the intake, no hunter lineage, front and back equally soft (1.00-1.03), in all twelve runs. Cells broken 0-29 per 10,000 steps (seed 3 with trees: 109, a passing body with muscle, as in e014).",
-    "c3": "no", "l3": "No", "v3": "The most common body at the end of every run has no muscle (0.00-0.10 per body over all bodies) and moves that happen are 1.0-2.8% of decisions (e014: 1.1-3.2%); shoves are zero. The winner is e014's constellation: eight digestive cells at three or four corners of the grid, over 4.5 world cells.",
-    "c4": "yes", "l4": "Yes", "v4": "No extinction; population 1,420-1,520 with trees, 1,820-1,940 with the edge, 2,320-2,450 with shrubs, never below 1,290; 276-496 steps per second with twelve runs on one machine (the slowest window 169). The cost of moving is 0.0001-0.0003 per body per step, 0.2-0.6% of a body's upkeep.",
-    "h1": "Pushing is free, and nobody pushes",
-    "r1": "Forward actions rise a little (9-27% against 7-15%) and contacts with them (0.10-0.37 against 0.06-0.22): a push is free, so the policies that press on a neighbor now and then are no longer weeded out, and that is the whole effect. Moves that happen stay at 1-3% of decisions, blocked moves at 78-95%, and a body spends 0.0001-0.0003 per step on moving against an upkeep of about 0.05: the cost that was removed was never the one that mattered. The rest of the decisions are turns (66-87%, free, 38-87% of them blocked) and stays (0-15%). Seed 4 with trees, the run that pushed the most, shows what pushing without a tooth is: 0.37 contacts per body per step, 12 cells broken per 10,000 steps, nothing eaten.",
-    "h2": "No tooth at any width",
-    "r2": "Hard cells per body on the narrow places stay at 0.00-0.03 (peaks of 0.4-4.5 in single windows, single bodies passing), and no body on any place has a bite on the front in the second half of any run. The contact that exists (a soft corner pressing on a soft corner) breaks 0-29 cells per 10,000 steps and feeds nobody: meat is at most 0.001% of the intake. Births are 125,000-193,000 per 10,000 steps, so the tries were there (1.3-1.9 million per run) and, as in e014, none of them found the tooth. The narrow places hold what e014 held: trees 180-194 bodies at 62% cover, the edge 552-706 at 53%, the shrubs 1,140-1,200 at 33%, grazers of 4.0-5.3 cells.",
-    "h3": "The constellation wins again",
-    "r3": "Mass 7-9 per body, 3.5-5.0 world cells under a body, 1-4 lineages alive (peaks of 6-17) with 10-265 splits per run: e014's numbers. Figure 2 shows the bodies that prospered in the viewer run: corners, corners with a second cell, a front row early on; on the trees a 2x2 block, a bar and a column, small bodies that fit in the gaps of the constellations. The winner of the run, lineage 205, is eight digestive cells at three corners and one, born at step 74,000 and alive at the end with 1,581 bodies at its peak; it has no muscle, and 81% of its forward actions are blocked.",
-    "viewer": "Grass and trees, 128, seed 1. Two grass islands, each a lawn of one color, and two tree knots of 90 small bodies. The zoom shows the constellation: dots of one color at the corners of an invisible square, with the dots of other bodies between them, a white edge on the front side of each square pointing every way. The long view shows lineage 205 taking the grass by step 200,000 and holding it; the tree knots change color every hundred thousand steps. Play the clip: a dot moves one sub-cell now and then; most do not, and none of them presses on a neighbor for long. ",
-    "discussion": "<p>The cost of a push was not the lever. A push is free now and the policies that win still do not push, or move: forward rose from 7-15% to 9-27% of decisions, contacts from 0.06-0.22 to 0.10-0.37 per body per step, and that is all. What a forward action costs a body is not the push but the move: when it finds room it takes the body off the cells its corners eat from, and pays for the distance, and there is nothing to walk to. The world is grazed down to its regrowth everywhere a body can reach (0.3-0.6% of cells hold more than half of what a cell can hold; the mean cell holds 0.05-0.09 of 8), a full cell feeds a gut cell no faster than a regrowing one (0.02 per step, the bite), and a lineage spreads over a patch by births faster and cheaper than by walking. Selection keeps reach, again, and the body that reaches the most from where it stands is the constellation.</p><p>This is the world of a lawn: food regrows in place, under the body that eats it, so the best body is one that stands still and reaches. e011 and e012 had contact because a body without size paid nothing for being in a crowd, not because moving paid; with space of any resolution and any cost law, moving is what a body does when it must, and nothing here makes it. The real world's herds move because a plant under a standing animal does not grow, and the grass a herd leaves recovers: standing still exhausts the spot. That premise is missing. A law about the world says it: a cell shaded by a body does not regrow (regrowth per cell scaled by its free sub-cells, or stopped by any). It costs nothing (the crowd per cell is already kept), it makes a lawn into something that must move, and it says nothing about a trait; whether what moves is a herd, a crowd that jostles, or a world that starves is for the run to show.</p><p>Two other levers stay on the table. Matter that does not vanish: a dead body is food where it lies, so a crowd of bodies is a place worth going to and a body gains from another without a tooth. And the spill: a full cell that feeds its neighbors, for the trees' waste (67-68 of the 164 regrowth per step is lost to the cap with trees, as in e014). Neither makes a body move on its own. The ground half of #16 (friction by the cells that touch the ground) waits for 3D bodies (#5), where a side exists.</p>",
-    "conclusion": "Work is force times distance: a forward action that moves nothing costs nothing, and nothing changes. Forward 9-27% of decisions, contacts 0.10-0.37 per body per step, no tooth, no armor, no meat, the same constellation of eight gut cells at the corners of its grid winning every run, the world standing at 1,420-2,450 bodies and 276-496 steps/s. The cost law stays (it is the honest one, and it costs nothing), the reading changes: bodies do not move because moving finds nothing in a world where food regrows under the body that eats it. Next: a plant under a body does not grow (regrowth by the free sub-cells of a cell), so that standing still exhausts the spot, as it does for a herd; then the spill and matter that stays as food.",
+    "question": "e015 made a push free and nobody pushed: forward 9-27% of decisions, contacts 0.10-0.37 per body per step, no tooth, and the same winner as e014, eight digestive cells at the corners of a grid that lies over 4.5 world cells and hardly moves. The reading was that food regrows in place, under the body that eats it, so the best body stands still and reaches: a lawn, and a lawn has no herd. The real world's herds move because a plant under a standing animal does not grow, and the grass a herd leaves recovers. This experiment adds that premise as a law about the world (issue #18): a cell held by a body does not regrow. It names no trait and costs nothing per step; it takes food from the world instead. The hypotheses:",
+    "world": "Everything is e015's (128x128 on a torus, drifting food patches of two widths, bodies of 8x8 cells in five kinds grown from the genome, space at the resolution of the body with 4x4 sub-cells per world cell, a facing per body, only the front pushes, e010's contact rule, a cell that costs what it holds, 0.032 per body per step, work = force x distance for a move, four actions: stay, forward, turn left, turn right) with one law added to the regrowth of food (Figure 1). Food is per world cell (up to 8); a body's cell is one sub-cell. Before a cell's regrowth is added, the crowd of the cell is read: under the strict reading (<code>shade</code> = any, the main runs) a cell that any body holds a sub-cell of adds nothing; under the free reading (<code>shade</code> = free) it adds its regrowth times the share of its 16 sub-cells that are free. The regrowth that does not happen is lost, not moved, and counted (<code>shaded</code>).",
+    "runs": "<strong>Runs.</strong> At 128x128, two patches of each kind: grass and trees (widths 8 and 1), grass and the edge (8 and 2), grass and shrubs (8 and 4), seeds 1-4 each under the strict reading (twelve runs), and grass and trees seeds 1-4 under the free reading (four runs); six at a time on each of two machines, one thread each, 1,000,000 steps (8-16 minutes per strict run, the world being small; 23-40 minutes for a free run). A pilot (seed 9, 100,000 steps, trees, both readings) came first; the batch ran both readings because the free one left the pilot a lawn. Reference: e015 (the same world, food regrowing under the body) and e014 on the same worlds and seeds. We record e015's measures and:",
+    "tldr": "A cell a body stands on no longer regrows, and the lawn becomes a pasture: bodies move (moves that happen 11-20% of decisions against e015's 1-3%, and only 12-26% of forward actions blocked against 78-95%), the winner is a block of 7-9 digestive cells in a corner of its grid over 1.6-2.7 world cells instead of a constellation over 4.5, and the world is half as full (630-1,093 bodies against 1,420-2,450) because 66-78% of its regrowth falls on cells that bodies hold. Nobody meets anybody: contacts fall to 0.02-0.05 per body per step, no tooth, no armor, no meat. The free reading (a cell regrows by its free sub-cells) leaves the lawn a lawn: 1,028-1,333 bodies, moves that happen 4-6% of decisions, 62-81% of forward actions blocked, and corners again: 6-12 gut cells at two to four corners of its grid over 3.9-6.0 world cells (e015: 4.5). Moving is now what a body does, and it still finds nothing but grass; the next law is matter that does not vanish, so that a dead body is food where it lies and a crowd is a place worth going to.",
+    "c1": "partly", "l1": "Half", "v1": "Moves that happen are 11-20% of decisions in all twelve strict runs (e015: 1.0-2.8%), above 10% everywhere; forward is 14-24% (e015: 9-27%), never the 30% asked for. A body moves once every 5-9 steps and 74-88% of its forward actions find room (e015: 5-22%); the rest of its decisions are turns (76-86%) and stays (0-1%). The free reading: forward 14-21% of decisions, moves that happen 4-6%, with 62-81% of forward actions blocked: e015's numbers.",
+    "c2": "yes", "l2": "Yes", "v2": "The most common body at the end of every strict run is 7-9 digestive cells in one block, a 3x3 square or a wedge of three, three, two (or three, two, two, one), in a corner of the grid, lying over 1.6-2.7 world cells (e015's constellation: 4.5), with no muscle (0.00-0.17 per body over all bodies). It moves because it can: 74-88% of its forward actions find room. The free reading keeps the corners: 6-12 digestive cells at two to four corners of the grid, over 3.9-6.0 world cells (e015: 4.5).",
+    "c3": "no", "l3": "No", "v3": "Contacts 0.02-0.05 per body per step in every strict run, below e015's 0.10-0.37 and e012's 2-4: bodies move, and there is nobody in the way. Cover is 2-3% of the world (7-8% of the grass, 27-28% of the trees, 20-26% of the edge, 15-18% of the shrubs; e015: 62%, 53%, 33% of the narrow places). Hard cells 0.00-0.13 per body, bodies with a bite 0% on the front and on any side, meat 0% of the intake, cells broken 0-74 per 10,000 steps.",
+    "c4": "partly", "l4": "Stands, on a third of the food", "v4": "No extinction; population 630-750 with trees, 713-830 with the edge, 848-1,093 with shrubs (e015: 1,420-2,450), never below 318 (seed 4 with trees, early) and holding over the second half (last quarter 0.94-1.06 of the third); 541-1,892 steps per second with six runs on a machine. Regrowth lost to standing bodies is 66-78% of the world's regrowth (75-78% with trees, 74-77% with the edge, 66-71% with shrubs), well over the half asked for: the world lives on 33-55 of its 164 regrowth per step. The free reading loses 51-53% of the regrowth and holds 1,028-1,333 bodies: half the shading, two thirds more bodies.",
+    "h1": "Bodies move, and meet nobody",
+    "r1": "The share of decisions that move the body rises from 1-3% to 11-20%, and the share of forward actions blocked falls from 78-95% to 12-26%: a body steps once every 5-9 steps into room it finds. Forward actions themselves stay at 14-24% (e015: 9-27%); what changed is not how often a body tries to move but how often it can, because the world it moves in is 2-3% covered instead of 33-62% on the narrow places. Contacts fall with the crowd, to 0.02-0.05 per body per step: a body that moves through an empty world presses on nothing. Two thirds to three quarters of the regrowth falls on held cells and is lost, most of it on the trees, whose regrowth sits on a few cells that a few bodies hold 27% of the time; the world lives on the rest. The free reading shades 51-53% of the regrowth and moves nothing: forward 14-21%, moves that happen 4-6%, blocked 62-81%, contacts 0.11-0.25, cover 10-13% of the grass and 51-52% of the trees, as in e015.",
+    "h2": "No tooth at any width, again",
+    "r2": "Hard cells per body on the narrow places 0.00-0.08 (single windows on the trees reach 12 hard per body and 6% of bodies with a bite: one or two bodies among 32-40, passing), muscle 0.00-0.18, no body with a bite on the front in the second half of any strict run, meat 0% of the intake, cells broken 0-74 per 10,000 steps (seed 3 with the edge and with shrubs: single bodies with muscle passing through). The narrow places are held by 32-40 bodies on the trees, 110-150 on the edge, 268-370 on the shrubs, a fifth to a third of e015's numbers, at 15-28% cover. Births are 26,000-51,000 per 10,000 steps (e015: 125,000-193,000): fewer tries, and none of them found the tooth. There is nothing to bite: a body gains nothing from another body in this world but its place, and places are free.",
+    "h3": "The block replaces the constellation",
+    "r3": "Mass 7.8-10.6 per body, 1.8-2.7 world cells under a body (e015: 3.5-5.0), 1-5 lineages alive with 7-18 kept over a run: the constellation is gone from every strict run, replaced by a block or a wedge of 7-9 digestive cells in a corner of the grid. Reach is worth nothing when standing exhausts every cell under the body alike; what pays is bringing every mouth onto the cell the body just entered, and a block does that. Figure 2 shows the viewer run's bodies: the wedge that wins (lineage 144, born at step 119,000, alive at the end, 570 agents at its peak, over 1.6 world cells), a wider wedge before it, a double block of 15 cells that lasted, and on the trees a block, a column, and the one body of the run with hard cells and muscle (lineage 247, 58 agents, 51,000 steps, no bite landed). The free reading's winner is the corners again, 6-12 cells at two to four corners over 3.9-6.0 world cells: a sixteenth of the regrowth per held sub-cell is a tax on standing that reach pays for, not a reason to move.",
+    "viewer": "Grass and trees, 128, seed 1, strict reading. The grass is no longer a lawn of one color but a scatter of blocks with room between them, each stepping now and then; the tree knots are a few bodies on a few cells. Play the clip: a block steps forward, turns, steps again; the room between the blocks is where the food is. The long view shows the wedge (lineage 144) taking the grass by step 300,000 and holding it, with two or three challengers a run, and the trees changing hands every hundred thousand steps.",
+    "discussion": "<p>One law about the world, and the lawn is a pasture. A body that stands still eats what is under it in a few steps and then nothing, so the policies that win step off the exhausted cell into one that has recovered: moves that happen went from 1-3% of decisions to 11-20%, blocked moves from 78-95% of forward actions to 12-26%, and the winning body from eight cells reaching over 4.5 world cells to a block of 7-9 over 1.6-2.7. Nothing in the law names a move or a shape; the herd's premise gave a body that walks and a body that brings its mouths together. The price is food: two thirds to three quarters of the regrowth falls on held cells and is lost, and the world holds half as many bodies. The free reading shows the same law at a sixteenth of the strength does the opposite: it shades 51-53% of the regrowth and the winner keeps its corners (3.9-6.0 world cells), because a body that loses a sixteenth of a cell's regrowth per sub-cell it holds gains more by holding a piece of one more cell than by stepping.</p><p>What did not come: contact, and with it teeth, armor, meat. Bodies move through a world that is 2-3% covered and press on nothing (0.02-0.05 contacts per body per step, less than when they stood still in a crowd). A body gains nothing from another body here but its place, and there is room; moving is what a body does now, and it finds only grass. The premise that is missing is the one the sentence \"a crowd is a place worth going to\" needs: matter that does not vanish. A dead body is food where it lies, so a body gains from another without a tooth, and a place where bodies die is a place to walk to. That is vision's \"Next\" 2 and the recommended next experiment; the spill (a full cell feeds its neighbors, for the trees' waste, which is small now: 0-4 of 164) waits behind it.</p><p>What this does not show: whether the strict reading is the right resolution. It stops a whole world cell's regrowth for one sub-cell held, and the free reading (a sixteenth per sub-cell) is a tax that reach pays and nobody moves for. Where the truth of a grazed plant lies between them is not a question this world can answer; the strict reading is the one that made a herd's premise bite, at the cost of a third of the food, and it stays until a reason to change it appears.</p>",
+    "conclusion": "A plant under a body does not grow, and bodies move: moves that happen 11-20% of decisions (e015: 1-3%), 74-88% of forward actions finding room (e015: 5-22%), the winner a block of 7-9 gut cells over 1.6-2.7 world cells in every run, the world standing at 630-1,093 bodies on a third of its regrowth. Contact does not return (0.02-0.05 per body per step), because a body that moves through an empty world meets nobody and gains nothing from a body it meets. The law stays (strict reading). Next: matter that does not vanish, a dead body is food where it lies, so that a crowd is a place worth going to; then the spill.",
 }
 
 if __name__ == "__main__":
