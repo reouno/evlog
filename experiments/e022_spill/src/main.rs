@@ -1595,6 +1595,7 @@ fn main() {
     let mut mutations = 0usize; // point mutations in them
     let mut clones = 0usize; // children conceived without one
     let mut last_time = std::time::Instant::now();
+    let trace = std::env::var("EVLOG_TRACE").is_ok();
 
     for step in 1..=steps {
         if step % PATCH_DRIFT == 0 {
@@ -1628,6 +1629,16 @@ fn main() {
         // Then the fruit falls around the columns that made it.
         if spill > 0 {
             fruit_fallen += food.spill(g, &fruit_out, spill) as f64;
+        }
+        // A trace of the world's stores every 100 steps, for the start (EVLOG_TRACE=1).
+        if trace && step % 100 == 0 {
+            let res: f64 = food.res.iter().map(|&r| r as f64).sum();
+            let fruit: f64 = food.fruit.iter().map(|&r| r as f64).sum();
+            let soil: f64 = food.soil.iter().sum();
+            let pop = agents.iter().filter(|a| a.alive).count();
+            eprintln!("trace step {step} pop {pop} plants {res:.0} fruit {fruit:.0} soil {soil:.0} air {air:.0} eaten {:.1} fruit_eaten {:.1} fruit_fallen {:.1} regrowth {:.1} barren {:.1} shaded {:.1} shade {:.1}",
+                (plant_intake as f64 + cc.meat_intake as f64) / (step % LOG_INTERVAL).max(1) as f64, fruit_eaten / (step % LOG_INTERVAL).max(1) as f64, fruit_fallen / (step % LOG_INTERVAL).max(1) as f64,
+                regrowth / (step % LOG_INTERVAL).max(1) as f64, barren / (step % LOG_INTERVAL).max(1) as f64, shaded / (step % LOG_INTERVAL).max(1) as f64, shade_moved / (step % LOG_INTERVAL).max(1) as f64);
         }
         // Then the soil runs downhill.
         if flow_rate > 0.0 {
