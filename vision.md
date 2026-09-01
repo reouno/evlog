@@ -89,36 +89,50 @@ intake from the trees; the canopy raises the closed world's income to its record
 e020: 100-103) by taking the light the bodies' own shadow was wasting; lineages alive reach 3-5 in four runs and
 two lineages coexist 921,000 steps, the deepest coexistence since e012, with the heaviest winner of the series
 (mass 10.3) standing in the thickest forest - but no tooth: a tree is silenced by the body that eats it, feeding
-one gut at a time).
+one gut at a time), e022 (the spill: a full crown keeps taking the light it stands in, a column under a body keeps
+taking it, and what a column cannot hold - growth past the cap, or under a body - falls as fruit on the ring of
+eight cells around it; the crowd comes back for the first time since e012, contacts 0.2-0.8 per body per step in
+ten runs of eleven, fruit 44-77% of the intake, the dead 10-26% of it, and the crowd state eats 115-134 per step,
+the record; the crowd picks a new winner, a hollow frame of 19-24 cells around the rim of the grid, seven world cells wide,
+that stands around a tree without holding it and eats the ring, with armor at its corners, three times e021's bar - and it is one winner still, lineages 1-3, the tooth found and lost
+(biters up to 0.026); the price is the start: with every neighbor's light taken the lawn under the trees is dark,
+every world crashes to a few hundred bodies by step 1,000 and one in five dies there, bodies that see two cells
+starving beside piles they cannot see; mutation as a chance per base rides along and changes nothing else).
 
 Next, in this order (GitHub issue numbers). The plan was reset on 2026-09-01 after e021 with the user's reading of
 the series: one body wins because the environment is still uniform in time and the body has too few axes; the fixes
 are fluctuation, the crowd, and materials with more properties - as laws about the world and materials, as ever.
-1. #23 The spill (e022; #14 continued). e021's canopy makes trees and forests and shows what stops the crowd: a body
-   eating a tree stands on it, and a held cell neither grows nor claims, so a tree feeds one gut at a time. Next law:
-   a full crown keeps taking the light it stands in and drops what it cannot hold as fruit on the cells around it
-   (e021's pilot 2 showed that flow as a famine because the hoard was destroyed; as food on the forest floor it is a
-   rich place with a radius). The open point is the radius: a ring keeps the crowd tight, a wide fall may disperse it.
-   #30 (mutation as a probability per base instead of exactly two per child) rides along.
-2. #24 Weather: rain (and later the sun, seasons) that fluctuates in time and place on a timescale longer than a
+The order was reset again on 2026-09-02 after e022: the crowd is here, and what it exposed comes first - the
+bodies' sight (the start's deaths are bodies that cannot see a pile two cells away) and the worth of a body (the
+crowd touches, and a tooth still loses to a gut that eats what falls).
+1. #26 Eyes that see far (e023): sensor range as what a sensor block is, a material law. e022's spill world dies one
+   time in five at its start because food lies in piles on the rings of the trees and a body sees two cells; the
+   knockout of e009 and the start survey of e022 (seeds 1-8, 10,000 steps) are the tests. Judged by #19 as ever,
+   and by the start's death rate.
+2. #27 What flesh is worth (the energy a body's cell holds, as a material property, matter conserved) and #25 what
+   a block weighs (mass by material and a density the genome expresses), one at a time and then together with the
+   eyes, judged with e009's knockout and #19: e022 has the crowd (contacts 0.2-0.8) and the tooth appears and never
+   pays, so the prize is the missing piece now, where e008 and e017 found it was not the lever without a crowd.
+3. #24 Weather: rain (and later the sun, seasons) that fluctuates in time and place on a timescale longer than a
    lifetime and shorter than a run, so that no optimum holds long enough to win. Vision's seasons belong here; a
-   tree is a store now, so seasons have something to work on.
-3. The three pieces of carnivory, one at a time and then together, judged with e009's knockout and #19: #27 what
-   flesh is worth (the energy a body's cell holds, as a material property, matter conserved; e008 and e017 say the
-   prize alone is not the lever), #26 eyes that see far (sensor range as what a sensor block is), #25 what a block
-   weighs (mass by material - a hard block heavier than a gut block - and a density the genome expresses, so that
-   light-and-fast and heavy-and-hard are both reachable). Speed is already an outcome (muscle over mass).
-4. #28 Small and large bodies in one world (a bigger grid, cheap) once a place makes size pay, then #5 3D bodies
-   (the vertical axis for legs and wings, with the ground half of #16).
+   tree is a store and a crowd a place now, so the weather has something to work on.
+4. #28 Small and large bodies in one world (a bigger grid, cheap): e022's frame is seven world cells wide, the widest
+   the 8x8 grid allows, so the ceiling is reached; then #5 3D bodies (the vertical axis for legs and wings, with the
+   ground half of #16).
 5. Later: #29 water that flows (rivers, lakes, deserts as outcomes; a rewrite of the closed cycle's carrier, when a
    question needs wet and dry as places), #4 learning, growth, aging, health as a layer on top of birth traits.
+Also open on the spill: a start with soil in the ground (the lottery may be the all-plants start meeting the dark
+lawn), and whether the crowd state is entered by chance or by history (half seed 2 flipped at 400,000, half seed 1
+at 900,000, half seed 4 fell back).
 Other laws still open on the height axis under #14: cold by height (huddling as an outcome), slope grip.
 
 How we judge whether a law worked (#19): count the winners. e013-e021 end with one body winning every run and 1-5
 lineages alive (e018's closed cycle: 1-3, fewer than the open world's 4, so a law can also lose by this rule; e019's
 terrain: 1-2; e020's rain: 1-2, but graded by height for the first time, with second lineages holding the low ground
 for 300,000-520,000 steps; e021's canopy: 1-5, with two lineages coexisting 921,000 steps and the winners sorted by
-state as well as height - kin of one winner still, not other kinds); a world with one optimum is
+state as well as height - kin of one winner still, not other kinds; e022's spill: 1-3, with a new winner, the frame,
+where the crowd is, the middle body where it is half there, and the bar where it never came - a different winner,
+not a second one); a world with one optimum is
 reached fast and is dull to watch. A wider genome or more parts would only
 make the one optimum slower to reach; what makes several winners is more pressures (places, seasons, matter that
 cycles), so every law is judged by how many different bodies prosper at once, not by how many are possible.

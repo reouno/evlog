@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Build report.html for e021.
+"""Build report.html for e022.
 
 Charts: matplotlib, exported as SVG and inlined. Diagram: hand-written SVG.
-Run from the repo root: uv run python experiments/e021_canopy/report.py
+Run from the repo root: uv run python experiments/e022_spill/report.py
 """
 import base64
 import csv
@@ -52,27 +52,28 @@ plt.rcParams.update({
     "savefig.transparent": True,
 })
 
-E020 = os.path.join(HERE, "..", "e020_rain")
+E021 = os.path.join(HERE, "..", "e021_canopy")
 # Places of a world: (id in the CSVs, name, color). Under the uniform sun a place is a height band (thirds of the cells by the
 # terrain).
 BANDS = [(0, "valleys (lowest third)", SERIES[0]), (1, "slopes (middle third)", SERIES[3]), (2, "ridges (highest third)", SERIES[1])]
 # Worlds of this experiment: label -> run prefix, world size, places, seeds, whether the sun is uniform (always, here).
 WORLDS = {
-    "canopy on the mountains": dict(run="128_sigma0_r64_f0.1_high", size=128, places=BANDS, seeds=[1, 2, 3, 4], uniform=True),
-    "canopy, half the breath": dict(run="128_sigma0_r64_f0.1_high-b0.5", size=128, places=BANDS, seeds=[1, 2, 3, 4], uniform=True),
-    "canopy on the flat lawn": dict(run="128_sigma0_r64_f0.1_flat", size=128, places=BANDS, seeds=[1, 2, 3, 4], uniform=True),
+    "spill on the mountains": dict(run="128_sigma0_r64_f0.1_high", size=128, places=BANDS, seeds=[1, 2, 3, 4], uniform=True),
+    "spill, half the breath": dict(run="128_sigma0_r64_f0.1_high-b0.5", size=128, places=BANDS, seeds=[1, 2, 3, 4], uniform=True),
+    "spill on the flat lawn": dict(run="128_sigma0_r64_f0.1_flat", size=128, places=BANDS, seeds=[1, 2, 3, 4], uniform=True),
+    "control: e021's canopy, mutation per base": dict(run="128_sigma0_r64_f0.1_high-spill0", size=128, places=BANDS, seeds=[1, 2, 3, 4], uniform=True),
 }
 UNIFORM = list(WORLDS)
-HIGH64, HALF, FLAT = list(WORLDS)
-# e020's runs (the same worlds without the canopy; the terrains differ by the mean-height
-# normalization, so they are read as ranges): label -> (run prefix, folder, uniform).
-REFS = {"e020 mountains (no canopy)": ("128_sigma0_r64_f0.1_high", E020, True), "e020 half breath (no canopy)": ("128_sigma0_r64_f0.1_high-b0.5", E020, True)}
-WORLD_COLOR = {HIGH64: SERIES[0], HALF: SERIES[1], FLAT: SERIES[3], "e020 mountains (no canopy)": INK, "e020 half breath (no canopy)": "#c6c4bb"}
+HIGH64, HALF, FLAT, CONTROL = list(WORLDS)
+# e021's runs (the same worlds and terrains with the saturating canopy and no spill, two
+# mutations per child): label -> (run prefix, folder, uniform).
+REFS = {"e021 mountains": ("128_sigma0_r64_f0.1_high", E021, True), "e021 half breath": ("128_sigma0_r64_f0.1_high-b0.5", E021, True), "e021 flat lawn": ("128_sigma0_r64_f0.1_flat", E021, True)}
+WORLD_COLOR = {HIGH64: SERIES[0], HALF: SERIES[1], FLAT: SERIES[3], CONTROL: SERIES[2], "e021 mountains": INK, "e021 half breath": "#b5b3ab", "e021 flat lawn": "#d3d1c9"}
 KIND_COLOR = {1: SERIES[0], 2: SERIES[1], 3: SERIES[3], 4: SERIES[2]}
 CONFIRM_STEPS = 5000
 MAIN = HIGH64
 VIEWER_WORLD = HIGH64
-VIEWER_SEED = 3
+VIEWER_SEED = 2
 LAST_STEP = 1_000_000
 
 
@@ -582,76 +583,94 @@ details {{ margin: 8px 0; }} summary {{ cursor: pointer; color: var(--ink2); }}
 
 DIAGRAM = """
 <figure class="diagram">
-<svg viewBox="0 0 800 340" role="img" aria-label="A row of world cells in cross-section, each with a green column of standing plant matter. Most columns are a grazed lawn a few hundredths tall. One column stands at height 4: a growing tree. The sun falls on every cell alike, but the cells within the tree's reach lose part of their sun to it, shown as arrows bending from their tops to the tree's crown; the cell beside the tree grows in the dark. A second column stands at the cap of 8: a full crown that intercepts nothing, a standing larder, with a body biting its base." style="max-width:100%;height:auto;display:block">
+<svg viewBox="0 0 800 340" role="img" aria-label="A row of world cells in cross-section. One column stands at the cap of 8, a full tree, with a body on its base. The sun falls on every cell alike, but the cells within the tree's reach lose their sun to it, shown as arrows bending from their tops into the crown, and the crown drops what it cannot hold as fruit on the two cells beside it, where bodies stand and eat. The cells under the crown's shadow are nearly bare; the lawn beyond the reach grows as before." style="max-width:100%;height:auto;display:block">
 <g fill="none" stroke="currentColor" stroke-width="1.2" font-size="12" font-family="system-ui, sans-serif">
   <!-- the sun: one arrow per cell -->
   <g stroke="#eda100" stroke-width="1.4">
     <path d="M 65,16 L 65,36 M 115,16 L 115,36 M 165,16 L 165,36 M 215,16 L 215,36 M 265,16 L 265,36 M 365,16 L 365,36 M 415,16 L 415,36 M 465,16 L 465,36 M 515,16 L 515,36 M 565,16 L 565,36" marker-end="url(#sunhead)"/>
     <path d="M 315,16 L 315,36" stroke-width="2.2" marker-end="url(#sunhead)"/>
   </g>
-  <text x="300" y="56" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">sun: 0.01 per cell per step, everywhere</text>
-  <!-- the light the canopy takes: curved arrows from the shaded cells' tops to the growing tree's crown -->
-  <g stroke="var(--s1)" stroke-width="1.5">
-    <path d="M 165,64 C 200,70 260,80 296,104" marker-end="url(#lighthead)"/>
-    <path d="M 215,62 C 240,68 275,82 300,102" marker-end="url(#lighthead)"/>
-    <path d="M 265,60 C 280,68 295,84 306,100" marker-end="url(#lighthead)"/>
-    <path d="M 365,60 C 352,70 336,86 326,100" marker-end="url(#lighthead)"/>
-    <path d="M 415,62 C 390,70 352,88 332,104" marker-end="url(#lighthead)"/>
+  <text x="150" y="56" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">sun: 0.01 per cell per step, everywhere</text>
+  <!-- the light the crown takes: from the tops of the cells within reach into the crown -->
+  <g stroke="currentColor" stroke-width="1.3">
+    <path d="M 115,66 C 170,72 250,78 294,96" marker-end="url(#lighthead)"/>
+    <path d="M 165,64 C 210,70 262,80 296,100" marker-end="url(#lighthead)"/>
+    <path d="M 215,62 C 245,68 275,84 300,104" marker-end="url(#lighthead)"/>
+    <path d="M 265,60 C 280,68 295,86 306,102" marker-end="url(#lighthead)"/>
+    <path d="M 365,60 C 352,70 336,88 326,102" marker-end="url(#lighthead)"/>
+    <path d="M 415,62 C 388,70 356,88 332,104" marker-end="url(#lighthead)"/>
+    <path d="M 465,64 C 420,70 366,82 336,100" marker-end="url(#lighthead)"/>
   </g>
-  <text x="190" y="90" fill="var(--s1)" stroke="none" font-weight="600">the canopy takes the light</text>
+  <text x="348" y="150" fill="currentColor" stroke="none" font-weight="600">the full crown keeps taking the light,</text>
+  <text x="348" y="166" fill="currentColor" stroke="none" font-weight="600">with a body on it</text>
+  <!-- the fruit: from the crown down onto the ring -->
+  <g stroke="var(--s1)" stroke-width="1.8" stroke-dasharray="5 3">
+    <path d="M 298,120 C 270,150 262,200 264,238" marker-end="url(#fruithead)"/>
+    <path d="M 332,120 C 360,150 368,200 366,238" marker-end="url(#fruithead)"/>
+  </g>
+  <text x="60" y="176" fill="var(--s1)" stroke="none" font-weight="600">what it cannot hold falls</text>
+  <text x="60" y="192" fill="var(--s1)" stroke="none" font-weight="600">as fruit on the ring</text>
   <!-- the ground -->
   <path d="M 40,260 L 590,260" stroke-width="1.5"/>
-  <!-- lawn columns (grazed to 0.03-0.05) -->
+  <!-- the lawn beyond the reach -->
   <g fill="#1baf7a" stroke="none">
     <rect x="50" y="254" width="30" height="6"/>
-    <rect x="100" y="254" width="30" height="6"/>
-    <rect x="150" y="255" width="30" height="5"/>
-    <rect x="200" y="256" width="30" height="4"/>
-    <rect x="400" y="255" width="30" height="5"/>
-    <rect x="450" y="254" width="30" height="6"/>
+    <rect x="500" y="254" width="30" height="6"/>
+    <rect x="550" y="255" width="30" height="5"/>
   </g>
-  <!-- the cell in the dark beside the tree: nearly bare -->
-  <rect x="250" y="258" width="30" height="2" fill="#1baf7a" stroke="none"/>
-  <text x="258" y="244" text-anchor="middle" fill="currentColor" stroke="none">in the dark</text>
-  <!-- the growing tree: height 4 of 8 -->
-  <rect x="300" y="150" width="30" height="110" fill="#1baf7a" stroke="none"/>
-  <text x="290" y="280" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">a growing tree</text>
-  <text x="290" y="296" text-anchor="middle" fill="currentColor" stroke="none">height 4, room 4: claims</text>
-  <text x="290" y="312" text-anchor="middle" fill="currentColor" stroke="none">from every cell it overtops,</text>
-  <text x="290" y="328" text-anchor="middle" fill="currentColor" stroke="none">gathers tens of suns</text>
-  <!-- the full tree: at the cap, with a body biting it -->
-  <rect x="500" y="40" width="30" height="220" fill="#1baf7a" stroke="none"/>
-  <rect x="524" y="238" width="26" height="11" rx="1.5" fill="var(--s1)" stroke="none"/>
-  <text x="510" y="280" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">a full tree, height 8</text>
-  <text x="510" y="296" text-anchor="middle" fill="currentColor" stroke="none">the crown saturated: a larder</text>
-  <text x="510" y="312" text-anchor="middle" fill="currentColor" stroke="none">of 400 bites; a bite opens room,</text>
-  <text x="510" y="328" text-anchor="middle" fill="currentColor" stroke="none">and the bitten tree pulls hardest</text>
+  <!-- the cells in the shadow: nearly bare -->
+  <g fill="#1baf7a" stroke="none">
+    <rect x="100" y="258" width="30" height="2"/>
+    <rect x="150" y="258" width="30" height="2"/>
+    <rect x="200" y="259" width="30" height="1"/>
+    <rect x="400" y="259" width="30" height="1"/>
+    <rect x="450" y="258" width="30" height="2"/>
+  </g>
+  <text x="165" y="246" text-anchor="middle" fill="currentColor" stroke="none">in the dark</text>
+  <text x="440" y="246" text-anchor="middle" fill="currentColor" stroke="none">in the dark</text>
+  <!-- the ring cells: fruit lying, a body on each -->
+  <g fill="var(--s1)" stroke="none">
+    <circle cx="255" cy="256" r="2.6"/><circle cx="262" cy="252" r="2.6"/><circle cx="270" cy="256" r="2.6"/><circle cx="277" cy="252" r="2.6"/>
+    <circle cx="355" cy="256" r="2.6"/><circle cx="362" cy="252" r="2.6"/><circle cx="370" cy="256" r="2.6"/><circle cx="377" cy="252" r="2.6"/>
+  </g>
+  <g fill="currentColor" fill-opacity="0.55" stroke="none">
+    <rect x="252" y="236" width="26" height="11" rx="1.5"/>
+    <rect x="352" y="236" width="26" height="11" rx="1.5"/>
+  </g>
+  <!-- the full tree, with a body on its base -->
+  <rect x="300" y="40" width="30" height="220" fill="#1baf7a" stroke="none"/>
+  <rect x="304" y="247" width="22" height="11" rx="1.5" fill="currentColor" fill-opacity="0.55" stroke="none"/>
+  <text x="315" y="280" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">a full tree, height 8, a body on it</text>
+  <text x="315" y="296" text-anchor="middle" fill="currentColor" stroke="none">the crown's light is above the body: it takes</text>
+  <text x="315" y="312" text-anchor="middle" fill="currentColor" stroke="none">up to 200 suns per step, out of its soil,</text>
+  <text x="315" y="328" text-anchor="middle" fill="currentColor" stroke="none">and lays them on its ring, where the crowd eats</text>
   <!-- labels: the column on the right -->
   <text x="610" y="50" fill="currentColor" stroke="none" font-weight="600">the law, per step</text>
   <text x="610" y="70" fill="currentColor" stroke="none">a column claims, from every cell</text>
   <text x="610" y="86" fill="currentColor" stroke="none">within reach, a share of its sun:</text>
-  <text x="610" y="110" fill="var(--s1)" stroke="none">(height difference - distance</text>
-  <text x="610" y="126" fill="var(--s1)" stroke="none">walked) / 8  x  2 x room / 8</text>
-  <text x="610" y="150" fill="currentColor" stroke="none">slant: the shadow fades by a</text>
-  <text x="610" y="166" fill="currentColor" stroke="none">cap-worth per cell, reach at most 8</text>
-  <text x="610" y="190" fill="currentColor" stroke="none">saturation: room = 8 - height;</text>
-  <text x="610" y="206" fill="currentColor" stroke="none">a full crown claims nothing, so a</text>
-  <text x="610" y="222" fill="currentColor" stroke="none">column never takes much more</text>
-  <text x="610" y="238" fill="currentColor" stroke="none">than it can grow by</text>
-  <text x="610" y="262" fill="currentColor" stroke="none">claims past a cell's whole sun</text>
-  <text x="610" y="278" fill="currentColor" stroke="none">share it in proportion; a column</text>
-  <text x="610" y="294" fill="currentColor" stroke="none">under a body claims nothing;</text>
-  <text x="610" y="310" fill="currentColor" stroke="none">the sun is moved, never made</text>
+  <text x="610" y="110" fill="currentColor" stroke="none">(height difference - distance</text>
+  <text x="610" y="126" fill="currentColor" stroke="none">walked) / 8  x  2, whatever its</text>
+  <text x="610" y="142" fill="currentColor" stroke="none">own height (no saturation), and</text>
+  <text x="610" y="158" fill="currentColor" stroke="none">under a body too</text>
+  <text x="610" y="182" fill="var(--s1)" stroke="none">the growth its light and soil</text>
+  <text x="610" y="198" fill="var(--s1)" stroke="none">would give past the cap, or</text>
+  <text x="610" y="214" fill="var(--s1)" stroke="none">under a body, falls as fruit on</text>
+  <text x="610" y="230" fill="var(--s1)" stroke="none">the ring of 8, in equal shares</text>
+  <text x="610" y="254" fill="currentColor" stroke="none">fruit lies on the ground: any</text>
+  <text x="610" y="270" fill="currentColor" stroke="none">gut eats it, it rots into the</text>
+  <text x="610" y="286" fill="currentColor" stroke="none">soil at 1% per step, and it</text>
+  <text x="610" y="302" fill="currentColor" stroke="none">counts in the column it lies on</text>
+  <text x="610" y="326" fill="currentColor" stroke="none">the sun is moved, never made</text>
 </g>
 <defs>
   <marker id="sunhead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#eda100"/></marker>
-  <marker id="lighthead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="var(--s1)"/></marker>
+  <marker id="lighthead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/></marker>
+  <marker id="fruithead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="var(--s1)"/></marker>
 </defs>
 </svg>
-<figcaption>Figure 1. The canopy law. The matter standing on a cell (its plant, and the dead lying on it) is a column; a taller column takes, from every cell within Chebyshev reach, a share of that cell's sun equal to the height difference less the distance walked, over the cap - times the rate (2) and the column's own room over the cap. The taken light lands in the taker's regrowth budget for the step, where the soil feeds it (a plant still grows out of its own cell's soil). Everything else is e020's world unchanged: the uniform sun, the terrain with soil that runs downhill, the breath to the air and the rain by height, a cell held by a body that neither grows nor gathers. The worlds: the canopy on e020's mountain-rain world, on its half-breath world, and on its flat-rain lawn.</figcaption>
+<figcaption>Figure 1. The spill. e021's canopy - a column of standing matter claims, from every cell within its height in cells, a share of that cell's sun equal to the height difference less the distance walked, over the cap, times the rate 2 - without its saturation: a full crown claims as hard as a bitten one, and a column under a body claims too, because what it takes is the crown's light, above the body (only the cell's own sun falls in the body's shadow, e016). A cell grows out of its soil by at most its light; the growth that would pass the cap, or that a held cell cannot make, is fruit, taken from the cell's soil and laid in equal shares on the eight cells around it. Fruit is plant matter lying on the ground beside the dead: a gut takes it in the cell's proportion, it rots into the soil at 1% per step, and it counts in the column it lies on. A full tree alone on a bare lawn takes the whole sun of the cells within five of it and a part out to eight, 200 suns per step; the cells under its shadow grow nothing, and the lawn beyond its reach grows as before. Everything else is e021: the uniform sun, the terrain with soil that runs downhill, the breath to the air and the rain by height, the height bands as places. Riding along, mutation is a chance of 2/512 per base per copy instead of exactly two per child.</figcaption>
 </figure>
 """
-
 
 def read_frames(path, folder=HERE):
     with open(os.path.join(folder, path)) as f:
@@ -928,7 +947,7 @@ def main():
         per_step = Counter(int(r["step"]) for r in load_rows(f"results/{run}_lineages.csv"))
         last_step = int(log["step"][-1])
         pop = half(log, "pop")
-        sun = [r + sh + wa + b for r, sh, wa, b in zip(log["regrowth"], log["shaded"], log["wasted"], log["barren"])]
+        sun = [r + sh + wa + b + f for r, sh, wa, b, f in zip(log["regrowth"], log["shaded"], log["wasted"], log["barren"], log["fruit"])]
         eaten = eaten_of(log)
         n = len(eaten)
         end = st[-1] if st else None
@@ -948,7 +967,11 @@ def main():
                  trees=med(half(log, "trees")), tree_res=med(half(log, "tree_res")), res_max=med(half(log, "res_max")),
                  shade=med(half(log, "shade")), tree_eaten=med(half(log, "tree_eaten")),
                  tree_share=med([t / max(e, 1e-9) for t, e in zip(half(log, "tree_eaten"), eaten[n // 2:])]),
-                 biters=med(half(log, "biters_share")))
+                 biters=med(half(log, "biters_share")), biters_max=max(log["biters_share"]),
+                 fruit=med(half(log, "fruit")), fruit_eaten=med(half(log, "fruit_eaten")), fruit_stock=med(half(log, "fruit_stock")),
+                 fruit_share=med([f / max(e, 1e-9) for f, e in zip(half(log, "fruit_eaten"), eaten[n // 2:])]),
+                 meat_share=med([m / max(p_ + m, 1e-9) for p_, m in zip(half(log, "plant_intake"), half(log, "meat_intake"))]),
+                 clones=med(half(log, "clones")), mutations=med(half(log, "mutations")))
         if end:
             for p, e in end["by"].items():
                 d[f"soilend_{p}"] = e["soil"]
@@ -974,6 +997,7 @@ def main():
             d[f"regrowth_{p}"] = med(q["regrowth"][h])
             d[f"soilcell_{p}"] = med([so / c for so, c in zip(q["soil"][h], q["cells"][h])])
             d[f"trees_{p}"] = med(q["trees"][h])
+            d[f"fruit_{p}"] = med(q["fruit"][h])
         return d
 
     S = {w: {s: summarize(w, s) for s in seeds_of(w)} for w in WORLDS}
@@ -1000,11 +1024,17 @@ def main():
         if key in ("barren", "shaded"):
             out = []
             for s in seeds:
-                sun = [r + sh + wa + b for r, sh, wa, b in zip(L[s]["regrowth"], L[s]["shaded"], L[s]["wasted"], L[s]["barren"])]
+                sun = [r + sh + wa + b + f for r, sh, wa, b, f in zip(L[s]["regrowth"], L[s]["shaded"], L[s]["wasted"], L[s]["barren"], L[s].get("fruit", [0.0] * len(L[s]["step"])))]
                 out.append(med([b / max(t, 1e-9) for b, t in zip(half(L[s], key), sun[len(sun) // 2:])]))
             return med(out)
         if key == "soil_end":
             return med([L[s]["soil"][-1] for s in seeds])
+        if key == "tree_share":
+            return med([med([t / max(e, 1e-9) for t, e in zip(half(L[s], "tree_eaten"), eaten_of(L[s])[len(L[s]["step"]) // 2:])]) for s in seeds])
+        if key == "meat_share":
+            return med([med([m / max(p_ + m, 1e-9) for p_, m in zip(half(L[s], "plant_intake"), half(L[s], "meat_intake"))]) for s in seeds])
+        if key == "biters_max":
+            return med([max(L[s]["biters_share"]) for s in seeds])
         if key == "mass":
             key = "mass_mean"
         if key not in L[1]:
@@ -1014,33 +1044,23 @@ def main():
     logs_ref = dict(logs)
     logs_ref.update({w: rlogs[w] for w in REFS})
     all_worlds = list(WORLDS) + list(REFS)
-    refhigh, refhalf = list(REFS)
 
     charts = {}
-    charts["eaten"] = world_chart("Food eaten per step", "Plant and dead matter taken by guts per step, one line per run; gray: e020's mountain-rain world (dark) and half-breath world (light), the same laws without the canopy. The sun gives 164 per step; the mean height is normalized, so the rain's caps add up to 82 in every seed. A line that ends is a world that died.", logs_ref, eaten_of, all_worlds, WORLD_COLOR)
-    charts["pop"] = world_chart("Population", "Bodies alive at each log step, one line per run; gray: e020 without the canopy.", logs_ref, lambda l: l["pop"], all_worlds, WORLD_COLOR)
-    charts["barren"] = world_chart("Sun lost to empty soil", "Share of the sun that shone on a cell whose soil had nothing left, per log window, one line per run; gray: e020 without the canopy (10-29% in the mountain-rain world, all of it in the valleys).", logs_ref, lambda l: [b / max(r + sh + wa + b, 1e-9) for r, sh, wa, b in zip(l["regrowth"], l["shaded"], l["wasted"], l["barren"])], all_worlds, WORLD_COLOR, percent=True)
-    charts["soil_cells"] = world_chart("Cells with soil", "Share of the cells holding at least a step of sun's worth of soil (0.01), at each log step, one line per run: the area of the world that can grow a plant this step.", logs, lambda l: l["soil_cells"], list(WORLDS), WORLD_COLOR, percent=True, ymax=1.0)
-    charts["air"] = world_chart("Matter in the air", "What bodies have burned and the rain has not yet returned, at each log step, one line per run. The world holds 139,700 in all; a line that climbs and levels is a store forming in the air; one that stays at zero is air that empties every step.", logs, lambda l: l["air"], list(WORLDS), WORLD_COLOR)
-    charts["soil_total"] = world_chart("Matter in the soil", "Soil of the whole world at each log step, one line per run; gray: e020 without the canopy (2,200-7,300 in the mountain-rain world, 135,900-136,300 with half the breath). A line that falls is the lake draining into the air.", logs_ref, lambda l: l["soil"], all_worlds, WORLD_COLOR)
-    charts["rain"] = world_chart("Rain per step", "Matter fallen from the air on the whole world per step, one line per run. With rain on the mountains the caps add up to 82 per step; a flat line at 82 means the air is never short. With rain everywhere alike the caps add up to 164 and the line is what the bodies burned.", logs, lambda l: l["rain"], list(WORLDS), WORLD_COLOR)
-    charts["soil_band"] = place_chart(f"Soil per cell by height, {HIGH64}", "Matter in the soil per cell of each height band (thirds of the cells by the terrain), at each log step, one line per seed. e020 ended near zero everywhere but a remnant pool on the valley floor.", places, HIGH64, lambda d: [so / c for so, c in zip(d["soil"], d["cells"])])
-    charts["pop_band"] = place_chart(f"Bodies by height, {HIGH64}", "Bodies standing in each height band at each log step, one line per seed. The bands are equal in cells (5,461 each). e020: 658-670 on the ridges, 268-484 in the valleys.", places, HIGH64, lambda d: d["pop"])
-    charts["pop_band_half"] = place_chart(f"Bodies by height, {HALF}", "Bodies standing in each height band at each log step, one line per seed: half of what a body burns rains on the mountains, half falls to the soil under it.", places, HALF, lambda d: d["pop"])
-    charts["soil_band_half"] = place_chart(f"Soil per cell by height, {HALF}", "Matter in the soil per cell of each height band, one line per seed: whether a lake survives when half of the breath still falls to the ground.", places, HALF, lambda d: [so / c for so, c in zip(d["soil"], d["cells"])])
-    charts["pop_band_flat"] = place_chart(f"Bodies by height, {FLAT}", "Bodies standing in each height band at each log step, one line per seed.", places, FLAT, lambda d: d["pop"])
-    charts["eaten_band"] = place_chart(f"Food eaten per step by height, {HIGH64}", "Plant and dead matter eaten per step by the bodies standing in each band, one line per seed. Each band gets 54.6 of sun per step; the rain's caps give the ridges about 37, the slopes 27 and the valleys 18.", places, HIGH64, lambda d: [(a + b) / 10_000 for a, b in zip(d["plant_intake"], d["meat_intake"])])
-    charts["rain_band"] = place_chart(f"Rain per step by height, {HIGH64}", "Matter fallen on the cells of each band per step, one line per seed. The cap of a cell is the sun's worth (0.01) times its height over the relief.", places, HIGH64, lambda d: d["rain"])
-    charts["top"] = stats_chart("Where the soil lies: the richest tenth of the cells", "Share of the world's soil held by its richest tenth of cells, every 100,000 steps, one line per run. 10% is soil spread evenly.", STATS, lambda d: d["top"], list(WORLDS), percent=True, ymax=1.0)
-    charts["under"] = stats_chart("Soil under the bodies over soil elsewhere", "Mean soil of the cells with a body on them over the mean of the cells without, every 100,000 steps, one line per run. Above 1, bodies stand where the soil is; e020's mountain-rain world: 1.2-1.5.", STATS, lambda d: d["under"] / max(d["free"], 1e-9), list(WORLDS), ymin=0)
+    charts["eaten"] = world_chart("Food eaten per step", "Plant, fruit and dead matter taken by guts per step, one line per run; gray: e021's runs, the same worlds with the saturating canopy and no spill (dark: mountains, mid: half breath, light: flat lawn). The sun gives 164 per step. A line that ends is a world that died.", logs_ref, eaten_of, all_worlds, WORLD_COLOR)
+    charts["pop"] = world_chart("Population", "Bodies alive at each log step, one line per run; gray: e021.", logs_ref, lambda l: l["pop"], all_worlds, WORLD_COLOR)
+    charts["fruit_share"] = world_chart("Intake from fruit", "Share of the food eaten that was fruit lying on the ground, per log window, one line per run. e021 had no fruit; the control drops none.", logs, lambda l: [f / max(e, 1e-9) for f, e in zip(l["fruit_eaten"], eaten_of(l))], list(WORLDS), WORLD_COLOR, percent=True, ymax=1.0)
+    charts["fruit"] = world_chart("Fruit fallen per step", "Matter dropped by the columns on the cells around them per step, one line per run, of the sun's 164. A flat line is a world whose crowns are full and lit; the control drops nothing.", logs, lambda l: l["fruit"], list(WORLDS), WORLD_COLOR)
+    charts["trees"] = world_chart("Trees standing", "Cells whose standing plant is 1.0 or more (50 bites; the fruit and the dead lying on a cell do not count) at each log step, one line per run; gray: e021 (6-24 in its orchard runs, 165-1,405 in its forests).", logs_ref, lambda l: l["trees"], all_worlds, WORLD_COLOR)
+    charts["tree_share"] = world_chart("Intake from the trees", "Share of the food eaten that was taken from a cell whose plant stands at 1.0 or more, per log window, one line per run; gray: e021 (0.2-0.8% in the orchards, 6.5% in the forests).", logs_ref, lambda l: [t / max(e, 1e-9) for t, e in zip(l["tree_eaten"], eaten_of(l))], all_worlds, WORLD_COLOR, percent=True)
+    charts["contacts"] = world_chart("Contacts per body per step", "Pairs of bodies whose cells touched, per body per step, one line per run; gray: e021 (0.008-0.093, the forests at the top).", logs_ref, lambda l: [c / max(p, 1) / 10_000 for c, p in zip(l["contacts"], l["pop"])], all_worlds, WORLD_COLOR)
+    charts["meat_share"] = world_chart("Dead matter in the intake", "Share of the food eaten that was dead bodies, per log window, one line per run; gray: e021 (about 1%). A body that dies in a crowd is eaten.", logs_ref, lambda l: [m / max(p + m, 1e-9) for p, m in zip(l["plant_intake"], l["meat_intake"])], all_worlds, WORLD_COLOR, percent=True)
+    charts["biters"] = world_chart("Bodies with a bite", "Share of the bodies with a hard tip on the front backed by muscle, at each log step, one line per run; gray: e021 (0.000 throughout). A line above zero is a tooth that pays for a while.", logs_ref, lambda l: l["biters_share"], all_worlds, WORLD_COLOR, percent=True)
+    charts["lineages"] = world_chart("Lineages alive", "Confirmed lineages at each log step, one line per run; gray: e021 (1-5).", logs_ref, lambda l: l["lineages"], all_worlds, WORLD_COLOR)
+    charts["barren"] = world_chart("Sun lost to empty soil", "Share of the sun that shone on a column whose soil had nothing left, per log window, one line per run; gray: e021. With the spill a full column with no soil takes light and wastes it.", logs_ref, lambda l: [b / max(r + sh + wa + b + f, 1e-9) for r, sh, wa, b, f in zip(l["regrowth"], l["shaded"], l["wasted"], l["barren"], l.get("fruit", [0.0] * len(l["step"])))], all_worlds, WORLD_COLOR, percent=True)
+    charts["shaded"] = world_chart("Sun lost under the bodies", "Share of the sun that fell on a cell's own plant while a body stood on it, per log window, one line per run; gray: e021 (29-38%). The crown's light is above the body and is not lost.", logs_ref, lambda l: [sh / max(r + sh + wa + b + f, 1e-9) for r, sh, wa, b, f in zip(l["regrowth"], l["shaded"], l["wasted"], l["barren"], l.get("fruit", [0.0] * len(l["step"])))], all_worlds, WORLD_COLOR, percent=True)
+    charts["clones"] = world_chart("Children born as clones", "Share of the children conceived with no point mutation, per log window, one line per run. At 2/512 per base the expectation is e^-2 = 13.5%; e021 had none.", logs, lambda l: l["clones"], list(WORLDS), WORLD_COLOR, percent=True)
+    charts["pop_band"] = place_chart(f"Bodies by height, {HIGH64}", "Bodies standing in each height band at each log step, one line per seed. The bands are equal in cells (5,461 each). e021: the crowd on the ridges where the rain is.", places, HIGH64, lambda d: d["pop"])
     charts["maps"] = terrain_soil_figure("The terrain and the soil at the end", "Top: the terrain of seed 1 of each world (white high, black low). Bottom: soil per cell at step 1,000,000 (or the last dump before the world died), darker is more (log scale, 30 and above black).", [(w, seeds_of(w)[0]) for w in WORLDS])
-    charts["lineages"] = world_chart("Lineages alive", "Confirmed lineages at each log step, one line per run; gray: e020's worlds without the canopy (1-2).", logs_ref, lambda l: l["lineages"], all_worlds, WORLD_COLOR)
-    charts["trees"] = world_chart("Trees standing", "Cells holding at least 1.0 of matter (50 bites; the grazed lawn stands at 0.03-0.05) at each log step, one line per run. e020 had none once the start's stock was eaten.", logs, lambda l: l["trees"], list(WORLDS), WORLD_COLOR)
-    charts["tree_share"] = world_chart("Intake from the trees", "Share of the food eaten that was taken from a cell standing at 1.0 or more, per log window, one line per run: the trees as a harvest, not a dead store.", logs, lambda l: [t / max(e, 1e-9) for t, e in zip(l["tree_eaten"], eaten_of(l))], list(WORLDS), WORLD_COLOR, percent=True)
-    charts["tree_res"] = world_chart("Matter standing in the trees", "Matter in the cells at 1.0 or more at each log step, one line per run; the world holds 139,700 in all.", logs, lambda l: l["tree_res"], list(WORLDS), WORLD_COLOR)
-    charts["shade_moved"] = world_chart("Sun moved by the canopy", "Light taken from shorter columns by taller ones per step, one line per run, of the sun's 164.", logs, lambda l: l["shade"], list(WORLDS), WORLD_COLOR)
-    charts["trees_band"] = place_chart(f"Trees by height, {HIGH64}", "Cells at 1.0 or more in each height band at each log step, one line per seed.", places, HIGH64, lambda d: d["trees"])
-    charts["contacts"] = world_chart("Contacts per body per step", "Pairs of bodies whose cells touched, per body per step, one line per run; gray: e020 without the canopy (0.009-0.042).", logs_ref, lambda l: [c / max(p, 1) / 10_000 for c, p in zip(l["contacts"], l["pop"])], all_worlds, WORLD_COLOR)
 
     vseed = VIEWER_SEED if VIEWER_SEED in events[VIEWER_WORLD] else seeds_of(VIEWER_WORLD)[0]  # a dry run may lack the viewer's seed
     viewer_run = f"{WORLDS[VIEWER_WORLD]['run']}_seed{vseed}"
@@ -1066,7 +1086,8 @@ def main():
     blob = base64.b64encode(gzip.compress(len(header).to_bytes(4, "little") + header + bytes(data), 9)).decode()
 
     def rng(w, key, fmt):
-        vals = [S[w][s].get(key, float("nan")) for s in seeds_of(w)]
+        # A run that died at its start (one log row) has no second half: it only reports its death.
+        vals = [S[w][s].get(key, float("nan")) for s in seeds_of(w) if key == "extinct_at" or not S[w][s]["extinct"]]
         vals = [v for v in vals if v == v]
         if not vals:
             return "-"
@@ -1097,37 +1118,28 @@ def main():
                + row("Died at step", "extinct_at", n0)
                + row("Food eaten per step", "eaten", d1, "eaten")
                + row("Food eaten, last quarter over third quarter", "steady", d2, "steady")
+               + row("Fruit fallen per step", "fruit", d1)
+               + row("Intake from fruit, share of the food eaten", "fruit_share", p0)
+               + row("Dead matter, share of the food eaten", "meat_share", p0, "meat_share")
+               + row("Trees standing (plant at 1.0 or more)", "trees", n0, "trees")
+               + row("Intake from the trees, share of the food eaten", "tree_share", p0, "tree_share")
+               + row("Tallest column (plant, fruit and dead)", "res_max", d1, "res_max")
                + row("Sun lost to empty soil, share of the sun", "barren", p0, "barren")
-               + row("Sun lost to bodies standing on cells, share", "shaded", p0, "shaded")
-               + row("Cells with soil (0.01 or more), share", "soil_cells", p0)
-               + row("Rain per step", "rain", d1)
-               + row("Matter in the air at the end", "air_end", n0)
-               + row("Matter in the soil at the end", "soil_end", n0, "soil_end")
-               + row("Soil per cell at the end: valleys / slopes / ridges", by_band("soilend"), d1)
-               + row("Bodies: valleys / slopes / ridges", by_band("pop"), n0)
-               + row("Eaten per step: valleys / slopes / ridges", by_band("eaten"), d1)
-               + row("Mass: valleys / slopes / ridges", by_band("mass"), d1)
-               + row("Bodies in the lowest two thirds at the end, share", uniform_only("low_pop"), p0)
-               + row("Richest tenth of the cells, share of the soil at the end", "top", p0)
-               + row("Soil under the bodies over soil elsewhere, at the end", "under", d2)
-               + row("Soil moved per step", "flow", d1)
-               + row("Matter at the end over the start", "matter_hold", lambda v: f"{v:.4f}")
-               + row("Trees standing (cells at 1.0 or more)", "trees", n0)
-               + row("Trees: valleys / slopes / ridges", by_band("trees"), n0)
-               + row("Intake from the trees, share of the food eaten", "tree_share", p0)
-               + row("Matter standing in the trees", "tree_res", n0)
-               + row("Tallest cell", "res_max", d1)
-               + row("Sun moved by the canopy, per step", "shade", d1)
+               + row("Sun lost under the bodies, share", "shaded", p0, "shaded")
+               + row("Contacts per body per step", "contacts", d3, "contacts")
+               + row("Bodies with a bite, share (median / peak)", "biters|biters_max", d3, "biters_share")
                + row("Lineages alive", "lineages", n0, "lineages")
                + row("Mass", "mass", d1, "mass")
-               + row("Bodies with a bite, share", "biters", d3, "biters_share")
-               + row("Contacts per body per step", "contacts", d3, "contacts")
+               + row("Bodies: valleys / slopes / ridges", by_band("pop"), n0)
+               + row("Children born as clones, share", "clones", p0)
+               + row("Mutations per child", "mutations", d2)
+               + row("Matter at the end over the start", "matter_hold", lambda v: f"{v:.4f}")
                + row("Steps per second", "sps", n0, "steps_per_sec")
                + "</tbody>")
 
-    tables = data_table(["step", "place", "pop", "mass", "hard", "muscle", "digestive", "cover", "foot", "plant_intake", "meat_intake", "dead", "carrion", "soil", "rain", "trees", "barren", "regrowth", "cells", "lineages", "movers"],
+    tables = data_table(["step", "place", "pop", "mass", "hard", "muscle", "digestive", "cover", "foot", "plant_intake", "meat_intake", "fruit", "fruit_intake", "dead", "carrion", "soil", "rain", "trees", "barren", "regrowth", "cells", "lineages", "movers"],
                         {f"{w}, seed {s}, {place_names(w)[p]} (every 100,000 steps)": places[w][s][p] for w in WORLDS for s in seeds_of(w) for p, _, _ in WORLDS[w]["places"] if p in places[w][s]}, every=10)
-    tables += data_table(["step", "pop", "births", "deaths_energy", "mass_mean", "forward", "blocked", "foot_mean", "cover", "contacts", "regrowth", "shaded", "wasted", "barren", "rot", "spent", "flow", "rain", "air", "shade", "trees", "tree_res", "res_max", "tree_eaten", "soil_cells", "deep", "soil", "matter", "plant_intake", "meat_intake", "lineages", "steps_per_sec"],
+    tables += data_table(["step", "pop", "births", "deaths_energy", "mass_mean", "forward", "blocked", "foot_mean", "cover", "contacts", "regrowth", "shaded", "wasted", "barren", "rot", "spent", "flow", "rain", "air", "shade", "trees", "tree_res", "res_max", "tree_eaten", "fruit", "fruit_stock", "fruit_eaten", "clones", "mutations", "soil", "matter", "plant_intake", "meat_intake", "biters_share", "lineages", "steps_per_sec"],
                          {f"{w}, seed {s}, whole world (every 100,000 steps)": logs[w][s] for w in WORLDS for s in seeds_of(w)}, every=10)
 
     text = TEXT
@@ -1136,13 +1148,13 @@ def main():
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>e021 The tall plant takes the light - Report</title>
+<title>e022 The spill - Report</title>
 <style>{CSS}</style>
 </head>
 <body>
 <main>
-<h1>e021: The tall plant takes the light</h1>
-<p class="sub">Experiment report - 2026-09-01 - e020's closed world with one law added: a taller plant shades a shorter one, as far as it is tall, and takes only the light it can use. The canopy on the mountain-rain world, on the half-breath world and on the flat-rain lawn, 128x128, four seeds each, 1,000,000 steps; e020's runs without the canopy as the reference</p>
+<h1>e022: The spill</h1>
+<p class="sub">Experiment report - 2026-09-01 - e021's closed world with the canopy's saturation dropped and one law added: what a column cannot hold falls as fruit on the ring of cells around it. Rain on the mountains, half the breath, and rain everywhere alike, 128x128, four seeds each, 1,000,000 steps; a control with e021's canopy; e021's runs as the reference. Mutation as a chance per base rides along.</p>
 
 <section class="tldr">
 <h2>TL;DR</h2>
@@ -1152,12 +1164,13 @@ def main():
 <h2>1. Question</h2>
 <p>{text["question"]}</p>
 <ol>
-  <li><strong>Trees stand.</strong> Cells holding at least 1.0 of matter (50 bites; the grazed lawn stands at 0.03-0.05) persist through the second half of every run - tens to hundreds per world (e020: none once the start's stock was eaten) - and some reach the cap. They stand where soil meets few bodies: in the mountain-rain world on the valley floors and rivers, where 10-29% of e020's sun fell on empty ground.</li>
-  <li><strong>The trees are eaten.</strong> Intake from tree cells is at least 5% of the world's intake in the mountain-rain world: the trees are a harvest, not a dead store, and the world eats within 15% of e020's income.</li>
-  <li><strong>A crowd forms at the trees.</strong> Contacts per body per step rise above e020's 0.009-0.042 in every run: bodies waiting at a tree the way e011's crowds shared a rich cell.</li>
-  <li><strong>A second kind of body lives on the trees.</strong> By #19: in at least two seeds of four, a lineage whose intake is mostly from tree cells coexists with the lawn bar for over 100,000 steps, with a different body (larger, or toothed - a biters' share over 0.01 would be the first tooth since e012). This is the hypothesis the law is for; it has failed in every world since e013.</li>
-  <li><strong>The world stands.</strong> No extinction, population coefficient of variation under 0.10 over the second half, matter conserved to 0.05%, in all twelve runs. The canopy moves sun, it does not destroy it; trees can starve the lawn locally but the trees themselves are food.</li>
-  <li><strong>The rate is not a dial.</strong> Doubling the shade rate (pilot only) changes how sharp the canopy is, not what kind of world forms.</li>
+  <li><strong>The world stands without saturation.</strong> No extinction, population coefficient of variation under 0.10 over the second half, matter conserved to 0.05%, in all twelve runs: light a full crown takes is fruit now, not a blight.</li>
+  <li><strong>Fruit is the harvest.</strong> Intake from fruit is at least a third of the food eaten in every run, and the standing trees are eaten less than in e021's forest.</li>
+  <li><strong>A crowd forms.</strong> Contacts per body per step exceed e021's forest ceiling (0.093) in every run.</li>
+  <li><strong>The crowd pays for a second kind of body.</strong> By #19: in at least two seeds of four, a lineage with a different body coexists with the winner for over 100,000 steps, or the biters' share exceeds 0.01 (the first tooth since e012); dead matter is a larger share of the intake than e021's 1%.</li>
+  <li><strong>The canopy pays the world more.</strong> Food eaten per step exceeds e021's in every world (mountains 83, half breath 100-109, flat 105-113).</li>
+  <li><strong>The ring, not the wide fall.</strong> Fruit spread over the 24 cells within distance 2 (pilot only) makes a weaker crowd and wastes more sun.</li>
+  <li><strong>Mutation per base changes the distribution, not the world.</strong> About e^-2 = 13.5% of the children are clones, and the control (e021's canopy with the per-base mutation) has e021's winners, lineage counts and income.</li>
 </ol>
 
 <h2>2. The world</h2>
@@ -1165,11 +1178,11 @@ def main():
 {DIAGRAM}
 <p>{text["runs"]}</p>
 <ul class="measures">
-  <li><strong>Trees</strong> (<code>trees</code>): cells holding at least 1.0 of standing matter (50 bites), also per height band in <code>places.csv</code>. <strong>Their stock</strong> (<code>tree_res</code>): the matter standing in them; <code>res_max</code> is the tallest cell.</li>
-  <li><strong>The harvest</strong> (<code>tree_eaten</code>): intake taken from cells standing at 1.0 or more at the bite. <strong>The canopy</strong> (<code>shade</code>): sun moved from shorter columns to taller ones per step. The shade rate is in <code>terrain.json</code>.</li>
-  <li><strong>Places by height</strong>: the place of a cell is its band (the lowest third of the cells by the terrain, the middle third, the highest third), so the per-place log (population, body means, intake, soil, rain, barren sun, lineages, movers) reads by height. Each agent and lineage also carries the terrain height under it.</li>
-  <li><strong>The soil map</strong> (<code>soil.jsonl</code>, every 100,000 steps): the share of the soil in the richest tenth of the cells, the soil per cell and its share per place, the share of the bodies standing in each place, the shares of bare and wet cells, and the soil under the bodies over the soil elsewhere.</li>
-  <li>e020's measures: the air and the rain; sun split into grown, shaded, wasted and barren; soil, spent, rot, flow, matter; population, food eaten, dead matter, contacts, moves, lineages and events; places by height band; snapshots with the terrain and the soil as layers.</li>
+  <li><strong>Fruit</strong> (<code>fruit</code>): matter fallen from the columns per step; <code>fruit_stock</code> is what lies on the ground now; <code>fruit_eaten</code> the intake taken as fruit; per height band <code>fruit</code> (fallen, by the column's cell) and <code>fruit_intake</code>.</li>
+  <li><strong>Trees</strong> (<code>trees</code>): cells whose standing plant (the column less the fruit and the dead on it) is 1.0 or more (50 bites); <code>tree_res</code> the plant in them, <code>res_max</code> the tallest column of anything, <code>tree_eaten</code> the intake from tree cells.</li>
+  <li><strong>The crowd</strong>: contacts per body per step, dead matter's share of the intake, the biters' share (a hard tip on the front backed by muscle), lineages alive (a mating-connected group of at least 5 that persists).</li>
+  <li><strong>Mutation</strong> (<code>clones</code>, <code>mutations</code>): the share of the children conceived without a point mutation, and the mean number per child.</li>
+  <li>e021's measures: sun split into grown, shaded (a cell's own sun under a body), wasted and barren; the canopy's moved sun; the air and the rain; soil, spent, rot, flow, matter; population, food eaten, moves, events; places by height band; snapshots with the terrain and the soil as layers.</li>
 </ul>
 
 <h2>3. Results</h2>
@@ -1181,49 +1194,52 @@ def main():
 <li><span class="verdict {text["c4"]}">{text["l4"]}</span> {text["v4"]}</li>
 <li><span class="verdict {text["c5"]}">{text["l5"]}</span> {text["v5"]}</li>
 <li><span class="verdict {text["c6"]}">{text["l6"]}</span> {text["v6"]}</li>
+<li><span class="verdict {text["c7"]}">{text["l7"]}</span> {text["v7"]}</li>
 </ol>
 
 <h3>3.1 {text["h1"]}</h3>
 <div class="grid2">
-{charts["trees"]}{charts["trees_band"]}
+{charts["eaten"]}{charts["pop"]}
 </div>
-<div class="wide">{charts["maps"]}</div>
 <p>{text["r1"]}</p>
 
 <h3>3.2 {text["h2"]}</h3>
 <div class="grid2">
-{charts["tree_share"]}{charts["tree_res"]}
+{charts["fruit_share"]}{charts["fruit"]}
 </div>
 <div class="grid2">
-{charts["shade_moved"]}{charts["barren"]}
+{charts["trees"]}{charts["tree_share"]}
 </div>
+<div class="wide">{charts["maps"]}</div>
 <p>{text["r2"]}</p>
 
 <h3>3.3 {text["h3"]}</h3>
 <div class="grid2">
-{charts["contacts"]}{charts["under"]}
+{charts["contacts"]}{charts["meat_share"]}
 </div>
 <p>{text["r3"]}</p>
 
 <h3>3.4 {text["h4"]}</h3>
 <div class="grid2">
-{charts["lineages"]}{charts["pop_band"]}
+{charts["biters"]}{charts["lineages"]}
 </div>
 {gallery(GALLERY)}
 <p>{text["r4"]}</p>
 
 <h3>3.5 {text["h5"]}</h3>
 <div class="grid2">
-{charts["eaten"]}{charts["pop"]}
-</div>
-<div class="grid2">
-{charts["air"]}{charts["soil_total"]}
+{charts["shaded"]}{charts["barren"]}
 </div>
 <p>{text["r5"]}</p>
 
 <h3>3.6 {text["h6"]}</h3>
 <p>{text["r6"]}</p>
 
+<h3>3.7 {text["h7"]}</h3>
+<div class="grid2">
+{charts["clones"]}{charts["pop_band"]}
+</div>
+<p>{text["r7"]}</p>
 
 <div class="wide">{timeline}</div>
 <div class="viewer">
@@ -1252,7 +1268,7 @@ def main():
 <p>{text["conclusion"]}</p>
 
 <h2>Appendix: data</h2>
-<p>Every 100,000th record; full logs in <code>results/*_log.csv</code>, per place in <code>results/*_places.csv</code>, lineages in <code>results/*_lineages.csv</code>, events in <code>results/*_events.csv</code>, agents every 100,000 steps in <code>results/*_agents.csv</code>, the terrain (with the rain mode) in <code>results/*_terrain.json</code>, the soil and plants of every cell every 100,000 steps in <code>results/*_soil.jsonl</code>, snapshots in <code>results/*_{{long,clip,bodies}}.jsonl</code>. Reference runs are read from <code>../e020_rain/results</code>. Build this report with <code>uv run python experiments/e021_canopy/report.py</code>.</p>
+<p>Every 100,000th record; full logs in <code>results/*_log.csv</code>, per place in <code>results/*_places.csv</code>, lineages in <code>results/*_lineages.csv</code>, events in <code>results/*_events.csv</code>, agents every 100,000 steps in <code>results/*_agents.csv</code>, the terrain (with the rain mode, the shade rate, the spill radius and the mutation rate) in <code>results/*_terrain.json</code>, the soil and plants of every cell every 100,000 steps in <code>results/*_soil.jsonl</code>, snapshots in <code>results/*_{{long,clip,bodies}}.jsonl</code>. Reference runs are read from <code>../e021_canopy/results</code>. Build this report with <code>uv run python experiments/e022_spill/report.py</code>.</p>
 {tables}
 </main>
 <script id="frames" type="application/octet-stream">{blob}</script>
@@ -1268,43 +1284,47 @@ def main():
 
 # Lineages that prospered: (world, seed, lineage id, name, what the shape does).
 GALLERY = [
-    ("canopy on the mountains", 3, 1, "the bar of the forest world", "Eight digestive cells 2 by 8, the main lineage of the one mountain seed that lives in the forest state, alive all 1,000,000 steps (1,663 agents at its peak): the same mower as e019's lawn and e020's ridges, now grazing between 200-1,400 standing trees."),
-    ("canopy on the mountains", 3, 81, "the heavy bar above the trees", "Ten digestive cells, the heaviest winner of the series (mass 10.3), living 395,000 steps beside lineage 1 and standing highest (mean height 39.5, where the forest is thickest, 125 trees on the ridges): where cells hold 50-400 bites, a bigger gut pays."),
-    ("canopy on the mountains", 1, 90, "the thin bar of the low ground", "Six digestive cells in a single row, a cell lighter than the main line, 415,000 steps at height 26 against the main line's 36: e020's height sorting unchanged - the thin rain of the valleys still keeps the small variant."),
-    ("canopy on the flat lawn", 3, 35, "the second bar of the lawn forest", "Nine digestive cells 1.4 rows deep, living 921,000 steps beside the main lineage (mass 9.1 against 7.6) in the flat world that holds 217-458 trees on its lake - the longest coexistence of two lineages since e012."),
-    ("canopy, half the breath", 4, 23, "the long bar", "Nine to ten digestive cells, 2.2 rows by 7.7 columns, the main lineage of half seed 4 for 997,000 steps (1,882 agents): the richest world still grows the biggest bars, and this seed keeps five lineages alive at once at its peak."),
-    ("canopy, half the breath", 4, 261, "the squat bar", "Seven to eight digestive cells folded 3 rows deep by 4.3 wide, living 396,000 steps in the same world and seed as the long bar: two shapes of the same organ sharing one world, which the count of lineages alone would hide."),
+    ("spill on the flat lawn", 1, 1, "the frame", "Twenty-four cells around the rim of the 8x8 grid and none inside - 19 digestive, 4 hard at the corners - a hollow square 7 world cells wide, the only lineage of its run for all 1,000,000 steps (1,098 agents at its peak). The hollow is the point: the frame stands around a tree without holding it, so the tree keeps growing and dropping, and the frame's guts sit on the ring where the fruit lands. Three times the mass of e021's winner, and the first winner since e013 that is not a bar."),
+    ("spill on the mountains", 2, 545, "the frame on the mountains", "Nineteen cells over 6.5 world cells, hard 1.4, alive 877,000 steps on the mountain-rain world where the crowd formed (contacts 0.69 per body per step): the same answer to the same place, a body as wide as the ring it feeds on."),
+    ("spill, half the breath", 2, 608, "the armored frame", "Eighteen cells with 3.3 hard, 567,000 steps beside a bar (lineage 20, below) for 326,000 of them: in a crowd that touches 0.7 times per body per step, hard cells on the rim pay for the first time since e012 - without a tooth."),
+    ("spill, half the breath", 2, 20, "the bar that shared the world", "Eleven cells, 2.6 by 7.4, e021's winner one row deeper, 326,000 steps in the same world as the armored frame before the frame took the crowd: the two bodies of the two states, side by side for a third of the run."),
+    ("spill on the mountains", 3, 56, "the middle body", "Ten cells, 3 by 5.7, on 3 world cells, all 993,000 steps of a run that stayed in the mixed state (fruit 44% of the intake, contacts 0.36): between the bar and the frame, the body of a world where fruit is half the food."),
+    ("spill on the mountains", 1, 44, "e021's bar, unchanged", "Seven and a half digestive cells 3.7 by 3.7, the whole run, in the one spill world that never entered the crowd state (fruit 8% of the intake, contacts 0.03, 158 trees): the same world as e021 gives the same body."),
+    ("spill on the mountains", 3, 494, "the giant, briefly", "Thirty-seven cells - 23 digestive, 9.6 hard - the heaviest body of the series, 25 agents for 16,000 steps in the valleys at height 14: what a rich place lets a body afford, and what a crowd of frames does not let it keep."),
+    ("control: e021's canopy, mutation per base", 3, 1, "the control's bar", "Seven digestive cells in a single row, 1 by 8, the only lineage of the control run for 1,000,000 steps: e021's canopy with mutation as a chance per base gives e021's winner, e021's income (81-84) and e021's 1-2 lineages."),
 ]
 
-
 TEXT = {
-    "question": "Since e013 one kind of body, a bar of 6-10 gut cells, has won every run, and lineages alive have stayed at 1-2. The last world with several winners at once was e011, and its premise was a cell that holds more than one bite: crowds around rich cells made size, armor and teeth worth their cost. A closed world has had no way to such a cell, because no cell grows faster than the sun (0.01 per step, half a bite): every place is a thin lawn and the best body is the smallest bar that reaches wet ground. The real world's way from thin sunlight to a concentrated meal is the tree: a plant that is not eaten grows tall and takes the light of its neighbors. e021 writes that as a law of the world - the matter standing on a cell is a column, and a taller column takes a shorter one's light, as far as it is tall, but only as much as it can use - and asks whether the world grows trees, whether the trees gather crowds, and whether a crowd is finally worth biting into. Alongside it one piece of geography: each seed's terrain is normalized to a mean height of half the relief, so that every seed's rain adds up to the same income (in e020 the seeds spread 73-94 with their terrains). The hypotheses, written before the runs:",
-    "world": "Everything is e020's closed world (128x128 on a torus, matter 8 per cell at the start as plants, bodies of 8x8 cells in five kinds grown from the genome, space at the resolution of the body, a facing, e010's contact rule, a cell that costs what it holds, 0.032 per body per step, work = force x distance, a cell held by a body does not regrow, a dead body is food where it lies, a plant grows out of its own cell's soil at most its light, the dead rot into the soil, a terrain of relief 64 with its mean height normalized to 32, soil that runs downhill and levels, a uniform sun, the breath to the air and the rain by height) with the canopy added (Figure 1): before anything grows, every column of standing matter takes a share of the sun of the cells it overtops, and the taken light lands in its own regrowth budget. One new argument, the shade rate (2 by default; 0 is e020). The place of a cell is its height band, thirds of the cells by the terrain: valleys, slopes, ridges. A cell is called a tree here when it holds at least 1.0 of matter, 50 bites, about 25 times what the grazed lawn stands at.",
-    "runs": "<strong>Runs.</strong> The canopy at rate 2 on e020's three worlds - rain on the mountains with all of the breath to the air, with half of it, and rain on every cell alike - at relief 64 and flow 0.1, twelve runs at once on one machine, one thread each, 1,000,000 steps, seeds 1-4. Reference: e020's twelve runs of the same worlds without the canopy, read as ranges (the normalization rescales each seed's heights, so seeds do not match one to one). Three pilots (seed 9, 100,000 steps) shaped the law itself: a shadow stopped at the four neighbors gathers at most five suns, less than one body's upkeep, and stays marginal (7-27 trees, 0.2-0.5% of the intake); the full slant without saturation starves every world dead in 700-3,200 steps, because a column at the cap throws away the light it hoards; with saturation the world stands, and the rate has a threshold - trees lose the race against grazing at 1 and win it at 2. We record e020's measures and:",
-    "tldr": "The canopy works, and the world it makes has two states. Every run keeps standing trees - cells of 50 to 400 bites in a world whose lawn stands at a fiftieth of one - but most runs hold a sparse orchard of 6-24 of them (0.2-0.8% of the intake), while three runs live in a forest: 165-1,405 tree cells, 6.5% of the intake harvested from them, contacts twice e020's ceiling, and booms the grazers mow back down. The forest arrived after step 700,000 twice, so the orchard runs read as not-yet rather than never. The canopy also pays: the flat worlds eat 105-113 per step against e020's 100-103, because a tree overtopping a grazed or held cell takes light that the bodies' own shadow was wasting, and the forest seed eats 112.9, the most of any closed world so far. Nothing grew a tooth (biters 0.000 everywhere) and every winner is still a gut bar - but lineages alive reach 3-5 in four runs, flat seed 3 holds two lineages for 921,000 steps (the longest coexistence since e012), and the heaviest winner of the series (mass 10.3) stands exactly where the forest is. Next: the spill - a full crown that drops what it catches as fruit - so that a tree feeds a crowd instead of being silenced by the body that eats it.",
-    "c1": "yes", "l1": "Yes, in two states", "v1": "Every run keeps cells at 1.0 or more through the whole run and the tallest reaches the cap in 8 of 12; but the count is bimodal, an orchard of 6-24 in most runs against a forest in three: high seed 3 holds 165-1,405 over the run (a boom of 1,405 at step 400,000 grazed to 165 by 600,000, then 200-250), flat seed 3 holds 217-458, half seed 3 flips at step 800,000 from 4-10 to 300-477, and high seed 2 touches 172 and falls back. Where: not the valleys as guessed - in the mountain worlds the trees stand where the rain is (high seed 3 at the end: 37 valleys / 94 slopes / 125 ridges), on the flat lawn they stand on the lake (44 / 39 / 2).",
-    "c2": "no", "l2": "Only in the forest", "v2": "Intake from tree cells is 5.47-7.40 per step, 6.5% of the food eaten, in the two full-run forests, and 0.2-0.8% in the orchard runs - the 5% asked arrives only with the forest state. The unasked result is the income: the flat worlds eat 105.4-112.9 against e020's 100.4-103.3, because the canopy takes light that the standing bodies' shadow was destroying (shaded sun falls from 36-38% to 29-35%), and the high worlds eat 83.2-83.8 - the seed spread of e020 (72.8-94.3) collapsed by the normalization, the level held by the canopy.",
-    "c3": "no", "l3": "Only in the forest", "v3": "Contacts per body per step span 0.008-0.093: the orchard runs sit inside e020's 0.009-0.042, and only the forests rise above it - high seed 3 at 0.093 (twice e020's ceiling and its own orchard neighbors' 0.019-0.047), flat seed 3 at 0.042, half seed 3 at 0.027 after its flip. A crowd needs the forest, and the forest is episodic.",
-    "c4": "no", "l4": "No - but the deepest coexistence since e012", "v4": "No tooth in any run (biters 0.000, hard 0.0-0.2), no lineage provably fed mostly on trees, and every winner is a gut bar; mass still rises with height in all four high seeds. But lineages alive reach 3 (median) in high seeds 1 and 3 and 5 in half seed 4 (e020: 1-2), and the coexistences are long: flat seed 3 holds two lineages for 921,000 steps at different masses (9.1 against 7.6), high seed 3 holds three with the heaviest winner of the series (lineage 81, mass 10.3, 395,000 steps) standing where the forest is, and half seed 4 turns over four lineages of two different bar shapes (2.2 x 7.7 and 3.0 x 4.3).",
-    "c5": "yes", "l5": "Yes", "v5": "No extinction in twelve runs; population coefficient of variation 0.007-0.028, food eaten last quarter over third quarter 0.990-1.011. Matter holds to 0.01% in the orchard runs and 0.04-0.08% in the forests (the plants are f32, and rounding grows with the standing heights; the soil and the air are f64). The two failed pilot forms mark the boundaries: reach without saturation starves every world in 700-3,200 steps, saturation without reach is marginal.",
-    "c6": "no", "l6": "No: a threshold", "v6": "Answered by the pilot before the runs: at rate 1 the trees lose the race against the grazing (8-12 standing, 0.3% of the intake, no larder full), at rate 2 they win it (204 standing, 6.4%). Saturation halves the slant's strength and the rate restores it; the committed default is 2. The runs did not vary the rate further.",
-    "h1": "Trees stand, and the world has two states",
-    "r1": "The trees chart (left) is really a chart of states: nine runs wander between 5 and 30 trees, and three sit far above, with high seed 3's boom to 1,405 - a twelfth of the world under trees - grazed back to 200 within 200,000 steps. The flips are sudden: half seed 3 spends 800,000 steps as an orchard and 100,000 as a forest, and stays one. By height (right), the mountain forests stand on the rain: ridges and slopes hold five of every six trees, while e020's picture put all the matter in the valleys. The maps (below) show why the guess missed: the valley floors are where the bodies are not, but also where the rain is not, and a tree grows only as fast as its cell's soil feeds it; the ridge, wet with rain and grazed thin, is where an ungrazed cell can outgrow its neighbors fastest.",
-    "h2": "The trees are a harvest in the forest, and the canopy raises the world's income",
-    "r2": "In the forest runs 6.5% of everything eaten comes out of tree cells (left), against 0.2-0.8% in the orchards: the trees are grazed like everything else, in gulps of up to 400 bites. The stock chart (right) shows the standing wealth - 1,500 of matter in high seed 3's trees, against 14-100 in the orchards. The surprise is in the barren chart: the canopy does not cost the world income, it adds some. A column overtopping a held cell claims sun that the body standing there would have blanked, so the flat worlds eat 3-10% more than e020's and the bodies' shadow falls by 3-6 points of the sun. The moved light itself is small - 5-8 per step of 164 in the orchards, 17-18 in the forests.",
-    "h3": "A crowd forms only in the forest",
-    "r3": "Contacts (left) separate the two states more cleanly than the tree count: the orchard runs lie in e020's band, and the forests stand above it, high seed 3 doubled. But 0.093 of a contact per body per step is still a tenth of e011's crowds, and none of it is a bite: the crowd waits at the trees, eats, and disperses. The soil-under-bodies chart (right) shows the mountain worlds' bodies still standing under the rain rather than on a store (1.2-1.5).",
-    "h4": "One kind of body still - sorted by height, now also by state",
-    "r4": "Lineages alive (left) reach 3 in the forest seed and 5 in half seed 4, against e020's 1-2, and the long coexistences are all where trees are: the 921,000-step pair of the flat forest, the mass-10.3 third lineage of the mountain forest standing at height 39.5. The bodies by height (right) keep e020's grading in every seed. The gallery below shows what coexists: bars of 6 to 10 gut cells, thin and long or folded squat, sorted by the thickness of the rain and the richness of the state - kin of one winner, not other kinds. Nothing needs a tooth to eat a tree, and nothing grew one.",
-    "h5": "The world stands, in both states",
-    "r5": "Twelve runs, no extinction, the food eaten flat to 1% between quarters (left), the population's coefficient of variation at most 0.028 even through the forest booms (right). The closed cycle absorbs the new law the way it absorbed the rain: the stores shift (a forest holds up to 1,500 standing; the air and the lake hold the rest), the flows rebalance, and the world goes on. The forest booms are the only new dynamics visible at the world scale - and they are the first world-scale dynamics under a uniform sun that are not damped noise.",
-    "h6": "The rate is a threshold (from the pilot)",
-    "r6": "At rate 1 the canopy exists and does nothing that matters: trees hover under a dozen, harvest under half a percent. At rate 2 the same law makes forests. The threshold is where a tree's gathered light outruns the grazing pressure on it; the runs were made at 2 and the rate was not varied further. Unlike e019's flow rate (which did not matter across two orders of magnitude), the canopy has a scale the world can feel - which is worth remembering when a law seems inert: its strength may sit just under a threshold.",
-    "viewer": "The mountain forest, seed 3. The food layer shows the trees as bright green points standing in the thin lawn of the ridges - watch them thicken into groves and get mown back; the terrain layer shows the crowd living on the high ground; the soil layer shows the rivers running from under it. From step 237,000 the world is lineage 1 with lineage 80 beside it from 570,000 and lineage 81 - the heavy bar - above both from 750,000: three bars of one family, sharing a forest.",
-    "discussion": "<p>The law does what it was written for, but in a state the world only sometimes occupies. A tree is a runaway - it must gather light faster than bodies eat it, and whether any cell ever gets the head start is a matter of local accident: three seeds of twelve found it, twice after step 700,000. Once found, the forest is stable in the aggregate (flat seed 3 holds 200-450 trees for 900,000 steps) while every individual tree booms and is mown. The world under a uniform sun now has weather of its own making. That is one answer to #19's question in miniature: more winners need more states, and the canopy gives the world a second one.</p><p>The income result was not asked for and matters most. In every closed world since e016, the population's own shadow has been the binding waste - bodies stand on a third of the sun. The canopy is the first law that recovers any of it, because a tree is taller than the body next to it and takes the light that the held cell would blank. The flat forest eats 112.9 per step, the record for a closed world, with a third of its matter standing in trees; richness and structure arrived together, where e020 found them traded (its richest world had no places).</p><p>What the canopy did not do is convert the crowd into an arms race. Contacts double in the forest but stay at a tenth of e011's, and the reason is in the law: a body eating a tree stands on it, and a held cell neither grows nor claims. A tree is therefore silent exactly while it is being eaten - it feeds one body at a time, in gulps, and the crowd disperses between gulps. e011's rich cells fed 45-77 bodies standing on one cell at once; nothing in this world feeds more than the body that got there first. The missing piece is not a bigger store but a store that feeds its surroundings while it stands.</p><p>Which is what the spill is (vision, next step 2, written before this experiment): a full crown that keeps catching the light it stands in and drops what it cannot hold onto the cells around it. Pilot 2 showed exactly that flow - full columns hoarding the whole neighborhood's sun - as a famine, because the hoard was destroyed; sent to the forest floor as fruit instead, it is a rich place with a radius, fed by the canopy, eaten by a crowd that never touches the tree. The two failed pilots turn out to be the map: between the blight (take and destroy) and the orchard (take only for yourself) sits the tree that gives it back.</p>",
-    "conclusion": "The canopy - a taller column takes a shorter one's light, as far as it is tall, as much as it can use - is kept as a law of the world at rate 2. It gives the closed world standing stores of 50-400 bites where no cell could hold more than half of one, a second state (the forest, episodic, self-made), an income above the lawn's (112.9 per step, the closed-world record, with the bodies' shadow partly recovered), and the deepest coexistence in nine experiments: 3-5 lineages in four runs, two lineages for 921,000 steps, the heaviest winner of the series standing in the thickest forest. It did not bring back teeth: a tree is silenced by the body that eats it, so the forest feeds one gut at a time. Next, the spill: a full crown that drops what it catches as fruit on its neighbors, so a tree feeds a crowd - e011's rich cell, rebuilt inside a closed world by two laws about light and one about falling.",
-
+    "question": "e021's canopy gave the closed world standing trees, a forest state and its record income, and still one kind of body and no tooth: a body eating a tree stands on it, a held cell neither grows nor claims, so a tree feeds one gut at a time. e011, the only world where teeth paid, had cells that kept producing while 45-77 bodies ate them at once. The spill writes that into the closed world: a full crown keeps taking the light it stands in, a column under a body keeps taking it too, and what a column cannot hold falls as fruit on the eight cells around it - a rich place with a radius, where a crowd eats without silencing the tree. Mutation as a chance per base (2/512, the same mean as e021's two per child) rides along, with a control that isolates it. The hypotheses:",
+    "world": "Everything is e021's closed world (128x128 on a torus, matter 8 per cell at the start as plants, bodies of 8x8 cells in five kinds grown from the genome, space at the resolution of the body, a cell that costs what it holds, work = force x distance, a plant that grows out of its own cell's soil at most the sun's rate and not under a body, the dead lying where they fall, the breath to the air and the rain by height on a terrain of relief 64 with soil that runs downhill, and the canopy at rate 2: a taller column takes a shorter one's light as far as it is tall) with two changes to the canopy and one law added. The canopy no longer saturates - a full crown claims as hard as a bitten one - and a column under a body claims too, because what it takes is the crown's light, above the body. And the growth a column's light and soil would give past the cap, or under a body, falls as fruit on the ring of eight cells around it: plant matter lying on the ground, eaten by any gut, rotting into the soil at 1% per step if nobody eats it, counted in the column it lies on. The sun and the matter are only moved.",
+    "runs": "<strong>Runs.</strong> The spill (radius 1, shade 2) on e021's three worlds - rain on the mountains, half of the breath to the air, rain on every cell alike - 1,000,000 steps, seeds 1-4, one thread each (eleven on one machine, flat seed 4 on a second), and a control on the mountain world at spill 0 (e021's saturating canopy, held columns claiming nothing) with the per-base mutation, four seeds on the second machine; e021's twelve runs, the same terrains seed for seed, as the reference. A pilot (seed 9, 100,000 steps) chose the ring over a fall of radius 2 and rate 2 over 1; a survey of the start (seeds 1-8 of the three worlds, 10,000 steps each) counted how often the spill world dies in its first 4,000 steps.",
+    "tldr": "The spill makes the crowd: contacts per body per step are 0.22-0.76 in ten runs of eleven, two to eight times e021's forest ceiling, fruit is 44-77% of everything eaten, dead bodies 10-26% of it, and the closed world's income reaches 115-134 per step in the crowd state, a record. The crowd picks a new winner - a hollow frame of 19-24 cells around the rim of the 8x8 grid, 7 world cells wide, that stands around a tree without holding it and eats the ring, with 1-4 hard cells, three times e021's bar - in four runs, a middle body in five, and e021's bar in one; but it is one winner again (lineages 1-3), and no tooth (the biters' share peaks at 0.026 and falls back). The price is the start: with a full crown taking every neighbor's light the grazed lawn is dark, every seed crashes to a few hundred bodies by step 1,000, and one run of twelve (five of twenty-four in the survey) never recovers. Mutation per base does what it should and changes nothing else. Next: the start is the bodies' two-cell sight meeting clumped food, which is #26 (eyes that see far); the crowd is here, and the tooth is not, which is #27 and #25 (what flesh is worth, what a block weighs).",
+    "c1": "no", "l1": "No: one run of twelve died at the start", "v1": "High seed 4 died at step 3,324, and a survey of the start (seeds 1-8 of the three worlds, 10,000 steps) counted 5 deaths in 24 and bottlenecks of 7-431 bodies in the survivors (e021's law never falls below 750 on the same seed). The eleven survivors stand: population cv 0.03-0.11 (flat seed 3 at 0.109, just over the 0.10 asked), food eaten last quarter over third 0.96-1.07, matter held to 0.11% at worst (flat seed 1; the columns are f32 and stand 30-40 tall). The blight is gone - the light a full crown takes is fruit now - but the start is a lottery.",
+    "c2": "yes", "l2": "Yes, in ten runs of eleven", "v2": "Fruit is 44-77% of the food eaten in ten runs, 7.7% in high seed 1 (the one run that stayed in e021's state); 68-128 of fruit falls per step in those ten, of the sun's 164. The trees are eaten 2-9% of the intake, about e021's forest (6.5%), not less: the tree is the source and the ring the table, and both are eaten.",
+    "c3": "yes", "l3": "Yes, in ten runs of eleven", "v3": "Contacts per body per step are 0.22-0.76 in ten runs against e021's 0.008-0.093 (its forests at the top) and the control's 0.03-0.05; high seed 1 sits at 0.029. Dead matter is 10-26% of the intake in those ten (e021: 1%): a body that dies in a crowd is eaten.",
+    "c4": "maybe", "l4": "A new winner, not a second one", "v4": "The crowd picks a different body: a hollow frame of 19-24 cells around the rim of the 8x8 grid, 6.5-7 world cells wide, 17-20 of them digestive and 1-4 hard at the corners, standing around a tree without holding it, in the four runs in the crowd state (flat 1 and 4, high 2, half 2, with half 1 arriving at step 900,000), a middle body of 10-15 cells in five runs, and e021's bar of 7.5 in high seed 1. But it is one winner per run again: lineages alive 1-3 (peaks of 8-9 in half 2 and flat 2), the frame sweeps as fully as the bar did (flat seeds 1 and 4: one lineage for the whole run), and no tooth: the biters' share peaks at 0.026 (flat seed 1) and 0.008-0.013 elsewhere and every top lineage has bite 0. Hard cells pay for the first time since e012 (3.9 per body in flat seed 1), as armor on a body that is touched 0.5-0.8 times a step.",
+    "c5": "yes", "l5": "Yes, in the crowd state", "v5": "The crowd-state runs eat 115 (mountains), 120 (half breath) and 105-134 (flat) per step against e021's 83, 100-109 and 105-113: the bodies' shadow falls from 29-38% of the sun to 0.5-0.7%, because a body in a crowd stands on a tree whose crown takes light above it. The mixed-state runs eat 97-111, inside or under e021's range, and high seed 1 eats 84.2, e021's income. Sun lost to empty soil is 15-34% (control 20-26%): a full column with no soil takes light and wastes it.",
+    "c6": "yes", "l6": "Yes (from the pilot)", "v6": "With the fall spread over the 24 cells within distance 2, the mountain world dropped 19-25 of fruit per step against 80-120 at radius 1, ate 13-16 of it against 45-70, lost 31-34% of the sun to empty soil, and its contacts were 0.13 against 0.3-0.5. A wide fall is a lawn with extra steps; the ring is a place.",
+    "c7": "yes", "l7": "Yes", "v7": "13.5% of the children are clones in every run (e^-2 = 13.5%) at 2.00 mutations per child, and the control - e021's canopy with the per-base mutation - reproduces e021's mountain world: 81-84 eaten per step (e021: 83.2-83.8), a bar of 7-8 cells, lineages 1-2, contacts 0.03-0.05, trees 7-42, dead matter 1%.",
+    "h1": "The world stands, once it has survived its start",
+    "r1": "Every spill run starts the same way: with every cell at the cap and fruit falling from the first step the population doubles to 4,000 by step 100 and eats 45% of the world's plants; when the stock is gone the grazed cells cannot regrow, because every full column around them takes their whole sun (7-12 per step of regrowth against e021's 90 at the same point), and all of the sun goes to fruit lying on the rings of the surviving trees, clumped, while bodies that see two cells wander the dark lawn. Every seed falls to 200-500 bodies by step 500-1,000 (half seed 1 to 11); most climb back as the far lawn regrows and the crowds find the trees, and one in five does not. After that the runs are steady: the food eaten (left) is flat to a few percent between quarters, the population (right) varies 3-11%, more than e021's 1-3%, because a crowd's food is in piles.",
+    "h2": "Fruit is the harvest, and the world has two states again",
+    "r2": "Fruit is half to three quarters of everything eaten (top left), and the runs split into two states by it: at 70-77% (flat 1 and 4, high 2, half 2 from step 400,000, half 1 from 900,000) the bodies' shadow is gone, the crowd is thickest and the winner is the frame; at 44-62% the world is mixed, and high seed 1 at 8% is e021's orchard. 68-128 of fruit falls per step (top right) - in the crowd state most of the sun - out of the soil under the trees. The trees (bottom left) stand 290-660 to a run, e021's forest state made permanent and its orchard state gone, and they are eaten as much as e021's forests (bottom right). In the mountain worlds the fruit falls where the soil is, not where the rain is: 48 per step in the valleys of high seed 2 against 20 on the ridges (whose rain runs down to the lake), and the bodies follow it, 474 in the valleys against 254 on the ridges - e020's height sorting turned upside down. The maps show the lakes.",
+    "h3": "A crowd forms, and it eats its dead",
+    "r3": "Contacts (left) jump from e021's 0.01-0.09 to 0.2-0.8 per body per step - a body in the crowd state is touched three times every four steps - and they track the fruit share run for run. Dead matter (right) is 10-26% of the intake against e021's 1%: bodies die on the rings and are eaten where they lie, the scavenging e017 was written for arriving with the crowd, and the crowd's densest runs have the most of it (26% in flat seed 4).",
+    "h4": "The crowd picks a new winner, and it is still one",
+    "r4": "The biters' share (left) rises above zero for the first time since e012 - 0.006 on median in flat seed 1, peaks of 0.01-0.03 in seven runs - and falls back every time: a tooth is found, and does not pay enough to keep. Lineages alive (right) stay at 1-3. What changed is the winner. Where the fruit is three quarters of the food the body is a frame: 19-24 cells around the rim of the 8x8 grid and none inside, 7 world cells wide, 17-20 of them digestive and 1-4 hard at the corners, mass three times e021's bar. The hollow is the mechanism: the frame stands around a tree without holding it (a held tree still drops fruit, but the frame's own cells would shade its ring), and its guts sit on the eight cells where the fruit lands - a body shaped like the place that feeds it. In the mixed runs a middle body of 10-15 cells wins, and where the crowd never came the bar is unchanged. The gallery shows them, with the giant of 37 cells that a valley of high seed 3 afforded for 16,000 steps.",
+    "h5": "The crowd state is the richest closed world so far",
+    "r5": "Sun lost under the bodies (left) falls from e021's 29-38% to under 1% in the crowd state: a body on a tree no longer shades anything the tree cannot reclaim above it. Sun lost to empty soil (right) is 15-34%, the control's 20-26%: a full column takes light whether or not it has soil, and in the mountain worlds the ridges have the rain and the valleys the soil. The income is 115-134 per step in the crowd state, e021's record (112.9) passed in three worlds, while the mixed state sits at e021's level and high seed 1 at e021's mountain income.",
+    "h6": "The ring, not the wide fall (from the pilot)",
+    "r6": "At radius 2 the same law makes a quarter of the fruit and a fifth of the crowd, and loses a third of the sun to empty soil. A fall spread wide is fruit lying thin where bodies already stand, which is e015's lawn under the bodies again; the ring keeps the food beside the tree, where a body must come and stay. The runs were made at radius 1.",
+    "h7": "Mutation per base: the distribution, not the world",
+    "r7": "Clones (left) are 13.5% of the children in every run, as the binomial says, at 2.00 mutations per child; the control's four runs are e021's mountain world in every measure the table has, so the spill's differences from e021 are the spill's. Bodies by height (right) in the mountain worlds now follow the soil to the valleys: the crowd lives on the lake, where the fruit falls out of the deepest soil, and the ridges that held e020's and e021's crowds hold a third as many.",
+    "viewer": "The mountain world, seed 2, the crowd state. The food layer shows the trees standing on the lake as bright points with the fruit lying around them, and the bodies - frames 7 cells wide - clustered on the rings, touching; the terrain layer shows the crowd on the low ground; the soil layer the lake it eats from. In the clip, watch a frame stand on a tree while the ring around it refills.",
+    "discussion": "<p>The law was written to make a place where a crowd eats without silencing the tree, and it does: the tree keeps taking light with a body on it, the fruit lands beside it, and the bodies come and stay, touching each other three times in four steps where e021's touched once in ten. And the crowd changed the winning body - for the first time since e013 the answer is not a bar of gut cells but a hollow frame seven world cells wide that stands around a tree and eats its ring, with hard cells at its corners - which is what #19 asks a law to do. But it changed it to another single winner. The frame sweeps a run as completely as the bar did, and the mixed-state runs settle on a middle body just as completely: the pressures are stronger, and there is still one of them. What the crowd did not buy is the tooth. Bites appear (0.01-0.03 of the bodies, in seven runs) and vanish, and every long-lived lineage has bite 0: with a cell of flesh worth 0.02, a body of 20 cells is worth 0.4 plus its energy, a few steps of fruit, so a tooth that costs its cells and its contacts loses to a gut that eats what falls. The crowd is here; the prize is not, and that is #27.</p><p>The surprise is the start. Without saturation, a full crown takes every neighbor's light, so a grazed lawn among trees is dark and the world's whole production lies in piles on the rings; a body that sees two cells and stands in the dark starves next to a pile it cannot see. e021's world survived its start because full crowns took nothing; this one survives it one time in five by the crowds finding the trees before the last bodies die. This is not a flaw of the spill but the meeting of clumped food with a body that cannot see - the premise of #26, eyes that see far, arriving as a mortality. The other surprise is where the crowd lives: not on the ridges where the rain falls but on the lake where the soil pools, because fruit is grown out of the soil under the tree, and e020's height sorting turned over.</p><p>What the experiment does not show: whether the frame is the end of the line or a stage (a frame 7 world cells wide is the widest the 8x8 grid allows - #28's ceiling is reached in one step); whether the crowd state is entered from the mixed state by chance or by history (half seed 2 flipped at 400,000, half seed 1 at 900,000, half seed 4 flipped back at 400,000); and whether a start with soil in the ground, or eyes, removes the lottery.</p>",
+    "conclusion": "The spill - a full crown keeps taking the light, a column under a body keeps taking it, and what a column cannot hold falls as fruit on the ring of eight - is kept as a law of the world at radius 1, with its start marked as the open wound: a fifth of the worlds die in their first 4,000 steps, in the dark under their own trees. It gives the closed world the crowd it has lacked since e012 (contacts 0.2-0.8 per body per step), the scavenging e017 was written for (dead matter a fifth of the intake), an income of 115-134 per step in its crowd state, and a new winning body, the hollow frame of 19-24 cells around a tree, seven world cells wide, with armor at its corners - one winner still, and no tooth. Mutation per base is kept: it does what it says and changes nothing else. The next steps follow from what the crowd exposed: #26 eyes that see far, because the start kills bodies that cannot see a pile two cells away, and #27 what flesh is worth, because the crowd is here and a body is still worth less than the fruit it stands beside; #24 weather stays after them.",
 }
+
 
 if __name__ == "__main__":
     import sys
