@@ -91,21 +91,28 @@ two lineages coexist 921,000 steps, the deepest coexistence since e012, with the
 (mass 10.3) standing in the thickest forest - but no tooth: a tree is silenced by the body that eats it, feeding
 one gut at a time).
 
-Next, in this order (GitHub issue numbers):
-1. The spill (#14 continued, absorbing old step 2: fruit falls). e021's canopy makes trees and forests, and shows
-   exactly what stops the crowd: a body eating a tree stands on it, and a held cell neither grows nor claims, so a
-   tree is silent precisely while it is eaten and feeds one gut at a time - e011's rich cells fed 45-77 bodies on
-   one cell at once. The next law: a full crown keeps catching the light it stands in and drops what it cannot
-   hold as fruit on the cells around it (pilot 2 of e021 showed that flow as a famine, because the hoard was
-   destroyed; sent to the forest floor as food it is a rich place with a radius). Then a tree feeds a crowd that
-   never touches it, which is the crowd-and-teeth premise rebuilt inside the closed world. Other laws still open
-   on the height axis: cold by height (exposed faces lose heat, huddling as an outcome - stronger once crowds
-   exist), slope grip (muscle per mass to stand), seasons (need a material that stores; a body's reserve is about
-   60 steps, but a tree is a store now). Laws about the world only, as ever.
-2. #5 3D bodies (same development, 8x8x8), with the ground half of #16 (friction by the cells that touch the ground, an
-   overhang has to be held up): legs and wings need a vertical axis, and the top-view grid has none. The 90th percentile
-   of mass is 64 at width 1.
-3. #4 Learning, growth, aging, health as a layer on top of birth traits.
+Next, in this order (GitHub issue numbers). The plan was reset on 2026-09-01 after e021 with the user's reading of
+the series: one body wins because the environment is still uniform in time and the body has too few axes; the fixes
+are fluctuation, the crowd, and materials with more properties - as laws about the world and materials, as ever.
+1. #23 The spill (e022; #14 continued). e021's canopy makes trees and forests and shows what stops the crowd: a body
+   eating a tree stands on it, and a held cell neither grows nor claims, so a tree feeds one gut at a time. Next law:
+   a full crown keeps taking the light it stands in and drops what it cannot hold as fruit on the cells around it
+   (e021's pilot 2 showed that flow as a famine because the hoard was destroyed; as food on the forest floor it is a
+   rich place with a radius). The open point is the radius: a ring keeps the crowd tight, a wide fall may disperse it.
+   #30 (mutation as a probability per base instead of exactly two per child) rides along.
+2. #24 Weather: rain (and later the sun, seasons) that fluctuates in time and place on a timescale longer than a
+   lifetime and shorter than a run, so that no optimum holds long enough to win. Vision's seasons belong here; a
+   tree is a store now, so seasons have something to work on.
+3. The three pieces of carnivory, one at a time and then together, judged with e009's knockout and #19: #27 what
+   flesh is worth (the energy a body's cell holds, as a material property, matter conserved; e008 and e017 say the
+   prize alone is not the lever), #26 eyes that see far (sensor range as what a sensor block is), #25 what a block
+   weighs (mass by material - a hard block heavier than a gut block - and a density the genome expresses, so that
+   light-and-fast and heavy-and-hard are both reachable). Speed is already an outcome (muscle over mass).
+4. #28 Small and large bodies in one world (a bigger grid, cheap) once a place makes size pay, then #5 3D bodies
+   (the vertical axis for legs and wings, with the ground half of #16).
+5. Later: #29 water that flows (rivers, lakes, deserts as outcomes; a rewrite of the closed cycle's carrier, when a
+   question needs wet and dry as places), #4 learning, growth, aging, health as a layer on top of birth traits.
+Other laws still open on the height axis under #14: cold by height (huddling as an outcome), slope grip.
 
 How we judge whether a law worked (#19): count the winners. e013-e021 end with one body winning every run and 1-5
 lineages alive (e018's closed cycle: 1-3, fewer than the open world's 4, so a law can also lose by this rule; e019's
