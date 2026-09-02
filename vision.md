@@ -103,7 +103,16 @@ eye pays where the crowd is and nowhere else - in two seeds of four the winner c
 261,000 and 695,000 steps (e022's longest: 23,000), and it is the crowd state's frame with no armor, four muscle
 and three to seven eyes where e022's frame had armor at its corners, walking from ring to ring; in the other two
 seeds, the mixed state and a lawn, the blind bar wins and the eye is dropped; the start's deaths fall from 5 to 2
-in 24 and its bottlenecks do not move; no tooth).
+in 24 and its bottlenecks do not move; no tooth),
+e024 (what flesh is worth: a share `flesh` of the upkeep a body pays is fixed in its flesh instead of breathed, and
+goes to whoever breaks a cell of it or to the ground when it dies, matter conserved; a cell is worth 1-2.5 against
+0.15, and the world answers by eating its dead: at every share up to 0.7 and in three seeds of four at 1 nothing
+bites, the winner is the net - four pads of three gut cells at the corners of the box, eating corpses from four
+places at once - and the fat hoards 25-70% of the world's matter, the rain stopping at 1; the tooth comes in one
+seed of four at 1 and in every pilot at 0.85 and above: a state entered at the start and kept, 4,500 bodies of nine
+cells, half with a bite, four kills a step, a hunter lineage of 488,000 steps beside a gut of 286,000 - two
+winners; a cell is worth less in the hunter's world (0.64) than in the net's (2.4), so the worth does not decide
+the state, the start does; matter drifts 0.2-1.8% on the f32 ground under fat corpses, #31).
 
 Next, in this order (GitHub issue numbers). The plan was reset on 2026-09-01 after e021 with the user's reading of
 the series: one body wins because the environment is still uniform in time and the body has too few axes; the fixes
@@ -112,11 +121,12 @@ The order was reset again on 2026-09-02 after e022: the crowd is here, and what 
 bodies' sight (the start's deaths are bodies that cannot see a pile two cells away) and the worth of a body (the
 crowd touches, and a tooth still loses to a gut that eats what falls).
 Done 2026-09-02: #26 eyes (e023) - kept; the eye pays in the crowd state only, and the crowd's body sees now.
-1. #27 What flesh is worth (the energy a body's cell holds, as a material property, matter conserved) and #25 what
-   a block weighs (mass by material and a density the genome expresses), one at a time, judged with e009's knockout
-   and #19: e022 has the crowd (contacts 0.2-0.8), e023 a body that sees prey three to seven cells off and walks,
-   and the tooth appears and never pays, so the prize is the missing piece now, where e008 and e017 found it was not
-   the lever without a crowd.
+Done 2026-09-03: #27 flesh (e024) - kept at `flesh` 1; a body is worth eating, the world eats its dead, and the
+tooth pays in a state the start decides (one seed of four), where it gives two winners and four kills a step.
+1. #31 The ground as an f64 (a small fix first: the f32 ground loses 0.2-1.8% under fat corpses), then #25 what a
+   block weighs (mass by material and a density the genome expresses): the armored 48-cell hunter of e024's pilot
+   and the light net are two bodies that could both be right once armor weighs and speed costs; judged with #19 and
+   by whether the hunter state is entered more often than one seed in four.
 2. #24 Weather: rain (and later the sun, seasons) that fluctuates in time and place on a timescale longer than a
    lifetime and shorter than a run, so that no optimum holds long enough to win. Vision's seasons belong here; a
    tree is a store and a crowd a place now, so the weather has something to work on.
@@ -125,6 +135,8 @@ Done 2026-09-02: #26 eyes (e023) - kept; the eye pays in the crowd state only, a
    ground half of #16).
 4. Later: #29 water that flows (rivers, lakes, deserts as outcomes; a rewrite of the closed cycle's carrier, when a
    question needs wet and dry as places), #4 learning, growth, aging, health as a layer on top of birth traits.
+Also open on the flesh: which side of the switch (between 0.7 and 0.85; the air falls from 71 to 45 across it) a run
+takes is a lottery of the start, and whether a net world ever tips into the hunter state later.
 Also open on the spill: a start with soil in the ground (the lottery may be the all-plants start meeting the dark
 lawn), and whether the crowd state is entered by chance or by history (half seed 2 flipped at 400,000, half seed 1
 at 900,000, half seed 4 fell back; e023 flat seed 2 entered it at 750,000 with its eyes, flat seed 3 left it at
@@ -138,7 +150,9 @@ for 300,000-520,000 steps; e021's canopy: 1-5, with two lineages coexisting 921,
 state as well as height - kin of one winner still, not other kinds; e022's spill: 1-3, with a new winner, the frame,
 where the crowd is, the middle body where it is half there, and the bar where it never came - a different winner,
 not a second one; e023's eye: 1-2, the frame that sees where the crowd is, the blind bar elsewhere - the first
-block whose worth depends on the state of the world); a world with one optimum is
+block whose worth depends on the state of the world; e024's flesh: 1-3, the net everywhere but in the hunter
+state, where the tooth and a gut hold together 286,000 steps - the first second winner that is another kind of
+body, not kin on other ground); a world with one optimum is
 reached fast and is dull to watch. A wider genome or more parts would only
 make the one optimum slower to reach; what makes several winners is more pressures (places, seasons, matter that
 cycles), so every law is judged by how many different bodies prosper at once, not by how many are possible.
