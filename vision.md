@@ -97,7 +97,13 @@ the record; the crowd picks a new winner, a hollow frame of 19-24 cells around t
 that stands around a tree without holding it and eats the ring, with armor at its corners, three times e021's bar - and it is one winner still, lineages 1-3, the tooth found and lost
 (biters up to 0.026); the price is the start: with every neighbor's light taken the lawn under the trees is dark,
 every world crashes to a few hundred bodies by step 1,000 and one in five dies there, bodies that see two cells
-starving beside piles they cannot see; mutation as a chance per base rides along and changes nothing else).
+starving beside piles they cannot see; mutation as a chance per base rides along and changes nothing else),
+e023 (eyes that see far: a sensor block sees one more cell, seen at 1/distance, range paid for with the cell; the
+eye pays where the crowd is and nowhere else - in two seeds of four the winner carries a sensor per body for
+261,000 and 695,000 steps (e022's longest: 23,000), and it is the crowd state's frame with no armor, four muscle
+and three to seven eyes where e022's frame had armor at its corners, walking from ring to ring; in the other two
+seeds, the mixed state and a lawn, the blind bar wins and the eye is dropped; the start's deaths fall from 5 to 2
+in 24 and its bottlenecks do not move; no tooth).
 
 Next, in this order (GitHub issue numbers). The plan was reset on 2026-09-01 after e021 with the user's reading of
 the series: one body wins because the environment is still uniform in time and the body has too few axes; the fixes
@@ -105,25 +111,24 @@ are fluctuation, the crowd, and materials with more properties - as laws about t
 The order was reset again on 2026-09-02 after e022: the crowd is here, and what it exposed comes first - the
 bodies' sight (the start's deaths are bodies that cannot see a pile two cells away) and the worth of a body (the
 crowd touches, and a tooth still loses to a gut that eats what falls).
-1. #26 Eyes that see far (e023): sensor range as what a sensor block is, a material law. e022's spill world dies one
-   time in five at its start because food lies in piles on the rings of the trees and a body sees two cells; the
-   knockout of e009 and the start survey of e022 (seeds 1-8, 10,000 steps) are the tests. Judged by #19 as ever,
-   and by the start's death rate.
-2. #27 What flesh is worth (the energy a body's cell holds, as a material property, matter conserved) and #25 what
-   a block weighs (mass by material and a density the genome expresses), one at a time and then together with the
-   eyes, judged with e009's knockout and #19: e022 has the crowd (contacts 0.2-0.8) and the tooth appears and never
-   pays, so the prize is the missing piece now, where e008 and e017 found it was not the lever without a crowd.
-3. #24 Weather: rain (and later the sun, seasons) that fluctuates in time and place on a timescale longer than a
+Done 2026-09-02: #26 eyes (e023) - kept; the eye pays in the crowd state only, and the crowd's body sees now.
+1. #27 What flesh is worth (the energy a body's cell holds, as a material property, matter conserved) and #25 what
+   a block weighs (mass by material and a density the genome expresses), one at a time, judged with e009's knockout
+   and #19: e022 has the crowd (contacts 0.2-0.8), e023 a body that sees prey three to seven cells off and walks,
+   and the tooth appears and never pays, so the prize is the missing piece now, where e008 and e017 found it was not
+   the lever without a crowd.
+2. #24 Weather: rain (and later the sun, seasons) that fluctuates in time and place on a timescale longer than a
    lifetime and shorter than a run, so that no optimum holds long enough to win. Vision's seasons belong here; a
    tree is a store and a crowd a place now, so the weather has something to work on.
-4. #28 Small and large bodies in one world (a bigger grid, cheap): e022's frame is seven world cells wide, the widest
+3. #28 Small and large bodies in one world (a bigger grid, cheap): e022's frame is seven world cells wide, the widest
    the 8x8 grid allows, so the ceiling is reached; then #5 3D bodies (the vertical axis for legs and wings, with the
    ground half of #16).
-5. Later: #29 water that flows (rivers, lakes, deserts as outcomes; a rewrite of the closed cycle's carrier, when a
+4. Later: #29 water that flows (rivers, lakes, deserts as outcomes; a rewrite of the closed cycle's carrier, when a
    question needs wet and dry as places), #4 learning, growth, aging, health as a layer on top of birth traits.
 Also open on the spill: a start with soil in the ground (the lottery may be the all-plants start meeting the dark
 lawn), and whether the crowd state is entered by chance or by history (half seed 2 flipped at 400,000, half seed 1
-at 900,000, half seed 4 fell back).
+at 900,000, half seed 4 fell back; e023 flat seed 2 entered it at 750,000 with its eyes, flat seed 3 left it at
+500,000 and lost them: the eye and the crowd select each other, and which comes first is open).
 Other laws still open on the height axis under #14: cold by height (huddling as an outcome), slope grip.
 
 How we judge whether a law worked (#19): count the winners. e013-e021 end with one body winning every run and 1-5
@@ -132,7 +137,8 @@ terrain: 1-2; e020's rain: 1-2, but graded by height for the first time, with se
 for 300,000-520,000 steps; e021's canopy: 1-5, with two lineages coexisting 921,000 steps and the winners sorted by
 state as well as height - kin of one winner still, not other kinds; e022's spill: 1-3, with a new winner, the frame,
 where the crowd is, the middle body where it is half there, and the bar where it never came - a different winner,
-not a second one); a world with one optimum is
+not a second one; e023's eye: 1-2, the frame that sees where the crowd is, the blind bar elsewhere - the first
+block whose worth depends on the state of the world); a world with one optimum is
 reached fast and is dull to watch. A wider genome or more parts would only
 make the one optimum slower to reach; what makes several winners is more pressures (places, seasons, matter that
 cycles), so every law is judged by how many different bodies prosper at once, not by how many are possible.
