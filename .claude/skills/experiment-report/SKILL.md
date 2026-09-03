@@ -58,13 +58,24 @@ Write in plain English. One idea per paragraph. Numbers where possible. Do not r
   Slow / Normal / Fast selector (1x / 2x / 4x) next to Play. The user asked for this; do not speed it up again.
 - Keep the marks: lineage color, white dot on agents that can bite, block legend, per-lineage label with teeth / armor / eyes.
 
-## Length (from e012 on)
+## Length (from e012 on; word budgets from e024)
 
-Reports had grown to the length of a paper by e011. Keep them short:
+Reports had grown to the length of a paper by e011, and again by e022 (3,000 words of prose)
+because the limits below counted sentences and paragraphs, and each one grew. The budgets are
+words now. Count them (`len(text.split())` over `TEXT`) before calling the report done.
 
-- TL;DR: at most 5 sentences. Question: one paragraph. Discussion: at most 3 paragraphs. Conclusion: one paragraph.
+- TL;DR: 80 words. Question: 90. The world: 60. Runs: 60.
+- Each verdict: 30 words - the answer and the one number that decides it.
+- Each results paragraph: 70 words. Say what the chart means, not what it shows.
+- Discussion: 200 words in at most 3 paragraphs. Conclusion: 80. Gallery captions: 30 each.
+- The whole of `TEXT`: 1,000 words.
+
+How to stay inside: one number per claim, given once (the table has the rest); no phrase that
+repeats the table or a chart title; no "for the first time since", "the surprise is", or any
+flourish unless it is the finding itself; cut every adjective that is not a measurement.
+If a point does not change what the reader concludes, it goes to the README, not the report.
+
 - Only charts that carry a claim. Aim for 6-8 charts in total, not 16. If two charts say the same thing, keep one.
-- One paragraph of prose per results heading, and no restating of the summary table: give the number once.
 - The summary table: at most 15 rows. Rare measures go to the appendix tables.
 - Method: the mechanism diagram, the runs in one paragraph, the measures as one list. Do not repeat the README.
 

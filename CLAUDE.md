@@ -49,7 +49,8 @@ And must end with:
 
 Record seed, parameters, and results. Use `experiments/TEMPLATE.md`.
 
-Each experiment also ships a `report.html`. Build it with the `experiment-report` skill.
+Each experiment also ships a `report.html`. Build it with the `experiment-report` skill,
+and keep it inside the skill's word budgets: a report is read only if it is short.
 
 ## Layout
 
