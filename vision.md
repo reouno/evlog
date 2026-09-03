@@ -135,11 +135,16 @@ blocks on a big body (seed 3).
    lifetime and shorter than a run, so that no optimum holds long enough to win. Vision's seasons belong here; a
    tree is a store, a crowd a place, and the world holds two kinds of body now, so the weather has something to
    move between.
-2. #28 Small and large bodies in one world (a bigger grid, cheap): e022's frame is seven world cells wide, the widest
-   the 8x8 grid allows, so the ceiling is reached; then #5 3D bodies (the vertical axis for legs and wings, with the
-   ground half of #16).
-3. Later: #29 water that flows (rivers, lakes, deserts as outcomes; a rewrite of the closed cycle's carrier, when a
-   question needs wet and dry as places), #4 learning, growth, aging, health as a layer on top of birth traits.
+2. #33 Space per body and #28 small and large bodies in one world (the same first pilot: a bigger grid at the same
+   matter). The user's reading after e025: the world is too crowded for the eye and for flight to matter (a body
+   bumps into food or another body wherever it goes), so a world with room is the eye's real test; then #5 3D bodies
+   (the vertical axis for legs and wings). An arm is an outcome to watch for there, not a rule.
+3. #32 What a gut digests: a heritable digestion axis (plant or flesh) as a property of the gut material, like the
+   density; cheap, after #24.
+4. Later: #34 kinds of matter (several conserved substances - water, plant stuff, animal stuff of different
+   hardness - and blocks as mixtures, so that organs are outcomes of the mix; starts with #29 water that flows:
+   rivers, lakes, deserts as outcomes, a rewrite of the closed cycle's carrier, when a question needs wet and dry
+   as places), #4 learning, growth, aging, health as a layer on top of birth traits.
 Also open on the weight: whether the net state can be entered at all under the law (e025's pilot on seed 9 came
 close: no tooth, but kills), and why a seed takes density or hard blocks as its route to resistance. On the flesh:
 which side of the switch (between 0.7 and 0.85) a run takes was a lottery of the start without the weight law.
