@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Build report.html for e024.
+"""Build report.html for e025.
 
 Charts: matplotlib, exported as SVG and inlined. Diagram: hand-written SVG.
-Run from the repo root: uv run python experiments/e024_flesh/report.py
+Run from the repo root: uv run python experiments/e025_weight/report.py
 """
 import base64
 import csv
@@ -52,28 +52,27 @@ plt.rcParams.update({
     "savefig.transparent": True,
 })
 
-E023 = os.path.join(HERE, "..", "e023_eyes")
+E024 = os.path.join(HERE, "..", "e024_flesh")
 # Places of a world: (id in the CSVs, name, color). Under the uniform sun a place is a height band (thirds of the cells by the
 # terrain); the flat world is rained on alike, the bands are kept for the loaders.
 BANDS = [(0, "valleys (lowest third)", SERIES[0]), (1, "slopes (middle third)", SERIES[3]), (2, "ridges (highest third)", SERIES[1])]
 # Worlds of this experiment: label -> run prefix, world size, places, seeds.
 WORLDS = {
-    "flesh 1": dict(run="128_sigma0_r64_f0.1_flat_eyes8_flesh1", size=128, places=BANDS, seeds=[1, 2, 3, 4], uniform=True),
-    "flesh 0.7": dict(run="128_sigma0_r64_f0.1_flat_eyes8_flesh0.7", size=128, places=BANDS, seeds=[1, 2, 3, 4], uniform=True),
+    "weight 1": dict(run="128_sigma0_r64_f0.1_flat_eyes8_flesh1_w1", size=128, places=BANDS, seeds=[1, 2, 3, 4], uniform=True),
 }
-FLESH = list(WORLDS)[0]
-FLESH_07 = list(WORLDS)[1]
-PILOT_RUN = "128_sigma0_r64_f0.1_flat_eyes8_flesh{}_seed9"  # the dose series: seed 9, 200,000 steps, at each share
-# The control: e023's flat runs, the same code at flesh 0 (a body worth what it cost).
-REFS = {"e023: flesh 0": ("128_sigma0_r64_f0.1_flat_eyes8", E023, True)}
-E023_FLAT = list(REFS)[0]
-WORLD_COLOR = {FLESH: SERIES[0], FLESH_07: SERIES[1], E023_FLAT: "#b5b3ab"}
+WEIGHT = list(WORLDS)[0]
+PILOT_RUN = "128_sigma0_r64_f0.1_flat_eyes8_flesh1_w{}_seed9"  # the pilots: seed 9, 200,000 steps, at weight 0, kind, density and 1
+PILOTS = [("0", "every block 1"), ("kind", "kind only"), ("density", "density only"), ("1", "both")]
+# The control: e024's flat runs at flesh 1, the same law with every block at 1 (on the f32 ground and the leaking ledger).
+REFS = {"e024: every block 1": ("128_sigma0_r64_f0.1_flat_eyes8_flesh1", E024, True)}
+E024_FLAT = list(REFS)[0]
+WORLD_COLOR = {WEIGHT: SERIES[0], E024_FLAT: "#b5b3ab"}
 CELL_ENERGY = 0.02
 BITE = 0.02
 KIND_COLOR = {1: SERIES[0], 2: SERIES[1], 3: SERIES[3], 4: SERIES[2]}
 CONFIRM_STEPS = 5000
-VIEWER_WORLD = FLESH
-VIEWER_SEED = 3
+VIEWER_WORLD = WEIGHT
+VIEWER_SEED = 1
 LAST_STEP = 500_000
 
 
@@ -474,42 +473,34 @@ def stats_chart(title, subtitle, stats, key_fn, worlds, ymin=0, ymax=None, perce
     return figure(title, subtitle, to_svg(fig))
 
 
-def dose_chart(title, subtitle, series):
-    """The dose series: one line per measure over the flesh share (seed 9, 200,000 steps, median over the second half);
-    series: [(label, color, {share: value})]."""
-    fig, ax = new_axes(xlabel="flesh: share of the upkeep fixed in the flesh", size=(6.4, 2.8))
-    top = 0
-    for label, color, pts in series:
-        xs = sorted(pts)
-        ys = [pts[x] for x in xs]
-        top = max(top, max(ys))
-        ax.plot(xs, ys, color=color, linewidth=1.4, marker="o", markersize=3.5, label=label)
-    ax.set_xlim(-0.03, 1.03)
-    ax.xaxis.set_major_formatter(matplotlib.ticker.FormatStrFormatter("%g"))
-    ax.set_xticks([0, 0.1, 0.3, 0.5, 0.7, 0.85, 1])
-    ax.set_ylim(0, top * 1.12 if top > 0 else 1)
-    ax.yaxis.set_major_formatter(PercentFormatter(1.0, decimals=0))
-    ax.yaxis.set_major_locator(MaxNLocator(4))
-    legend_above(ax, len(series))
-    return figure(title, subtitle, to_svg(fig))
-
-
-def dose_series():
-    """Per share of the pilot runs that exist: medians over the second half of (meat share, biters share, kills per step, worth)."""
-    out = {}
-    for fl in ("0", "0.1", "0.3", "0.5", "0.7", "0.85", "0.95", "1"):
-        path = os.path.join(HERE, "results", f"{PILOT_RUN.format(fl)}_log.csv")
+def pilot_table():
+    """The pilots (seed 9, 200,000 steps, one per weight mode): medians over the second half, as an HTML table."""
+    cols = []
+    for mode, label in PILOTS:
+        path = os.path.join(HERE, "results", f"{PILOT_RUN.format(mode)}_log.csv")
         if not os.path.exists(path) or os.path.getsize(path) < 1000:  # a run still writing has an empty log
             continue
         log = load_csv(path)
         n = len(log["step"])
         h = slice(n // 2, n)
         med = lambda xs: statistics.median(xs[h])
-        out[float(fl)] = dict(meat=med([m / max(p + m, 1e-9) for p, m in zip(log["plant_intake"], log["meat_intake"])]), biters=med(log["biters_share"]),
-                              kills=med([k / 10_000 for k in log["deaths_broken"]]), worth=med(log["worth"]), broken=med([b / 10_000 for b in log["cells_broken"]]),
-                              fruit=med([f / max((p + m) / 10_000, 1e-9) for f, p, m in zip(log["fruit_eaten"], log["plant_intake"], log["meat_intake"])]),
-                              air=med(log["air"]), pop=med(log["pop"]), fat_share=med([f / m for f, m in zip(log["fat_stock"], log["matter"])]))
-    return out
+        q = slice(3 * n // 4, n)
+        pop = log["pop"]
+        cols.append((f"{label} (<code>{mode}</code>)", dict(
+            density=f"{med(log['density_mean']):.2f} &plusmn; {med(log['density_std']):.2f}", size=f"{med(log['size_mean']):.1f}", mass=f"{med(log['mass_mean']):.1f}",
+            speed=f"{med(log['speed_mean']):.3f}", hard=f"{med(log['hard_mean']):.2f}", muscle=f"{med(log['muscle_mean']):.2f}",
+            biters=f"{med(log['biters_share']):.1%} / {statistics.median(log['biters_share'][q]):.1%}", kills=f"{med([k / 10_000 for k in log['deaths_broken']]):.2f}",
+            meat=f"{med([m / max(p + m, 1e-9) for p, m in zip(log['plant_intake'], log['meat_intake'])]):.0%}",
+            fat=f"{med([f / m for f, m in zip(log['fat_stock'], log['matter'])]):.0%}", air=f"{med(log['air']):.0f}",
+            pop=f"{med(pop):,.0f} ({statistics.pstdev(pop[h]) / max(statistics.mean(pop[h]), 1):.2f})", lineages=f"{med(log['lineages']):.0f}",
+            matter=f"{log['matter'][-1] / log['matter'][0]:.6f}")))
+    if not cols:
+        return ""
+    rows = [("Density per body (mean &plusmn; spread)", "density"), ("Cells per body; mass", "size|mass"), ("Speed (muscle over mass)", "speed"), ("Hard; muscle blocks per body", "hard|muscle"),
+            ("Bodies with a bite (median / last quarter)", "biters"), ("Bodies killed per step", "kills"), ("Intake from other bodies", "meat"), ("Fat, share of the matter; air", "fat|air"),
+            ("Population (cv)", "pop"), ("Lineages alive", "lineages"), ("Matter at the end over the start", "matter")]
+    body = "".join(f"<tr><td>{label}</td>" + "".join("<td>" + " / ".join(d[k] for k in keys.split("|")) + "</td>" for _, d in cols) + "</tr>" for label, keys in rows)
+    return ("<thead><tr><th>Pilot, seed 9, 200,000 steps (median over the second half)</th>" + "".join(f"<th>{c}</th>" for c, _ in cols) + "</tr></thead><tbody>" + body + "</tbody>")
 
 
 def color_slots(run):
@@ -625,50 +616,51 @@ details {{ margin: 8px 0; }} summary {{ cursor: pointer; color: var(--ink2); }}
 
 DIAGRAM = """
 <figure class="diagram">
-<svg viewBox="0 0 900 330" role="img" aria-label="A body in the middle. Each step it pays its upkeep: 70% of it goes up to the air as breath and 30% goes back into the body as fat, drawn in the accent color. To the right a tooth breaks one cell of the body and gets the cell's matter plus its share of the energy and the fat; below, the body dies and lays everything on the ground, where it rots into the soil and the plants. Rain brings the air back to the soil.">
+<svg viewBox="0 0 900 330" role="img" aria-label="Two bodies of eight cells. The light one, mass 5.5 at density 1/2, is fast, cheap to move and made of little, and its faces break under a single muscle. The heavy one, mass 20 at density 2 with two hard blocks, is slow, dear to move and made of much, and its armor resists three times harder.">
 <g fill="none" stroke="currentColor" stroke-width="1.2" font-size="12" font-family="system-ui, sans-serif">
-  <!-- the body -->
-  <rect x="380" y="110" width="160" height="120" rx="3" fill="currentColor" fill-opacity="0.10"/>
-  <g fill="#1baf7a" stroke="none"><rect x="388" y="118" width="144" height="104" rx="1"/></g>
-  <g fill="var(--s1)" stroke="none"><rect x="396" y="126" width="128" height="88" rx="1" fill-opacity="0.75"/></g>
-  <text x="460" y="162" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">a body of m cells</text>
-  <text x="460" y="180" text-anchor="middle" fill="currentColor" stroke="none">energy E, fat F</text>
-  <!-- upkeep out, the split -->
-  <path d="M 380,140 L 250,140" marker-end="url(#ah)"/>
-  <text x="300" y="128" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">upkeep, as before</text>
-  <text x="300" y="158" text-anchor="middle" fill="currentColor" stroke="none">0.002 m + 0.032 a step</text>
-  <path d="M 240,140 L 240,60 L 178,60" marker-end="url(#ah)"/>
-  <text x="250" y="48" text-anchor="middle" fill="currentColor" stroke="none">breath: 70% to the air</text>
-  <path d="M 240,140 L 240,210 L 370,210" stroke="var(--s1)" stroke-width="2" marker-end="url(#ahs)"/>
-  <text x="290" y="230" text-anchor="middle" fill="var(--s1)" stroke="none" font-weight="600">flesh: 30% fixed in the body</text>
-  <text x="290" y="246" text-anchor="middle" fill="var(--s1)" stroke="none">never spent by the body itself</text>
-  <!-- the air and the rain -->
-  <rect x="40" y="36" width="130" height="48" rx="3"/>
-  <text x="105" y="56" text-anchor="middle" fill="currentColor" stroke="none">the air</text>
-  <text x="105" y="72" text-anchor="middle" fill="currentColor" stroke="none">less by the fat</text>
-  <path d="M 105,84 L 105,290" marker-end="url(#ah)"/>
-  <text x="114" y="190" text-anchor="start" fill="currentColor" stroke="none">rain</text>
+  <!-- the scale of blocks -->
+  <text x="450" y="28" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">what a block weighs: its kind, times the body's density (1/2 to 2, from the genome)</text>
+  <g stroke="none">
+    <rect x="250" y="44" width="22" height="22" fill="#2a78d6"/><text x="282" y="60" fill="currentColor" font-size="12">hard 2</text>
+    <rect x="345" y="44" width="22" height="22" fill="#eb6834"/><text x="377" y="60" fill="currentColor" font-size="12">muscle 1</text>
+    <rect x="455" y="44" width="22" height="22" fill="#1baf7a"/><text x="487" y="60" fill="currentColor" font-size="12">gut 1</text>
+    <rect x="545" y="44" width="22" height="22" fill="#eda100"/><text x="577" y="60" fill="currentColor" font-size="12">sensor 1/2</text>
+  </g>
+  <!-- the light body -->
+  <text x="200" y="110" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">light: density 1/2</text>
+  <g stroke="none" transform="translate(150,120)">
+    <rect x="0" y="0" width="100" height="50" rx="2" fill="currentColor" fill-opacity="0.08"/>
+    <rect x="4" y="4" width="20" height="20" fill="#eb6834"/><rect x="28" y="4" width="20" height="20" fill="#eb6834"/><rect x="52" y="4" width="20" height="20" fill="#1baf7a"/><rect x="76" y="4" width="20" height="20" fill="#1baf7a"/>
+    <rect x="4" y="27" width="20" height="20" fill="#1baf7a"/><rect x="28" y="27" width="20" height="20" fill="#1baf7a"/><rect x="52" y="27" width="20" height="20" fill="#1baf7a"/><rect x="76" y="27" width="20" height="20" fill="#eda100"/>
+  </g>
+  <text x="200" y="196" text-anchor="middle" fill="currentColor" stroke="none">8 cells, mass 3.75</text>
+  <text x="200" y="214" text-anchor="middle" fill="currentColor" stroke="none">speed 2/3.75 = 0.53; a move costs 0.004</text>
+  <text x="200" y="232" text-anchor="middle" fill="currentColor" stroke="none">made of 0.075; a face resists 1/2: one muscle breaks it</text>
+  <!-- the heavy body -->
+  <text x="700" y="110" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">heavy: density 2</text>
+  <g stroke="none" transform="translate(650,120)">
+    <rect x="0" y="0" width="100" height="50" rx="2" fill="currentColor" fill-opacity="0.08"/>
+    <rect x="4" y="4" width="20" height="20" fill="#2a78d6"/><rect x="28" y="4" width="20" height="20" fill="#2a78d6"/><rect x="52" y="4" width="20" height="20" fill="#1baf7a"/><rect x="76" y="4" width="20" height="20" fill="#1baf7a"/>
+    <rect x="4" y="27" width="20" height="20" fill="#eb6834"/><rect x="28" y="27" width="20" height="20" fill="#eb6834"/><rect x="52" y="27" width="20" height="20" fill="#eb6834"/><rect x="76" y="27" width="20" height="20" fill="#1baf7a"/>
+  </g>
+  <text x="700" y="196" text-anchor="middle" fill="currentColor" stroke="none">8 cells, mass 22</text>
+  <text x="700" y="214" text-anchor="middle" fill="currentColor" stroke="none">speed 3/22 = 0.14; a move costs 0.022</text>
+  <text x="700" y="232" text-anchor="middle" fill="currentColor" stroke="none">made of 0.44; its armor resists 6 per hard block, its gut 2</text>
+  <!-- what is the same -->
+  <path d="M 310,145 L 590,145" stroke-dasharray="4 4"/>
+  <text x="450" y="138" text-anchor="middle" fill="currentColor" stroke="none">the same upkeep: 0.002 a cell + 0.032 a step</text>
+  <text x="450" y="162" text-anchor="middle" fill="currentColor" stroke="none">the same bite, the same sight: per block</text>
   <!-- the ground -->
-  <path d="M 40,300 L 860,300"/>
-  <text x="450" y="320" text-anchor="middle" fill="currentColor" stroke="none">the ground: the dead rot into the soil, the plants grow out of it, a bite of grass is 0.02</text>
-  <!-- death -->
-  <path d="M 460,230 L 460,290" marker-end="url(#ah)"/>
-  <text x="472" y="270" text-anchor="start" fill="currentColor" stroke="none">dies: lays 0.02 m + E + F</text>
-  <!-- the tooth -->
-  <rect x="700" y="110" width="160" height="120" rx="3" fill="currentColor" fill-opacity="0.10"/>
-  <g stroke="none"><rect x="708" y="118" width="144" height="104" rx="1" fill="#1baf7a"/><rect x="708" y="160" width="16" height="22" fill="#2a78d6"/><rect x="724" y="160" width="56" height="22" fill="#eb6834"/></g>
-  <text x="780" y="252" text-anchor="middle" fill="currentColor" stroke="none">a tooth: a hard tip, muscle behind</text>
-  <path d="M 700,180 L 544,180" marker-end="url(#ah)"/>
-  <text x="622" y="142" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">breaks one cell, gets</text>
-  <text x="622" y="160" text-anchor="middle" fill="currentColor" stroke="none">0.02 + E/m + F/m</text>
-  <text x="622" y="204" text-anchor="middle" fill="var(--s1)" stroke="none">F/m: what it lived through</text>
-  <defs>
-    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor" stroke="none"/></marker>
-    <marker id="ahs" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="var(--s1)" stroke="none"/></marker>
-  </defs>
+  <path d="M 40,290 L 860,290"/>
+  <text x="450" y="312" text-anchor="middle" fill="currentColor" stroke="none">the ground: a child costs its mass x 0.02 of matter; a broken or dead block gives back what it was made of</text>
+  <path d="M 200,240 L 200,282" marker-end="url(#ah)"/>
+  <path d="M 700,240 L 700,282" marker-end="url(#ah)"/>
 </g>
+<defs>
+  <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/></marker>
+</defs>
 </svg>
-<figcaption>Figure 1. The flesh law. Everything is e023's world; the one change is where the upkeep goes. A body of m cells pays 0.002 m + 0.032 a step as before, but a share of it (<code>flesh</code>, 30% in the drawing; the runs use 1 and 0.7) is fixed in its flesh as fat instead of breathed, and the body cannot spend it. Whoever breaks a cell of the body gets the cell's matter, its share of the body's energy, and its share of the fat; a body that dies lays all three on the ground. A body that has lived 500 steps at 15 cells carries 9 of fat at a share of 0.3, 0.6 a cell: thirty bites of grass in one cell. The air gets that much less, so the rain does; what the fat holds comes back through the eater or the soil, and the matter of the world stays conserved.</figcaption>
+<figcaption>Figure 1. The weight law. Everything is e024's world with its ledger fixed; the one law added is what a block weighs. A hard block weighs 2, a sensor 1/2, muscle and gut 1, and every block of a body weighs that times the body's density, a number from 1/2 to 2 that the genome expresses like the policy and that a child inherits with mutation. Mass is what a body is made of (a child costs its mass times 0.02; a broken or dead block gives back the same), what it moves with (the work of moving is mass times distance, speed is muscle over mass, a shove needs more muscle than the shoved body's mass) and what its faces resist with (hardness times density: light armor is weak armor). The upkeep, the bite and the sight stay per block. Two bodies of eight cells: the light one is fast, cheap and soft; the heavy one slow, dear and hard.</figcaption>
 </figure>
 """
 
@@ -890,7 +882,7 @@ def gallery(picks):
         home = f"{at[0] / max(sum(at), 1):.0%} in the {first}" if WORLDS[world]["places"] else "a flat world"
         height = f", at height {float(peak['height']):.0f}" if "height" in peak and WORLDS[world]["uniform"] and WORLDS[world]["places"] else ""
         cards.append(f"""<figure class="card"><svg viewBox="-1 -1 89 89" width="120" height="120" role="img" aria-label="{html.escape(name)}"><rect x="-1" y="-1" width="89" height="89" fill="var(--cell)"/>{rects}<line x1="-1" y1="-0.5" x2="88" y2="-0.5" stroke="var(--ink2)" stroke-width="1.5" stroke-dasharray="3 2"/></svg>
-<figcaption><strong>{html.escape(name)}</strong><br>{html.escape(world)}, seed {seed}, lineage {lid}: {span:,} steps, {int(peak["size"]):,} agents at {"step " + format(int(peak["step"]), ",") if at else "its peak"}, {home}{height}<br>mass {float(peak["mass"]):.0f} on {float(peak["foot"]):.1f} cells: hard {float(peak["hard"]):.0f}, muscle {float(peak["muscle"]):.0f}, sensor {float(peak["sensor"]):.1f}, digestive {float(peak["digestive"]):.0f}; dead matter {meat:.0%} of the intake<br>{html.escape(what)}</figcaption></figure>""")
+<figcaption><strong>{html.escape(name)}</strong><br>{html.escape(world)}, seed {seed}, lineage {lid}: {span:,} steps, {int(peak["size"]):,} agents at {"step " + format(int(peak["step"]), ",") if at else "its peak"}, {home}{height}<br>mass {float(peak["mass"]):.0f} on {float(peak["foot"]):.1f} cells: hard {float(peak["hard"]):.0f}, muscle {float(peak["muscle"]):.0f}, sensor {float(peak["sensor"]):.1f}, digestive {float(peak["digestive"]):.0f}{", density " + format(float(peak["density"]), ".2f") if "density" in peak else ""}; dead matter {meat:.0%} of the intake<br>{html.escape(what)}</figcaption></figure>""")
     return f"""<figure class="diagram"><div class="cards">{"".join(cards)}</div>
 <figcaption>Figure 2. Bodies of lineages that prospered: the most common body of the lineage at its peak (or at the step named), on the 8x8 grid a body grows on, front up (the dashed edge). Blue: hard, orange: muscle, green: digestive, yellow: sensor. "Cells" is the world cells the body covers; "dead matter" the share of the lineage's lifetime intake that was dead bodies; the height is the terrain under the lineage's members at its peak (relief 64). Sensor is the mean per body: the range is one cell plus that.</figcaption></figure>"""
 
@@ -977,6 +969,8 @@ def main():
                  lineages=med([per_step.get(t, 0) for t in range(1000, last_step + 1, 1000)]), ids=len(first),
                  contacts=med([c / max(p, 1) / 10_000 for c, p in zip(half(log, "contacts"), pop)]), forward=med(half(log, "forward")),
                  mass=med(half(log, "mass_mean")), hard=med(half(log, "hard_mean")), muscle=med(half(log, "muscle_mean")), foot=med(half(log, "foot_mean")),
+                 size=med(half(log, "size_mean")) if "size_mean" in log else med(half(log, "mass_mean")), speed=med(half(log, "speed_mean")),
+                 density=med(half(log, "density_mean")) if "density_mean" in log else 1.0, density_std=med(half(log, "density_std")) if "density_std" in log else 0.0,
                  eaten=med(eaten[n // 2:]), steady=med(eaten[3 * n // 4:]) / max(med(eaten[n // 2: 3 * n // 4]), 1e-9),
                  matter_hold=log["matter"][-1] / log["matter"][0],
                  trees=med(half(log, "trees")), biters=med(half(log, "biters_share")), biters_max=max(log["biters_share"]),
@@ -1002,9 +996,7 @@ def main():
     charts["meat_share"] = world_chart("Intake from other bodies", "Share of the food eaten that was another body, broken or dead, per log window, one line per run; gray: e023 (5-18%).", logs, lambda l: [m / max(p + m, 1e-9) for p, m in zip(l["plant_intake"], l["meat_intake"])], all_worlds, WORLD_COLOR, percent=True)
     charts["broken"] = world_chart("Cells broken per step", "Cells of living bodies broken by a push, per step, one line per run; gray: e023. Zero would be a world without teeth.", logs, lambda l: [b / 10_000 for b in l["cells_broken"]], all_worlds, WORLD_COLOR)
     charts["fat_share"] = world_chart("Fat, share of the world's matter", "The matter fixed in living bodies' flesh over all the matter of the world, at each log step, one line per run. What it holds is not in the air, so not in the rain.", logs, lambda l: [f / m for f, m in zip(l["fat_stock"], l["matter"])] if "fat_stock" in l else None, all_worlds, WORLD_COLOR, percent=True)
-    dose = dose_series()
-    charts["dose"] = dose_chart("The dose: what the share of the upkeep fixed in the flesh does", "Seed 9, 200,000 steps at each share, medians over the second half: the intake from other bodies, the fruit's share, the bodies with a bite, and the fat as a share of the world's matter. The tooth appears at 0.85 and above, never at 0.7 or below.", [("intake from other bodies", SERIES[2], {k: v["meat"] for k, v in dose.items()}), ("intake from fruit", SERIES[3], {k: v["fruit"] for k, v in dose.items()}), ("bodies with a bite", SERIES[1], {k: v["biters"] for k, v in dose.items()}), ("fat, share of the matter", SERIES[0], {k: v["fat_share"] for k, v in dose.items()})])
-    charts["sensor_share"] = world_chart("Bodies with a sensor", "Share of the bodies alive that carry at least one sensor block, at each log step, one line per run; gray: e022's flat runs (the same code, every body seeing two cells). A line that stays up is an eye that pays.", logs, lambda l: l["sensor_agents_share"], all_worlds, WORLD_COLOR, percent=True)
+    pilot = pilot_table()
     charts["sensor_mean"] = world_chart("Sensor blocks per body", "Mean sensor blocks per body alive, one line per run; gray: e022. With the eye a body's range is one cell plus this.", logs, lambda l: l["sensor_mean"], all_worlds, WORLD_COLOR)
     charts["sense_used"] = world_chart("The knockout: decisions the eye changed", "Of the decisions taken by bodies with a sensor, the share that would differ if the body saw one cell, per log window, one line per run; gray: e022 (there: if the second cell were not seen). Zero would be an eye nobody reads.", logs, lambda l: l["sense_used"], all_worlds, WORLD_COLOR, percent=True)
     charts["pop"] = world_chart("Population", "Bodies alive at each log step, one line per run; gray: e022. A line that ends is a world that died.", logs, lambda l: l["pop"], all_worlds, WORLD_COLOR)
@@ -1013,7 +1005,14 @@ def main():
     charts["contacts"] = world_chart("Contacts per body per step", "Pairs of bodies whose cells touched, per body per step, one line per run; gray: e022 (0.22-0.76 in the crowd state).", logs, lambda l: [c / max(p, 1) / 10_000 for c, p in zip(l["contacts"], l["pop"])], all_worlds, WORLD_COLOR)
     charts["biters"] = world_chart("Bodies with a bite", "Share of the bodies with a hard tip on the front backed by muscle, at each log step, one line per run; gray: e022 (peaks of 0.01-0.03, never kept).", logs, lambda l: l["biters_share"], all_worlds, WORLD_COLOR, percent=True)
     charts["lineages"] = world_chart("Lineages alive", "Confirmed lineages at each log step, one line per run; gray: e022 (1-3).", logs, lambda l: l["lineages"], all_worlds, WORLD_COLOR)
-    charts["mass"] = world_chart("Mass per body", "Mean cells per body alive, one line per run; gray: e022 (the frame of 19-24 cells in the crowd state).", logs, lambda l: l["mass_mean"], all_worlds, WORLD_COLOR)
+    charts["mass"] = world_chart("Mass per body", "Mean mass of the bodies alive (the sum of the blocks' weights times the density), one line per run; gray: e024 (there mass is the count of cells).", logs, lambda l: l["mass_mean"], all_worlds, WORLD_COLOR)
+    charts["size"] = world_chart("Cells per body", "Mean cells per body alive, one line per run; gray: e024. Mass over cells is what the body is made of.", logs, lambda l: l["size_mean"] if "size_mean" in l else l["mass_mean"], all_worlds, WORLD_COLOR)
+    charts["density"] = world_chart("Density per body", "Mean density of the bodies alive (what the genome expresses, 1/2 to 2), one line per run; gray: e024 (1 by law). The dotted line is 1.", logs, lambda l: l["density_mean"] if "density_mean" in l else [1.0] * len(l["step"]), all_worlds, WORLD_COLOR, ymin=0.4, ymax=2.1, hline=1.0)
+    charts["density_std"] = world_chart("Spread of the density", "Standard deviation of the density over the bodies alive, one line per run (e024: 0). Zero would be one density for the whole world.", logs, lambda l: l["density_std"] if "density_std" in l else [0.0] * len(l["step"]), all_worlds, WORLD_COLOR, ymin=0)
+    charts["speed"] = world_chart("Speed per body", "Mean muscle blocks over mass (the chance of a second sub-cell per move), one line per run; gray: e024.", logs, lambda l: l["speed_mean"], all_worlds, WORLD_COLOR, ymin=0)
+    charts["hard"] = world_chart("Hard blocks per body", "Mean hard blocks per body alive (each weighs 2 now), one line per run; gray: e024.", logs, lambda l: l["hard_mean"], all_worlds, WORLD_COLOR, ymin=0)
+    charts["matter"] = world_chart("The world's matter", "All the matter of the world (soil, ground, bodies, air) at each log step over what it was at the start, one line per run; gray: e024 (the leaking ledger).", logs, lambda l: [m / l["matter"][0] for m in l["matter"]], all_worlds, WORLD_COLOR, ymin=0.975, ymax=1.005, hline=1.0)
+    charts["kills"] = world_chart("Bodies killed per step", "Bodies whose last cell a push broke, per step, one line per run; gray: e024 (3.95 in its hunter run, 0 elsewhere).", logs, lambda l: [k / 10_000 for k in l["deaths_broken"]], all_worlds, WORLD_COLOR, ymin=0)
 
     vseed = VIEWER_SEED if VIEWER_SEED in events[VIEWER_WORLD] else seeds_of(VIEWER_WORLD)[0]  # a dry run may lack the viewer's seed
     viewer_run = f"{WORLDS[VIEWER_WORLD]['run']}_seed{vseed}"
@@ -1055,9 +1054,12 @@ def main():
     p0 = lambda v: f"{v:.0%}"
     p1 = lambda v: f"{v:.1%}"
     summary = ("<thead><tr><th>Measure (range over seeds, median over the second half unless said)</th>" + "".join(f"<th>{w}</th>" for w in all_worlds) + "</tr></thead><tbody>"
-               + row("What a cell of a body is worth (a bite of grass is 0.02); peak", "worth|worth_max", d3)
+               + row("Density per body (mean); its spread over bodies", "density|density_std", d2)
+               + row("Cells per body; mass", "size|mass", d1)
+               + row("Speed (muscle over mass)", "speed", d3)
+               + row("Hard; muscle blocks per body", "hard|muscle", d2)
+               + row("What a cell of a body is worth (a bite of grass is 0.02)", "worth", d3)
                + row("What a kill paid per cell broken", "kill_gain", d3)
-               + row("Fat per body", "fat", d1)
                + row("Fat, share of the world's matter", "fat_share", p0)
                + row("Intake from other bodies, share of the food eaten", "meat_share", p0)
                + row("Cells broken per step; bodies killed per step", "broken|kills", d2)
@@ -1070,11 +1072,11 @@ def main():
                + row("Food eaten per step", "eaten", d1)
                + row("Intake from fruit, share of the food eaten", "fruit_share", p0)
                + row("Contacts per body per step", "contacts", d2)
-               + row("Lineages alive; mass", "lineages|mass", d1)
-               + row("Matter at the end over the start", "matter_hold", lambda v: f"{v:.4f}")
+               + row("Lineages alive", "lineages", d1)
+               + row("Matter at the end over the start", "matter_hold", lambda v: f"{v:.5f}")
                + "</tbody>")
 
-    tables = data_table(["step", "pop", "births", "deaths_energy", "deaths_broken", "cells_broken", "mass_mean", "worth", "kill_gain", "fat_mean", "fat_stock", "sensor_mean", "forward", "contacts", "fruit_eaten", "plant_intake", "meat_intake", "lineages", "biters_share", "steps_per_sec"],
+    tables = data_table(["step", "pop", "births", "deaths_energy", "deaths_broken", "cells_broken", "mass_mean", "size_mean", "density_mean", "density_std", "speed_mean", "hard_mean", "worth", "fat_stock", "matter", "contacts", "fruit_eaten", "plant_intake", "meat_intake", "lineages", "biters_share", "steps_per_sec"],
                         {f"{w}, seed {s} (every 100,000 steps)": logs[w][s] for w in all_worlds for s in seeds_of(w)}, every=10)
 
     text = TEXT
@@ -1083,13 +1085,13 @@ def main():
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>e024 What flesh is worth - Report</title>
+<title>e025 What a block weighs - Report</title>
 <style>{CSS}</style>
 </head>
 <body>
 <main>
-<h1>e024: What flesh is worth</h1>
-<p class="sub">Experiment report - 2026-09-03 - e023's closed world with one law changed: a share of what a body burns is fixed in its flesh, and goes to whoever breaks a cell of it. The flat world, 500,000 steps, seeds 1-4 at two shares (1 and 0.7), a dose series on seed 9, against e023's same four runs over their first 500,000 steps.</p>
+<h1>e025: What a block weighs</h1>
+<p class="sub">Experiment report - 2026-09-03 - e024's closed world with the ledger fixed (#31) and one law added: a block weighs by its kind, times a density the genome expresses. The flat world, 500,000 steps, seeds 1-4, four pilots on seed 9, against e024's same four runs.</p>
 
 <section class="tldr">
 <h2>TL;DR</h2>
@@ -1099,11 +1101,11 @@ def main():
 <h2>1. Question</h2>
 <p>{text["question"]}</p>
 <ol>
-  <li><strong>A body is worth eating.</strong> The worth of a cell (its matter plus its share of the body's energy and fat) is at least twice e023's 0.10-0.15, and old bodies are worth many times a bite.</li>
-  <li><strong>Meat pays.</strong> The energy gained per cell broken is at least twice e023's, and the intake from other bodies rises above e023's 5-18%.</li>
-  <li><strong>A hunter lineage lasts.</strong> In at least one seed of four a lineage with a bite of 2 or more holds 100,000 steps, or the biters' share stays above 1% over the last quarter (e023: 0 on median, peaks 0.3-1.1%).</li>
-  <li><strong>The world stands.</strong> No death, matter conserved, population coefficient of variation under 0.10 over the second half; the fat locked in bodies is a few percent of the world's matter.</li>
-  <li><strong>#19.</strong> Lineages alive at or above e023's 1-2; a hunter, if one comes, is a second winner beside the frame.</li>
+  <li><strong>The world stands and matter holds.</strong> No death, matter conserved to 0.01% over 500,000 steps (e024: 0.982-0.999), population coefficient of variation under 0.10.</li>
+  <li><strong>Mass spreads.</strong> The density's spread over bodies stays above 0.1 (the range is 1/2 to 2) over the second half, and lineages alive at the end differ in mean density by 0.2 or more.</li>
+  <li><strong>Armor costs speed, so the armored body changes.</strong> In the hunter state the tooth either drops its armor and keeps its muscle, or keeps the armor and is denser than its prey.</li>
+  <li><strong>The hunter state is entered more often than one seed in four</strong> (e024 at flesh 1: seed 3 of 1-4).</li>
+  <li><strong>#19.</strong> Lineages alive at or above e024's 2-3; a second winner that differs from the first in density or armor, not only in shape.</li>
 </ol>
 
 <h2>2. The world</h2>
@@ -1111,11 +1113,10 @@ def main():
 {DIAGRAM}
 <p>{text["runs"]}</p>
 <ul class="measures">
-  <li><strong>Worth</strong>: <code>worth</code>, what one cell of a body yields to whoever breaks it (0.02 of matter plus the cell's share of the body's energy and fat), mean over the bodies alive; <code>kill_gain</code>, what eaters actually gained per cell broken; <code>fat_mean</code> and <code>fat_stock</code>, the fat per body and in all bodies.</li>
-  <li><strong>Meat</strong>: the intake from other bodies (cells broken by a push, and the dead eaten where they lie) as a share of the food eaten; cells broken and bodies killed per step; deaths by a push as a share of all deaths.</li>
-  <li><strong>Hunters</strong>: the biters' share (bodies with a hard tip on the front backed by muscle); from the lineage log, lineages whose mean bite is 2 or more, the steps they held it and their meat share.</li>
-  <li><strong>The crowd</strong>: contacts per body per step, fruit's share of the intake, lineages alive, mass, the eye's measures.</li>
-  <li>e023's measures otherwise: population, food eaten, trees, sun, soil, matter, events, snapshots.</li>
+  <li><strong>Weight</strong>: <code>density_mean</code> and <code>density_std</code> over the bodies alive; <code>mass_mean</code> (the weight now) beside <code>size_mean</code> (cells); <code>speed_mean</code> (muscle over mass); hard and muscle blocks per body; the density of each lineage in the lineage log.</li>
+  <li><strong>The ledger</strong>: the world's matter (soil, ground, bodies, air) at each log step over the start.</li>
+  <li><strong>Hunters</strong>: the biters' share, cells broken and bodies killed per step; from the lineage log, the lineages with a bite and the steps they held it.</li>
+  <li>e024's measures otherwise: worth, meat, fat, population, contacts, fruit, lineages, events, snapshots.</li>
 </ul>
 
 <h2>3. Results</h2>
@@ -1129,36 +1130,37 @@ def main():
 </ol>
 
 <h3>3.1 {text["h1"]}</h3>
-<div class="grid2">
-{charts["dose"]}{charts["worth"]}
-</div>
+<div class="tw"><table>{pilot}</table></div>
 <p>{text["r1"]}</p>
 
 <h3>3.2 {text["h2"]}</h3>
 <div class="grid2">
-{charts["meat_share"]}{charts["kill_gain"]}
+{charts["matter"]}{charts["pop"]}
 </div>
 <p>{text["r2"]}</p>
 
 <h3>3.3 {text["h3"]}</h3>
 <div class="grid2">
-{charts["biters"]}{charts["broken"]}
+{charts["density"]}{charts["density_std"]}
 </div>
-{gallery(GALLERY)}
+<div class="grid2">
+{charts["mass"]}{charts["size"]}
+</div>
 <p>{text["r3"]}</p>
 
 <h3>3.4 {text["h4"]}</h3>
 <div class="grid2">
-{charts["pop"]}{charts["fat_share"]}
+{charts["hard"]}{charts["speed"]}
 </div>
-<div class="grid2">
-{charts["fruit_share"]}{charts["contacts"]}
-</div>
+{gallery(GALLERY)}
 <p>{text["r4"]}</p>
 
 <h3>3.5 {text["h5"]}</h3>
 <div class="grid2">
-{charts["lineages"]}{charts["mass"]}
+{charts["kills"]}{charts["biters"]}
+</div>
+<div class="grid2">
+{charts["lineages"]}{charts["meat_share"]}
 </div>
 <p>{text["r5"]}</p>
 
@@ -1189,7 +1191,7 @@ def main():
 <p>{text["conclusion"]}</p>
 
 <h2>Appendix: data</h2>
-<p>Every 100,000th record; full logs in <code>results/*_log.csv</code>, lineages in <code>results/*_lineages.csv</code>, events in <code>results/*_events.csv</code>, bodies with their fat every 100,000 steps in <code>results/*_agents.csv</code>; e023's runs in <code>../e023_eyes/results</code>. Build: <code>uv run python experiments/e024_flesh/report.py</code>.</p>
+<p>Every 100,000th record; full logs in <code>results/*_log.csv</code>, lineages in <code>results/*_lineages.csv</code>, events in <code>results/*_events.csv</code>, bodies with their mass, size and density every 100,000 steps in <code>results/*_agents.csv</code>; e024's runs in <code>../e024_flesh/results</code>. Build: <code>uv run python experiments/e025_weight/report.py</code>.</p>
 {tables}
 </main>
 <script id="frames" type="application/octet-stream">{blob}</script>

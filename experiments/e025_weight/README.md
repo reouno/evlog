@@ -92,25 +92,46 @@ instead of a little below.
     `density_std`; `agents.csv` gets `size` and `density`; `lineages.csv` gets `density`.
   - Compute: none added (a sum over five kinds per body at birth and per break).
 
-The control is e024's runs at flesh 1 (`experiments/e024_flesh/results`, flat seeds 1-4,
-500,000 steps): the same law up to the ground's rounding, so nothing is rerun.
+The control is `weight 0` at the same code, flat seeds 1-4, 500,000 steps (the fixed ledger
+moves a seed's start, so e024's runs at flesh 1, `experiments/e024_flesh/results`, are a
+second reference, not the control); the report draws e024's runs in gray.
 
 Pilot (flat seed 9, 200,000 steps, one thread each, four at once, 30-40 minutes on the Mac):
 `weight` 0, kind, density and 1, to see which half does what and whether the world stands (0
 is the pilot's control: the fixed ledger moves seed 9's start, so e024's seed 9 is not). The
-batch: `weight 1`, flat seeds 1-4, 500,000 steps, one thread each, four at once (1.5-2 hours;
-a hunter-state run goes at 100-130 steps per second).
+batch: `weight 1` and `weight 0`, flat seeds 1-4 each, 500,000 steps, one thread each, eight
+at once on the Mac (about 2 hours: 70-115 steps per second in the pilots).
 
 Run (from the repo root):
 
     bash experiments/e025_weight/run.sh 1 1 2 3 4
+    bash experiments/e025_weight/run.sh 0 1 2 3 4
 
 Arguments: `<steps> <seed> <size> <widths> <cell_energy> <matter> <relief> <flow> <rain> <breath> <shade> <spill> <mutation> <eyes> <flesh> <weight>`;
 the batch uses `500000 <seed> 128 0 0.02 8 64 0.1 flat 1 2 1 0.00390625 8 1 <weight>`.
 
 ## Result
 
-(to come)
+### The pilots (flat seed 9, 200,000 steps, medians over the second half)
+
+| weight | bodies with a bite | bodies killed per step | cells broken per step | density (mean +- spread) | cells per body; mass | speed | hard; muscle per body | intake from other bodies | fat, share of the matter | air | bodies | lineages | matter |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 0 (every block 1) | 22% | 4.0 | 248 | 1 | 25; 25 | 0.076 | 3.4; 4.2 | 72% | 15% | 25 | 2,660 | 2 | 1.000000 |
+| kind | 14% | 5.2 | 190 | 1 | 16; 18 | 0.049 | 1.8; 2.6 | 74% | 20% | 17 | 3,650 | 2 | 1.000000 |
+| density | 34% | 2.1 | 251 | 1.38 +- 0.18 | 11; 16 | 0.091 | 1.3; 1.7 | 75% | 18% | 21 | 4,657 | 2 | 1.000000 |
+| 1 (both) | 0.0% | 0.83 | 39 | 1.41 +- 0.47 | 11; 16 | 0.028 | 0.06; 0.6 | 72% | 43% | 8 | 4,515 | 6 | 1.000000 |
+
+All four entered the hunter state at the start (the control at step 25,000, the rest by
+10,000). Each half alone keeps it: `kind` with fewer hard blocks (1.8 against 3.4) and smaller
+bodies, `density` with bodies that drift heavy (1.38, rising to 1.52 at 200,000) and more
+biters. Both together end the tooth (0.0% with a bite, 0.06 hard blocks per body) but not the
+killing: 0.8 bodies a step die to pushes without a hard tip, because a face's hardness is the
+material's times the density and a light body's soft face (1/2) breaks under a single muscle.
+The density's spread is 0.47, three times the density-only pilot's, and six lineages are
+alive against two everywhere else. The matter holds to 1e-6 in all four (e024: 0.982-0.999).
+The batch runs `weight 1` and, as the control at the same code, `weight 0`, flat seeds 1-4,
+500,000 steps, eight at once (the fixed ledger moves a seed's start, so e024's runs are not
+the control for the state a seed enters).
 
 ## Conclusion
 
