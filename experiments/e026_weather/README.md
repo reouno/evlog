@@ -108,8 +108,77 @@ alive; at 0.5, two. The batch runs `cloud` 1 and `season` 0.5.
 
 ### The batch (flat seeds 1-4, 500,000 steps; e025's weight-1 runs as the control)
 
-(pending)
+Eight runs, one thread each, eight at once on the Mac: 2 hours (52-113 steps per second).
+Report: `report.html`. Ranges over seeds, medians over the second half unless said.
+
+| | cloud 1 | season 0.5 | e025 (the control) |
+|---|---|---|---|
+| Population (cv) | 2,053-3,923 (0.04-0.06) | 2,613-4,777 (0.05-0.11) | 2,407-4,726 (0.02-0.11) |
+| Peak over trough within a season of 20,000 steps (median over cycles) | 1.16-1.31 | 2.09-2.54 | 1.16-1.52 |
+| The ridge's soil follows the cloud (correlation over its cells at the dumps) | 0.42-0.54 | - | - |
+| Lineages alive (median; at the end) | 2-4; 2-8 | 2-7; 1-6 | 1-5; 1-4 |
+| Holders of the top place over the second half; longest hold, steps | 1-2; 43,000-251,000 | 1-14; 17,000-251,000 | 1-4; 35,000-251,000 |
+| Fat per body; fat, share of the matter | 4.0-11.5; 8-29% | 5.0-10.5; 12-27% | 3.3-4.2; 6-14% |
+| Trees | 173-726 | 256-528 | 291-646 |
+| Bodies standing outside the band they were born in | 9-12% | 7-14% | 10-13% |
+| Bodies with a sensor | 0.5-13.6% | 1.5-19.3% | 0.4-6.4% |
+| Longest lineage with a sensor per body, steps | 1,000-99,000 | 5,000-125,000 | 1,000-10,000 |
+| Bodies with a bite; bodies killed per step | 0-48%; 1.3-3.7 | 0-45%; 1.0-3.7 | 29-47%; 2.1-3.8 |
+| Density per body (mean); its spread | 1.24-1.56; 0.12-0.46 | 1.06-1.67; 0.05-0.46 | 0.95-1.52; 0.10-0.47 |
+| Cells per body; hard blocks per body | 10.4-25.3; 0.10-2.08 | 8.2-21.6; 0.03-2.48 | 7.5-17.9; 0.5-2.7 |
+| Matter at the end over the start | 1.000000 | 1.000000 | 1.000000-1.000001 |
+
+The cloud. The soil records it (correlation 0.42-0.54 on the ridge at every dump; the standing
+plant does not, 0.00-0.05: it is eaten as it grows) and the bodies hardly do: the population
+moves as the control's, the movers are the control's, the winners hold 43,000-251,000 steps
+with 1-2 holders per run (control 1-4). Seeds 2 and 3 are e025's hunter state with a tooth
+(biters 46-48%); seeds 1 and 4 kill without one (biters 0-0.5%, hard 0.10-0.15, 2.1-3.7
+kills a step): heavy bodies (density 1.3-1.6, 14-25 cells) whose faces resist 2 or more break
+the light bodies they walk into. Seed 1's late lineages are giants of 57 cells (19 muscle, 38
+guts, density 2.0, mass 115) living 190 steps on the dead.
+
+The season. The bodies halve each winter and double each summer (2.1-2.5 times per cycle;
+control 1.2-1.5, the same lineage log at 1,000 steps). The top place changes hands 6 times in
+seed 1 and 14 times in seed 2 over the second half, no holder lasting 29,000 steps (control:
+1-4 holders, the longest 35,000-251,000); seeds 3 and 4 have one winner for 423,000 and
+500,000 steps. Lineages alive 2-7 (seed 2: 6 at the end). Fat per body 5.0-10.5 (control
+3.3-4.2). The state: seeds 1, 3, 4 hunt with a tooth (biters 18-45%), seed 2 kills without one
+(1.3 a step, hard 0.03).
+
+The eye. A lineage whose bodies carry a sensor each (sensor mean 1 or more in the lineage log)
+lives 99,000 steps in cloud seed 3 (lineage 616: seventeen guts in a column, three wide and six
+long), 72,000 in season seed 2 (lineage 1139: four muscle, nine guts, a sensor, density 2.0),
+125,000 in season seed 3 (lineage 606, the winner: two hard, three muscle, twelve guts, a
+sensor) and 96,000 in season seed 4 (lineage 208: sixteen guts, a sensor); in the control the
+longest is 10,000 steps. Bodies with a sensor reach 10-19% of the population in three weather
+runs (control at most 6.4%).
 
 ## Conclusion
 
-(pending)
+1. **The world stands: yes.** No death in eight runs, matter 1.000000, population cv 0.04-0.11.
+2. **The fluctuation is felt: yes, both.** The ridge's soil follows the cloud (0.42-0.54); the
+   season moves the population 2.1-2.5 times within a cycle (control 1.2-1.5).
+3. **No optimum holds: partly, the season only.** Season seeds 1 and 2: 6 and 14 holders of the
+   top place over the second half, no hold over 29,000 steps; seeds 3 and 4 one winner. The
+   cloud: 1-2 holders, as the control. Lineages alive 2-7 against 1-5, not a clear rise.
+4. **Tolerance is selected: partly.** The eye: lineages with a sensor per body for
+   72,000-125,000 steps in four runs of eight (control 10,000 at most), three of them under
+   the season. Fat per body 5.0-11.5 against 3.3-4.2. Trees and movers unchanged.
+5. **The hunter state: kept.** Kills 1.0-3.7 a step in eight of eight; in three runs (cloud 1
+   and 4, season 2) the killer has no tooth: a dense face breaks a light one.
+
+What it changes. Both forms are kept as laws of the world (`weather` cloud 1 or season 0.5;
+0 is e025). The season is the one that does what #24 asked: everyone's income moves at once,
+nothing escapes it, the lineage on top in summer is not the one on top in winter, and the eye
+pays for the first time in the series (a sensor sees food and crowd up to nine cells away, and
+where food moves in time and place, seeing it pays for the block). The cloud moves where the
+rain falls and the soil records it, but a body lives on the dead and on the valley's fruit,
+so a dry ridge costs a walking body little; it is felt by the world, not by the bodies. The
+season's ceiling is a fact about the bodies: a body has no store of its own (its fat is its
+eater's), so a winter of 3,000 steps without sun kills the world at amplitude 1 and makes a
+lottery at 0.75.
+
+Open: whether the turnover in two season seeds is coexistence or a lottery each winter; the
+cloud on a mountain world (rain on the ridges only); the season's amplitude between 0.5 and
+0.75; a store a body can spend (the fat is the eater's now). Next: #33 and #28, room: a bigger
+grid at the same matter and small and large bodies, where the eye's range has space to matter.

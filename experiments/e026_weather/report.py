@@ -75,8 +75,8 @@ CELL_ENERGY = 0.02
 BITE = 0.02
 KIND_COLOR = {1: SERIES[0], 2: SERIES[1], 3: SERIES[3], 4: SERIES[2]}
 CONFIRM_STEPS = 5000
-VIEWER_WORLD = CLOUD
-VIEWER_SEED = 1
+VIEWER_WORLD = SEASON
+VIEWER_SEED = 2
 LAST_STEP = 500_000
 WEATHER_GRAIN = 16
 SEASON_STEPS = 20_000
@@ -516,18 +516,18 @@ def cloud_figure(title, subtitle, run, step, sigma, size=128):
     if not nodes or step not in nodes or not maps:
         return ""
     w = cloud_field(nodes[step], nx, ny, step, size, sigma)
-    plant = None
-    for t, _, pl in maps:
+    soil = None
+    for t, so, _ in maps:
         if t == step:
-            plant = pl
-    if plant is None:
+            soil = so
+    if soil is None:
         return ""
     fig, axes = plt.subplots(1, 2, figsize=(6.4, 3.3))
     grid = lambda v: [v[y * size:(y + 1) * size] for y in range(size)]
     axes[0].imshow(grid([math.log2(x) for x in w]), cmap="Blues", vmin=-1.5, vmax=1.5, interpolation="nearest")
     axes[0].set_title("rain weight (log scale)", fontsize=9, color=INK)
-    axes[1].imshow(grid(plant), cmap="Greens", vmin=0, vmax=8, interpolation="nearest")
-    axes[1].set_title("standing plant, 0 to the cap 8", fontsize=9, color=INK)
+    axes[1].imshow(grid([math.log10(max(x, 0.01)) for x in soil]), cmap="YlOrBr", vmin=-2, vmax=1, interpolation="nearest")
+    axes[1].set_title("soil, 0.01 to 10 (log scale)", fontsize=9, color=INK)
     for ax in axes:
         ax.set_xticks([])
         ax.set_yticks([])
@@ -557,14 +557,16 @@ def pilot_table():
             if int(r["step"]) >= log["step"][-1] // 2:
                 tot[int(r["step"])] += int(r["size"])
         swing = max(tot.values()) / max(min(tot.values()), 1) if tot else float("nan")
-        last = log["step"][-1]
-        cols.append((label + (f" (died at {last:,})" if last < 200_000 else ""), dict(
+        last = int(log["step"][-1])
+        dead = last < 200_000
+        blank = lambda v: "-" if dead else v
+        cols.append((label + (f" (died at {last:,})" if dead else ""), {k: blank(v) if k not in ("matter",) else v for k, v in dict(
             pop=f"{med(pop):,.0f} ({statistics.pstdev(pop[h]) / max(statistics.mean(pop[h]), 1):.2f})", swing=f"{swing:.1f}",
             fat=f"{med(log['fat_mean']):.2f}", fat_share=f"{med([f / m for f, m in zip(log['fat_stock'], log['matter'])]):.0%}",
             trees=f"{med(log['trees']):.0f}", sensor=f"{med(log['sensor_agents_share']):.1%}",
             biters=f"{med(log['biters_share']):.1%}", kills=f"{med([k / 10_000 for k in log['deaths_broken']]):.2f}",
             density=f"{med(log['density_mean']):.2f} &plusmn; {med(log['density_std']):.2f}", size=f"{med(log['size_mean']):.1f}",
-            lineages=f"{med(log['lineages']):.0f}", matter=f"{log['matter'][-1] / log['matter'][0]:.6f}")))
+            lineages=f"{med(log['lineages']):.0f}", matter=f"{log['matter'][-1] / log['matter'][0]:.6f}").items()}))
     if not cols:
         return ""
     rows = [("Population (cv); peak over trough, second half", "pop|swing"), ("Fat per body; fat, share of the matter", "fat|fat_share"), ("Trees", "trees"),
@@ -663,6 +665,20 @@ def cloud_field_at(nodes, nx, ny, step, size, sigma, cell, wind=1 / 200):
     a, b, c, d = (1 - fx) * (1 - fy), fx * (1 - fy), (1 - fx) * fy, fx * fy
     z = (a * nodes[j0 * nx + i0] + b * nodes[j0 * nx + i1] + c * nodes[j1 * nx + i0] + d * nodes[j1 * nx + i1]) / math.sqrt(a * a + b * b + c * c + d * d)
     return math.exp(sigma * z - 0.5 * sigma * sigma)
+
+
+def cycle_swing(run, folder=HERE, first_step=250_000):
+    """Peak over trough of the bodies in confirmed lineages (every 1,000 steps) within each season of the second half; the median."""
+    tot = Counter()
+    for r in load_rows(f"results/{run}_lineages.csv", folder):
+        t = int(r["step"])
+        if t >= first_step:
+            tot[t] += int(r["size"])
+    cyc = defaultdict(list)
+    for t, v in tot.items():
+        cyc[(t - first_step) // SEASON_STEPS].append(v)
+    sw = [max(v) / max(min(v), 1) for v in cyc.values() if len(v) >= 15]
+    return statistics.median(sw) if sw else float("nan")
 
 
 def winners(run, folder=HERE, first_step=250_000):
@@ -818,8 +834,8 @@ DIAGRAM = """
   <text x="205" y="124" text-anchor="middle" fill="var(--s1)" stroke="none">wet: weight 2.2</text>
   <text x="345" y="124" text-anchor="middle" fill="currentColor" stroke="none">dry: weight 1/6</text>
   <text x="40" y="104" fill="currentColor" stroke="none">nodes 16 cells apart, memory 3,000 steps</text>
-  <path d="M 300,160 L 350,160" marker-end="url(#ah)"/>
-  <text x="395" y="164" text-anchor="middle" fill="currentColor" stroke="none">wind: 1 cell / 200 steps</text>
+  <path d="M 285,160 L 325,160" marker-end="url(#ah)"/>
+  <text x="335" y="164" fill="currentColor" stroke="none">wind: 1 cell / 200 steps</text>
   <!-- the rain -->
   <path d="M 175,150 L 175,210" stroke="var(--s1)" stroke-width="3" marker-end="url(#ah)"/>
   <path d="M 205,150 L 205,210" stroke="var(--s1)" stroke-width="3" marker-end="url(#ah)"/>
@@ -842,7 +858,7 @@ DIAGRAM = """
   <text x="680" y="270" text-anchor="middle" fill="currentColor" stroke="none">step: one cycle is 20,000 steps, seven lifetimes</text>
   <path d="M 500,250 L 500,60" marker-end="url(#ah)"/>
   <text x="515" y="72" fill="currentColor" stroke="none">the sun's rate on every cell</text>
-  <text x="567" y="58" text-anchor="middle" fill="#1baf7a" stroke="none">0.01 (1 + a)</text>
+  <text x="612" y="62" fill="#1baf7a" stroke="none">0.01 (1 + a)</text>
   <text x="702" y="245" text-anchor="middle" fill="#1baf7a" stroke="none">0.01 (1 - a): at a = 1 the sun goes out</text>
   <text x="680" y="300" text-anchor="middle" fill="currentColor" stroke="none">where the plant stands at the cap, fruit falls at the sun's rate:</text>
   <text x="680" y="318" text-anchor="middle" fill="currentColor" stroke="none">the valley's income moves with the sun; the bare ridge's does not</text>
@@ -1183,6 +1199,7 @@ def main():
         d["movers"] = med([sum(pl[p]["movers"][i] for p in pl) / max(sum(pl[p]["pop"][i] for p in pl), 1) for i in range(n_pl // 2, n_pl)]) if n_pl else float("nan")
         d["rain_cv"] = max((statistics.pstdev(pl[p]["rain"][n_pl // 2:]) / max(statistics.mean(pl[p]["rain"][n_pl // 2:]), 1e-9)) for p in pl) if n_pl else float("nan")
         d["winners"], d["hold"], _ = winners(run, folder)
+        d["cycle_swing"] = cycle_swing(run, folder)
         d["cloud_corr"] = cloud_soil_corr(run, folder, float(CLOUD_AMP))[0] if w == CLOUD else float("nan")
         d["lineages_end"] = per_step.get(last_step - last_step % 1000, 0)
         return d
@@ -1209,7 +1226,7 @@ def main():
     charts["season_zoom"] = season_chart(f"Two cycles of the season ({SEASON})", "Bodies in confirmed lineages every 1,000 steps over steps 300,000-340,000 (two cycles), one line per run (aqua: the season, orange: e025); dotted: the sun's factor, right scale.", logs, 300_000, 340_000)
     mseed = VIEWER_SEED if VIEWER_SEED in seeds_of(CLOUD) else seeds_of(CLOUD)[0]
     mstep = 300_000 if len(logs[CLOUD][mseed]["step"]) >= 30 else 100_000
-    charts["cloud_map"] = cloud_figure(f"The cloud and the plant ({CLOUD}, seed {mseed})", f"Left: the rain weight over the world at step {mstep:,} (blue: wet, 2 and above; white: dry, 1/2 and below); right: the standing plant at the same step (dark: a tree).", f"{WORLDS[CLOUD]['run']}_seed{mseed}", mstep, float(CLOUD_AMP))
+    charts["cloud_map"] = cloud_figure(f"The cloud and the plant ({CLOUD}, seed {mseed})", f"Left: the rain weight over the world at step {mstep:,} (blue: wet, 2 and above; white: dry, 1/2 and below); right: the soil at the same step (dark: a step of sun's worth or more; the valley's pool is dark everywhere).", f"{WORLDS[CLOUD]['run']}_seed{mseed}", mstep, float(CLOUD_AMP))
     vseed = VIEWER_SEED if VIEWER_SEED in events[VIEWER_WORLD] else seeds_of(VIEWER_WORLD)[0]  # a dry run may lack the viewer's seed
     viewer_run = f"{WORLDS[VIEWER_WORLD]['run']}_seed{vseed}"
     timeline = timeline_chart(f"Lineages over time ({VIEWER_WORLD}, seed {vseed})", "Each colored band is one lineage, height = agents in it; marks are events at the size they were logged with.", viewer_run, events[VIEWER_WORLD][vseed])
@@ -1251,7 +1268,7 @@ def main():
     p1 = lambda v: f"{v:.1%}"
     summary = ("<thead><tr><th>Measure (range over seeds, median over the second half unless said)</th>" + "".join(f"<th>{w}</th>" for w in all_worlds) + "</tr></thead><tbody>"
                + row("Population (coefficient of variation)", "pop|pop_cv", lambda v: f"{v:,.0f}" if v >= 1 else f"{v:.2f}")
-               + row("Population, peak over trough, second half", "pop_swing_half", d2)
+               + row("Population, peak over trough within a season of 20,000 steps (median over the second half)", "cycle_swing", d2)
                + row("The ridge's soil follows the cloud (correlation over its cells, median over the dumps from 100,000)", "cloud_corr", d2)
                + row("Lineages alive (median; at the end)", "lineages|lineages_end", d1)
                + row("Distinct winners over the second half; longest hold, steps", "winners|hold", lambda v: f"{v:,.0f}")
@@ -1292,7 +1309,7 @@ def main():
 <p>{text["question"]}</p>
 <ol>
   <li><strong>The world stands.</strong> No death under either form at the amplitude the pilot picks; matter holds to 1e-6.</li>
-  <li><strong>The fluctuation is felt.</strong> The cloud: a band's rain varies over time with a cv above 0.3 (e025: 0). The season: the population moves 20% or more within a cycle.</li>
+  <li><strong>The fluctuation is felt.</strong> The cloud: the ridge's soil follows the cloud (correlation over its cells above 0.3). The season: the population moves 20% or more within a cycle.</li>
   <li><strong>No optimum holds.</strong> Lineages alive above e025's 1-5, and the top lineage changes hands over the second half in more seeds than the control.</li>
   <li><strong>Tolerance is selected.</strong> The season: more fat per body or more trees than the control. The cloud: more bodies outside their birth band, or the sensor back (e025: 0.4-6%).</li>
   <li><strong>The hunter state of e025 (four of four) is kept or changed</strong>, recorded either way.</li>
@@ -1392,41 +1409,34 @@ def main():
 
 # Lineages that prospered: (world, seed, lineage id, name, what the shape does).
 GALLERY = [
+    (SEASON, 2, 1658, "the gut that holds", "Eleven guts on 2.8 cells, density 1.0, no armor, no muscle: the body of e025's net state. It holds the top place for 302,000 steps in the run with 14 holders."),
+    (SEASON, 2, 1139, "the heavy body with an eye", "Four muscle, nine guts and a sensor at density 2.0: its faces resist 2, and it sees two cells. A lineage with a sensor per body for 72,000 steps.", 146_000),
+    (SEASON, 3, 606, "the armored body with an eye", "Two hard, three muscle, twelve guts and a sensor at density 1.1, 20 cells: the winner of seed 3 for 423,000 steps, eyed for 125,000 of them.", 140_000),
+    (SEASON, 1, 3102, "the bar tooth", "One hard cell at the front, two muscle behind, three guts, seven cells long and one wide, density 2.0: the tooth of e025 at the ceiling, one of six holders in seed 1."),
+    (CLOUD, 3, 616, "the eyed column", "Seventeen guts in a column three wide and six long with a sensor, density 1.0: the prey of seed 3's tooth, eyed for 99,000 steps.", 310_000),
+    (CLOUD, 4, 222, "the killer without a tooth", "Five muscle and ten guts, no hard block, density 2.0: nothing to bite with, but a face of hardness 2 that breaks the light bodies it walks into. 488,000 steps."),
+    (CLOUD, 1, 1455, "the giant", "Fifty-seven cells over 7.6 by 7.7, nineteen muscle and thirty-eight guts at density 2.0, mass 115: the heaviest body of the series, living 190 steps on the dead."),
+    (CLOUD, 2, 842, "the tooth", "Two hard cells, two muscle, seven guts at density 1.3, a bite of 0.9: the hunter of seed 2 for 194,000 steps beside a gut of ten cells."),
 ]
 
 TEXT = {
-    "tldr": "(pending)",
-    "question": "(pending)",
-    "world": "(pending)",
-    "runs": "(pending)",
-    "c1": "yes",
-    "l1": "(pending)",
-    "v1": "(pending)",
-    "h1": "(pending)",
-    "r1": "(pending)",
-    "c2": "yes",
-    "l2": "(pending)",
-    "v2": "(pending)",
-    "h2": "(pending)",
-    "r2": "(pending)",
-    "c3": "yes",
-    "l3": "(pending)",
-    "v3": "(pending)",
-    "h3": "(pending)",
-    "r3": "(pending)",
-    "c4": "yes",
-    "l4": "(pending)",
-    "v4": "(pending)",
-    "h4": "(pending)",
-    "r4": "(pending)",
-    "c5": "yes",
-    "l5": "(pending)",
-    "v5": "(pending)",
-    "h5": "(pending)",
-    "r5": "(pending)",
-    "viewer": "(pending)",
-    "discussion": "(pending)",
-    "conclusion": "yes",
+    "tldr": "Weather is kept, both forms. The cloud (rain where a drifting field says) is felt by the soil and changes little else: 1-2 holders of the top place, as the control. The season (the sun a sine, amplitude 0.5) halves the bodies each winter, turns the winner over in two seeds of four (6 and 14 holders), and brings the eye back: lineages with a sensor per body live 72,000-125,000 steps in four runs of eight, 10,000 at most in the control. Next: room (#33, #28).",
+    "question": "Every law of the world has been a fixed field, and one or two bodies win every run. #24: fluctuation is the classic reason several strategies coexist, since no optimum holds long enough to win. Two laws about the world, run alone: the air rains where a cloud says, and the sun has seasons. Hypotheses:",
+    "world": "e025's closed world (128x128 on a torus, bodies of 8x8 cells in five kinds grown from the genome, the weight and flesh laws, the canopy, the spill, the air that rains on every cell alike) with one law added per run: the cloud weights the rain, or the season scales the sun.",
+    "runs": "<strong>Runs.</strong> Five pilots on seed 9 (<code>cloud</code> 1 and 0.5, <code>season</code> 1, 0.75 and 0.5; 200,000 steps). Then <code>cloud</code> 1 and <code>season</code> 0.5, flat seeds 1-4, 500,000 steps, eight at once (2 hours; 52-113 steps per second). The control is e025's <code>weight 1</code> batch: the same code, weather off, byte for byte.",
+    "c1": "yes", "l1": "The world stands", "v1": "No death in eight runs, matter at the end over the start 1.000000, population cv 0.04-0.11.",
+    "c2": "yes", "l2": "Both are felt", "v2": "The ridge's soil follows the cloud, correlation 0.42-0.54 over its cells; the season moves the population 2.1-2.5 times within a cycle (control 1.2-1.5).",
+    "c3": "partly", "l3": "The season turns the winner over; the cloud does not", "v3": "Season seeds 1 and 2: 6 and 14 holders of the top place over the second half, no hold over 29,000 steps. Cloud: 1-2 holders, as the control's 1-4.",
+    "c4": "partly", "l4": "The eye and the fat; not the trees or the movers", "v4": "Lineages with a sensor per body live 72,000-125,000 steps in four runs of eight (control: 10,000 at most); fat per body 5.0-11.5 against 3.3-4.2; trees and movers unchanged.",
+    "c5": "yes", "l5": "Kept: kills in eight of eight", "v5": "1.0-3.7 bodies killed a step in every run; in three runs the killing has no tooth (biters under 1%, hard 0.03-0.15).",
+    "h1": "The pilots set the amplitudes", "r1": "The season at amplitude 1 kills the world in its first winter: a body's fat is its eater's store, not its own. At 0.75 the world lives through ten winters but falls to 23 bodies in each, a lottery every cycle. At 0.5 it moves 2.8 times within a cycle and keeps six lineages. Both clouds stand; the batch takes the stronger.",
+    "h2": "The world stands under both", "r2": "The ledger (left) is flat at 1.000000 in every run: the weather moves matter and makes none. Population (right) is 2,053-4,777; the log samples every 10,000 steps, half a season, so the season's swing is in 3.3. The season worlds hold no fewer bodies than the control.",
+    "h3": "Both are felt", "r3": "The rain one cell sees (left) swings between a sixth and three times its mean (once nine) in spells of a few thousand steps, and the ridge's soil follows (correlation 0.42-0.54; the standing plant does not, it is eaten as it grows). The season (right): the bodies halve each winter and double each summer, 2.1-2.5 times per cycle against the control's 1.2-1.5.",
+    "h4": "The season turns the winner over; the cloud does not", "r4": "Lineages alive (left) are 2-7 in the weather worlds against 1-5, with 6-8 alive at the end in three runs. The top place changes hands 6 and 14 times over the second half in season seeds 1 and 2, no holder lasting 29,000 steps; the cloud's winners hold 43,000-251,000 steps, as the control's. Kills (right) go on in every run, and in three the killer has no tooth (Figure 2).",
+    "h5": "Tolerance: the eye and the fat", "r5": "Fat per body (left) is 5.0-11.5 against the control's 3.3-4.2. The sensor (right): a lineage with a sensor per body lives 72,000-125,000 steps in four weather runs (cloud seed 3, season seeds 2-4) against 10,000 at most in the control; the bodies are a column of guts, an armored body and a heavy one (Figure 2). The map: wet cells dark with soil, dry cells bare.",
+    "viewer": "The timeline: season seed 2, the run with 14 holders of the top place. The viewer's long view samples every 10,000 steps, half a season, so it alternates between a summer and a winter frame.",
+    "discussion": "<p>The two forms do different things. The cloud moves where the rain falls and the soil records it, but the bodies live on the dead and on the valley's fruit, so a dry ridge costs a walking body little; the winners are the control's. The season moves everyone's income at once and nothing escapes it: the bodies halve each winter, and the lineage on top in summer is not the one on top in winter (14 holders in seed 2).</p><p>The eye came back where it never did: a lineage with a sensor per body for 72,000-125,000 steps in four runs of eight, once under the cloud and three times under the season. A sensor sees food and crowd up to nine cells away; where food moves in time and place, seeing it pays for the block. The pilot at amplitude 1 says the other thing: a body has no store of its own, so a season strong enough to select for one kills the world.</p><p>Not shown: whether the turnover is coexistence or a lottery each winter; the cloud on a mountain world, where rain falls on the ridges only; the amplitude between 0.5 and 0.75.</p>",
+    "conclusion": "Both forms are kept (<code>weather</code> cloud 1 or season 0.5; 0 is e025). The season does what #24 asked: no optimum holds through a winter in two seeds of four, and the eye pays for the first time in the series. The cloud is felt by the world, not by the bodies. Next: room (#33 and #28: a bigger grid at the same matter, small and large bodies), where the eye's range has space to matter.",
 }
 
 

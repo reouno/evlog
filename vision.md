@@ -131,16 +131,22 @@ density. It ended the start's lottery: the hunter state in four seeds of four (t
 state in four of four), hunters denser than their prey, a second winner half a density apart in three seeds, nobody
 light (a light body's face breaks under one muscle). Two routes to resistance: density (seeds 1, 2, 4) or hard
 blocks on a big body (seed 3).
-1. #24 Weather: rain (and later the sun, seasons) that fluctuates in time and place on a timescale longer than a
-   lifetime and shorter than a run, so that no optimum holds long enough to win. Vision's seasons belong here; a
-   tree is a store, a crowd a place, and the world holds two kinds of body now, so the weather has something to
-   move between.
-2. #33 Space per body and #28 small and large bodies in one world (the same first pilot: a bigger grid at the same
+Done 2026-09-04: #24 weather (e026) - kept, both forms, as laws of the world: the cloud (the air rains where a
+field with a memory of 3,000 steps says, drifting east; the ridge's soil follows it, the bodies hardly do: the
+winners are e025's) and the season (the sun a sine of 20,000 steps at amplitude 0.5; the bodies halve each winter,
+the top place changes hands 6 and 14 times in two seeds of four, and the eye pays for the first time: lineages with
+a sensor per body for 72,000-125,000 steps in four runs of eight, 10,000 at most without weather). The season's
+ceiling is a fact about the bodies: a body has no store of its own (its fat is its eater's), so amplitude 1 kills
+the world in its first winter and 0.75 makes a lottery every winter.
+1. #33 Space per body and #28 small and large bodies in one world (the same first pilot: a bigger grid at the same
    matter). The user's reading after e025: the world is too crowded for the eye and for flight to matter (a body
-   bumps into food or another body wherever it goes), so a world with room is the eye's real test; then #5 3D bodies
-   (the vertical axis for legs and wings). An arm is an outcome to watch for there, not a rule.
-3. #32 What a gut digests: a heritable digestion axis (plant or flesh) as a property of the gut material, like the
-   density; cheap, after #24.
+   bumps into food or another body wherever it goes), so a world with room is the eye's real test, now that the
+   season made the eye pay; then #5 3D bodies (the vertical axis for legs and wings). An arm is an outcome to watch
+   for there, not a rule.
+2. #32 What a gut digests: a heritable digestion axis (plant or flesh) as a property of the gut material, like the
+   density; cheap.
+3. A store a body can spend (the fat is the eater's store now; a winter selects for one only if it exists), which
+   would let the season go past 0.5; and the cloud on a mountain world (rain on the ridges only).
 4. Later: #34 kinds of matter (several conserved substances - water, plant stuff, animal stuff of different
    hardness - and blocks as mixtures, so that organs are outcomes of the mix; starts with #29 water that flows:
    rivers, lakes, deserts as outcomes, a rewrite of the closed cycle's carrier, when a question needs wet and dry
