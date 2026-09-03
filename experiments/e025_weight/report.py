@@ -59,20 +59,22 @@ BANDS = [(0, "valleys (lowest third)", SERIES[0]), (1, "slopes (middle third)", 
 # Worlds of this experiment: label -> run prefix, world size, places, seeds.
 WORLDS = {
     "weight 1": dict(run="128_sigma0_r64_f0.1_flat_eyes8_flesh1_w1", size=128, places=BANDS, seeds=[1, 2, 3, 4], uniform=True),
+    "weight 0 (control)": dict(run="128_sigma0_r64_f0.1_flat_eyes8_flesh1_w0", size=128, places=BANDS, seeds=[1, 2, 3, 4], uniform=True),
 }
 WEIGHT = list(WORLDS)[0]
+CONTROL = list(WORLDS)[1]
 PILOT_RUN = "128_sigma0_r64_f0.1_flat_eyes8_flesh1_w{}_seed9"  # the pilots: seed 9, 200,000 steps, at weight 0, kind, density and 1
 PILOTS = [("0", "every block 1"), ("kind", "kind only"), ("density", "density only"), ("1", "both")]
 # The control: e024's flat runs at flesh 1, the same law with every block at 1 (on the f32 ground and the leaking ledger).
 REFS = {"e024: every block 1": ("128_sigma0_r64_f0.1_flat_eyes8_flesh1", E024, True)}
 E024_FLAT = list(REFS)[0]
-WORLD_COLOR = {WEIGHT: SERIES[0], E024_FLAT: "#b5b3ab"}
+WORLD_COLOR = {WEIGHT: SERIES[0], CONTROL: SERIES[1], E024_FLAT: "#b5b3ab"}
 CELL_ENERGY = 0.02
 BITE = 0.02
 KIND_COLOR = {1: SERIES[0], 2: SERIES[1], 3: SERIES[3], 4: SERIES[2]}
 CONFIRM_STEPS = 5000
 VIEWER_WORLD = WEIGHT
-VIEWER_SEED = 1
+VIEWER_SEED = 2
 LAST_STEP = 500_000
 
 
@@ -903,9 +905,9 @@ def top_lineages():
                 out.append((span, lid, peak))
             out.sort(reverse=True)
             print(f"{w}, seed {s}")
-            for span, lid, r in out[:4]:
+            for span, lid, r in out[:5]:
                 print(f"  lineage {lid}: {span:,} steps ({r['step']} peak), {r['size']} agents, mass {r['mass']}, hard {r['hard']}, muscle {r['muscle']}, dig {r['digestive']}, "
-                      f"foot {r['foot']}, {r['len_fwd']}x{r['len_side']}, bite {r['bite']}, meat {r['meat']}/{r['plant']}, p0 {r['p0']} p1 {r['p1']} pnone {r['pnone']}, height {r.get('height', '-')}")
+                      f"foot {r['foot']}, {r['len_fwd']}x{r['len_side']}, bite {r['bite']}, shell {r['shell']}, meat {r['meat']}/{r['plant']}, density {r.get('density', '-')}, age {r['age']}")
 
 
 
@@ -991,22 +993,9 @@ def main():
 
     charts = {}
     worth_of = lambda l: l["worth"] if "worth" in l else [e / max(m, 1e-9) + CELL_ENERGY for e, m in zip(l["mean_energy"], l["mass_mean"])]
-    charts["worth"] = world_chart("What a cell of a body is worth", "What one cell yields to whoever breaks it (its matter 0.02, plus its share of the body's energy and fat), mean over the bodies alive, one line per run; gray: e023 (from mean energy and mass). A bite of grass is 0.02: the dotted line.", logs, worth_of, all_worlds, WORLD_COLOR, ymin=0, hline=BITE)
-    charts["kill_gain"] = world_chart("What a kill paid", "Energy gained per cell broken by a push, per log window, one line per run (e023 did not log it). Above the cells' mean worth means old bodies are the ones broken; below, newborns.", logs, lambda l: l["kill_gain"] if "kill_gain" in l else None, all_worlds, WORLD_COLOR, hline=BITE)
-    charts["meat_share"] = world_chart("Intake from other bodies", "Share of the food eaten that was another body, broken or dead, per log window, one line per run; gray: e023 (5-18%).", logs, lambda l: [m / max(p + m, 1e-9) for p, m in zip(l["plant_intake"], l["meat_intake"])], all_worlds, WORLD_COLOR, percent=True)
-    charts["broken"] = world_chart("Cells broken per step", "Cells of living bodies broken by a push, per step, one line per run; gray: e023. Zero would be a world without teeth.", logs, lambda l: [b / 10_000 for b in l["cells_broken"]], all_worlds, WORLD_COLOR)
-    charts["fat_share"] = world_chart("Fat, share of the world's matter", "The matter fixed in living bodies' flesh over all the matter of the world, at each log step, one line per run. What it holds is not in the air, so not in the rain.", logs, lambda l: [f / m for f, m in zip(l["fat_stock"], l["matter"])] if "fat_stock" in l else None, all_worlds, WORLD_COLOR, percent=True)
     pilot = pilot_table()
-    charts["sensor_mean"] = world_chart("Sensor blocks per body", "Mean sensor blocks per body alive, one line per run; gray: e022. With the eye a body's range is one cell plus this.", logs, lambda l: l["sensor_mean"], all_worlds, WORLD_COLOR)
-    charts["sense_used"] = world_chart("The knockout: decisions the eye changed", "Of the decisions taken by bodies with a sensor, the share that would differ if the body saw one cell, per log window, one line per run; gray: e022 (there: if the second cell were not seen). Zero would be an eye nobody reads.", logs, lambda l: l["sense_used"], all_worlds, WORLD_COLOR, percent=True)
-    charts["pop"] = world_chart("Population", "Bodies alive at each log step, one line per run; gray: e022. A line that ends is a world that died.", logs, lambda l: l["pop"], all_worlds, WORLD_COLOR)
-    charts["eaten"] = world_chart("Food eaten per step", "Plant, fruit and dead matter taken by guts per step, one line per run; gray: e022. The sun gives 164 per step.", logs, eaten_of, all_worlds, WORLD_COLOR)
-    charts["fruit_share"] = world_chart("Intake from fruit", "Share of the food eaten that was fruit lying on the rings, per log window, one line per run; gray: e022 (44-77% in its crowd state).", logs, lambda l: [f / max(e, 1e-9) for f, e in zip(l["fruit_eaten"], eaten_of(l))], all_worlds, WORLD_COLOR, percent=True, ymax=1.0)
-    charts["contacts"] = world_chart("Contacts per body per step", "Pairs of bodies whose cells touched, per body per step, one line per run; gray: e022 (0.22-0.76 in the crowd state).", logs, lambda l: [c / max(p, 1) / 10_000 for c, p in zip(l["contacts"], l["pop"])], all_worlds, WORLD_COLOR)
-    charts["biters"] = world_chart("Bodies with a bite", "Share of the bodies with a hard tip on the front backed by muscle, at each log step, one line per run; gray: e022 (peaks of 0.01-0.03, never kept).", logs, lambda l: l["biters_share"], all_worlds, WORLD_COLOR, percent=True)
-    charts["lineages"] = world_chart("Lineages alive", "Confirmed lineages at each log step, one line per run; gray: e022 (1-3).", logs, lambda l: l["lineages"], all_worlds, WORLD_COLOR)
-    charts["mass"] = world_chart("Mass per body", "Mean mass of the bodies alive (the sum of the blocks' weights times the density), one line per run; gray: e024 (there mass is the count of cells).", logs, lambda l: l["mass_mean"], all_worlds, WORLD_COLOR)
-    charts["size"] = world_chart("Cells per body", "Mean cells per body alive, one line per run; gray: e024. Mass over cells is what the body is made of.", logs, lambda l: l["size_mean"] if "size_mean" in l else l["mass_mean"], all_worlds, WORLD_COLOR)
+    charts["pop"] = world_chart("Population", "Bodies alive at each log step, one line per run (orange: the control); gray: e024. A line that ends is a world that died.", logs, lambda l: l["pop"], all_worlds, WORLD_COLOR)
+    charts["lineages"] = world_chart("Lineages alive", "Confirmed lineages at each log step, one line per run (orange: the control); gray: e024 (1-3). One would be one body winning.", logs, lambda l: l["lineages"], all_worlds, WORLD_COLOR)
     charts["density"] = world_chart("Density per body", "Mean density of the bodies alive (what the genome expresses, 1/2 to 2), one line per run; gray: e024 (1 by law). The dotted line is 1.", logs, lambda l: l["density_mean"] if "density_mean" in l else [1.0] * len(l["step"]), all_worlds, WORLD_COLOR, ymin=0.4, ymax=2.1, hline=1.0)
     charts["density_std"] = world_chart("Spread of the density", "Standard deviation of the density over the bodies alive, one line per run (e024: 0). Zero would be one density for the whole world.", logs, lambda l: l["density_std"] if "density_std" in l else [0.0] * len(l["step"]), all_worlds, WORLD_COLOR, ymin=0)
     charts["speed"] = world_chart("Speed per body", "Mean muscle blocks over mass (the chance of a second sub-cell per move), one line per run; gray: e024.", logs, lambda l: l["speed_mean"], all_worlds, WORLD_COLOR, ymin=0)
@@ -1059,18 +1048,13 @@ def main():
                + row("Speed (muscle over mass)", "speed", d3)
                + row("Hard; muscle blocks per body", "hard|muscle", d2)
                + row("What a cell of a body is worth (a bite of grass is 0.02)", "worth", d3)
-               + row("What a kill paid per cell broken", "kill_gain", d3)
                + row("Fat, share of the world's matter", "fat_share", p0)
                + row("Intake from other bodies, share of the food eaten", "meat_share", p0)
-               + row("Cells broken per step; bodies killed per step", "broken|kills", d2)
-               + row("Deaths by a push, share of all deaths", "kill_share", p1)
-               + row("Bodies with a bite, share (median / last quarter / peak)", "biters|biters_q4|biters_max", d3)
+               + row("Cells broken per step; bodies killed per step", "broken|kills", lambda v: f"{v:.0f}" if v >= 10 else f"{v:.2f}")
+               + row("Bodies with a bite, share (median / peak)", "biters|biters_max", d3)
                + row("Longest lineage with a bite of 1 or more, steps", "hunter_steps", n0)
-               + row("Its intake from other bodies", "hunter_diet", p0)
-               + row("Lineages with a bite for 100,000 steps or more", "hunter_100k", n0)
                + row("Population (coefficient of variation)", "pop|pop_cv", lambda v: f"{v:,.0f}" if v >= 1 else f"{v:.2f}")
-               + row("Food eaten per step", "eaten", d1)
-               + row("Intake from fruit, share of the food eaten", "fruit_share", p0)
+               + row("Bodies with a sensor, share", "sensor_share", p1)
                + row("Contacts per body per step", "contacts", d2)
                + row("Lineages alive", "lineages", d1)
                + row("Matter at the end over the start", "matter_hold", lambda v: f"{v:.5f}")
@@ -1143,9 +1127,6 @@ def main():
 <div class="grid2">
 {charts["density"]}{charts["density_std"]}
 </div>
-<div class="grid2">
-{charts["mass"]}{charts["size"]}
-</div>
 <p>{text["r3"]}</p>
 
 <h3>3.4 {text["h4"]}</h3>
@@ -1157,10 +1138,7 @@ def main():
 
 <h3>3.5 {text["h5"]}</h3>
 <div class="grid2">
-{charts["kills"]}{charts["biters"]}
-</div>
-<div class="grid2">
-{charts["lineages"]}{charts["meat_share"]}
+{charts["kills"]}{charts["lineages"]}
 </div>
 <p>{text["r5"]}</p>
 
@@ -1207,37 +1185,38 @@ def main():
 
 # Lineages that prospered: (world, seed, lineage id, name, what the shape does).
 GALLERY = [
-    ("flesh 1", 3, 164, "the tooth", "Eight cells two wide on 2.5 world cells: two hard cells at the front, the gut behind them, three of muscle at the back. Half its bodies bite (the lineage's mean bite is 1.1), it moves forward in 86% of its decisions, and 81% of what it ate was other bodies. 7,139 agents at its peak, the winner of seed 3 for 488,000 steps: the only hunter lineage of the batch, in the one run that entered the hunter state.", 300_000),
-    ("flesh 1", 3, 814, "the gut beside the teeth", "Ten gut cells on 2.7 world cells, no armor, alive 286,000 steps with 1,365 agents beside the tooth: the prey that is also a scavenger (59% of its intake was other bodies, mostly the dead the teeth leave). Two winners in one world, the first time a second body holds for this long against the first."),
-    ("flesh 1", 1, 107, "the net", "Four pads of three gut cells at the four corners of the 8x8 box, nothing between them: twelve guts on 7.6 world cells, no armor, no muscle, no eye. The winner of seed 1 for 498,000 steps with 78% of its intake from the dead. A body that eats from four places seven cells apart at once, laid over a ground where the fat corpses lie: the body of the flat world at flesh 1 in three seeds of four.", 300_000),
-    ("flesh 0.7", 2, 1, "the net, with rain", "The same four pads at flesh 0.7 (12.6 gut cells on 6.2 world cells), the winner of its run for all 500,000 steps and of every run at 0.7: 54% of its intake the dead, the rest fruit. It is e022's bar pulled apart into its corners.", 300_000),
-    ("flesh 1", 1, 882, "a small body with an eye", "Thirteen cells on 3.2 world cells with one sensor, alive 204,000 steps beside the net with 428 agents: the last body of the batch that kept an eye. In a world where the food is corpses that lie for hundreds of steps, an eye that sees far pays nobody."),
-    ("flesh 1", 4, 123, "the compact gut", "Fifteen gut cells in a bar and a hook on 4.6 world cells, 182,000 steps with 398 agents beside seed 4's net: e023's shape, and it loses to four pads that eat from four places with fewer guts."),
+    ("weight 1", 2, 4, "the dense tooth", "Two hard cells at the front, muscle behind, four guts, density 1.7-1.8: e024's tooth made heavy. Its face resists 6 per hard block, its prey's 1.2. The winner of seed 2 for all 500,000 steps.", 400_000),
+    ("weight 1", 2, 377, "the gut beside it", "Ten guts on 2.5 world cells at density 1.2, no armor, no muscle: the prey and the scavenger, alive 468,000 steps beside the tooth with 1,000-1,900 agents. Two winners half a density apart."),
+    ("weight 1", 4, 2430, "the small tooth at the ceiling", "Six cells: one hard, two muscle, two guts, density 2.0, the densest the genome can express. Mass 12.8 for six cells; slow, and nothing breaks it. Seed 4's hunter for 79,000 steps."),
+    ("weight 1", 4, 1, "the light gut that wins", "Nine guts in a bar at density 1.06, the lightest body of the batch, on 2.5 cells: fast to make and to move, and prey to every muscle. The winner of seed 4 for 500,000 steps."),
+    ("weight 1", 1, 1661, "the heavy net", "Ten guts spread over 7x7 cells at density 2.0: e024's net at twice the weight, eating the dead from four places. It lives 400 steps and 94,000 steps as a lineage, then loses to the tooth."),
+    ("weight 1", 3, 332, "the armored body", "Seventeen cells at density 0.93: three hard, four muscle, nine guts. Seed 3 took the other route to resistance, hard blocks instead of density, and one body wins there for 205,000 steps."),
+    ("weight 0 (control)", 1, 1, "the control's gut", "Eleven guts in a hooked bar on 3.3 cells, no armor, no muscle, density 1 by law: the winner of every control run for 500,000 steps, 72-80% of its intake the dead. e024's four-pad net lives beside it and loses."),
 ]
 
 TEXT = {
-    "question": "e022 brought the crowd and e023 the eye; the tooth appears in every run and never pays, and a cell of another body is worth what it cost: 0.02 of matter plus its share of the body's energy, 0.10-0.15 in all, five to seven bites of grass. Issue #27 asks for the worth of flesh as a law about a material with matter conserved. The real world's premise: flesh is dense because an animal is the concentrate of what it ate and burned. The law here: a share of what a body burns is fixed in its flesh instead of breathed, and goes to whoever breaks a cell of it, or to the ground when it dies. The body's own economy is unchanged; only what its cells are worth to others changes. Hypotheses:",
-    "world": "Everything is e023's closed world (128x128 on a torus, matter 8 per cell at the start, bodies of 8x8 cells in five kinds grown from the genome, space at the resolution of the body, work = force x distance, a cell that costs what it holds, the dead eaten where they lie, the terrain with soil that runs downhill, the canopy, the spill, rain on every cell alike, mutation per base, a sensor block that sees one more cell) with one law changed: where the upkeep goes.",
-    "runs": "<strong>Runs.</strong> A dose series first: the flat world on seed 9 for 200,000 steps at <code>flesh</code> 0.1, 0.3, 0.5, 0.7, 0.85, 0.95 and 1 (15-20 minutes each). Then the batch at the two shares that bracket the switch the dose series found: <code>flesh</code> 1 and <code>flesh</code> 0.7, seeds 1-4 each, 500,000 steps, one thread each, eight at once on one machine (12 cores, 90 minutes; 80-135 steps per second). The control is e023's flat seeds 1-4, the same code at <code>flesh 0</code> (checked byte for byte on seed 9 over 30,000 steps), compared over their first 500,000 steps.",
-    "tldr": "The flesh law makes a body worth eating - a cell is worth 1-2.5 against e023's 0.15 - and the world answers by eating the dead. At every share up to 0.7, and in three seeds of four at 1, nothing bites: the winner is a net of four pads of three gut cells at the corners of its box, seven world cells apart, that eats the corpses from four places at once, meat is 56-80% of the intake, and the fat hoards a quarter to two thirds of the world's matter. The tooth comes in one seed of four at flesh 1 and in every pilot at 0.85 and above: 4,500 bodies of nine cells, half with a hard tip, four kills a step, a hunter lineage for 488,000 steps beside a gut that lasts 286,000. A cell is worth less in the hunter's world than in the net's; the two are states, entered at the start. Next: #25, what a block weighs.",
-    "c1": "yes", "l1": "Yes, four to nineteen times", "v1": "A cell of a body is worth 1.09-1.19 at flesh 0.7 and 2.2-2.5 in the net state at flesh 1, against e023's 0.125-0.181 (a bite of grass is 0.02); in the hunter state it is 0.64, because nobody grows old there. The pilot's oldest bodies (age 2,400, 64 cells) carried 130-160 of fat.",
-    "c2": "partly", "l2": "Meat is most of the intake, and it is the dead's", "v2": "Other bodies are 56-58% of the food eaten at 0.7 and 75-80% at 1 (e023: 9-20%), and a cell broken by a push pays 0.45-0.70 where cells are broken, twenty to thirty bites. But in seven runs of eight the bodies killed per step are 0.00: the meat is corpses. A body that starves lays its fat, and a gut eats it without a tooth.",
-    "c3": "partly", "l3": "One seed of four at flesh 1, and it holds", "v3": "Seed 3 entered the hunter state at step 40,000 and kept it: 44-50% of its bodies carry a bite over the whole run, 4 bodies are killed and 310 cells broken per step, and one lineage holds a bite for 488,000 steps with 81% of its intake from other bodies. Seeds 1, 2 and 4 and all four runs at 0.7 never bite (peaks 0.4%). The dose series entered the hunter state at 0.85, 0.95 and 1 (seed 9) and never below.",
-    "c4": "partly", "l4": "The world stands; the fat hoards it", "v4": "No run died, population cv is 0.02-0.05 (e023: 0.05-0.11). But the fat is not a few percent of the world's matter: 25-29% at 0.7 and 63-70% in the net state at 1, where the air holds 0.4-2 and the rain has stopped; in the hunter state it is 9%. Matter is 0.998-0.999 at the end over the start and 0.982 in the hunter run: an f32 ground under corpses of 30-150 per cell loses to rounding, e019's soil problem again.",
-    "c5": "partly", "l5": "A second winner in one world; the net everywhere else", "v5": "Lineages alive 1-3 (e023: 1-2). The hunter run holds two for 286,000 steps, the tooth and a gut that lives beside it, the longest a second body has held against the first. The other seven runs have one winner each and it is the same body, the net, in every one; e023's frame that sees is gone, and the eye with it (a sensor on 0.2-7% of the bodies).",
-    "h1": "A cell is worth up to a hundred bites, and the dead lie everywhere",
-    "r1": "The dose (left): the intake from other bodies climbs with the share from 23% to 72% while the bodies with a bite stay at zero up to 0.7 and jump to 17-26% from 0.85, and the fat takes 2-16% of the world's matter. The worth of a cell (right) is 1.1-1.2 at 0.7 and climbs to 2.2-2.5 in the net state at 1 as the bodies age on a ground of corpses; the hunter run (the low blue line) sits at 0.64 with the same law, because its bodies die at 124 steps on average. What a cell is worth is not what decides whether it is bitten.",
-    "h2": "Meat is most of the intake, and it is the dead's",
-    "r2": "Other bodies (left) are 56-58% of the food at 0.7 and 75-80% at 1, in the net state and the hunter state alike; e023's 9-20% is the gray band. What a kill pays (right) is 0.45 per cell in the hunter run, steady, twenty bites for one push; at 0.7 the line jumps between 0.1 and 0.9 because a cell is broken every few thousand steps. The meat is the same in both states; who takes it differs: a net over a corpse, or a tooth in a living body.",
-    "h3": "The tooth: one world in four, and it holds",
-    "r3": "Biters (left) are a flat zero in seven runs and 44-50% in seed 3 from step 40,000 to the end; cells broken (right) are 300 a step there and under 0.2 everywhere else. The bodies (Figure 2) show the two answers to the same law: the net, four pads of three guts at the corners of its box, and the tooth, two hard cells at the front of a gut with muscle behind, two wide on two and a half cells. The tooth's world is 4,500 bodies of nine cells; the net's is 3,500 of twelve. The pilot at flesh 1 also grew a 48-cell body with 9 hard, 13 muscle and a bite of 2 that held 26,000 steps beside a smaller winner: the armored hunter exists in the space, and did not win.",
-    "h4": "The world stands; the fat hoards it",
-    "r4": "Population (top left) is flat at 3,300-4,500 in every run, twice e023's, with no death. The fat's share of the world's matter (top right) is the story: 25-29% at 0.7, 63-70% in the net state at 1, and 9% in the hunter state, where the teeth keep the fat moving. In the net state the air holds 0.4-2 and the rain is gone: nothing is breathed, the corpses rot where they fall, and the world's matter sits in living flesh. Fruit (bottom left) is 35% of the intake at 0.7 and 20% at 1; contacts (bottom right) are 0.7-1.0 at 0.7, the crowd on the rings, and 0.1-0.7 at 1.",
-    "h5": "Winners: the net, and in one world the tooth beside a gut",
-    "r5": "Lineages (left) are 1-3, and in the hunter run two hold together for 286,000 steps: the tooth and the gut that lives beside it, the first second body since e021 that is not the first body on other ground. Mass (right) marks the states: 11-13 cells in the net state, 9 in the hunter's, where a body of 15 is eaten before it grows. The frame that sees is not among the winners; the eye is on 0.2-7% of the bodies, because corpses do not move and lie for hundreds of steps.",
-    "viewer": "The flat world at flesh 1, seed 3, the hunter state: bodies with a white dot are the teeth, and the ground under the crowd is bright with what they leave.",
-    "discussion": "<p>The law was written as a material, and it worked as one: a cell of a body is worth four to nineteen times what it was. Selection then took the cheapest route to that worth, which is not a tooth. A body that starves lays its fat on the ground, and a gut on that cell eats it at the same rate as grass; a body that puts three guts in each corner of its box eats from four cells at once. The net is that body, and it wins at every share up to 0.7 and in three seeds of four at 1. e008 and e017 found the prize on a body was not the lever; this experiment says why: with the dead eaten where they lie, the prize is paid to whoever waits. Hunting pays only where the corpses are too few - the hunter state, where the teeth kill bodies at 124 steps of age and the fat never accumulates.</p><p>The two states are the surprise. Under one law and one share the world sits either in the net state - 70% of its matter in living flesh, no breath, no rain, one winner - or in the hunter state - 9% in flesh, 300 cells broken a step, the air fed by the work of moving, two winners. Which one a run enters is decided in the first 40,000 steps: the pilots at 0.85-1 all entered the hunter state at the start's crash, seed 3 at step 40,000, and seeds 1, 2 and 4 never. A cell is worth less in the hunter's world (0.64) than in the net's (2.4), so the worth of a cell is not what makes the tooth pay; the state does, and the state is a lottery of the start, like e022's. Weather (#24) is the kind of law that could move a world between them.</p><p>What this does not show: why the switch sits between 0.7 and 0.85 (the air falls from 71 to 45 across it; the grass may be what runs short first), whether the net state ever tips into the hunter state after the start, and what the mountain worlds do. The matter drifts by 0.2-1.8% over 500,000 steps where corpses of 30-150 lie on an f32 ground (e023: 0.03%); the fix is an f64 ground, as e019's soil, before the next experiment. The runs are 500,000 steps, not a million; the states were settled by 100,000 in every run.</p>",
-    "conclusion": "The flesh law is kept: a share of what a body burns stays in its flesh and goes to whoever breaks a cell of it, matter conserved. It made a body worth eating and it made the world eat its dead. The tooth pays in a state the world enters at the start and keeps, where the meat is not left lying, and there the world has two winners and four kills a step: the most there has been to watch. The default share is set to 1 (nothing a body burns is lost but the work of moving), the share where the hunter state exists. Next: #25, what a block weighs - a heavy armored hunter and a light net are now two bodies that could both be right - after the ground is made an f64; then #24, weather, which could move a world between its two states.",
+    "question": "e024 left two bodies that could both be right: the net, twelve guts eating the dead, and the tooth in one seed. Every block weighed 1, so armor cost nothing but upkeep and no lineage could be light or heavy. Issue #25 asks for mass as a property of the material and of the lineage: a hard block weighs more, and the genome sets a density a child inherits. Hypotheses:",
+    "world": "e024's closed world (128x128 on a torus, bodies of 8x8 cells in five kinds grown from the genome, the flesh law, the canopy, the spill) with its ledger fixed (#31) and one law added: a block weighs by its kind times the body's density, and mass is what a body is made of, moves with, and resists with.",
+    "runs": "<strong>Runs.</strong> Four pilots on seed 9 (<code>weight</code> 0, kind, density and 1; 200,000 steps). Then <code>weight 1</code> and the control at the same code, <code>weight 0</code>: flat seeds 1-4, 500,000 steps, eight at once on one machine (2 hours; 53-123 steps per second). e024's runs are gray: the control's law on the leaking ledger.",
+    "tldr": "A block that weighs makes a hunting world. With every block at 1 the same code gives the net state in four seeds of four: no kill, the dead eaten where they lie. With the weight law all four seeds hunt: 2-4 kills a step, hunters denser than their prey, a second winner in three seeds, and nobody light, because a light body's face breaks under one muscle. The ledger holds to 1e-6. Next: #24, weather.",
+    "c1": "yes", "l1": "The world stands; the matter holds", "v1": "No death, population cv 0.02-0.11, matter at the end over the start 1.000000-1.000001 in all eight runs (e024: 0.982-0.999).",
+    "c2": "yes", "l2": "Density spreads, within and between lineages", "v2": "The spread over bodies is 0.10-0.47 over the second half; in three seeds the two largest lineages differ by 0.5-0.9: a tooth at 1.7-2.0 beside a gut at 1.1-1.2.",
+    "c3": "partly", "l3": "The tooth keeps its armor and gets dense", "v3": "Hunters carry 1.4-4.4 hard blocks and are denser than their prey in three seeds (1.36-2.00 against 1.21-1.40); seed 3's are eighteen cells at 0.89, lighter than theirs.",
+    "c4": "yes", "l4": "Four seeds of four, against none", "v4": "Every weight-1 run enters the hunter state by 50,000 steps and keeps it; the four control runs never do (kills 0.00 throughout); e024 entered it in one seed of four.",
+    "c5": "partly", "l5": "One to five lineages; the second differs in density", "v5": "Lineages alive 1-5 (control 1-3). Seeds 1, 2 and 4 hold a tooth and a gut for 268,000-500,000 steps, 0.5-0.9 apart in density; seed 3 has one winner.",
+    "h1": "The pilots: each half alone keeps the tooth, both together end it once",
+    "r1": "Each half alone keeps the control's hunter state. Both together, on seed 9, end the bite (0.0%) but not the killing: 0.8 bodies a step die to pushes without a hard tip, because a light body's soft face resists 1/2 and one muscle breaks it. Six lineages live there against two. The batch says seed 9 was the odd one.",
+    "h2": "The world stands and the matter holds",
+    "r2": "The ledger (left) is flat at 1.000000 in every run; e024's runs fall 0.2-1.8%, the two leaks #31 found. Population (right) is 2,400-4,700 and flat; the hunter worlds hold fewer bodies because a body there dies at 60-130 steps of age.",
+    "h3": "Density spreads, and drifts heavy",
+    "r3": "The mean density (left) climbs from 1 to 1.26-1.52 in three seeds and sits at 0.95 in seed 3. Nobody is light: no body under 0.8 at the end of any run, and half the bodies of seed 4 sit at the ceiling of 2. The spread (right) is 0.10-0.47 and stays: a dense tooth and a lighter gut coexist.",
+    "h4": "Armor weighs, and the hunter answers with density",
+    "r4": "Hard blocks per body (left) are 0.5-2.7 against the control's 0.01: armor costs speed and matter now, and is kept. Speed (right) is 0.09-0.24 against the net's 0.001. The bodies (Figure 2): e024's tooth with guts behind at density 1.7-2.0, a net of ten guts at 2.0 over 7x7 cells, and seed 3's armored body at 0.9.",
+    "h5": "Four hunter worlds, and a second winner in three",
+    "r5": "Kills (left) are 2-4 a step from 50,000 steps on in every weight-1 run and 0 in every control. Lineages (right): 1-5 alive, a tooth and a gut beside each other for 268,000-500,000 steps in seeds 1, 2 and 4. Seed 3, where the density stayed near 1, has one winner, as e024's hunter run.",
+    "viewer": "Weight 1, seed 2: the tooth (lineage 4, density 1.8) with the white dot, the gut (lineage 377, density 1.2) beside it.",
+    "discussion": "<p>The law was written about a block, and the world it made is a hunting one, not by a rule about teeth but because hardness is now a property of the whole body: a face resists the material's hardness times the density, so a light body breaks under a single muscle. At the start cheap light bodies proliferate, anything with muscle eats them, and the muscle pays before a tooth forms. The prey's answer is density (1.26-1.52), which costs matter and speed; the hunter's answer is more density still. e024 reached the hunter state by the lottery of the start in one seed of four; the weight law reaches it in four of four.</p><p>The second winner is real in three seeds and differs from the first in density and armor, as #19 asked. Seed 3 is the exception: its density stayed at 1, its bodies grew big and armored instead, and one lineage wins: two routes to the same resistance.</p><p>What it does not show: whether the net state can be entered at all under the weight law (seed 9's pilot came close), the mountain worlds, and why seed 3 took the other route. The eye is gone (a sensor on 0.4-6% of the bodies). The states were settled by 50,000 steps in every run.</p>",
+    "conclusion": "The weight law is kept (hard 2, muscle 1, gut 1, sensor 1/2, times a density the genome expresses from 1/2 to 2). It gave selection two axes at once, armor that costs speed and matter, and a density no lineage leaves at 1; with it the hunter state is the world's state in four seeds of four, with two winners in three. Next: #24, weather, on a world with two kinds of body to move between.",
 }
 
 

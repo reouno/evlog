@@ -123,20 +123,26 @@ crowd touches, and a tooth still loses to a gut that eats what falls).
 Done 2026-09-02: #26 eyes (e023) - kept; the eye pays in the crowd state only, and the crowd's body sees now.
 Done 2026-09-03: #27 flesh (e024) - kept at `flesh` 1; a body is worth eating, the world eats its dead, and the
 tooth pays in a state the start decides (one seed of four), where it gives two winners and four kills a step.
-1. #31 The ground as an f64 (a small fix first: the f32 ground loses 0.2-1.8% under fat corpses), then #25 what a
-   block weighs (mass by material and a density the genome expresses): the armored 48-cell hunter of e024's pilot
-   and the light net are two bodies that could both be right once armor weighs and speed costs; judged with #19 and
-   by whether the hunter state is entered more often than one seed in four.
-2. #24 Weather: rain (and later the sun, seasons) that fluctuates in time and place on a timescale longer than a
+Done 2026-09-03: #31 (e025) - the drift was not the f32 ground but two leaks of the ledger (a body's deficit filled
+by a kill in the same step; f32 rounding of the fat's fixed increment); the ground and the bodies' ledger are f64
+now and the matter holds to 1e-6. #25 what a block weighs (e025) - kept, both halves: a block weighs by its kind
+(hard 2, sensor 1/2) times a density the genome expresses (1/2 to 2), and hardness is the material's times the
+density. It ended the start's lottery: the hunter state in four seeds of four (the control at the same code: the net
+state in four of four), hunters denser than their prey, a second winner half a density apart in three seeds, nobody
+light (a light body's face breaks under one muscle). Two routes to resistance: density (seeds 1, 2, 4) or hard
+blocks on a big body (seed 3).
+1. #24 Weather: rain (and later the sun, seasons) that fluctuates in time and place on a timescale longer than a
    lifetime and shorter than a run, so that no optimum holds long enough to win. Vision's seasons belong here; a
-   tree is a store and a crowd a place now, so the weather has something to work on.
-3. #28 Small and large bodies in one world (a bigger grid, cheap): e022's frame is seven world cells wide, the widest
+   tree is a store, a crowd a place, and the world holds two kinds of body now, so the weather has something to
+   move between.
+2. #28 Small and large bodies in one world (a bigger grid, cheap): e022's frame is seven world cells wide, the widest
    the 8x8 grid allows, so the ceiling is reached; then #5 3D bodies (the vertical axis for legs and wings, with the
    ground half of #16).
-4. Later: #29 water that flows (rivers, lakes, deserts as outcomes; a rewrite of the closed cycle's carrier, when a
+3. Later: #29 water that flows (rivers, lakes, deserts as outcomes; a rewrite of the closed cycle's carrier, when a
    question needs wet and dry as places), #4 learning, growth, aging, health as a layer on top of birth traits.
-Also open on the flesh: which side of the switch (between 0.7 and 0.85; the air falls from 71 to 45 across it) a run
-takes is a lottery of the start, and whether a net world ever tips into the hunter state later.
+Also open on the weight: whether the net state can be entered at all under the law (e025's pilot on seed 9 came
+close: no tooth, but kills), and why a seed takes density or hard blocks as its route to resistance. On the flesh:
+which side of the switch (between 0.7 and 0.85) a run takes was a lottery of the start without the weight law.
 Also open on the spill: a start with soil in the ground (the lottery may be the all-plants start meeting the dark
 lawn), and whether the crowd state is entered by chance or by history (half seed 2 flipped at 400,000, half seed 1
 at 900,000, half seed 4 fell back; e023 flat seed 2 entered it at 750,000 with its eyes, flat seed 3 left it at

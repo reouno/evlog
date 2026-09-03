@@ -133,6 +133,82 @@ The batch runs `weight 1` and, as the control at the same code, `weight 0`, flat
 500,000 steps, eight at once (the fixed ledger moves a seed's start, so e024's runs are not
 the control for the state a seed enters).
 
+### The batch (flat seeds 1-4, 500,000 steps; e024's flesh-1 runs as a second reference)
+
+Eight runs, one thread each, eight at once on the Mac: 2 hours (53-123 steps per second).
+Report: `report.html`. Ranges over seeds, medians over the second half unless said.
+
+| | weight 1 | weight 0 (the control) | e024 flesh 1 (leaking ledger) |
+|---|---|---|---|
+| The state entered (by 50,000 steps, kept to the end) | hunter, 4 of 4 | net, 4 of 4 | net 3, hunter 1 |
+| Bodies with a bite (median) | 29-47% | 0.0% | 0 / 46% |
+| Bodies killed per step; cells broken per step | 2.1-3.8; 166-358 | 0.00; 0 | 0.00 / 3.95; 310 |
+| Density per body (mean); its spread over bodies | 0.95-1.52; 0.10-0.47 | 1; 0 | 1; 0 |
+| Bodies under density 0.8 at the end; at 1.8 and above | 0-0.7%; 0-51% | - | - |
+| Cells per body; mass | 7.5-17.9; 11.5-19.4 | 11.8-11.9; the same | 11.7-11.8 / 8.8 |
+| Speed (muscle over mass) | 0.087-0.242 | 0.001-0.002 | - |
+| Hard; muscle blocks per body | 0.5-2.7; 1.2-5.0 | 0.01-0.03; 0.01-0.03 | 0.01-0.02 / 1.35; 0.00-0.03 / 2.14 |
+| Hunters' density against their prey's (at the end) | 1.36 / 1.21, 1.76 / 1.40, 0.89 / 0.98, 2.00 / 1.33 | - | - |
+| Worth of a cell | 0.46-1.18 | 2.19-2.50 | 2.2-2.5 / 0.64 |
+| Fat, share of the world's matter; air | 6-14%; 22-27 | 57-68%; 0-2 | 63-70%; 0.4-2 / 9%; 20-23 |
+| Intake from other bodies | 72-74% | 75-80% | 78-79% / 75% |
+| Population (cv) | 2,407-4,726 (0.02-0.11) | 3,304-3,610 (0.02-0.03) | 3,313-3,812 (0.02) / 4,509 (0.05) |
+| Bodies with a sensor | 0.4-6.4% | 0.2-0.9% | 0.5-7% |
+| Lineages alive | 1-5 | 1-3 | 2-3 / 2 |
+| Matter at the end over the start | 1.000000-1.000001 | 1.000000 | 0.998 / 0.982 |
+
+The states. Every control run is e024's net state: the winner is a body of eleven to twelve
+guts on 3-4 world cells (a bar with a hook; e024's four-pad net lives beside it for 491,000
+steps in seed 2 and loses), no armor, no muscle, no cell ever broken, the air empty and the
+fat holding two thirds of the matter. Every `weight 1` run is the hunter state from its first 50,000 steps:
+a bite on 29-47% of the bodies, 2-4 kills a step, the fat at 6-14%, the air at 22-27. The
+pilot on seed 9 was the exception (no bite, 0.8 kills a step): five seeds of five with the
+law kill; zero of four without it.
+
+The bodies (report, Figure 2). Seed 2: the tooth of e024 with four guts behind it at density
+1.7-1.8 (lineage 4, the winner for 500,000 steps) beside a ten-gut body at 1.2 (lineage 377,
+468,000 steps). Seed 1: a ten-gut body at 1.16 (467,000 steps) beside a tooth at 1.2 (268,000)
+and, early, nets of ten guts spread over 7x7 cells at density 2.0 that live 400 steps. Seed 4:
+a nine-gut bar at 1.06, the lightest winner, for 500,000 steps, and teeth of six cells at the
+ceiling of 2 (79,000 steps; 51% of the run's bodies sit at 2 at the end). Seed 3 took the other
+route: density 0.9-1.1, bodies of 17-29 cells with 3-4 hard and 4-5 muscle blocks, one winner
+at a time (lineages of 205,000-211,000 steps). Nobody is light: no run ends with more than
+0.7% of its bodies under 0.8.
+
+The density by role (agents at the end): the bodies with a bite are denser than the rest in
+seeds 1, 2 and 4 (1.36 / 1.21, 1.76 / 1.40, 2.00 / 1.33) and lighter in seed 3 (0.89 / 0.98,
+where the hunters are the big armored bodies). The hunters are 6-10 cells at speed 0.16-0.29
+in seeds 1, 2 and 4, and 18 cells at 0.36 in seed 3; the rest move at 0.02-0.12.
+
 ## Conclusion
 
-(to come)
+1. **The world stands and matter holds: yes.** No death, population cv 0.02-0.11 (seed 3 at
+   0.11), matter 1.000000-1.000001 in all eight runs; e024: 0.982-0.999. #31 is closed: the
+   drift was two leaks of the ledger (a deficit filled by a kill, and f32 rounding of the fat's
+   fixed increment), not the ground.
+2. **Mass spreads: yes.** The density's spread over bodies is 0.10-0.47 (seed 3 at the floor);
+   the two largest lineages differ by 0.5-0.9 in seeds 1, 2 and 4 (a tooth at 1.7-2.0, a gut at
+   1.1-1.2).
+3. **Armor costs speed and the tooth changes: partly.** The tooth keeps its armor (1.4-4.4
+   hard blocks on the hunters) and gets dense, denser than its prey in three seeds; in seed 3
+   it is a big armored body lighter than its prey. Both routes to resistance are taken.
+4. **The hunter state is entered more often than one seed in four: yes.** Four of four (five of
+   five with the pilot) against zero of four at the same code without the law and one of four in
+   e024.
+5. **#19: partly.** Lineages 1-5 (control 1-3); a second winner that differs from the first in
+   density and armor holds 268,000-500,000 steps in three seeds; seed 3 has one winner.
+
+What it changes. The weight law is kept, both halves (`weight` 1 by default: hard 2, muscle 1,
+gut 1, sensor 1/2, times a density from 1/2 to 2 that the genome expresses). It ended the
+lottery of the start: e024's world sat in the net state unless the start happened to put it in
+the hunter state; with a block that weighs the hunter state is the state, in every seed. The
+reason is not a rule about teeth but that hardness became a property of the whole body: a
+light body's soft face breaks under a single muscle, so muscle pays from the start and the
+prey answers with density, which costs matter and speed. The world now holds two kinds of
+body at once, and for the first time since e013 a second winner that differs from the first in
+a material property, not only in shape.
+
+Open: whether the net state can be entered at all under the law (the pilot came close), why
+seed 3 took hard blocks instead of density, the mountain worlds, and the eye, which is gone
+again (a sensor on 0.4-6% of the bodies). Next: #24, weather, which now has two kinds of body
+to move between; then #28, small and large bodies in one world.
