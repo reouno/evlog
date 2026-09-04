@@ -153,11 +153,19 @@ muscle and sit (speed 0.001-0.005). Either form costs the world two thirds of it
 quarter of every pass in the soil breaks the cycle of the dead that fed e026 (an intake of 1.5-2.5 times the sun).
 A flesh gut needs flesh that lies apart from the plants (a place, #14, or a hunter that carries its prey); the
 split between grazers and hunters stays with the tooth and the state of the world.
-1. #28 small and large bodies in one world (the body's grid: the cloud's giants of 57 cells sit near the ceiling of
-   64); then #5 3D bodies (the vertical axis for legs and wings). An arm is an outcome to watch for there, not a
-   rule.
-2. A store a body can spend (the fat is the eater's store now; a winter selects for one only if it exists), which
-   would let the season go past 0.5; and the cloud on a mountain world (rain on the ridges only).
+Done 2026-09-05: #28 small and large bodies (e029) - not kept as the default (`side` stays 8; the argument stays: a
+number up to 16, or `grow`, the side the genome expresses from 4 to 16). The grid is not the size: on a 16x16 grid
+the bodies are 12.5-14.2 cells (control 8-21), and under `grow` four seeds settle on sides 4.4, 5.2, 8.1 and 14.3
+with bodies of 11-16 cells in all four; the side sorts a seed's two kinds (a dense mover, a sitting gut) onto grids
+by chance, the giants (up to 240 cells) are newborns that starve, and the 16 grid costs 2x per step and the tooth
+(gone in three seeds of four). Size is the sun's: a body of 16 cells costs the sun of six cells, and a cell of
+ground holds what the sun gives it whatever stands on it. Size will pay when a body can do with size what a small
+body cannot: carry a store through the winter, or reach food a small body cannot.
+1. A store a body can spend (the fat is the eater's store now; a winter selects for one only if it exists), which
+   would let the season go past 0.5 and is the first law under which size could pay (test it under `grow`, where the
+   side is heritable); and the cloud on a mountain world (rain on the ridges only).
+2. #5 3D bodies (the vertical axis for legs and wings), after size pays: 12-16 cells in 3D is a blob. An arm is an
+   outcome to watch for there, not a rule.
 3. Later: #34 kinds of matter (several conserved substances - water, plant stuff, animal stuff of different
    hardness - and blocks as mixtures, so that organs are outcomes of the mix; starts with #29 water that flows:
    rivers, lakes, deserts as outcomes, a rewrite of the closed cycle's carrier, when a question needs wet and dry
