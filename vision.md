@@ -144,14 +144,21 @@ a quarter of the matter halves the bodies and they crowd the valley (21% of its 
 whole-world figure). Contacts per body are 0.3-0.6 in every world: the bodies make their own crowd where the
 food is. Room, if it is to be given, is a matter of spreading the food (terrain, rain), not of the grid; the eye's
 test stays the season world. The 256 grid costs 2-3x per step and is kept as an argument only.
-1. #32 What a gut digests: a heritable digestion axis (plant or flesh) as a property of the gut material, like the
-   density; cheap; in the season world.
-2. #28 small and large bodies in one world (the body's grid: the cloud's giants of 57 cells sit near the ceiling of
+Done 2026-09-04: #32 what a gut digests (e028) - not kept. A heritable digestion axis on the gut material (plant
+yield 1 - d/2, flesh 1/2 + d/2; the dung to the soil) is neutral as the issue's line: the world's flesh is its own
+dead, lying where the bodies are, so every gut eats a mix (the control digests 70% flesh) and the world settles at
+the mix where the line has no slope. As a sharp curve (the middle worse than the mean of the ends) it is selected,
+one way: four seeds of four go to the plant gut (d 0.15-0.32), no flesh gut, kills stop, the winners drop their
+muscle and sit (speed 0.001-0.005). Either form costs the world two thirds of its bodies: a gut that leaves a
+quarter of every pass in the soil breaks the cycle of the dead that fed e026 (an intake of 1.5-2.5 times the sun).
+A flesh gut needs flesh that lies apart from the plants (a place, #14, or a hunter that carries its prey); the
+split between grazers and hunters stays with the tooth and the state of the world.
+1. #28 small and large bodies in one world (the body's grid: the cloud's giants of 57 cells sit near the ceiling of
    64); then #5 3D bodies (the vertical axis for legs and wings). An arm is an outcome to watch for there, not a
    rule.
-3. A store a body can spend (the fat is the eater's store now; a winter selects for one only if it exists), which
+2. A store a body can spend (the fat is the eater's store now; a winter selects for one only if it exists), which
    would let the season go past 0.5; and the cloud on a mountain world (rain on the ridges only).
-4. Later: #34 kinds of matter (several conserved substances - water, plant stuff, animal stuff of different
+3. Later: #34 kinds of matter (several conserved substances - water, plant stuff, animal stuff of different
    hardness - and blocks as mixtures, so that organs are outcomes of the mix; starts with #29 water that flows:
    rivers, lakes, deserts as outcomes, a rewrite of the closed cycle's carrier, when a question needs wet and dry
    as places), #4 learning, growth, aging, health as a layer on top of birth traits.
