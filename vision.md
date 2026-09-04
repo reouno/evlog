@@ -138,13 +138,17 @@ the top place changes hands 6 and 14 times in two seeds of four, and the eye pay
 a sensor per body for 72,000-125,000 steps in four runs of eight, 10,000 at most without weather). The season's
 ceiling is a fact about the bodies: a body has no store of its own (its fat is its eater's), so amplitude 1 kills
 the world in its first winter and 0.75 makes a lottery every winter.
-1. #33 Space per body and #28 small and large bodies in one world (the same first pilot: a bigger grid at the same
-   matter). The user's reading after e025: the world is too crowded for the eye and for flight to matter (a body
-   bumps into food or another body wherever it goes), so a world with room is the eye's real test, now that the
-   season made the eye pay; then #5 3D bodies (the vertical axis for legs and wings). An arm is an outcome to watch
-   for there, not a rule.
-2. #32 What a gut digests: a heritable digestion axis (plant or flesh) as a property of the gut material, like the
-   density; cheap.
+Done 2026-09-04: #33 room (e027, two pilots) - not a lever. Four times the space at the same matter is four times
+the sun, so the matter turns over four times faster and the bodies fill the room (1.4x as many, twice as big);
+a quarter of the matter halves the bodies and they crowd the valley (21% of its cells under a body, e026's
+whole-world figure). Contacts per body are 0.3-0.6 in every world: the bodies make their own crowd where the
+food is. Room, if it is to be given, is a matter of spreading the food (terrain, rain), not of the grid; the eye's
+test stays the season world. The 256 grid costs 2-3x per step and is kept as an argument only.
+1. #32 What a gut digests: a heritable digestion axis (plant or flesh) as a property of the gut material, like the
+   density; cheap; in the season world.
+2. #28 small and large bodies in one world (the body's grid: the cloud's giants of 57 cells sit near the ceiling of
+   64); then #5 3D bodies (the vertical axis for legs and wings). An arm is an outcome to watch for there, not a
+   rule.
 3. A store a body can spend (the fat is the eater's store now; a winter selects for one only if it exists), which
    would let the season go past 0.5; and the cloud on a mountain world (rain on the ridges only).
 4. Later: #34 kinds of matter (several conserved substances - water, plant stuff, animal stuff of different
