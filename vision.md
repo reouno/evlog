@@ -198,15 +198,30 @@ valley 70-79% of them against 73-85%, the ridge's summer share 17-20% against 17
 step instead of 16 and loses the same sun for want of soil (27 a step, half its sun), because the soil runs downhill
 a tenth of the drop per step where the plant grows a hundredth - the rain's place is not the soil's place, and the
 lake stands in the valley whatever the sky does. No batch: the pilot settles the mechanism.
+Done 2026-09-05: the soil barely moves (e034, #35) - not kept, the flow stays 0.1. Five pilots on seed 9 (flow 0,
+0.0001 and 0.001 with the rain alike on every cell; 0 and 0.001 with the rain on the mountains) against the flow-0.1
+pilots: with the soil still the soil climbs - it leaves the valley (18,300 of 131,000; 41-56% of the valley's cells
+bare, its soil heaped) and piles on the slope and the ridge (61,000-72,000, even), because the dead do not lie in
+this world (the world eats them, e024) and the matter returns through the air, which rains alike on every cell; the
+soil stays where nothing eats (the ridge: dark in winter, its plants full at the cap in summer) and comes down only
+by the flow. The world stands at half (floors 178-462 against 542-825, 52-63% of the sun lost for want of soil, the
+matter in the soil instead of the bodies). 0.001 is the plant's own rate (a lake cell gives 0.008 a step) and re-forms
+the lake at 80% of the floors with 16,600 left on the ridge, which the bodies use in summer (the ridge's summer share
+30-38% in every still world against 17-19%). The rain on the mountains under a still soil puts 104,400 on the ridge
+and 20 in the valley: a lottery of 22-80. What this settles for #29: the return road is the air, the carrier's job is
+to bring the matter back to the sunlit crowd at the order of the plant's use (a hundredth of the flow now), and the
+ridge is worth holding through the winter only with a store in the ground.
 Decided 2026-09-05 (the user, after e033): what runs downhill in the real world is water, not soil. The soil is
 roughly uniform and rich where the dead and the dung lie; a little moves with the water, not as the main cycle.
 e019's flow moves the nutrient itself at 10-100x what a plant can use, and the lake, the barren ridge and e033's
 negative are its products. So the order is:
-1. The soil barely moves (#35): pilots with flow 0 and 0.001 under the winter by height (does e018's fall return,
-   where does the soil end up), then the rain on the ridge again with a tiny flow (the rain's place is the soil's
-   place now). Then #29, water as the carrier: rain is water, water flows and evaporates, the soil stays where it
-   was laid and leaches a little, a plant needs both. Wet and dry as places; with the winter by height, the ridge
-   has the soil and the dark winter, the valley the water and the winter sun.
+1. (Done: #35, e034 - the still soil climbs to where nothing eats; the world stands at half.) Next #29, water as the
+   carrier: rain is water, water flows and evaporates, the soil stays where it was laid and leaches a little, a
+   plant needs both. Designed from e034: the return road from the bodies is the air (the dead are eaten), so the
+   carrier must bring the matter back down to the sunlit crowd at the order of the plant's use (0.001 of a lake
+   cell per step, a hundredth of the flow now), and a slower carrier leaves the ridge a soil the bodies use in
+   summer. Wet and dry as places; with the winter by height, the ridge has the soil and the dark winter, the
+   valley the water and the winter sun.
 2. The ridge worth something from the soil's side, if still needed after #29: a store in the ground that stands
    through the dark (seeds, roots, a wood nobody eats down).
    Also: whether size can pay at all under a per-cell upkeep (a store per cell instead of per mass would make the
