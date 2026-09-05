@@ -198,14 +198,22 @@ valley 70-79% of them against 73-85%, the ridge's summer share 17-20% against 17
 step instead of 16 and loses the same sun for want of soil (27 a step, half its sun), because the soil runs downhill
 a tenth of the drop per step where the plant grows a hundredth - the rain's place is not the soil's place, and the
 lake stands in the valley whatever the sky does. No batch: the pilot settles the mechanism.
-1. The ridge worth something, from the soil's side: a store in the ground that stands through the dark (seeds,
-   roots, a wood nobody eats down), or soil that a standing plant holds (roots against the flow), so that the high
-   ground holds what the valley cannot use. A law about the soil, not the sky.
+Decided 2026-09-05 (the user, after e033): what runs downhill in the real world is water, not soil. The soil is
+roughly uniform and rich where the dead and the dung lie; a little moves with the water, not as the main cycle.
+e019's flow moves the nutrient itself at 10-100x what a plant can use, and the lake, the barren ridge and e033's
+negative are its products. So the order is:
+1. The soil barely moves (#35): pilots with flow 0 and 0.001 under the winter by height (does e018's fall return,
+   where does the soil end up), then the rain on the ridge again with a tiny flow (the rain's place is the soil's
+   place now). Then #29, water as the carrier: rain is water, water flows and evaporates, the soil stays where it
+   was laid and leaches a little, a plant needs both. Wet and dry as places; with the winter by height, the ridge
+   has the soil and the dark winter, the valley the water and the winter sun.
+2. The ridge worth something from the soil's side, if still needed after #29: a store in the ground that stands
+   through the dark (seeds, roots, a wood nobody eats down).
    Also: whether size can pay at all under a per-cell upkeep (a store per cell instead of per mass would make the
    4x4 block and the 16x16 net equal; a cost that falls with size is the real-world premise still missing).
-2. #5 3D bodies (the vertical axis for legs and wings), after size pays: 12-16 cells in 3D is a blob. An arm is an
+3. #5 3D bodies (the vertical axis for legs and wings), after size pays: 12-16 cells in 3D is a blob. An arm is an
    outcome to watch for there, not a rule.
-3. Later: #34 kinds of matter (several conserved substances - water, plant stuff, animal stuff of different
+4. Later: #34 kinds of matter (several conserved substances - water, plant stuff, animal stuff of different
    hardness - and blocks as mixtures, so that organs are outcomes of the mix; starts with #29 water that flows:
    rivers, lakes, deserts as outcomes, a rewrite of the closed cycle's carrier, when a question needs wet and dry
    as places), #4 learning, growth, aging, health as a layer on top of birth traits.
