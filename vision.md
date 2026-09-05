@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-09-01 (e021).
+Last updated: 2026-09-05 (e032).
 
 ## What the viewer should see
 
@@ -182,10 +182,20 @@ either way; at amplitude 1 the world dies in its second winter, alone or with th
 lineages of 5 or more) and the lineages (4-16) are the control's. The dark winter is the world's arithmetic: 131,000 of
 matter cannot carry 3,000 bodies of 0.056 upkeep through 3,000 dark steps however the fat is divided. (The lineage
 count of the floors is 17-35% under the bodies alive; e030's floors are that much undercounted too.)
-1. A winter that differs by place: the season's amplitude by height (mild in the valley, dark on the ridge; the
-   real world's latitudes), so that the dark winter is somewhere a body can leave, and leaving, huddling and a
-   winter body are outcomes; with it the cloud on a mountain world (rain on the ridges only). The other world law
-   for the dark: a store in the ground that stands through it (seeds, roots, a wood nobody eats down).
+Done 2026-09-05: a winter that differs by place (e032) - kept: the season world is `winter high` at amplitude 2
+from here (the cell's amplitude is a times its height over the relief, at most 1; the argument's default stays
+`flat`, e031 byte for byte). The dark winter is a place now and the world stands: floors of 673-1,230 bodies with
+2-10 lineages at amplitude 2 (44% of the cells dark at midwinter) and 364-476 at 3 (72% dark), where the flat season
+at 1 is a lottery of 8-22; the floor is the valley's capacity and returns within 5% every winter. The valley holds
+68-90% of the bodies at every floor, the ridge's winter bodies are 58-100% born below, and the ridge is refilled to
+16-24% of the peak every summer: migration as an outcome, as a wave of the whole world (no lineage is a place's).
+The crowd the winter makes in the valley brought the tooth back in one seed of three (24-37% of the bodies for
+150,000 steps: a flesh column at density 2 beside a light gut, two kinds 260,000 steps together). Not reached: no
+body holds the ridge through the winter, because the valley is the best place at every season but the summer.
+1. The ridge worth something: e020's rain on the mountains (`rain high`, an argument already) under the winter by
+   height, so that the soil is where the sun goes out and the two places are a trade-off; a body that carries its
+   store uphill in spring is an outcome to watch for. The other world law for the dark: a store in the ground that
+   stands through it (seeds, roots, a wood nobody eats down).
    Also: whether size can pay at all under a per-cell upkeep (a store per cell instead of per mass would make the
    4x4 block and the 16x16 net equal; a cost that falls with size is the real-world premise still missing).
 2. #5 3D bodies (the vertical axis for legs and wings), after size pays: 12-16 cells in 3D is a blob. An arm is an
