@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-09-05 (e032).
+Last updated: 2026-09-05 (e033).
 
 ## What the viewer should see
 
@@ -192,10 +192,15 @@ at 1 is a lottery of 8-22; the floor is the valley's capacity and returns within
 The crowd the winter makes in the valley brought the tooth back in one seed of three (24-37% of the bodies for
 150,000 steps: a flesh column at density 2 beside a light gut, two kinds 260,000 steps together). Not reached: no
 body holds the ridge through the winter, because the valley is the best place at every season but the summer.
-1. The ridge worth something: e020's rain on the mountains (`rain high`, an argument already) under the winter by
-   height, so that the soil is where the sun goes out and the two places are a trade-off; a body that carries its
-   store uphill in spring is an outcome to watch for. The other world law for the dark: a store in the ground that
-   stands through it (seeds, roots, a wood nobody eats down).
+Done 2026-09-05: the wet ridge (e033) - not kept, the rain stays on every cell alike. e020's rain on the mountains
+under e032's winter changes nothing the bodies notice (two pilots on seed 9: floors 553-764 against 542-825, the
+valley 70-79% of them against 73-85%, the ridge's summer share 17-20% against 17-19%): the ridge gets 25 of rain a
+step instead of 16 and loses the same sun for want of soil (27 a step, half its sun), because the soil runs downhill
+a tenth of the drop per step where the plant grows a hundredth - the rain's place is not the soil's place, and the
+lake stands in the valley whatever the sky does. No batch: the pilot settles the mechanism.
+1. The ridge worth something, from the soil's side: a store in the ground that stands through the dark (seeds,
+   roots, a wood nobody eats down), or soil that a standing plant holds (roots against the flow), so that the high
+   ground holds what the valley cannot use. A law about the soil, not the sky.
    Also: whether size can pay at all under a per-cell upkeep (a store per cell instead of per mass would make the
    4x4 block and the 16x16 net equal; a cost that falls with size is the real-world premise still missing).
 2. #5 3D bodies (the vertical axis for legs and wings), after size pays: 12-16 cells in 3D is a blob. An arm is an
