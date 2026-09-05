@@ -161,9 +161,22 @@ by chance, the giants (up to 240 cells) are newborns that starve, and the 16 gri
 (gone in three seeds of four). Size is the sun's: a body of 16 cells costs the sun of six cells, and a cell of
 ground holds what the sun gives it whatever stands on it. Size will pay when a body can do with size what a small
 body cannot: carry a store through the winter, or reach food a small body cannot.
-1. A store a body can spend (the fat is the eater's store now; a winter selects for one only if it exists), which
-   would let the season go past 0.5 and is the first law under which size could pay (test it under `grow`, where the
-   side is heritable); and the cloud on a mountain world (rain on the ridges only).
+Done 2026-09-05: a store a body can spend (e030) - kept, at `store` 5. The fat a body fixes from its upkeep is its
+own: the flesh holds at most `store` per unit of mass, the fat pays the upkeep when the energy cannot and what it pays
+is breathed, the rest is e024's (the eater's share, the ground at death). Half the bodies live on their fat at every
+season (the crowded world's bodies wait instead of dying: starvation deaths 17-21 a step to 2-6), and the winter at
+0.75 is no longer a lottery: the floors are 327-1,186 bodies with 2-22 lineages over 45 winters of three seeds, where
+the control falls to 18-45 with one or two. Size does not pay: the side falls (4.0-5.6 against 4.8-7.2) and the mass
+rises by density (32 against 15 in two seeds), because the store is per unit of mass and mass is free of upkeep - a
+full 4x4 block at density 2 is the store's body, and the light sitting gut (with an eye in two seeds) holds the other
+place, 151,000-300,000 steps in one seed. The cycle moves from the ground to the air: the winners eat 13-49% flesh
+against 70-84%, the air rains three times as much. The tooth stays gone under `grow` (the side-8 pilot had it, 1-21%). At amplitude 1 the world lives now (e026's died in
+its first winter) but as a lottery of 7-25 bodies each winter (a pilot on seed 9): a store of 1,300 steps of upkeep does
+not span a winter of 6,700 steps under a quarter of the sun.
+1. The season at amplitude 1 (the sun out at midwinter: the world stands now, as a lottery), and the cloud on a mountain
+   world (rain on the ridges only): places that differ by season and by height, for more winners at once (#19).
+   Also: whether size can pay at all under a per-cell upkeep (a store per cell instead of per mass would make the
+   4x4 block and the 16x16 net equal; a cost that falls with size is the real-world premise still missing).
 2. #5 3D bodies (the vertical axis for legs and wings), after size pays: 12-16 cells in 3D is a blob. An arm is an
    outcome to watch for there, not a rule.
 3. Later: #34 kinds of matter (several conserved substances - water, plant stuff, animal stuff of different
