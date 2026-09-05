@@ -173,8 +173,19 @@ place, 151,000-300,000 steps in one seed. The cycle moves from the ground to the
 against 70-84%, the air rains three times as much. The tooth stays gone under `grow` (the side-8 pilot had it, 1-21%). At amplitude 1 the world lives now (e026's died in
 its first winter) but as a lottery of 7-25 bodies each winter (a pilot on seed 9): a store of 1,300 steps of upkeep does
 not span a winter of 6,700 steps under a quarter of the sun.
-1. The season at amplitude 1 (the sun out at midwinter: the world stands now, as a lottery), and the cloud on a mountain
-   world (rain on the ridges only): places that differ by season and by height, for more winners at once (#19).
+Done 2026-09-05: the child of the flesh, and breeding as a decision (e031) - not kept, both stay as arguments. A child
+made of half its parent's fat (`yolk`) shares the store among the same crowd: the fat per body falls and the floors at
+amplitude 1 are the control's (8-26 bodies). Breeding as the policy's fifth output (`breed`) is never selected toward a
+time: 98-99% of the decisions to breed are below the threshold from the first log step to the last in six runs of
+300,000 steps at 0.75, because a denied decision costs nothing and a body at the threshold breeds within a few steps
+either way; at amplitude 1 the world dies in its second winter, alone or with the yolk. At 0.75 the floors (498-728 in
+lineages of 5 or more) and the lineages (4-16) are the control's. The dark winter is the world's arithmetic: 131,000 of
+matter cannot carry 3,000 bodies of 0.056 upkeep through 3,000 dark steps however the fat is divided. (The lineage
+count of the floors is 17-35% under the bodies alive; e030's floors are that much undercounted too.)
+1. A winter that differs by place: the season's amplitude by height (mild in the valley, dark on the ridge; the
+   real world's latitudes), so that the dark winter is somewhere a body can leave, and leaving, huddling and a
+   winter body are outcomes; with it the cloud on a mountain world (rain on the ridges only). The other world law
+   for the dark: a store in the ground that stands through it (seeds, roots, a wood nobody eats down).
    Also: whether size can pay at all under a per-cell upkeep (a store per cell instead of per mass would make the
    4x4 block and the 16x16 net equal; a cost that falls with size is the real-world premise still missing).
 2. #5 3D bodies (the vertical axis for legs and wings), after size pays: 12-16 cells in 3D is a blob. An arm is an
