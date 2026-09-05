@@ -211,17 +211,28 @@ the lake at 80% of the floors with 16,600 left on the ridge, which the bodies us
 and 20 in the valley: a lottery of 22-80. What this settles for #29: the return road is the air, the carrier's job is
 to bring the matter back to the sunlit crowd at the order of the plant's use (a hundredth of the flow now), and the
 ridge is worth holding through the winter only with a store in the ground.
+Done 2026-09-06: water that flows (e035, #29) - kept: the season world is water 0.1, leach 0.01, depth 0.01, mix 0.2,
+flow 0 from here. Water is a field of the world: the sky gives every cell 1 a step, 1% evaporates, a share runs to
+the lower neighbors by the drop of the water's surface (a pool spreads level), and a plant grows under its sun times
+min(1, water / 100), so the ridge's plants get half their sun and the valley's all. The soil is the matter, laid where
+the dead rot and the breath rains; it moves only with the water that leaves a cell (the leaching, a hundredth of the
+old flow) and by mixing between wet neighbors. Three rounds of pilots on seed 9 found which part of e019's flow the
+crowd lived on: on the terrain alone the water and the leached soil pile in one-cell pits (81% of the valley's soil
+in 1% of its cells, the world at 60%); with the surface the pool spreads but a level lake does not flow, so a cell
+the crowd strips is not refilled (barren 77 a step, still 60%); with the mixing the soil is uniform (5-8 per cell,
+none bare, the ridge holding the most) and the world stands above e032's pilot. The batch (seeds 1-3, 300k): e032's
+floors in two seeds of three (720-874 and 659-736 against 716-792 and 673-738), 70% in the third, 10% more eaten
+(dryness costs 25 a step, the uniform soil gives back 30-40), the ridge's summer share 29-34% against 19-25%, the eye
+in 29-35% of the bodies in two seeds, the winners e032's kinds. No lake of matter: the soil is uphill. Open: a body
+that needs water, the rain on the ridge again, the mixing's rate.
 Decided 2026-09-05 (the user, after e033): what runs downhill in the real world is water, not soil. The soil is
 roughly uniform and rich where the dead and the dung lie; a little moves with the water, not as the main cycle.
 e019's flow moves the nutrient itself at 10-100x what a plant can use, and the lake, the barren ridge and e033's
 negative are its products. So the order is:
-1. (Done: #35, e034 - the still soil climbs to where nothing eats; the world stands at half.) Next #29, water as the
-   carrier: rain is water, water flows and evaporates, the soil stays where it was laid and leaches a little, a
-   plant needs both. Designed from e034: the return road from the bodies is the air (the dead are eaten), so the
-   carrier must bring the matter back down to the sunlit crowd at the order of the plant's use (0.001 of a lake
-   cell per step, a hundredth of the flow now), and a slower carrier leaves the ridge a soil the bodies use in
-   summer. Wet and dry as places; with the winter by height, the ridge has the soil and the dark winter, the
-   valley the water and the winter sun.
+1. (Done: #35, e034 - the still soil climbs to where nothing eats; the world stands at half. Done: #29, e035 -
+   water as the carrier, kept: wet and dry are places, the soil is uniform and uphill, the crowd lives on the
+   lake's mixing.) Open from e035: a body that needs water (a reason to move between places), the rain on the
+   ridge again (e033's question, with a carrier that keeps the soil there), the mixing's rate.
 2. The ridge worth something from the soil's side, if still needed after #29: a store in the ground that stands
    through the dark (seeds, roots, a wood nobody eats down).
    Also: whether size can pay at all under a per-cell upkeep (a store per cell instead of per mass would make the
