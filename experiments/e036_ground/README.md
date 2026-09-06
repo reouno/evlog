@@ -4,7 +4,9 @@ Date: 2026-09-06
 
 ## Purpose
 
-Since e032 the world has a winter by height: the ridge is dark half the year, and it is emptied
+Since e032 the world has a winter by height: the ridge's sun swings from twice its mean to nothing
+and back over 20,000 steps (the season's amplitude is 1 there, 0.80-1.00 on the slope and 0.56 in
+the valley, so the winter really makes two places, the valley and everything above it), and it is emptied
 every autumn and filled every summer from below (72-98% of its winter bodies are born in another
 band). No lineage is the ridge's, because a cell's plant is gone in a few steps of grazing and
 the dark grows nothing. The user's premise (issue #36): in the real world a dark place still
@@ -127,41 +129,89 @@ them born in another band, the store per band) and `log.csv` (second half, per s
 - **It is dug out before the dark ends.** Through one winter (root 4, dig 0.5) the ridge's store
   runs 1,243 at step 68,000, 752 at 70,000, 352 at 72,000, 70 at 74,000 and 4 at 76,000, the
   bottom of the winter, while its bodies run 931, 690, 435, 117, 90. The store carries the
-  ridge's crowd for two or three thousand steps of the eight thousand dark ones and is then gone.
+  ridge's crowd for two or three thousand steps of the winter and is then gone (the ridge's sun is
+  under a fifth of its mean for 4,097 steps of the 20,000).
 - **The ridge's winter is what it was.** 33-80 bodies at the floors, 74-100% of them born below,
   against the control's 36-63 and 72-92%: within the spread of one seed, unchanged. So are the
   world's floors (647-828 against 626-775).
 - **A store that stands is a store nobody can live on.** At dig 0.1 the ground holds 1,570-2,561
   on the ridge right through the winter - and 8 gut blocks digging a tenth of a bite take 0.016 a
   step against a body's upkeep of 0.074. The store stands because it is worthless.
-- **The arithmetic.** At the autumn (step 70,000) the ridge holds 752-1,502 of store and carries
-  690-695 bodies that pay 51 a step between them: fifteen to thirty steps of their upkeep. To
-  winter even 100 bodies through the 8,000 dark steps costs 59,000 - 42% of the 140,186 of matter
-  in the whole world.
+- **The arithmetic, corrected.** At the autumn (step 70,000) the ridge holds 752-1,502 of store
+  and carries 690-695 bodies that pay 51 a step between them: fifteen to thirty steps of their
+  upkeep. That is about the summer crowd, not about a lineage. The winter's own bill is much
+  smaller: the ridge's sun is under a fifth of its mean for 4,097 steps of the season (the law is
+  the sun times 1 + sin, so it is never dark for long and a season gives the ridge as much sun as
+  the valley), and a small body pays 0.048 a step, so twenty bodies wintering there cost 3,900 -
+  2.8% of the world's 140,186 of matter, and the store standing on the ridge at dig 0.1 (2,445 at
+  the end, 4,222-6,069 at the peaks) already covers that. The store is not too small; the rate at
+  which it can be eaten is what fails.
 - **Only a full bite makes a sitter.** The bodies are the control's kinds in six of the seven
   runs (mass 20.6-23.2 against 17.6, muscle 3.9-5.5 against 2.95, gut 7.1-8.7 against 7.1 - a
   little larger, because the digging adds to the bite). At dig 1, where the ground gives a whole
   bite of its own, the median body halves: mass 10.5 with 1.2 muscle. A body that is fed by the
   ground under it does not need to walk.
 
+### Round 3: the middle of the rate (the gap round 2 left)
+
+The first reading of rounds 1 and 2 said the two rates were in conflict, but only 0.1, 0.5 and 1
+were run. A small all-gut body pays 0.048 a step and eight gut blocks dig 8 x dig x 0.02, so the
+rate at which the store can just pay a body is dig 0.3; 0.2 pays the per-body part of the upkeep
+alone (0.032). Two more pilots at root 8, the store laid where the fruit falls.
+
+| root, dig | winter floors, in order | ridge at the floors (born below) | summer peaks | ridge store at the floor / at the peak | stored / dug per step | store standing | eaten per step | fruit | barren | biters |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 8, 0.2 | 735, 734, 766, 638, 745 | 45-82 (93-98%) | 2,675-3,721 | 617-2,076 / 5,704-7,847 | 37.37 / 37.53 | 13,513 | 112 | 45 | 21 | 30% |
+| 8, 0.3 | 613, 838, 745, 682, 730 | 35-88 (94-100%) | 2,918-4,474 | 181-1,099 / 3,689-5,786 | 43.14 / 43.22 | 10,602 | 119 | 37 | 22 | 2% |
+| 8, 0.5 (round 2) | 799, 828, 741, 700, 805 | 54-76 (74-100%) | 3,061-5,270 | 48-566 / 2,021-4,683 | 53.00 / 52.99 | 8,461 | 130 | 23 | 20 | 0% |
+| e035 (no store) | 626, 696, 724, 743, 775 | 36-63 (72-97%) | 3,089-6,398 | - | - | - | 116 | 96 | 9 | 2% |
+
+- **The middle is not empty: the store does stand.** At dig 0.2 the ground holds 13,513 (10% of
+  its capacity, against 8,461 at dig 0.5) and the ridge keeps 617-2,076 through every winter.
+- **And the ridge is still not held.** Through the winter of step 76,000 the ridge holds 977 of
+  store while its bodies fall from 965 to 62, and 93-98% of the ones left were born below. The
+  food is standing there and the bodies leave anyway.
+- **Because the same inequality decides both.** Eight gut blocks take 8 x dig x 0.02 a step:
+  0.032 at dig 0.2, below the 0.048 a small body must pay, so a body digging all winter still
+  starves, only slower. At dig 0.3 the rate just covers the upkeep - and the store is drawn down
+  year on year (1,099 at the first floor, 181 at the fourth). A store survives the summer exactly
+  while it is too slow to keep a body alive: the window is empty for a reason, not for want of
+  sampling.
+- **A side effect worth recording.** The dig-0.2 world is a hunter's: 30% of the bodies bite (2%
+  in the control) and the median body is the heaviest of any run here, mass 27.3. A slow ground
+  store feeds bigger bodies that then eat each other.
+
 ## Conclusion
 
-**Not kept, and no batch was run.** A store in the ground does not make the ridge a place a body
-holds through the winter, at any of the six rates tried and either way of laying it. The two
-rates the law needs are in conflict, and the pilot puts a number on it: a store fast enough to
-pay a body's upkeep (dig 0.5: 0.08 a step against 0.074) is dug out as fast as it is laid, and a
-store slow enough to stand through the summer (dig 0.1: 0.016 a step) cannot keep a body alive.
+**Not kept as a way to hold the ridge, and no batch was run** - but the law is not idle, and the
+first reading of these runs went further than the numbers allow. Three things have to be kept
+apart.
 
-Behind that is the world's arithmetic, e031's lesson again: the dark on the ridge is 8,000 steps
-long and a body pays 0.074 a step, so a hundred bodies wintering there would eat 42% of the
-world's matter. The ground of 5,461 cells cannot hold that, and if it did the world would have
-nothing left to circulate: the store already costs the crowd, taking the fruit out of the fall
-that spread it and rotted into the soil (the sun lost for want of soil doubles, 8.8 to 20 a step,
-and the trees fall from 239 to 52-134).
+**What the runs show.** A store in the ground does not change the ridge's winter at any of the
+eight rate-and-placement pairs tried: 33-91 bodies at the floors against the control's 36-63,
+74-100% of them born in another band against 72-92%. The reason is not that the store is too
+small. At dig 0.2 it stands - 977 on the ridge at the bottom of a winter, while the ridge's
+bodies fall from 965 to 62 - and it is not eaten because eight gut blocks digging at that rate
+take 0.032 a step, under the 0.048 a small body owes. Raise the rate to where it pays (0.3, and
+0.5 for a body of mass 21) and the same rate empties the store before the winter: a store
+survives the summer exactly while it is too slow to keep a body alive.
 
-What this changes for the project: **wintering in place is not a question of the ground, it is a
-question of how long a body can carry.** A body's own store (e030, `store` 5) holds 5 per unit of
-mass - 105 for a body of mass 21, or 1,400 steps of upkeep, a sixth of the dark. The next thing
-to try for a lineage of the ridge is a body that can carry the winter (a much deeper fat, or a
-body that spends less while it waits), not a richer ground. Issue #36 is answered and closed;
-`root` and `dig` stay in the code as arguments, 0 by default.
+**What the runs also show, and the first reading missed.** The world eats 10-12% more with the
+store (128-130 a step against the control's 116.3), and in round 2 a third of everything eaten
+comes out of the ground (49.5 of 129.5 a step). It does not become more bodies - the population
+is the control's, 2,595-2,892 against 2,910 - it becomes bigger ones (median mass 20.6-23.2
+against 17.6). The store short-circuits a lossy loop: the fruit that used to fall, rot into the
+soil and be regrown at 0.01 per cell per step is now eaten as it stands. The price is the soil
+that no longer gets it: the sun lost for want of soil rises from 8.8 to 11-20 a step and the
+trees fall from 239 to 52-134.
+
+**What is not shown.** "The store fills only under the crowns" is an inference, not a measurement - the only map is at the end of a winter, where 11-27% of
+cells hold anything and 4-10% are at the cap. And the ridge confounds three things: it is the
+band at the season's full amplitude (0.80-1.00 on the slope, 1.00 on the ridge; only the valley
+is milder, mean 0.56), it is the dry band under e035's water, and it is the band farthest from
+the valley the crowd winters in. A negative on the ridge is not a negative on stores.
+
+What this changes for the project: for a lineage of the ridge, look at what a body can carry
+(e030's fat holds 105 for a body of mass 21, about 1,400 steps of upkeep) and at the shape of the
+winter by height, which today makes only two places, the valley and everything above it. `root`
+and `dig` stay in the code as arguments, 0 by default.

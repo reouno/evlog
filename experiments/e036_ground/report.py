@@ -74,6 +74,8 @@ RUNS = {
     "round 2: root 4, dig 0.5": (HERE, run(4, 0.5, True), 1),
     "round 2: root 8, dig 0.5": (HERE, run(8, 0.5, True), 7),
     "round 2: root 4, dig 0.1": (HERE, run(4, 0.1, True), 6),
+    "round 3: root 8, dig 0.2": (HERE, run(8, 0.2, True), 2),
+    "round 3: root 8, dig 0.3": (HERE, run(8, 0.3, True), 4),
     "no store (e035)": (E035, run(), 5),
 }
 STEPS = 100_000
@@ -555,8 +557,8 @@ def main():
     charts_cost = [
         line_chart("Sun lost for want of soil", "Sun that fell on a cell with nothing left in its soil, per step, of the 164 the world gets. Rising means the soil is not being fed.",
                    xs, series("barren"), ymin=0),
-        line_chart("Bodies every 1,000 steps", "All bodies alive. The floor of a dip is what lives through the winter; e035's pilot is the control.",
-                   fx, fine_fn(lambda f: list(f["pop"])), ymin=0),
+        line_chart("What the world eats, per step", "Plant and flesh digested per step (log.csv, one point per 10,000 steps). The store raises it because what used to rot into the soil is eaten as it stands.",
+                   xs, [(label, pad([(logs[label]["plant_intake"][i] + logs[label]["meat_intake"][i]) / 10_000 for i in range(len(logs[label]["step"]))], len(xs)), slot[label]) for label in RUNS if label in logs], ymin=0),
     ]
 
     def summary_row(label):
@@ -567,17 +569,18 @@ def main():
         n = lambda x: "-" if x != x else f"{x:,.0f}"
         fmt = lambda k, s: ", ".join(s.format(r[k]) for r in w)
         stock = d["root_stock"][-1] if "root_stock" in d else float("nan")
+        eaten = sum((d["plant_intake"][i] + d["meat_intake"][i]) / 10_000 for i in half) / len(half)
         laid = f"{mean('stored'):.2f} / {mean('dug'):.2f}" if "stored" in d else "-"
         return (f"<tr><td>{label}</td><td>{fmt('pop', '{:,}')}</td><td>{min(r['ridge'] for r in w)}-{max(r['ridge'] for r in w)}</td>"
                 f"<td>{min(r['cross'] for r in w):.0%}-{max(r['cross'] for r in w):.0%}</td>"
                 f"<td>{min(r['peak'] for r in w):,}-{max(r['peak'] for r in w):,}</td>"
                 f"<td>{min(r['store'] for r in w):,.0f}-{max(r['store'] for r in w):,.0f}</td>"
-                f"<td>{laid}</td><td>{n(stock)}</td><td>{mean('fruit'):.0f}</td><td>{mean('barren'):.0f}</td></tr>")
+                f"<td>{laid}</td><td>{n(stock)}</td><td>{eaten:.0f}</td><td>{mean('fruit'):.0f}</td><td>{mean('barren'):.0f}</td></tr>")
 
     rows = "".join(summary_row(label) for label in RUNS if label in logs)
 
     # One winter of the ridge, in the run with the deepest store that a body can live on.
-    trace_label = "round 2: root 8, dig 0.5"
+    trace_label = "round 3: root 8, dig 0.2"
     tf = fines[trace_label]
     trace = "".join(f"<tr><td>{int(tf['step'][i]):,}</td><td>{int(tf['pop'][i]):,}</td><td>{int(tf['pop2'][i]):,}</td><td>{tf['root2'][i]:,.0f}</td><td>{tf['root0'][i]:,.0f}</td></tr>"
                     for i in range(len(tf["step"])) if 60_000 <= tf["step"][i] <= 80_000 and int(tf["step"][i]) % 2000 == 0)
@@ -597,7 +600,7 @@ def main():
 <body>
 <main>
 <h1>e036: A store in the ground</h1>
-<p class="sub">Experiment report - 2026-09-06 - plant matter kept in the ground of a cell, filled by the growth past the plant's cap and dug out slowly: seven pilots on seed 9 in the season world against e035's. No batch: no body wintered on the ridge.</p>
+<p class="sub">Experiment report - 2026-09-06 - plant matter kept in the ground of a cell, filled by the growth past the plant's cap and dug out slowly: nine pilots on seed 9 in the season world against e035's. No batch: no body wintered on the ridge.</p>
 
 <section class="tldr">
 <h2>TL;DR</h2>
@@ -610,7 +613,7 @@ def main():
   <li><strong>The store fills and stands:</strong> the summer's surplus is large, and the crowd can only dig a share of a bite out of the cells it stands on.</li>
   <li><strong>The ridge is held through the winter</strong> where the store pays a body's upkeep (dig 0.5: 0.08 a step against 0.074), and a lineage becomes the ridge's.</li>
   <li><strong>The two rates are in tension:</strong> a store fast enough to winter on is eaten in summer.</li>
-  <li><strong>A store is matter out of the cycle:</strong> the world's floors fall with what is locked up unless the ridge's winter pays for it.</li>
+  <li><strong>A store is matter out of the cycle:</strong> the floors fall with what is locked up.</li>
 </ol>
 
 <h2>2. The law</h2>
@@ -626,7 +629,7 @@ def main():
 
 <h2>3. Results</h2>
 <div class="tw"><table>
-<thead><tr><th>Seed 9, 100,000 steps (five winters)</th><th>winter floors, in order</th><th>ridge's bodies at the floors</th><th>of those, born in another band</th><th>summer peaks</th><th>ridge's store at the floors</th><th>laid / dug per step</th><th>store standing at the end</th><th>fruit fallen per step</th><th>sun lost for want of soil, per step (of 164)</th></tr></thead>
+<thead><tr><th>Seed 9, 100,000 steps (five winters)</th><th>winter floors, in order</th><th>ridge's bodies at the floors</th><th>of those, born in another band</th><th>summer peaks</th><th>ridge's store at the floors</th><th>laid / dug per step</th><th>store standing at the end</th><th>eaten per step</th><th>fruit fallen per step</th><th>sun lost for want of soil, per step (of 164)</th></tr></thead>
 <tbody>{rows}</tbody></table></div>
 <ol class="verdicts">
 {TEXT["verdicts"]}
@@ -643,7 +646,7 @@ def main():
 {"".join(charts_ridge)}
 </div>
 <div class="tw"><table>
-<thead><tr><th>One winter, root 8 and dig 0.5 (round 2)</th><th>bodies</th><th>on the ridge</th><th>store on the ridge</th><th>store in the valley</th></tr></thead>
+<thead><tr><th>One winter, root 8 and dig 0.2 (round 3)</th><th>bodies</th><th>on the ridge</th><th>store on the ridge</th><th>store in the valley</th></tr></thead>
 <tbody>{trace}</tbody></table></div>
 <p>{TEXT["p_ridge"]}</p>
 
@@ -685,31 +688,32 @@ GALLERY_CAPTION = "The most common body of the lineage at its peak, on the grid 
 
 TEXTS = {
     "tldr": ("A cell's ground was given a store: the growth past the plant's cap, which falls as fruit today, kept where it does not rot and dug out at a share of a bite. "
-             "It does not make the ridge liveable in the dark. What is laid is dug the same step (22.6 and 22.6 at root 4), the ground stays 1-16% full, and a store slow enough to stand cannot pay a body's upkeep. Not kept, and no batch was run."),
+             "It does not make the ridge liveable in winter, at any of eight rates: where it stands (977 on the ridge at midwinter) it is too slow to feed a body, where it feeds one it is emptied by the autumn. "
+             "The world does eat 10-12% more, in bigger bodies. Not kept; no batch."),
     "question": ("Since e032 the ridge is dark for 8,000 steps of every 20,000, and it is refilled from below every summer: 72-92% of the bodies standing there at the winter floor were born in another band. "
                  "In the real world a dark place still feeds animals out of what the summer left in the ground - seeds, roots, tubers, bark. Does a store in the ground make the ridge a place a lineage holds through the winter, and does the world's floor rise?"),
     "world": ("e035's world with one law. What a cell grows past the plant's cap of 8 goes into the ground, up to root per cell, instead of falling as fruit; it does not rot and no bite reaches it. "
               "A gut block digs dig x 0.02 out of it per step, besides its bite. Round 2 lays it in the ground of the cell the fruit falls on."),
-    "runs": ("Seed 9, 100,000 steps (five winters), one thread each, 25 minutes a round. Round 1 brackets the two rates with the store laid where the surplus grew: root 4 at dig 0.5, 0.1 and 1, and root 1 at dig 0.5. "
-             "Round 2 lays it where the fruit falls: root 4 at dig 0.5 and 0.1, root 8 at dig 0.5. Control: e035's pilot. Measures:"),
-    "verdicts": ("<li><span class=\"verdict no\">No</span> The ground stays 1-16% full (394-10,972 of the 65,536 a root of 4 could hold), and what is laid is dug the same step in all seven runs.</li>"
+    "runs": ("Seed 9, 100,000 steps (five winters), one thread each, 25 minutes a round. Round 1 lays the store where the surplus grew: root 4 at dig 0.5, 0.1 and 1, root 1 at dig 0.5. "
+             "Round 2 lays it where the fruit falls: root 4 at dig 0.5 and 0.1, root 8 at dig 0.5. Round 3 fills the gap at the rate where a body just breaks even: root 8 at dig 0.2 and 0.3. Control: e035's pilot."),
+    "verdicts": ("<li><span class=\"verdict partly\">Partly</span> It stands only below dig 0.3: 13,513 in the ground at 0.2 against 8,461 at 0.5. Above that, what is laid is dug the same step.</li>"
                  "<li><span class=\"verdict no\">No</span> 33-91 bodies on the ridge at the floors against the control's 36-63, and 74-100% of them born in another band against 72-92%. No lineage is the ridge's.</li>"
-                 "<li><span class=\"verdict\">Yes</span> dig 0.5 pays 0.08 a step and is dug out by the autumn; dig 0.1 leaves 1,570-2,561 standing on the ridge and pays 0.016 against an upkeep of 0.074.</li>"
-                 "<li><span class=\"verdict partly\">Partly</span> The floors are 528-828 against 626-775, within one seed's spread; but the sun lost for want of soil doubles, 8.8 to 20 a step.</li>"),
-    "h_pipe": "The store is a pipe, not a store",
-    "p_pipe": ("Fill and drain are the same number in every run, to two decimals, and the ground never fills: 1-5% of what it could hold in round 1, up to 16% in round 2. "
-               "The surplus goes in and comes straight out, because the crowd stands on every cell that has anything in it. A stock builds only where the digging is too slow to matter, at dig 0.1."),
-    "h_ridge": "The ridge's winter is what it was",
-    "p_ridge": ("The store carries the ridge's crowd for two or three thousand steps of the eight thousand dark ones, then it is gone, and the floor is the control's. "
-                "Wintering even 100 bodies there costs 59,000 - 42% of the 140,186 of matter in the whole world - so the ground of 5,461 cells cannot be the answer whatever its cap."),
-    "h_cost": "The store costs the world sun",
-    "p_cost": ("Taking the surplus out of the fall costs the soil. What fell on the ring of 8 and rotted into the soil that the lake mixes now sits in the ground of one cell, so the sun lost on cells with an empty soil rises from 8.8 a step to 11-20, "
-               "and the standing trees fall from 239 to 52-134. Nothing in the winter pays that back."),
-    "discussion": ("<p>The tension is arithmetic, not a matter of finding the rate. A store the crowd can reach is eaten at the rate the crowd can eat, and the only stores that stand are the ones nobody can live on. Round 2 says the placement is not the fix either: spreading the store over the ring of 8 raised what the ground holds fourfold and left the winter as it was.</p>"
-                   "<p>The dark is simply too long for a ground store. Eight thousand steps at 0.074 a body is 590 per body wintered, and matter in the ground is matter not circulating - the world already loses twice the sun for want of soil with 3,990-10,972 locked up.</p>"
-                   "<p>Not shown: a store bodies cannot reach without a trait that costs them something in summer, and a shorter dark. The store did not change what wins either, except at dig 1, where a ground that gives a whole bite of its own halves the median body (mass 10.5 against 17.6): a body fed from below does not need to walk.</p>"),
-    "conclusion": ("Not kept. root and dig stay in the code as arguments, 0 by default, and the season world is e035's. Issue #36 is answered: the ground cannot hold a winter. "
-                   "Wintering in place is a question of what a body can carry, not of what the ground keeps - e030's fat at store 5 pays 1,400 steps of the 8,000 dark ones. Next: a body that needs water (#37), and the rain on the ridge under the carrier (#38)."),
+                 "<li><span class=\"verdict\">Yes</span> and the two conditions are one inequality: 8 gut blocks take 8 x dig x 0.02, so the store stands exactly while that is under the 0.048 a small body owes.</li>"
+                 "<li><span class=\"verdict no\">No</span> The floors are 528-838 against 626-775, and the world eats 112-130 a step against 116. The store is not matter lost; it is matter that skips the soil.</li>"),
+    "h_pipe": "Above dig 0.3 the store is a pipe",
+    "p_pipe": ("Fill and drain are the same number in every run, to two decimals, so the ground's level is set by the rate alone: 6% of what it could hold at dig 0.5, 10% at 0.2, 17% at 0.1. "
+               "Laid where it grew (round 1) it sat on the few cells that make the surplus; the fall spreads it over the ring of 8 and fourfold more stands."),
+    "h_ridge": "The food stands there and the bodies leave",
+    "p_ridge": ("At dig 0.2 the ridge still holds 977 at the bottom of the winter while its bodies fall from 965 to 62, and 93-98% of the ones left were born below. The stock is not the limit: eight gut blocks digging at that rate take 0.032 a step, under the 0.048 a small body owes, so a body digging all winter starves more slowly. "
+                "At the rate that pays, the ground is empty by the autumn."),
+    "h_cost": "It costs soil and buys intake",
+    "p_cost": ("Taking the surplus out of the fall starves the soil: the sun lost on cells with an empty soil rises from 8.8 a step to 11-22 and the trees fall from 239 to 109-254. "
+               "What comes back is intake - 112-130 a step against 116, a third of it dug - which the world spends on bigger bodies (median mass up to 27.3 against 17.6), not on more of them."),
+    "discussion": ("<p>The window is empty for one reason, and it is the same inequality twice. A store lasts through the summer while the crowd digs it slower than it is laid; a body lives on a store when digging pays its upkeep. Both are a comparison between 8 x dig x 0.02 and what a body owes, so no rate satisfies them at once. Placement does not help: laying the store where the fruit falls spreads it over the ring of 8 and holds fourfold more, and the ridge's winter is unchanged.</p>"
+                   "<p>A negative on the ridge is not a negative on stores. The ridge under this world is three handicaps at once - the season's full amplitude (the winter by height makes two places, the valley at 0.56 and everything above it at 0.80-1.00), the dryness of e035's water, and the distance from the valley the crowd winters in - and the store was only ever asked about the ridge.</p>"
+                   "<p>What the store did do is short-circuit a lossy loop: the fruit that fell, rotted at 1% a step and was regrown out of the soil at 0.01 a cell is eaten as it stands, and the world eats 10-12% more. The soil pays for it. The slow store's world is also a hunter's - 30% of the bodies bite at dig 0.2, against 2% - which is a state to come back to, not a result of this experiment.</p>"),
+    "conclusion": ("Not kept for the question it was asked: root and dig stay as arguments, 0 by default, and the season world is e035's. A store the crowd digs cannot hold the ridge, whatever its cap, because standing through the summer and feeding a body are the same comparison. "
+                   "What is left open is the ridge itself - it is dry, at full amplitude, and far from the refuge, and none of the three was varied. Next: a body that needs water (#37), and the rain on the ridge under the carrier (#38)."),
 }
 
 

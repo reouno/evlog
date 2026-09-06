@@ -211,19 +211,23 @@ the lake at 80% of the floors with 16,600 left on the ridge, which the bodies us
 and 20 in the valley: a lottery of 22-80. What this settles for #29: the return road is the air, the carrier's job is
 to bring the matter back to the sunlit crowd at the order of the plant's use (a hundredth of the flow now), and the
 ridge is worth holding through the winter only with a store in the ground.
-Done 2026-09-06: a store in the ground (e036, #36) - not kept, and no batch was run. The law: what a cell grows
-past the plant's cap (the fruit that falls since e022) goes into the ground of a cell instead, up to `root` per cell,
-where it does not rot and no bite reaches it; a gut block digs `dig` of a bite out of it per step. Seven pilots on
-seed 9 at 100k in e035's season world, laying the store where the surplus grew (root 1 and 4, dig 0.1 to 1) and where
-the fruit falls (root 4 and 8). The store is a pipe, not a store: what is laid is dug the same step in every run
-(22.63 laid, 22.64 dug) and the ground stands 1-16% full, because the surplus is made on the hundred-odd cells under
-the crowns and the crowd stands on them; spreading it by the fall raised the stock fourfold and changed nothing. The
-ridge's winter is what it was (33-91 bodies at the floors against 36-63, 74-100% of them born below against 72-92%),
-and it costs the world: taking the fruit out of the fall doubles the sun lost for want of soil (8.8 to 20 a step) and
-the trees fall from 239 to 52-134. The two rates are in conflict by the world's arithmetic: dig 0.5 pays a body's
-upkeep (0.08 a step against 0.074) and is dug out by the autumn; dig 0.1 stands through the winter and pays 0.016.
-Wintering 100 bodies on the ridge for the 8,000 dark steps costs 59,000 - 42% of the world's matter. Lesson:
-wintering in place is a question of what a body can carry, not of what the ground keeps. `root` and `dig` stay as
+Done 2026-09-06: a store in the ground (e036, #36) - not kept for the ridge, and no batch was run. The law: what a
+cell grows past the plant's cap (the fruit that falls since e022) goes into the ground of a cell instead, up to `root`
+per cell, where it does not rot and no bite reaches it; a gut block digs `dig` of a bite out of it per step. Nine
+pilots on seed 9 at 100k in e035's season world, in three rounds (where the surplus grew; where the fruit falls; the
+rate where a body just breaks even). The ridge's winter is unchanged at every rate: 33-91 bodies at the floors against
+36-63, 74-100% of them born below against 72-92%. The reason is one inequality used twice: eight gut blocks take
+8 x dig x 0.02 a step, so a store stands through the summer exactly while that is under the 0.048 a small body owes.
+At dig 0.2 the ridge still holds 977 at midwinter while its bodies fall from 965 to 62 (the food is there, the rate is
+not); at dig 0.3-0.5 the rate pays and the ground is empty by the autumn. What the store does do: the world eats
+10-12% more (112-130 a step against 116, a third of it dug), because the fruit that used to rot into the soil and be
+regrown at 0.01 a cell is eaten as it stands - spent on bigger bodies (median mass up to 27.3 against 17.6), not more
+of them, and paid for in soil (barren 8.8 to 11-22 a step, trees 239 to 109-254). The dig-0.2 world is a hunter's
+(30% of bodies bite against 2%), a state to come back to. Care with the reading: a negative on the ridge is not a
+negative on stores - under `winter high` 2 the season's amplitude is 0.56 in the valley and 0.80-1.00 everywhere
+above, so the winter makes two places and not three; the ridge is also the dry band under e035's water and the one
+farthest from the valley the crowd winters in, and none of the three was varied. The ridge's sun is under a fifth of
+its mean for 4,097 steps of the 20,000 and a season gives it as much sun as the valley. `root` and `dig` stay as
 arguments, 0 by default.
 Done 2026-09-06: water that flows (e035, #29) - kept: the season world is water 0.1, leach 0.01, depth 0.01, mix 0.2,
 flow 0 from here. Water is a field of the world: the sky gives every cell 1 a step, 1% evaporates, a share runs to
@@ -247,9 +251,11 @@ negative are its products. So the order is:
    water as the carrier, kept: wet and dry are places, the soil is uniform and uphill, the crowd lives on the
    lake's mixing.) Open from e035, as issues: #37 a body that needs water (a reason to move between places), #38
    the rain on the ridge again (e033's question, with a carrier that keeps the soil there) with the mixing's rate.
-2. (Done: #36, e036 - a store in the ground, not kept.) Next: #37 a body that needs water, then #38 the rain on
-   the ridge. For a lineage of the ridge, the store has to be in the body, not the ground: e030's fat at store 5
-   pays 1,400 steps of the 8,000 dark ones, so a much deeper fat, or a body that spends less while it waits.
+2. (Done: #36, e036 - a store in the ground, not kept for the ridge: standing through the summer and feeding a
+   body are the same comparison, so no digging rate does both.) Next: #37 a body that needs water, then #38 the
+   rain on the ridge. Open on the ridge itself, from e036's reading: the winter by height makes two places, not
+   three (amplitude 0.56 in the valley, 0.80-1.00 everywhere above), and the ridge is also the dry band - a milder
+   or steeper winter by height, and a ridge that is not dry, are the two knobs never turned.
    Also: whether size can pay at all under a per-cell upkeep (a store per cell instead of per mass would make the
    4x4 block and the 16x16 net equal; a cost that falls with size is the real-world premise still missing).
 3. #5 3D bodies (the vertical axis for legs and wings), after size pays: 12-16 cells in 3D is a blob. An arm is an
