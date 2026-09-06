@@ -252,15 +252,22 @@ negative are its products. So the order is:
    lake's mixing.) Open from e035, as issues: #37 a body that needs water (a reason to move between places), #38
    the rain on the ridge again (e033's question, with a carrier that keeps the soil there) with the mixing's rate.
 2. (Done: #36, e036 - a store in the ground, not kept for the ridge: standing through the summer and feeding a
-   body are the same comparison, so no digging rate does both.) Next: #37 a body that needs water, then #38 the
-   rain on the ridge. Open on the ridge itself, from e036's reading: the winter by height makes two places, not
-   three (amplitude 0.56 in the valley, 0.80-1.00 everywhere above), and the ridge is also the dry band - a milder
-   or steeper winter by height, and a ridge that is not dry, are the two knobs never turned.
+   body are the same comparison, so no digging rate does both.) Read the bands with this in mind: at `winter high`
+   2 the season's amplitude is 0.45 in the valley and 0.91-1.00 above it (e032's own table), so the winter makes
+   two places, not three, and every "three bands" reading since e032 is valley against everything above.
+   The amplitude was chosen with that known (e032 ran 1, 2 and 3: at 1 the ridge keeps 306-412 bodies through
+   midwinter and half of them are its own, at 2 it keeps 13-56 and 80-92% are born below), so it is a dial, not
+   an open question.
+3. #39 The cost of a body: an upkeep that does not scale one for one with mass (UPKEEP x S0 x (size/S0)^k), the
+   real-world premise the vision has named as missing since e029. e036 sharpened the arithmetic from the other
+   side: a body's income is a rate ceiling (gut blocks x the bite) and its cost is linear in mass, so nothing
+   large is ever selected. It sits under #5 (3D bodies is "after size pays") and it changes how every body
+   measure in #37 and #38 would be read. Then #37 a body that needs water, then #38 the rain on the ridge.
    Also: whether size can pay at all under a per-cell upkeep (a store per cell instead of per mass would make the
    4x4 block and the 16x16 net equal; a cost that falls with size is the real-world premise still missing).
-3. #5 3D bodies (the vertical axis for legs and wings), after size pays: 12-16 cells in 3D is a blob. An arm is an
+4. #5 3D bodies (the vertical axis for legs and wings), after size pays (#39): 12-16 cells in 3D is a blob. An arm is an
    outcome to watch for there, not a rule.
-4. Later: #34 kinds of matter (several conserved substances - water, plant stuff, animal stuff of different
+5. Later: #34 kinds of matter (several conserved substances - water, plant stuff, animal stuff of different
    hardness - and blocks as mixtures, so that organs are outcomes of the mix; starts with #29 water that flows:
    rivers, lakes, deserts as outcomes, a rewrite of the closed cycle's carrier, when a question needs wet and dry
    as places), #4 learning, growth, aging, health as a layer on top of birth traits.
