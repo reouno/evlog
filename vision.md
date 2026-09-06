@@ -231,10 +231,10 @@ e019's flow moves the nutrient itself at 10-100x what a plant can use, and the l
 negative are its products. So the order is:
 1. (Done: #35, e034 - the still soil climbs to where nothing eats; the world stands at half. Done: #29, e035 -
    water as the carrier, kept: wet and dry are places, the soil is uniform and uphill, the crowd lives on the
-   lake's mixing.) Open from e035: a body that needs water (a reason to move between places), the rain on the
-   ridge again (e033's question, with a carrier that keeps the soil there), the mixing's rate.
-2. The ridge worth something from the soil's side, if still needed after #29: a store in the ground that stands
-   through the dark (seeds, roots, a wood nobody eats down).
+   lake's mixing.) Open from e035, as issues: #37 a body that needs water (a reason to move between places), #38
+   the rain on the ridge again (e033's question, with a carrier that keeps the soil there) with the mixing's rate.
+2. #36 The ridge worth something from the soil's side: a store in the ground that stands through the dark (seeds,
+   roots, a wood nobody eats down). Then #37, then #38.
    Also: whether size can pay at all under a per-cell upkeep (a store per cell instead of per mass would make the
    4x4 block and the 16x16 net equal; a cost that falls with size is the real-world premise still missing).
 3. #5 3D bodies (the vertical axis for legs and wings), after size pays: 12-16 cells in 3D is a blob. An arm is an
