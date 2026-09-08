@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-09-05 (e033).
+Last updated: 2026-09-09 (e038).
 
 ## What the viewer should see
 
@@ -265,13 +265,21 @@ negative are its products. So the order is:
    60,000; the law only made the transient larger. The upkeep's slope is not what binds size. The reading, not
    yet tested: the income binds - a gut block earns 0.002-0.004 a step, a fifth of its bite or less, and less
    the wider the body stands, because intake is the regrowth under the footprint. One short run with a higher
-   regrowth would test it: #40.) What is still missing for size is
+   regrowth would test it: #40.) (Done: #40, e038 - the sun's rate per cell at 2 and 4 times today's, at k 1
+   and k 0.6, seed 9, 100,000 steps: a gut block earns the same in summer under every sun, 0.003-0.005 a step;
+   the extra sun becomes 1.3-1.5x as many bodies, denser, of the same size or smaller (the median 9-15 cells at
+   k 1; at k 0.6 the hunters' 90th percentile falls 53, 37, 30 and the biters 33%, 29%, 6%). e027's reading holds
+   on the same grid: the world converts sun into bodies at the size it has. The income per block is pinned by the
+   crowd, not by the sun, so a law that gives the world more food is eaten by more small bodies; what escapes the
+   pinning is an income the crowd cannot dilute - a food only a big body reaches. The soil never bound the
+   regrowth, 2.2-6.2 per cell against a sun of 0.01-0.04. `sun` stays an argument, 1 by default.) What is
+   still missing for size is
    the real world's other half: a food a big body reaches and a small one does not (tall trees, tough grass,
    large prey). The canopy's trees (e021) are the candidate already in the world, eaten today by any gut; a
-   law about the tree as a material (what a bite takes from a column of height h) is #41. Order: #40 (one
-   short pilot), then #41 if #40 says the income is the lever, then #37 a body that needs water, then #38 the
-   rain on the ridge. Open from e037: whether seed 9's hunter world outlasts 100,000 steps, and what the
-   weight law costs a big body per step.
+   law about the tree as a material (what a bite takes from a column of height h) is #41. Order: #41 next (e038
+   is the reason for it: the crowd cannot dilute a food it cannot reach), then #37 a body that needs water, then
+   #38 the rain on the ridge. Open from e037 and e038: whether seed 9's hunter world outlasts 100,000 steps, and
+   what the weight law costs a big body per step (the other candidate for what binds size).
 4. #5 3D bodies (the vertical axis for legs and wings), after size pays (e037 says: after a food for big bodies exists): 12-16 cells in 3D is a blob. An arm is an
    outcome to watch for there, not a rule.
 5. Later: #34 kinds of matter (several conserved substances - water, plant stuff, animal stuff of different
