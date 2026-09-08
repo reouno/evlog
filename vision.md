@@ -265,12 +265,13 @@ negative are its products. So the order is:
    60,000; the law only made the transient larger. The upkeep's slope is not what binds size. The reading, not
    yet tested: the income binds - a gut block earns 0.002-0.004 a step, a fifth of its bite or less, and less
    the wider the body stands, because intake is the regrowth under the footprint. One short run with a higher
-   regrowth would test it.) What is still missing for size is
+   regrowth would test it: #40.) What is still missing for size is
    the real world's other half: a food a big body reaches and a small one does not (tall trees, tough grass,
    large prey). The canopy's trees (e021) are the candidate already in the world, eaten today by any gut; a
-   law about the tree as a material (what a bite takes from a column of height h) would be the next size
-   experiment. Then #37 a body that needs water, then #38 the rain on the ridge. Open from e037: whether seed
-   9's hunter world outlasts 100,000 steps, and what the weight law costs a big body per step.
+   law about the tree as a material (what a bite takes from a column of height h) is #41. Order: #40 (one
+   short pilot), then #41 if #40 says the income is the lever, then #37 a body that needs water, then #38 the
+   rain on the ridge. Open from e037: whether seed 9's hunter world outlasts 100,000 steps, and what the
+   weight law costs a big body per step.
 4. #5 3D bodies (the vertical axis for legs and wings), after size pays (e037 says: after a food for big bodies exists): 12-16 cells in 3D is a blob. An arm is an
    outcome to watch for there, not a rule.
 5. Later: #34 kinds of matter (several conserved substances - water, plant stuff, animal stuff of different
