@@ -258,14 +258,18 @@ negative are its products. So the order is:
    The amplitude was chosen with that known (e032 ran 1, 2 and 3: at 1 the ridge keeps 306-412 bodies through
    midwinter and half of them are its own, at 2 it keeps 13-56 and 80-92% are born below), so it is a dial, not
    an open question.
-3. #39 The cost of a body: an upkeep that does not scale one for one with mass (UPKEEP x S0 x (size/S0)^k), the
-   real-world premise the vision has named as missing since e029. e036 sharpened the arithmetic from the other
-   side: a body's income is a rate ceiling (gut blocks x the bite) and its cost is linear in mass, so nothing
-   large is ever selected. It sits under #5 (3D bodies is "after size pays") and it changes how every body
-   measure in #37 and #38 would be read. Then #37 a body that needs water, then #38 the rain on the ridge.
-   Also: whether size can pay at all under a per-cell upkeep (a store per cell instead of per mass would make the
-   4x4 block and the 16x16 net equal; a cost that falls with size is the real-world premise still missing).
-4. #5 3D bodies (the vertical axis for legs and wings), after size pays (#39): 12-16 cells in 3D is a blob. An arm is an
+3. (Done: #39, e037 - the cost of a body, UPKEEP x 16 x (size/16)^k, not kept: on seeds 1-3 at k 0.6 the world
+   is the control's after 60,000 steps, a median of 15-16 cells and 0-1% biters. Seed 9's pilot held a 16-cell
+   grazer beside armored hunters of 37-44 cells for 100,000 steps, and every seed passes through that world in
+   its first 40,000 steps and loses it: it is the ungrazed start's. The ceiling on size is the income, not the
+   bill: a gut block earns 0.003 a step from a grazed lawn, an eighth of its bite, and less the wider the body
+   stands, so a body cannot earn more by being wider at any price per cell.) What is still missing for size is
+   the real world's other half: a food a big body reaches and a small one does not (tall trees, tough grass,
+   large prey). The canopy's trees (e021) are the candidate already in the world, eaten today by any gut; a
+   law about the tree as a material (what a bite takes from a column of height h) would be the next size
+   experiment. Then #37 a body that needs water, then #38 the rain on the ridge. Open from e037: whether seed
+   9's hunter world outlasts 100,000 steps, and what the weight law costs a big body per step.
+4. #5 3D bodies (the vertical axis for legs and wings), after size pays (e037 says: after a food for big bodies exists): 12-16 cells in 3D is a blob. An arm is an
    outcome to watch for there, not a rule.
 5. Later: #34 kinds of matter (several conserved substances - water, plant stuff, animal stuff of different
    hardness - and blocks as mixtures, so that organs are outcomes of the mix; starts with #29 water that flows:
