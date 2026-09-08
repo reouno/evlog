@@ -260,10 +260,12 @@ negative are its products. So the order is:
    an open question.
 3. (Done: #39, e037 - the cost of a body, UPKEEP x 16 x (size/16)^k, not kept: on seeds 1-3 at k 0.6 the world
    is the control's after 60,000 steps, a median of 15-16 cells and 0-1% biters. Seed 9's pilot held a 16-cell
-   grazer beside armored hunters of 37-44 cells for 100,000 steps, and every seed passes through that world in
-   its first 40,000 steps and loses it: it is the ungrazed start's. The ceiling on size is the income, not the
-   bill: a gut block earns 0.003 a step from a grazed lawn, an eighth of its bite, and less the wider the body
-   stands, so a body cannot earn more by being wider at any price per cell.) What is still missing for size is
+   grazer beside armored hunters of 37-44 cells for 100,000 steps; every run, the control included, passes
+   through such a world in its first 40,000 steps (the start's population is random) and selection purges it by
+   60,000; the law only made the transient larger. The upkeep's slope is not what binds size. The reading, not
+   yet tested: the income binds - a gut block earns 0.002-0.004 a step, a fifth of its bite or less, and less
+   the wider the body stands, because intake is the regrowth under the footprint. One short run with a higher
+   regrowth would test it.) What is still missing for size is
    the real world's other half: a food a big body reaches and a small one does not (tall trees, tough grass,
    large prey). The canopy's trees (e021) are the candidate already in the world, eaten today by any gut; a
    law about the tree as a material (what a bite takes from a column of height h) would be the next size

@@ -717,8 +717,8 @@ GALLERY_CAPTION = "The most common body of the lineage at its peak, on the grid 
 
 TEXTS = {
     "tldr": ("Not kept. An upkeep that scales as (cells / 16)^k does not make size pay: on seeds 1-3 at k 0.6 the median body is 15-16 cells and the 90th percentile 21-25 after 300,000 steps, the control's numbers, with 0-1% biters. "
-             "Seed 9's pilot said otherwise for 100,000 steps (median 22, a third of the bodies armored hunters of 37-44 cells): the start's transient, which seeds 1-3 lose by step 60,000. "
-             "What binds size is the income: a gut block earns 0.003 a step, an eighth of its bite."),
+             "Seed 9's pilot said otherwise for 100,000 steps (median 22, a third of the bodies armored hunters of 37-44 cells): the start's transient, which every run has, the control included, and loses by step 60,000. "
+             "A gut block earns 0.002-0.004 a step, a fifth of its bite or less: the reading is that the income binds size, not the bill."),
     "question": ("Since e015 a body pays 0.002 per cell plus 0.032 per body a step; its income is 0.02 per gut block at most, bounded by the lawn under it. Every winner since e016 is 11-16 cells. "
                  "The real world's premise is missing: metabolism scales as about mass^0.75, so the cost per unit of mass falls with size and large animals exist. This experiment gives the upkeep that slope and asks whether size pays, and what the world pays for it."),
     "world": ("e035's season world with one law. The upkeep of the cells becomes 0.002 x 16 x (cells / 16)^k, over the per-body 0.032 as before; k 1 is today's law byte for byte. "
@@ -736,21 +736,20 @@ TEXTS = {
     "p_spread": ("The largest body is 81-121 cells in every run, so the ceiling was never the law. On seed 9 the k 0.6 bodies are made of light cells (density 1.05 against 1.43): the cheap cells buy armor and a mouth, not weight. "
                  "With the batch read, this is what the start allows, not what selection keeps."),
     "h_batch": "On seeds 1-3 the world returns to 16 cells",
-    "p_batch": ("Every seed at k 0.6 opens like the pilot - median 21-26 cells, 90th percentile 46-64 in the first 40,000 steps - and is at 16 by step 60,000, where it stays (seed 3: 16 at every percentile, density 2.0, e025's dense block). "
-                "k 0.75 is the control too. The pilot's hunter world is the start's transient, held longer on seed 9; whether a seed can keep it is open."),
+    "p_batch": ("Every run opens with big bodies - the control's 90th percentile is 30-51 in the first 40,000 steps, k 0.6's 28-54 - and is at 16 by step 40,000-60,000, where it stays (seed 3 at k 0.6: 16 at every percentile, density 2.0, e025's dense block). "
+                "k 0.75 is the control too. The start's population is random and selection purges it; k 0.6 makes the transient larger, and on seed 9 100,000 steps long. Whether that is a state a seed can keep is open."),
     "h_world": "The world's bill is the transient's",
-    "p_world": ("On seed 9 the peaks halve and births fall from 11.2 to 3.5 a step while the bodies are big, and the world eats 16% less: it eats its dead (e024) and the dead are fewer. "
-                "On seeds 1-3 after step 100,000 none of this remains."),
+    "p_world": ("On seed 9 the peaks halve and births fall from 11.2 to 3.5 a step while the bodies are big, and the world eats 16% less: it eats its dead (e024) and the dead are fewer. On seeds 1-3 after step 100,000 none of this remains."),
     "h_state": "Where the ceiling is: the lawn, not the bill",
-    "p_state": ("A gut block earns 0.0024-0.0036 a step in every run, an eighth of its bite, and less the wider the body stands (0.0023 at a footprint of 4.6 cells in seed 9's big world, 0.0036 at 2.4 in the control): a body strips the lawn under itself, and more gut over the same lawn shares the same regrowth. "
-                "The marginal cell's cost was halved; its income is what the cell under it regrows, not 0.02."),
-    "discussion": ("<p>The law did what it says: on seed 9 a 40-cell body pays a fifth less and a world of armored hunters and grazers holds for 100,000 steps. The batch says that is the world every seed passes through at the start, when the lawn is whole and a wide body earns over every cell it covers, and leaves once the crowd has grazed the world down to 0.003 a step per gut block. "
-                   "From then on the 16-cell body wins under a curve that favors a bigger one by 15-34%.</p>"
-                   "<p>So the ceiling on size is the income: intake is regrowth under the footprint, and regrowth per cell is the sun's and the soil's, so a body cannot earn more by being wider once the world is grazed. "
-                   "The real world's large animals eat what small ones cannot (tall trees, tough grass, large prey): the premise still missing is a food a big body reaches and a small one does not.</p>"
-                   "<p>Not shown: whether seed 9's hunter world outlasts 100,000 steps (seeds 1-3 lost theirs by 60,000), and what the weight law costs a big body. The compute of a big-bodied world is per cell: the batch ran 40% slower per step while the bodies were large.</p>"),
-    "conclusion": ("Not kept: k stays an argument, 1 by default, and the season world is e035's. Size does not pay under a sub-linear upkeep because the limit is the income, a gut block's 0.003 a step from a grazed lawn, not the bill. "
-                   "Next: a food only a big body reaches - the canopy's trees (e021) are the candidate already in the world - then #37 (a body that needs water) and #38 (the rain on the ridge)."),
+    "p_state": ("A gut block earns 0.0017-0.0037 a step in every run and window, and less the wider the body stands: every window with a footprint of 4.0-4.7 cells is at 0.0017-0.0024, every window at 2.4-3.1 at 0.0030-0.0037. "
+                "The reading: a body strips the lawn under itself, and more gut over the same lawn shares the same regrowth. Which constraint binds is not identified here, only that the upkeep's slope does not."),
+    "discussion": ("<p>The law did what it says: on seed 9 a 40-cell body pays a fifth less and a world of armored hunters and grazers holds for 100,000 steps. The batch says every run passes through that world at the start, the control included, because the start's population is random; selection purges the big bodies by step 40,000-60,000 under every k, and the law only made the transient larger. "
+                   "The gut's income is not higher at the start (0.0024 a step per gut block in the pilot, before and after); the income per body is, because the bodies are bigger.</p>"
+                   "<p>The reading of the steady state is that the income binds: a gut block earns a fifth of its bite or less, and less the wider the body stands, because intake is regrowth under the footprint. This is an interpretation from one measure, not a test; a world with a higher regrowth would test it in one short run. "
+                   "The real world's large animals eat what small ones cannot: the premise still missing is a food a big body reaches and a small one does not.</p>"
+                   "<p>Not shown: whether seed 9's hunter world outlasts 100,000 steps, and what the weight law costs a big body. A big-bodied world is 40% slower per step: the compute is per cell.</p>"),
+    "conclusion": ("Not kept: k stays an argument, 1 by default, and the season world is e035's. Size does not pay under a sub-linear upkeep; the upkeep's slope is not what binds it, and the reading is that the income does, a gut block's 0.002-0.004 a step from a grazed lawn. "
+                   "Next: test that reading in one short run (a higher regrowth), then a food only a big body reaches - the canopy's trees (e021) are the candidate already in the world - then #37 (a body that needs water) and #38 (the rain on the ridge)."),
 }
 
 

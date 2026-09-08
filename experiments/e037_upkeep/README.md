@@ -136,16 +136,24 @@ The median size every 20,000 steps (log.csv, `size_p50`), `k` 0.6:
   `k` 0.75, the 90th percentile 21-25 and 18-22, against the control's 13-16 and 16-28. Seed 3 at
   `k` 0.6 is 16 at every percentile with density 2.0: e025's dense block. The floors, the peaks,
   the valley's share and what the world eats are the control's.
-- **The pilot's world is the start's transient.** Every seed at `k` 0.6 opens like seed 9: a
-  median of 21-34 cells and a 90th percentile of 46-64 in its first 40,000 steps, then 16 by
-  60,000. Seed 9 held it through 100,000 steps; whether a seed can keep it is open.
+- **The pilot's world is the start's transient, and the control has one too.** In the first
+  40,000 steps every run holds big bodies: the control's p50 is 12-22 and its p90 30-51, `k` 0.6's
+  p50 18-26 and p90 28-54, `k` 0.75's 12-22 and 28-48. Every run is at 16 by 40,000-60,000. The
+  start's population is random (the initial genomes) and selection purges the big bodies; `k` 0.6
+  makes the transient larger and, on seed 9, 100,000 steps long. The gut's income is not higher at
+  the start (0.0024 a step per gut block in the pilot's first 40,000 and after), only the income
+  per body is (0.065 against 0.048), because the bodies are bigger. Whether seed 9's world is a
+  state a seed can keep (hunters thinning the crowd) is open.
 - **The tooth is at 0-1%** at `k` 0.6 after 100,000, where the control holds a hunter state in
   seed 3 (15-21% from step 140,000 on, with 16-cell bodies).
-- **Where the ceiling is.** A gut block earns `intake_per_gut` 0.0024-0.0036 a step in every
-  run, an eighth of its bite, and less the wider the body stands: 0.0023 at a footprint of 4.6
-  cells in the pilot's `k` 0.6 world, 0.0036 at 2.4 in the control's seed 1. A body strips the
-  lawn under itself, so more gut over the same lawn shares the same regrowth. At `k` 0.6 the
-  32nd cell costs 0.0009 a step (0.002 today) and still does not pay.
+- **Where the ceiling is (an interpretation).** A gut block earns `intake_per_gut`
+  0.0017-0.0037 a step in every run and window, an eighth to a fifth of its bite, and less the
+  wider the body stands: every window with a mean footprint of 4.0-4.7 cells is at 0.0017-0.0024,
+  every window at 2.4-3.1 is at 0.0030-0.0037 (30 windows). The reading: a body strips the lawn
+  under itself, so more gut over the same lawn shares the same regrowth. At `k` 0.6 the 32nd cell
+  costs 0.0009 a step (0.002 today) and still does not pay. Which constraint binds (the regrowth
+  under the footprint, the weight law's move cost, the winter's fat, the side grid) is not
+  identified here; only that the upkeep's slope does not.
 - **Compute.** The cost of a step is per cell: seeds 1 and 3 took 72 minutes for 300,000 steps at
   two threads each (the pilot: 17 minutes per 100,000 at one), 40% slower per step while the bodies
   were large. Seed 2 finished at 00:53 the next day; the Mac may have slept in between, so its wall
@@ -162,12 +170,15 @@ the upkeep's.
 **What the pilot showed is real but not selected.** On seed 9 at `k` 0.6 a 16-cell grazer and
 armored hunters of 37-44 cells (density 0.8, a bite of 1.6-2.6) held 100,000 steps together, the
 first size axis in the arms race. Seeds 1-3 pass through the same world in their first 40,000
-steps and lose it. It is the start's world: an ungrazed lawn on which a wide body earns over
-every cell it covers. Once the crowd has grazed the world down to 0.003 a step per gut block, a
-body cannot earn more by being wider, at any price per cell.
+steps and lose it, and so does the control: the start's population is random, and selection
+purges the big bodies by 40,000-60,000 steps under every `k`. The law made the transient larger,
+not the steady state different.
 
-**What this changes for the project.** The ceiling on size is the income side, not the bill:
-intake is regrowth under the footprint, and regrowth per cell is the sun's and the soil's. The
+**What this changes for the project.** The upkeep's slope is not what binds size. The reading
+of the numbers is that the income does: a gut block earns a fifth of its bite or less, and less
+the wider the body stands, because intake is regrowth under the footprint and regrowth per cell
+is the sun's and the soil's. That reading is not yet tested (a world with a higher regrowth would
+test it in one short run). The
 real world's large animals eat what small ones cannot (tall trees, tough grass, large prey) or go
 where food is. The premise still missing is a food a big body reaches and a small one does not;
 the canopy's trees (e021, eaten today by any gut) are the candidate already in the world. Open:
