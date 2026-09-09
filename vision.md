@@ -315,7 +315,10 @@ negative are its products. So the order is:
    law about the tree as a material (what a bite takes from a column of height h) is #41. Read #41 as the first
    law of the third axis of an environment (principles: by place, by time, by the size of the body looking at
    it): the tree's height is an environment only a tall body sees, and what follows it are the ground a body
-   can dig into, the water a body can enter, the gap only a small body fits. Order now (after e040): #38 the rain on the ridge, then #5 with the reach in mind. Open from e037 and e038: whether seed 9's hunter world outlasts 100,000 steps, and
+   can dig into, the water a body can enter, the gap only a small body fits. Order now (after e040, the user's reading): #43 a reason to leave - plant regrowth that follows the standing
+   plant, with the thirst, as a 2x2 (the sitter wins because nothing in the world forbids sitting; a law that needs
+   movement must be tested in a world where movement pays; frame a hypothesis as "Y pays when A and B" and test the
+   minimal combination) - then #38 the rain on the ridge, then #5 with the reach in mind. Open from e037 and e038: whether seed 9's hunter world outlasts 100,000 steps, and
    what the weight law costs a big body per step (the other candidate for what binds size).
 4. #5 3D bodies (the vertical axis for legs and wings), after size pays (e037 says: after a food for big bodies exists): 12-16 cells in 3D is a blob. An arm is an
    outcome to watch for there, not a rule.
