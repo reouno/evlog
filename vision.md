@@ -9,6 +9,15 @@ Not dots and numbers. Creatures with different shapes, eating and being eaten, s
 lineages that appear, spread, and go extinct. Nothing in that sentence is scripted: shape, diet,
 predation, and species all come out of the genome and the world's rules.
 
+The measure of a law is diversity (principles 7): how many different bodies prosper at once, and in
+how many different places. Every experiment from e039 on reports one fixed number for it beside the
+lineage count: the number of coexisting winner lineages whose bodies differ in shape, by place. The
+series so far says where diversity came from: from places (e012), from time (e026, e032), and not
+from a wider body space or a cheaper body (e029, e037), and that a uniform gain is eaten by more of
+the same body (e038). An environment differs by place, by time, and by the size of the body looking
+at it; the third axis is the one the world lacks entirely (every body sees the same field at the
+same grain), and #41 is its first law.
+
 ## Three mechanisms, none of them predefined
 
 1. **Shape comes from development.** The gene network of e002 is run on a small grid with the
@@ -276,7 +285,10 @@ negative are its products. So the order is:
    still missing for size is
    the real world's other half: a food a big body reaches and a small one does not (tall trees, tough grass,
    large prey). The canopy's trees (e021) are the candidate already in the world, eaten today by any gut; a
-   law about the tree as a material (what a bite takes from a column of height h) is #41. Order: #41 next (e038
+   law about the tree as a material (what a bite takes from a column of height h) is #41. Read #41 as the first
+   law of the third axis of an environment (principles: by place, by time, by the size of the body looking at
+   it): the tree's height is an environment only a tall body sees, and what follows it are the ground a body
+   can dig into, the water a body can enter, the gap only a small body fits. Order: #41 next (e038
    is the reason for it: the crowd cannot dilute a food it cannot reach), then #37 a body that needs water, then
    #38 the rain on the ridge. Open from e037 and e038: whether seed 9's hunter world outlasts 100,000 steps, and
    what the weight law costs a big body per step (the other candidate for what binds size).

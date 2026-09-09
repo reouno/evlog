@@ -17,6 +17,7 @@ The world exists and moves forward whether or not a user is present.
 4. **It must survive the long run.** Running for days or months must not lead to collapse, stagnation, or explosion. The world keeps changing instead of settling.
 5. **No individual belongs to anyone.** Selection happens. There is no user avatar. Attachment is to lineages and the world, not to individuals.
 6. **What happened stays.** Events in the world are recorded and can be observed later. The log is part of the world (evlog = evolution log).
+7. **Diversity is the measure, not a rule.** The richness of the world is counted as the number of different bodies that prosper at once and the number of different places they prosper in. Diversity stands in for "interesting to watch" (a world with one winner is not), but it is never written into the rules: a rule that favors the rare or the different is a rule about traits (principle 2). Diversity comes out of an environment that differs, and only from there.
 
 ## Decision rules
 
@@ -26,6 +27,7 @@ When unsure, ask in this order:
 2. Does it keep running in the long run?
 3. Does it add compute cost?
 4. Is it a rule about a trait, or about a material or the world? Only the second kind is allowed.
+5. Does it let more kinds of body prosper at once, or make more kinds of place? A law that improves the world the same everywhere is eaten by more of the same body (e038).
 
 ## Where new laws come from
 
@@ -44,6 +46,20 @@ When we look for one, we think in metaphors of the real world.
   the world has one optimum. More kinds of parts or a wider genome make that optimum slower to
   reach, not less alone. Add a pressure (a place, a season, matter that cycles) and count how many
   different bodies prosper at once; that count is how a law is judged.
+- **An environment differs in three ways.** By place (region, height, under the ground, in the water,
+  in the air; desert, marsh, grassland, forest, river, sea), by time (seasons, days, weather, drift),
+  and by the size of the body that looks at it: the same cell is one environment to a large body and
+  another to a small one (a tree's crown to a giraffe, its bark to an insect), as the real world is
+  one to mammals and another to microbes. Where every cell is the same, the optimum is one and one
+  body fills the world; an improvement that is the same everywhere is turned into more of that body
+  (e038: twice the sun, twice the bodies, the same size). A new law is preferred when it makes the
+  environment differ along one of the three, and the third is the least explored: today the world
+  shows every body the same field at the same grain.
+- **The space of bodies comes after the environment.** Four block kinds on a grid of 8 to 16 is a
+  narrow space, and the real world's range (microbes to whales, grams to tons, a year to a century)
+  is wide. But a wider space with one optimum converges the same way (e029, e037); widen it when a
+  differing environment hits the grid as a wall (e011 saw the wall once), with 3D bodies (#5), kinds
+  of matter (#34), and a time that scales with size (untested).
 - **The metaphor is a source, not a target.** evlog is a virtual world. It does not have to follow
   the real one, and it should not only imitate it: what can exist here and nowhere else is part of
   what makes it worth watching. Take the premise, not the outcome, and let selection decide.
