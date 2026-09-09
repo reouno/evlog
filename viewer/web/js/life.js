@@ -110,7 +110,7 @@ export class Life {
     this.far = new Pool(scene, box, flesh, 8000);
     this.pools = [this.grass, this.grass2, this.trunk, this.crown, this.fruit, this.carrion, this.far, ...this.blockPools.filter(Boolean)];
     this.treeMin = 1.0;
-    this.near = 26;   // cells: grass and fruit
+    this.near = 34;   // cells: grass and fruit
     this.mid = 90;    // cells: trees
     this.bodyNear = 55;
   }
@@ -161,14 +161,18 @@ export class Life {
           this.crown.putM(M, green.clone().multiplyScalar(0.86).getHex());
         } else if (p > 0.002 && near) {
           const r = hash(c);
-          const hgt = (0.22 + Math.min(1, p) * 0.85) * UP.plant * 1.6;
-          const wdt = 0.5 + 0.35 * Math.min(1, p);
+          // A column of p matter stands p cells tall, which is nothing for a lawn; it is drawn
+          // a little taller than that so it can be seen, and never above a body's back.
+          const hgt = (0.07 + Math.min(1, p) * 0.9) * UP.plant * 1.3;
+          const wdt = 0.42 + 0.3 * Math.min(1, p);
           const jx = (r - 0.5) * 0.3, jz = (hash(c + 7777) - 0.5) * 0.3;
-          this.grass.put(px + jx, y, pz + jz, wdt, hgt, 1, 0xdfe8cf);
+          // Short and yellow when it is grazed down, tall and green when it stands.
+          const tint = new THREE.Color(0xe8e0b4).lerp(new THREE.Color(0xa8d089), Math.min(1, p * 2.2)).lerp(new THREE.Color(0xd9c98d), winter * 0.6).getHex();
+          this.grass.put(px + jx, y, pz + jz, wdt, hgt, 1, tint);
           M.makeRotationY(Math.PI / 2);
           M.scale(new THREE.Vector3(wdt, hgt, 1));
           M.setPosition(px + jx, y, pz + jz);
-        this.grass2.putM(M, 0xdfe8cf);
+        this.grass2.putM(M, tint);
         }
         if (near && fruit && fruit[c] > 0.001) {
           const n = Math.min(6, 1 + Math.floor(fruit[c] * 3));
@@ -224,22 +228,30 @@ export class Life {
       if (r2 > this.bodyNear * this.bodyNear) {
         // Too far to make out its blocks: one low body, the colour of what it eats.
         const s = shape.side * cell;
-        const c = new THREE.Color(lit ? 0xffffff : diet[a.a.diet[i]]).multiplyScalar(0.72);
-        this.far.put(px + s / 2, y, pz + s / 2, s * 0.62, 0.16, s * 0.62, c.getHex());
+        const c = new THREE.Color(lit ? 0xffffff : diet[a.a.diet[i]]).multiplyScalar(0.5);
+        this.far.put(px + s / 2, y, pz + s / 2, s * 0.45, 0.1, s * 0.45, c.getHex());
         continue;
       }
       this.drawn.push({ id, x: px, z: pz, y, i });
+      // The world is flat, so a body would be a pallet if every block were the same height.
+      // It is given a back: the blocks stand tallest in the middle and fall away to the rim,
+      // and a bigger body stands higher.
+      const half = (shape.side - 1) / 2, span = half + 0.6;
+      const grow = 0.62 + 0.05 * shape.side;
       for (const bl of shape.blocks) {
         const bx = px + (bl.c + 0.5) * cell, bz = pz + (bl.r + 0.5) * cell;
         const k = bl.kind;
         const pool = pools[k] || pools[4];
-        const hgt = k === 1 ? 0.34 : k === 2 ? 0.3 : k === 3 ? 0.2 : 0.24;
+        const dr = (bl.r - half) / span, dc = (bl.c - half) / span;
+        const dome = 0.42 + 0.78 * Math.sqrt(Math.max(0, 1 - dr * dr - dc * dc));
+        const base = k === 1 ? 0.42 : k === 2 ? 0.36 : k === 3 ? 0.3 : 0.3;
+        const hgt = base * dome * grow;
         let hex = kinds[k] ?? 0xcbb98a;
         if (lit) hex = 0xffe9a8;
         if (k === 3) {
           // An eye sits on the body, round and dark.
-          this.blockPools[4].put(bx, y, bz, cell, 0.2, cell, lit ? 0xffe9a8 : 0x8f7f5e);
-          pool.put(bx, y + 0.26, bz, cell * 0.42, cell * 0.42, cell * 0.42, hex);
+          this.blockPools[4].put(bx, y, bz, cell, hgt * 0.8, cell, lit ? 0xffe9a8 : 0x8f7f5e);
+          pool.put(bx, y + hgt * 0.8 + cell * 0.2, bz, cell * 0.44, cell * 0.44, cell * 0.44, hex);
         } else {
           pool.put(bx, y, bz, cell * 0.98, hgt, cell * 0.98, hex);
         }

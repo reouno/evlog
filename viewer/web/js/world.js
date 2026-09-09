@@ -19,6 +19,7 @@ export class World {
     this.layerOf = {};
     header.layers.forEach((l, i) => (this.layerOf[l.name] = i));
     this.bodies = new Map();
+    this.turned = new Map(); // (shape, facing) -> its blocks in the world frame
     this.frames = new Map(); // step -> frame
     this.steps = [];         // the steps in `frames`, sorted
     this.keys = new Map();   // step -> [Uint8Array per layer]  (frames that carry the layers)
@@ -132,8 +133,18 @@ export class World {
     }
   }
 
-  /** The blocks of one body in the world frame: [{c, r, kind}] with r south, c east. */
+  /** The blocks of one body in the world frame: [{c, r, kind}] with r south, c east.
+   * A shape turned a way is the same every time it is drawn, so it is worked out once. */
   blocks(bodyId, facing) {
+    const key = bodyId * 4 + facing;
+    const hit = this.turned.get(key);
+    if (hit !== undefined) return hit;
+    const out = this.turn(bodyId, facing);
+    if (out) this.turned.set(key, out); // a shape not seen yet may still arrive
+    return out;
+  }
+
+  turn(bodyId, facing) {
     const b = this.bodies.get(bodyId);
     if (!b) return null;
     const s = b.side, m = s - 1, out = [];

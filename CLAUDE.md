@@ -62,6 +62,10 @@ Experiments are disposable. Shared code moves to a separate crate only after it 
 
 Run: `cargo run --release -p eNNN_<name>`
 
+The world is watched in 3D through `viewer/` (see its README): an experiment writes frames in three
+lines and the browser draws them, live or as a replay. Nothing happens unless EVLOG_VIEW is set, and
+a new law reaches the viewer by adding its layer or field to `Init` (the header says what a world holds).
+
 ## Tech
 
 - Language: Rust (strong types, fast, portable to WASM and mobile)

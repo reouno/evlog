@@ -271,18 +271,19 @@ function bindUI(header) {
     const to = +$('goto').value;
     if (!isFinite(to)) return;
     if (source.live) source.seek(to);
-    else { step = to; source.fetchFrom(step); }
+    else { step = to; source.asked.clear(); source.fetchFrom(step); }
   };
   $('goto').onkeydown = (e) => { if (e.key === 'Enter') $('gotob').onclick(); };
   const seek = $('seek');
   if (source.live) seek.style.display = 'none';
   else {
     seek.min = source.first; seek.max = source.last; seek.step = world.h.stride || 1;
-    seek.oninput = () => { step = +seek.value; source.fetchFrom(step); };
+    seek.oninput = () => { step = +seek.value; source.asked.clear(); source.fetchFrom(step); };
     seek.onpointerdown = () => (seeking = true);
     addEventListener('pointerup', () => (seeking = false));
   }
   $('v-shadow').onchange = (e) => setShadows(e.target.checked);
+  setShadows($('v-shadow').checked);
   $('mini').onclick = (e) => {
     const r = e.target.getBoundingClientRect();
     rig.goTo(((e.clientX - r.left) / r.width) * world.w, ((e.clientY - r.top) / r.height) * world.d);

@@ -19,6 +19,8 @@ export function sample(field, w, d, x, z) {
 }
 
 const C = new THREE.Color();
+const LAWN = new THREE.Color(0x7fa03a), STAND = new THREE.Color(0x24521f), VEG = new THREE.Color();
+const DEEP = new THREE.Color(0x123f5c), C2 = new THREE.Color();
 function mix(out, hex, t) {
   C.setHex(hex);
   out.lerp(C, t);
@@ -149,7 +151,7 @@ export class Ground {
     const winter = Math.max(0, 1 - (opts.sun ?? 1));
     const relief = this.world.relief || 1;
     const at = (i, j) => (((j % d) + d) % d) * w + (((i % w) + w) % w);
-    const c = new THREE.Color();
+    const c = C2;
     for (let j = 0; j <= d; j++) {
       for (let i = 0; i <= w; i++) {
         const v0 = at(i - 1, j - 1), v1 = at(i, j - 1), v2 = at(i - 1, j), v3 = at(i, j);
@@ -165,10 +167,10 @@ export class Ground {
         // What grows on it: a lawn is thin and yellowish, a stand of plants is deep green.
         if (pl > 0) {
           const g = Math.min(1, Math.sqrt(pl / 1.2));
-          c.lerp(new THREE.Color(0x7fa03a).lerp(new THREE.Color(0x24521f), Math.min(1, pl / 4)), g * 0.85);
+          c.lerp(VEG.copy(LAWN).lerp(STAND, Math.min(1, pl / 4)), g * 0.85);
         }
-        if (carrion) mix(c, 0x6b3a2e, Math.min(0.6, q(carrion) * 0.5));
-        if (fruit) mix(c, 0xb8703a, Math.min(0.35, q(fruit) * 0.4));
+        if (carrion) mix(c, 0x6d4436, Math.min(0.34, q(carrion) * 0.32));
+        if (fruit) mix(c, 0xa8803f, Math.min(0.22, q(fruit) * 0.28));
         // Winter whitens the high ground first (the season is by height in this world).
         const hi = this.terrainY[j * (w + 1) + i] / (relief * UP.terrain);
         const snow = Math.max(0, Math.min(1, (winter * 2.2 - 0.35) * 3 * Math.max(0, hi - 0.35)));
@@ -179,8 +181,8 @@ export class Ground {
         const pool = Math.max(0, wa - wet);
         const dep = pool * depth;
         wpos[vi * 3 + 1] = this.terrainY[vi] + Math.max(dep, 0.02);
-        const alpha = Math.min(0.86, dep / (0.6 + dep) + (pool > 0 ? 0.15 : 0));
-        c.setHex(0x2a6f8f).lerp(new THREE.Color(0x0d3550), Math.min(1, dep / 3));
+        const alpha = Math.min(0.9, dep / (0.35 + dep) + (pool > 0 ? 0.25 : 0));
+        c.setHex(0x4e9ab0).lerp(DEEP, Math.min(1, dep / 2.5));
         wcol[vi * 4] = c.r; wcol[vi * 4 + 1] = c.g; wcol[vi * 4 + 2] = c.b;
         wcol[vi * 4 + 3] = pool > 0 ? alpha : 0;
       }
