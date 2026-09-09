@@ -329,7 +329,15 @@ negative are its products. So the order is:
    so everything it takes falls at the body's feet. A body standing on a tree is paid for standing, and a law on a
    cell's own regrowth throttles a tenth of the world. The condition "the food under a body runs out" is not a
    property of the regrowth law but of the fall: the next test is e022's exception, the held column that still
-   claims, taken away.) Then #44 the fountain, then #38 the rain on the ridge, then #5 with the reach in mind. Open from e037 and e038: whether seed 9's hunter world outlasts 100,000 steps, and
+   claims, taken away.) Measured after e041 (the user's question - is that much fruit right?): the food is a rain onto
+   points. Of 146 of light a step the canopy moves 135 (92%) into the tall columns and 96 of it falls back as fruit;
+   the fruit lies on 7-15% of the cells with 30-56% of it on the richest 1% (about 164 of 16,384), a wet cell holding
+   0.7-1.4 and the biggest pile 21-26; only 22-25% of the cells carry anything, the world's living plant is 1,232
+   (941 of it on the 239 tree cells, the lawn at 0.018 a cell) against 3,486 of fruit on the ground. e021's canopy,
+   with its saturation, moved 5-18 of sun a step; e022 added the fall and dropped the saturation in the same change,
+   and the two have never been separated. That is #45, and it is the environment every law since e022 that needed
+   movement was tested against. Order: #45 (`sat` and `hold`, four runs), which contains #44 as its `hold` half, then
+   #38 the rain on the ridge, then #5 with the reach in mind. Open from e037 and e038: whether seed 9's hunter world outlasts 100,000 steps, and
    what the weight law costs a big body per step (the other candidate for what binds size).
 4. #5 3D bodies (the vertical axis for legs and wings), after size pays (e037 says: after a food for big bodies exists): 12-16 cells in 3D is a blob. An arm is an
    outcome to watch for there, not a rule.
