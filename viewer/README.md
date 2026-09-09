@@ -71,3 +71,34 @@ sensor is an eye, digestive is a gut. Far bodies are drawn as one slab, coloured
 
 Drag to turn, right-drag or shift-drag to move, wheel to zoom, WASD to walk, click a body to
 follow it, click the minimap to go somewhere.
+
+### The season
+
+The browser works the season out from the law, not from a number in a frame: `params` carries
+the period, the amplitude and whether the winter is by height (e032), so every cell's own sun is
+`1 + a(cell) sin(2 pi step / period)` and the browser knows the year from the step alone. That
+matters because under `winter high` the ridge is in winter while the valley is not, and a single
+number for the world cannot say so.
+
+What the watcher sees of it: the ground frosts and then goes white where a cell's sun is nearly
+out, and the snow line comes down the hills and goes back up (the minimap shows it too); the
+leaves turn amber and then fall, and a conifer stands green through it; the lawn goes to straw;
+the sun rides low and pale in winter and high and warm in summer, over the ground the eye is
+looking at rather than the one cell it sits on. The HUD has a dial of the year with the season
+named on it. A world with no season law says so and none of this happens.
+
+### Cost
+
+Everything that stands is instanced and only what is near the eye is drawn in full. The `草木の
+精細` slider is the knob: it sets how many parts a tree has, how many tufts a cell of lawn has,
+and how far out either is drawn (a 128 world on a laptop runs at 35-55 fps across its range).
+Nothing is rebuilt while the eye and the season hold still.
+
+### How a thing is drawn
+
+A tree is one of three kinds, stands somewhere of its own inside its cell, leans its own way and
+has its own greens and bark - all of it from the cell's own number, so it is the same tree every
+time it is drawn and no two neighbours are alike. Its height is the matter standing there and it
+stands on that one cell, so a tall column is drawn tall and narrow (the leaves stacked up the
+trunk) rather than as a wide crown that would cover its neighbours and lie about the world. The
+lawn, the fallen fruit and the dead are scattered inside their cells the same way.

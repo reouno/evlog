@@ -7,12 +7,12 @@ import { Ground, Sky, Rig, UP } from './render.js';
 import { Life } from './life.js';
 
 const $ = (id) => document.getElementById(id);
-const KIND_COLORS = { hard: '#2a2622', muscle: '#a8553c', sensor: '#1b1b20', digestive: '#cbb98a', empty: '#00000000' };
+const KIND_COLORS = { hard: '#2a2622', muscle: '#a8553c', sensor: '#1b1b20', digestive: '#b09760', empty: '#00000000' };
 const DIET = ['植物', 'まぜ', '肉', 'まだ'];
 
 let world, ground, sky, life, rig, renderer, scene, camera, source;
 let step = 0, latest = 0, playing = true, speed = 20, picked = null;
-let shapeOf = -1, drawnKey = -1, plantAt = null, last = performance.now(), fps = 60, miniBase = null, seeking = false;
+let shapeOf = -1, drawnKey = -1, drawnSwing = 99, plantAt = null, last = performance.now(), fps = 60, miniBase = null, seeking = false;
 
 async function boot() {
   let state = { live: false };
@@ -103,18 +103,23 @@ function loop(now) {
   sky.follow(camera);
 
   const [a, b, t] = world.around(step);
-  const season = a ? a.globals.sun ?? 1 : 1;
+  // Where in the year the world is, straight off the law (World.seasonOf), and what that means
+  // for the place being watched: under `winter high` the ridge is in winter while the valley
+  // is not, so the light and the sky are the eye's own cell's, not one number for the world.
+  const swing = world.swing(step);
+  const here = world.season.on ? world.sunAt(rig.target.x, rig.target.z, swing) : a ? a.globals.sun ?? 1 : 1;
   const v = world.layersAt(step);
   let redrawPlants = false;
-  if (v && world.decoded.step !== drawnKey) {
+  if (v && (world.decoded.step !== drawnKey || Math.abs(swing - drawnSwing) > 0.03)) {
     drawnKey = world.decoded.step;
-    ground.update(v, { sun: season });
+    drawnSwing = swing;
+    ground.update(v, { swing });
     miniBase = null;
     redrawPlants = true;
   }
   if (!plantAt || Math.hypot(plantAt.x - rig.target.x, plantAt.z - rig.target.z) > 2) redrawPlants = true;
   if (v && redrawPlants) {
-    life.plants(v, rig.target, ground, season);
+    life.plants(v, rig.target, ground, step);
     plantAt = { x: rig.target.x, z: rig.target.z };
   }
   life.bodies(world, a, b, t, rig.target, ground, picked);
@@ -125,9 +130,9 @@ function loop(now) {
       rig.goTo(a.a.x[i] * cell + 0.5, a.a.y[i] * cell + 0.5);
     }
   }
-  light(season);
+  light(here);
   renderer.render(scene, camera);
-  hud(a, season);
+  hud(a, here, swing);
   requestAnimationFrame(loop);
 }
 
@@ -146,20 +151,29 @@ function setShadows(on) {
   scene.traverse((o) => { if (o.material) o.material.needsUpdate = true; });
 }
 
-function light(season) {
-  const s = Math.max(0.1, Math.min(2, season));
-  const el = 0.22 + 0.42 * Math.min(1, s / 1.6);
+/** The light and the sky of the place being watched, from how much of its sun it gets now.
+ *
+ * The sun rides low and pale where the season has taken it and high and warm where it has not,
+ * so the length of the shadows and the colour of the sky say the season before any number does. */
+function light(here) {
+  const s = Math.max(0, Math.min(2, here));
+  const cold = Math.max(0, 1 - s), warm = Math.min(1, Math.max(0, s - 1));
+  const high = Math.min(1, s / 1.5);
+  const el = 0.16 + 0.62 * high;
   const az = 2.1;
   const dir = new THREE.Vector3(Math.cos(az) * Math.cos(el), Math.sin(el), Math.sin(az) * Math.cos(el));
   window.sun.position.copy(camera.position).addScaledVector(dir, 120);
   window.sun.target.position.copy(rig.target);
-  window.sun.intensity = 1.0 + 1.5 * Math.min(1, s / 1.4);
-  window.sun.color.setHSL(0.11 - 0.03 * Math.min(1, s), 0.55 - 0.25 * Math.min(1, s), 0.62);
-  window.hemi.intensity = 0.5 + 0.5 * Math.min(1, s);
+  window.sun.intensity = 0.5 + 2.1 * high;
+  window.sun.color.setHSL(0.09 + 0.02 * high, 0.62 - 0.3 * high, 0.52 + 0.12 * high);
+  // What the sky and the ground bounce back: a pale cold light over snow, a warm one over grass.
+  window.hemi.intensity = 0.4 + 0.55 * high;
+  window.hemi.color.setHSL(0.57, 0.16 + 0.3 * high, 0.72 - 0.1 * high);
+  window.hemi.groundColor.setHSL(0.18 + 0.4 * cold, 0.3 - 0.16 * cold, 0.28 + 0.22 * cold); // earth, then snow
   sky.uniforms.uSun.value.copy(dir);
-  const cold = Math.max(0, 1 - s);
-  sky.uniforms.uTop.value.setHSL(0.6, 0.62 - cold * 0.25, 0.30 - cold * 0.05);
-  sky.uniforms.uHorizon.value.setHSL(0.57, 0.30, 0.68 - cold * 0.10);
+  sky.uniforms.uTop.value.setHSL(0.6, 0.34 + 0.3 * high + 0.12 * warm, 0.34 - 0.08 * cold);
+  sky.uniforms.uHorizon.value.setHSL(0.57, 0.10 + 0.24 * high, 0.66 - 0.16 * cold);
+  sky.uniforms.uSunColor.value.copy(window.sun.color).multiplyScalar(1.6);
   scene.fog.color.copy(sky.uniforms.uHorizon.value);
   // The world is a torus drawn nine times; the haze has to close before its edge, and what
   // lies beyond the ground is the same haze, so there is no seam to see.
@@ -170,19 +184,57 @@ function light(season) {
 // ---- what the watcher reads ------------------------------------------------
 
 let hudAt = 0;
-function hud(a, season) {
+function hud(a, here, swing) {
   const now = performance.now();
   if (now - hudAt < 120) return;
   hudAt = now;
   $('step').textContent = Math.round(step).toLocaleString();
   $('pop').textContent = a ? (a.globals.pop ?? a.n).toLocaleString() : '—';
-  $('season').textContent = season.toFixed(2) + (season < 0.9 ? ' 冬' : season > 1.1 ? ' 夏' : '');
+  dial(swing);
   $('where').textContent = `${rig.target.x.toFixed(0)}, ${rig.target.z.toFixed(0)}`;
+  $('localsun').textContent = here.toFixed(2) + (here < 0.08 ? ' (日が出ない)' : '');
   $('fps').textContent = fps.toFixed(0);
   if (!source.live && !seeking) $('seek').value = step;
   $('speedv').textContent = (source.live ? '' : (speed < 0 ? '逆 ' : '')) + Math.abs(speed).toFixed(speed >= 10 ? 0 : 1) + ' 歩/秒';
   selection(a);
   minimap(a);
+}
+
+// The year as a dial: a ring of the four seasons with a hand on it, and the name under it.
+// The world with no season law (`weather` 0 or cloud) says so and shows no ring.
+const SEASONS = [['春', '#7fb84a'], ['夏', '#e0b520'], ['秋', '#c4701f'], ['冬', '#7fa8c8']];
+function dial(swing) {
+  const c = $('dial'), g = c.getContext('2d');
+  const R = c.width / 2;
+  g.clearRect(0, 0, c.width, c.width);
+  if (!world.season.on) {
+    $('seasonname').textContent = '季節なし';
+    $('year').textContent = '—';
+    return;
+  }
+  const year = world.year(step);
+  // Straight up on the dial is the spring equinox, and it turns clockwise. A season is the
+  // quarter of the year around its own extreme, so midsummer is the middle of summer, not
+  // the start of it: the quarters are set back an eighth of a year.
+  const seg = Math.floor(((year + 0.125) % 1) * 4) % 4;
+  g.lineWidth = R * 0.3;
+  for (let i = 0; i < 4; i++) {
+    g.beginPath();
+    g.arc(R, R, R * 0.74, (i / 4 - 0.125) * 6.283 - 1.5708, ((i + 1) / 4 - 0.125) * 6.283 - 1.5708);
+    g.strokeStyle = SEASONS[i][1] + (seg === i ? 'ff' : '44');
+    g.stroke();
+  }
+  const a = year * 6.283 - 1.5708;
+  g.beginPath();
+  g.moveTo(R, R);
+  g.lineTo(R + Math.cos(a) * R * 0.92, R + Math.sin(a) * R * 0.92);
+  g.strokeStyle = '#eef2ee';
+  g.lineWidth = R * 0.1;
+  g.lineCap = 'round';
+  g.stroke();
+  $('seasonname').textContent = SEASONS[seg][0] + (swing > 0.92 ? ' (盛夏)' : swing < -0.92 ? ' (真冬)' : '');
+  $('seasonname').style.color = SEASONS[seg][1];
+  $('year').textContent = (step / world.season.period).toFixed(2) + ' 年';
 }
 
 function selection(a) {
@@ -237,6 +289,7 @@ function minimap(a) {
     const img = og.createImageData(w, d);
     const v = world.layersAt(step) || {};
     const hgt = world.height, relief = world.relief || 1;
+    const swing = world.swing(step), amp = world.season.at;
     for (let i = 0; i < w * d; i++) {
       const pl = v.plant ? Math.min(1, v.plant[i] / 3) : 0;
       const wa = v.water ? Math.max(0, v.water[i] - world.wet) : 0;
@@ -244,6 +297,9 @@ function minimap(a) {
       let r = 150 * sh, gg = 135 * sh, b = 105 * sh;
       r = r * (1 - pl) + 45 * pl * sh * 1.6; gg = gg * (1 - pl) + 110 * pl * sh * 1.6; b = b * (1 - pl) + 40 * pl * sh * 1.6;
       if (wa > 0) { const t = Math.min(0.85, wa / 200 + 0.25); r = r * (1 - t) + 40 * t; gg = gg * (1 - t) + 100 * t; b = b * (1 - t) + 160 * t; }
+      // The snow line, so the whole map says how far the winter has come down the hills.
+      const snow = Math.min(1, Math.max(0, (-amp[i] * swing - 0.42) / 0.34)) * 0.9;
+      if (snow > 0) { r = r * (1 - snow) + 244 * snow; gg = gg * (1 - snow) + 247 * snow; b = b * (1 - snow) + 250 * snow; }
       img.data[i * 4] = r; img.data[i * 4 + 1] = gg; img.data[i * 4 + 2] = b; img.data[i * 4 + 3] = 255;
     }
     og.putImageData(img, 0, 0);
@@ -269,6 +325,7 @@ function bindUI(header) {
   }
   $('s-terrain').oninput = (e) => { UP.terrain = +e.target.value; ground.buildHeight(); drawnKey = -1; plantAt = null; };
   $('s-plant').oninput = (e) => { UP.plant = +e.target.value; plantAt = null; };
+  $('s-detail').oninput = (e) => { life.setDetail(+e.target.value); plantAt = null; };
   $('legend').innerHTML = header.blocks.slice(1).map((b) => `<span><i style="background:${KIND_COLORS[b]}"></i>${b}</span>`).join('');
   $('play').onclick = () => {
     playing = !playing;

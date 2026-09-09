@@ -22,6 +22,11 @@
   label.chk { display: flex; align-items: center; gap: 7px; padding: 1px 0; cursor: pointer; }
   label.rng { display: block; color: var(--dim); margin-top: 6px; }
   label.rng input { width: 100%; }
+  #seasonbox { display: flex; align-items: center; gap: 10px; margin: 7px 0 6px; padding: 6px 0;
+    border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  #seasonbox > div { flex: 1; min-width: 0; }
+  #dial { width: 48px; height: 48px; flex: none; }
+  #seasonname { font-weight: 600; font-size: 15px; letter-spacing: .04em; }
   #bar { left: 50%; transform: translateX(-50%); bottom: 12px; display: flex; align-items: center; gap: 10px;
     padding: 8px 12px; }
   #bar button { background: #ffffff14; color: var(--ink); border: 1px solid var(--line); border-radius: 7px;
@@ -50,7 +55,14 @@
 <div class="ui" id="hud">
   <b id="step">—</b>
   <div class="row"><span>bodies</span><span id="pop">—</span></div>
-  <div class="row"><span>season</span><span id="season">—</span></div>
+  <div id="seasonbox">
+    <canvas id="dial" width="96" height="96"></canvas>
+    <div>
+      <div id="seasonname">—</div>
+      <div class="row"><span>暦</span><span id="year">—</span></div>
+      <div class="row"><span>この場所の陽</span><span id="localsun">—</span></div>
+    </div>
+  </div>
   <div class="row"><span>at</span><span id="where">—</span></div>
   <div class="row"><span>fps</span><span id="fps">—</span></div>
 </div>
@@ -66,6 +78,7 @@
   <h4>地形</h4>
   <label class="rng">起伏 <input type="range" id="s-terrain" min="0.05" max="1" step="0.01" value="0.28"></label>
   <label class="rng">植物の高さ <input type="range" id="s-plant" min="0.1" max="1.5" step="0.05" value="0.5"></label>
+  <label class="rng">草木の精細 <input type="range" id="s-detail" min="0" max="2" step="1" value="1"></label>
   <label class="chk"><input type="checkbox" id="v-shadow" checked> 影</label>
   <hr>
   <h4>選んだ体</h4>

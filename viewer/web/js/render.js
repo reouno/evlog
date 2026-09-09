@@ -20,7 +20,8 @@ export function sample(field, w, d, x, z) {
 
 const C = new THREE.Color();
 const LAWN = new THREE.Color(0x7fa03a), STAND = new THREE.Color(0x24521f), VEG = new THREE.Color();
-const DEEP = new THREE.Color(0x123f5c), C2 = new THREE.Color();
+const LUSH = new THREE.Color(0x3f8a2c), STRAW = new THREE.Color(0xbda874); // high summer, deep winter
+const DEEP = new THREE.Color(0x123f5c), ICE = new THREE.Color(0xd4e6ee), C2 = new THREE.Color();
 function mix(out, hex, t) {
   C.setHex(hex);
   out.lerp(C, t);
@@ -148,8 +149,9 @@ export class Ground {
     const wcol = this.wgeo.attributes.color.array;
     const plant = v.plant, soil = v.soil, water = v.water, carrion = v.carrion, fruit = v.fruit;
     const wet = this.world.wet, depth = this.world.depth * UP.terrain;
-    const winter = Math.max(0, 1 - (opts.sun ?? 1));
-    const relief = this.world.relief || 1;
+    // The season, cell by cell: under `winter high` the ridge is in winter while the valley is
+    // not, so the ground says so place by place rather than by one number for the whole world.
+    const swing = opts.swing || 0, amp = this.world.season.at;
     const at = (i, j) => (((j % d) + d) % d) * w + (((i % w) + w) % w);
     const c = C2;
     for (let j = 0; j <= d; j++) {
@@ -159,22 +161,30 @@ export class Ground {
         const so = soil ? q(soil) : 0;
         const pl = plant ? q(plant) : 0;
         const wa = water ? q(water) : 0;
+        // How much of its sun this place loses now (cold) or gains (warm).
+        const am = 0.25 * (amp[v0] + amp[v1] + amp[v2] + amp[v3]);
+        const cold = Math.max(0, -am * swing), warm = Math.max(0, am * swing);
         // Bare ground: sand where the soil is thin, dark loam where it is deep.
         c.setHex(0xa8926a);
         mix(c, 0x4d3b26, Math.min(1, so / 8));
         // Wet ground darkens before it holds a pool.
         if (wa > 0) mix(c, 0x3a2f22, Math.min(0.5, wa / (wet * 2)));
-        // What grows on it: a lawn is thin and yellowish, a stand of plants is deep green.
+        // What grows on it: a lawn is thin and yellowish, a stand of plants is deep green,
+        // and the green leaves it for straw as its own winter comes on.
         if (pl > 0) {
           const g = Math.min(1, Math.sqrt(pl / 1.2));
-          c.lerp(VEG.copy(LAWN).lerp(STAND, Math.min(1, pl / 4)), g * 0.85);
+          VEG.copy(LAWN).lerp(STAND, Math.min(1, pl / 4));
+          if (warm > 0) VEG.lerp(LUSH, warm * 0.35);
+          if (cold > 0) VEG.lerp(STRAW, Math.min(0.92, cold * 1.15));
+          c.lerp(VEG, g * 0.85);
         }
         if (carrion) mix(c, 0x6d4436, Math.min(0.34, q(carrion) * 0.32));
         if (fruit) mix(c, 0xa8803f, Math.min(0.22, q(fruit) * 0.28));
-        // Winter whitens the high ground first (the season is by height in this world).
-        const hi = this.terrainY[j * (w + 1) + i] / (relief * UP.terrain);
-        const snow = Math.max(0, Math.min(1, (winter * 2.2 - 0.35) * 3 * Math.max(0, hi - 0.35)));
-        if (snow > 0) mix(c, 0xf2f4f6, snow * 0.9);
+        // The frost, then the snow: the ground pales as its sun goes, and goes white where the
+        // sun has nearly gone out. Half a world can be under snow while the other half is green.
+        if (cold > 0.12) mix(c, 0xb9bdb8, Math.min(0.4, (cold - 0.12) * 0.9));
+        const snow = Math.min(1, Math.max(0, (cold - 0.42) / 0.34));
+        if (snow > 0) mix(c, 0xe7edf3, snow * 0.84);
         const vi = j * (w + 1) + i;
         col[vi * 3] = c.r; col[vi * 3 + 1] = c.g; col[vi * 3 + 2] = c.b;
         // Standing water: what came down from above, above what the sky gives a cell alone.
@@ -183,8 +193,9 @@ export class Ground {
         wpos[vi * 3 + 1] = this.terrainY[vi] + Math.max(dep, 0.02);
         const alpha = Math.min(0.9, dep / (0.35 + dep) + (pool > 0 ? 0.25 : 0));
         c.setHex(0x4e9ab0).lerp(DEEP, Math.min(1, dep / 2.5));
+        if (snow > 0) c.lerp(ICE, snow * 0.8); // a pool under the snow line reads as ice
         wcol[vi * 4] = c.r; wcol[vi * 4 + 1] = c.g; wcol[vi * 4 + 2] = c.b;
-        wcol[vi * 4 + 3] = pool > 0 ? alpha : 0;
+        wcol[vi * 4 + 3] = pool > 0 ? Math.max(alpha, snow * 0.75) : 0;
       }
     }
     this.geo.attributes.color.needsUpdate = true;

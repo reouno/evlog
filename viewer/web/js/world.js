@@ -36,6 +36,56 @@ export class World {
     this.relief = this.params.relief || 1;
     this.wet = (this.params.water_rain || 1) / (this.params.water_evap || 1); // a cell's own water
     this.depth = this.params.depth || 0; // height per unit of water
+    this.season = this.seasonOf();
+  }
+
+  /** The season, read off the law itself rather than off the number in a frame.
+   *
+   * The world's sun is RES_GROWTH times (1 + a(cell) sin(2 pi step / period)): `period` and the
+   * amplitude `a` are in the header's params, and under `winter high` (e032) the amplitude is the
+   * cell's own, by its height. So the browser knows the year from the step alone, and knows which
+   * places are in winter while others are not - which is the whole point of that law. */
+  seasonOf() {
+    const p = this.params;
+    const amp = p.amplitude ?? 1;
+    const on = p.weather === 'season' && amp > 0;
+    const at = new Float32Array(this.cells);
+    const byHeight = p.winter === 'high';
+    for (let c = 0; c < this.cells; c++) {
+      at[c] = on ? (byHeight ? Math.min(1, (amp * this.height[c]) / this.relief) : amp) : 0;
+    }
+    let top = 0;
+    for (let c = 0; c < this.cells; c++) top = Math.max(top, at[c]);
+    return { on, period: p.season || 20000, amp, byHeight, at, top };
+  }
+
+  /** Where in the year a step falls, as the sine of it: +1 midsummer, -1 midwinter, 0 between. */
+  swing(step) {
+    return this.season.on ? Math.sin((2 * Math.PI * step) / this.season.period) : 0;
+  }
+
+  /** The year as a turn of the dial: 0 spring, 0.25 summer, 0.5 autumn, 0.75 winter. */
+  year(step) {
+    return ((step / this.season.period) % 1 + 1) % 1;
+  }
+
+  /** The factor on a cell's own sun: 0 (the sun is out there) to 1 + a. */
+  cellSun(c, swing) {
+    return Math.max(0, 1 + this.season.at[c] * swing);
+  }
+
+  /** The factor over the ground around a point, not just under it: the light and the sky belong
+   * to a view, and a view takes in a stretch of hillside, not the one cell the eye sits on. */
+  sunAt(x, z, swing, r = 24) {
+    let sum = 0, n = 0;
+    for (let dz = -r; dz <= r; dz += 6) {
+      const j = ((Math.round(z + dz) % this.d) + this.d) % this.d;
+      for (let dx = -r; dx <= r; dx += 6) {
+        sum += this.season.at[j * this.w + (((Math.round(x + dx) % this.w) + this.w) % this.w)];
+        n++;
+      }
+    }
+    return Math.max(0, 1 + (sum / n) * swing);
   }
 
   addBody(p) {
