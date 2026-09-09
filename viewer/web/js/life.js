@@ -123,6 +123,16 @@ function rnd(c, k) {
   return hash(c + k * 104729);
 }
 
+/** Ease a fade so a body holds its size for most of the interval and moves in the middle of it. */
+function ease(f) {
+  return f * f * (3 - 2 * f);
+}
+
+/** The pool a kind of block is drawn from (a kind the browser does not know goes in with the gut). */
+function pools_of(life, k) {
+  return life.blockPools[k] || life.blockPools[4];
+}
+
 export class Life {
   constructor(scene, world) {
     this.world = world;
@@ -365,7 +375,14 @@ export class Life {
     }
   }
 
-  /** Rebuild the bodies from two frames and where between them we are. */
+  /** Rebuild the bodies from two frames and where between them we are.
+   *
+   * The world is only known every `stride` steps, and between two frames of a recording about a
+   * quarter of the bodies are born or die (12% die and 15% are born in 50 steps of e041). Drawn
+   * as they come, that is a quarter of the world blinking in and out at every frame - the one
+   * thing the eye cannot ignore, and by far the largest change on the screen at a frame boundary.
+   * So a body that dies inside the interval goes down to nothing over it, and one that is born
+   * inside it comes up from nothing, and neither appears or vanishes whole. */
   bodies(world, a, b, t, at, ground, picked) {
     const pools = this.blockPools;
     pools.forEach((p) => p && p.reset());
@@ -378,70 +395,87 @@ export class Life {
       this.mark.done();
       return;
     }
-    const sub = world.sub, w = this.w, d = this.d;
-    const cell = 1 / sub;
+    const cell = 1 / world.sub, w = this.w, d = this.d;
     for (let i = 0; i < a.n; i++) {
       let x = a.a.x[i] * cell, z = a.a.y[i] * cell;
+      let fade = 1;
       if (b) {
         const j = b.index.get(a.a.id[i]);
         if (j !== undefined) {
           x += Life.wrap(b.a.x[j] * cell - x, w) * t;
           z += Life.wrap(b.a.y[j] * cell - z, d) * t;
-        }
-      }
-      // Draw it near the eye's own copy of the world.
-      const px = at.x + Life.wrap(x - at.x, w), pz = at.z + Life.wrap(z - at.z, d);
-      const dx = px - at.x, dz = pz - at.z;
-      const r2 = dx * dx + dz * dz;
-      if (r2 > this.mid * this.mid) continue;
-      const shape = world.blocks(a.a.body[i], a.a.facing[i]);
-      if (!shape) continue;
-      const y = ground.heightAt(x + 0.5, z + 0.5);
-      const id = a.a.id[i];
-      const lit = picked === id;
-      if (lit) {
-        const w = shape.side * cell;
-        const bob = 0.09 * Math.sin(performance.now() / 320);
-        this.mark.put(px + w / 2, y + 0.55 + w * 0.22 + bob, pz + w / 2, 1, 1, 1, WARM);
-      }
-      if (r2 > this.bodyNear * this.bodyNear) {
-        // Too far to make out its blocks: one low body, the colour of what it eats.
-        const s = shape.side * cell;
-        this.far.put(px + s / 2, y, pz + s / 2, s * 0.45, 0.1, s * 0.45, lit ? FARLIT : FAR[a.a.diet[i]]);
-        continue;
-      }
-      if (this.drawnN < this.drawnId.length) {
-        this.drawnId[this.drawnN] = id;
-        this.drawnX[this.drawnN] = px;
-        this.drawnZ[this.drawnN] = pz;
-        this.drawnN++;
-      }
-      // The world is flat, so a body would be a pallet if every block were the same height.
-      // It is given a back: the blocks stand tallest in the middle and fall away to the rim,
-      // and a bigger body stands higher.
-      const half = (shape.side - 1) / 2, span = half + 0.6;
-      const grow = 0.62 + 0.05 * shape.side;
-      for (const bl of shape.blocks) {
-        const bx = px + (bl.c + 0.5) * cell, bz = pz + (bl.r + 0.5) * cell;
-        const k = bl.kind;
-        const pool = pools[k] || pools[4];
-        const dr = (bl.r - half) / span, dc = (bl.c - half) / span;
-        const dome = 0.42 + 0.78 * Math.sqrt(Math.max(0, 1 - dr * dr - dc * dc));
-        const base = k === 1 ? 0.42 : k === 2 ? 0.36 : k === 3 ? 0.3 : 0.3;
-        const hgt = base * dome * grow;
-        let col = KIND[k] || KIND[4];
-        if (lit) col = HI.copy(col).lerp(WARM, 0.55); // marked, but still readable
-        if (k === 3) {
-          // An eye sits on the body, round and dark.
-          this.blockPools[4].put(bx, y, bz, cell, hgt * 0.8, cell, lit ? SOCKETLIT : SOCKET);
-          pool.put(bx, y + hgt * 0.8 + cell * 0.2, bz, cell * 0.44, cell * 0.44, cell * 0.44, col);
         } else {
-          pool.put(bx, y, bz, cell * 0.98, hgt, cell * 0.98, col);
+          fade = ease(1 - t); // it dies inside this interval
         }
+      }
+      this.body(world, a, i, x, z, fade, cell, at, ground, picked);
+    }
+    if (b && t > 0) {
+      for (let j = 0; j < b.n; j++) {
+        if (a.index.has(b.a.id[j])) continue; // it is born inside this interval
+        this.body(world, b, j, b.a.x[j] * cell, b.a.y[j] * cell, ease(t), cell, at, ground, picked);
       }
     }
     pools.forEach((p) => p && p.done());
     this.far.done();
     this.mark.done();
+  }
+
+  /** One body of frame `fr`, at `fade` of its size about its own middle: 1 while it is alive
+   * across the whole interval, going to 0 as it dies and coming up from 0 as it is born. */
+  body(world, fr, i, x, z, fade, cell, at, ground, picked) {
+    const px = at.x + Life.wrap(x - at.x, this.w), pz = at.z + Life.wrap(z - at.z, this.d);
+    const dx = px - at.x, dz = pz - at.z;
+    const r2 = dx * dx + dz * dz;
+    if (r2 > this.mid * this.mid) return;
+    const shape = world.blocks(fr.a.body[i], fr.a.facing[i]);
+    if (!shape) return;
+    const y = ground.heightAt(x + 0.5, z + 0.5);
+    const lit = picked === fr.a.id[i];
+    const side = shape.side * cell;
+    const mx = px + side / 2, mz = pz + side / 2; // the body's own middle: it shrinks towards this
+    if (lit) {
+      const bob = 0.09 * Math.sin(performance.now() / 320);
+      this.mark.put(mx, y + 0.55 + side * 0.22 + bob, mz, 1, 1, 1, WARM);
+    }
+    if (r2 > this.bodyNear * this.bodyNear) {
+      // Too far to make out its blocks: one low body, the colour of what it eats. It is seen
+      // from above, so it goes out by its footprint and not by its height.
+      const s = side * 0.45 * fade;
+      this.far.put(mx, y, mz, s, 0.1, s, lit ? FARLIT : FAR[fr.a.diet[i]]);
+      return;
+    }
+    if (fade > 0.5 && this.drawnN < this.drawnId.length) {
+      this.drawnId[this.drawnN] = fr.a.id[i];
+      this.drawnX[this.drawnN] = px;
+      this.drawnZ[this.drawnN] = pz;
+      this.drawnN++;
+    }
+    // The world is flat, so a body would be a pallet if every block were the same height.
+    // It is given a back: the blocks stand tallest in the middle and fall away to the rim,
+    // and a bigger body stands higher.
+    const half = (shape.side - 1) / 2, span = half + 0.6;
+    const grow = 0.62 + 0.05 * shape.side;
+    const wide = cell * 0.98 * fade;
+    for (const bl of shape.blocks) {
+      const bx = mx + (px + (bl.c + 0.5) * cell - mx) * fade;
+      const bz = mz + (pz + (bl.r + 0.5) * cell - mz) * fade;
+      const k = bl.kind;
+      const pool = pools_of(this, k);
+      const dr = (bl.r - half) / span, dc = (bl.c - half) / span;
+      const dome = 0.42 + 0.78 * Math.sqrt(Math.max(0, 1 - dr * dr - dc * dc));
+      const base = k === 1 ? 0.42 : k === 2 ? 0.36 : k === 3 ? 0.3 : 0.3;
+      const hgt = base * dome * grow * fade;
+      let col = KIND[k] || KIND[4];
+      if (lit) col = HI.copy(col).lerp(WARM, 0.55); // marked, but still readable
+      if (k === 3) {
+        // An eye sits on the body, round and dark.
+        const eye = cell * 0.44 * fade;
+        this.blockPools[4].put(bx, y, bz, wide, hgt * 0.8, wide, lit ? SOCKETLIT : SOCKET);
+        pool.put(bx, y + hgt * 0.8 + cell * 0.2 * fade, bz, eye, eye, eye, col);
+      } else {
+        pool.put(bx, y, bz, wide, hgt, wide, col);
+      }
+    }
   }
 }

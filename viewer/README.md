@@ -87,6 +87,23 @@ the sun rides low and pale in winter and high and warm in summer, over the groun
 looking at rather than the one cell it sits on. The HUD has a dial of the year with the season
 named on it. A world with no season law says so and none of this happens.
 
+### Between two frames
+
+A recording knows the world every `stride` steps and the browser draws the steps in between, so
+what happens inside an interval has to be shown rather than skipped. Bodies move by interpolation
+between the two frames. Births and deaths cannot be interpolated - a body is there or it is not -
+so a body that dies inside the interval goes down to nothing over it and one that is born inside
+it comes up from nothing.
+
+That is not a decoration. In 50 steps of e041, 12% of the bodies die and 15% are born; drawn as
+they come, a quarter of the world blinks in and out at every frame of the recording, and that is
+by far the largest change on the screen. Measured on what the drawing code actually draws, the
+body area that changes in a step went from 2,238 at the frame boundary and 0 everywhere else, to
+a peak of 44 spread over the interval.
+
+What is still cut rather than carried: a body's facing and its shape. In those same 50 steps 10%
+of the bodies turn and 6% change shape, and they do it in one frame.
+
 ### Cost
 
 Everything that stands is instanced and only what is near the eye is drawn in full. The `草木の
