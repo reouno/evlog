@@ -28,6 +28,7 @@ When unsure, ask in this order:
 3. Does it add compute cost?
 4. Is it a rule about a trait, or about a material or the world? Only the second kind is allowed.
 5. Does it let more kinds of body prosper at once, or make more kinds of place? A law that improves the world the same everywhere is eaten by more of the same body (e038).
+6. Does the world already meet the law's conditions? A law that needs a behavior pays only where that behavior pays, so name the conditions together ("Y pays when A and B") and test the minimal combination, not one law at a time (e040). And before writing a law about a flow, check which flow the bodies actually live on: e041 throttled the growth of the cells while 91% of what the bodies ate fell from the crowns above them.
 
 ## Where new laws come from
 

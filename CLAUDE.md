@@ -42,6 +42,9 @@ Every experiment must state, before starting:
 - **Hypothesis**: what we expect
 - **Method**: what we verify and how (compare, measure, check feasibility, ...)
 
+A law that needs a behavior is tested in a world where that behavior already pays: name the two
+conditions together ("Y pays when A and B") and run the minimal combination, not a factorial.
+
 And must end with:
 
 - **Result**: what happened, with numbers where possible
