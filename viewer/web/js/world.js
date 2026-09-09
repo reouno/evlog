@@ -159,13 +159,26 @@ export class World {
     return upperBound(this.steps, step) > 0;
   }
 
-  /** The cell layers at `step`, as physical values: {plant, water, soil, ...}. */
-  layersAt(step) {
+  /** The cell layers at `step`, as physical values: {plant, water, soil, ...}.
+   *
+   * The layers are only recorded every `layer_stride` frames, because they change slowly - but
+   * slowly is not never. A tree grows a cell in a few hundred steps, so taking the nearest frame
+   * makes everything that grows, and the colour of the whole ground with it, jump at once every
+   * time one arrives: on this recording the standing plant matter sat at 7,857 for 200 steps and
+   * then moved 341 in a single frame. So the two frames around `step` are blended.
+   *
+   * `grain` is how finely the blend is cut. Colouring the ground and rebuilding the plants is the
+   * cost, and they are only done when these values change, so this is how many times that happens
+   * between two recorded frames. */
+  layersAt(step, grain = 20) {
     const i = upperBound(this.keySteps, step) - 1;
     if (i < 0) return null;
     const at = this.keySteps[i];
-    if (this.decoded.step === at) return this.decoded.v;
+    const next = i + 1 < this.keySteps.length ? this.keySteps[i + 1] : at;
     const packed = this.keys.get(at);
+    const ahead = next > at ? this.keys.get(next) : null;
+    const u = ahead ? Math.round(((step - at) / (next - at)) * grain) / grain : 0;
+    if (this.decoded.step === at + u) return this.decoded.v;
     const v = {};
     // A layer arrives as one byte a cell, so the whole unpacking is a table of 256 values: the
     // scale is worked out once per layer instead of once per cell (this runs on every keyframe).
@@ -174,10 +187,12 @@ export class World {
       if (!src) return;
       const out = this.unpacked[k] || (this.unpacked[k] = new Float32Array(this.cells));
       const lut = this.luts[k] || (this.luts[k] = table(spec));
-      for (let c = 0; c < this.cells; c++) out[c] = lut[src[c]];
+      const to = u > 0 && ahead ? ahead[k] : null;
+      if (to) for (let c = 0; c < this.cells; c++) out[c] = lut[src[c]] + (lut[to[c]] - lut[src[c]]) * u;
+      else for (let c = 0; c < this.cells; c++) out[c] = lut[src[c]];
       v[spec.name] = out;
     });
-    this.decoded = { step: at, v };
+    this.decoded = { step: at + u, v };
     return v;
   }
 

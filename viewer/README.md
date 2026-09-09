@@ -100,7 +100,14 @@ eye reads as a stutter. Measured as the change in the drawn bodies' velocity, a 
 exactly 0 inside an interval and 37 at the boundary; a Catmull-Rom through the frame before and
 the frame after as well gives about 2 either side, and the boundary is no longer a place.
 
-Births and deaths are the ends of that: a body that dies inside the interval carries on the way
+**What grows is blended between the frames that carry it.** The cell layers are recorded every
+`layer_stride` frames because they change slowly, but slowly is not never: taking the nearest
+frame made every tree in the world change height at the same instant. The standing plant matter
+sat at 7,857 for 200 steps and then moved 341 in one frame; blended, the largest single change is
+24. The blend is cut into notches (`grain`) and the browser moves on a notch at most every 55 ms,
+so running the world fast does not mean colouring the ground on every frame.
+
+Births and deaths are the ends of the body's curve: a body that dies inside the interval carries on the way
 it was going and shrinks to nothing over the interval, and one that is born inside it comes up
 from nothing along the way it will be going. Standing them still at the near frame is a jerk of
 their whole speed, and popping them in and out whole is a quarter of the world blinking (in 50

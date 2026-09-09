@@ -13,7 +13,7 @@ const DIET = ['植物', 'まぜ', '肉', 'まだ'];
 let world, ground, sky, life, rig, renderer, scene, camera, source;
 let step = 0, latest = 0, playing = true, speed = 20, picked = null;
 let shapeOf = -1, drawnKey = -1, drawnSwing = 99, plantAt = null, last = performance.now(), fps = 60, miniBase = null, seeking = false;
-let groundDue = true, plantsDue = true;
+let groundDue = true, plantsDue = true, layersStep = 0, layersDrawnAt = 0;
 
 async function boot() {
   let state = { live: false };
@@ -109,7 +109,14 @@ function loop(now) {
   // is not, so the light and the sky are the eye's own cell's, not one number for the world.
   const swing = world.swing(step);
   const here = world.season.on ? world.sunAt(rig.target.x, rig.target.z, swing) : a ? a.globals.sun ?? 1 : 1;
-  const v = world.layersAt(step);
+  // The layers are blended between the two frames that carry them, so what grows grows rather
+  // than jumping; the blend is only allowed to move on so often, so that running the world fast
+  // does not mean rebuilding the ground and the plants on every frame.
+  if (now - layersDrawnAt > 55) {
+    layersDrawnAt = now;
+    layersStep = step;
+  }
+  const v = world.layersAt(layersStep);
   // Colouring the ground and rebuilding the plants are each a pass over the world, so they are
   // never done in the same frame: whichever is due goes now and the other goes next. Neither is
   // due at all while the layers, the season and the eye hold still.
@@ -303,7 +310,7 @@ function minimap(a, b, t, before, after) {
     off.width = w; off.height = d;
     const og = off.getContext('2d');
     const img = og.createImageData(w, d);
-    const v = world.layersAt(step) || {};
+    const v = world.layersAt(layersStep) || {};
     const hgt = world.height, relief = world.relief || 1;
     const swing = world.swing(step), amp = world.season.at;
     for (let i = 0; i < w * d; i++) {
