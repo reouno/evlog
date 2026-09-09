@@ -6,6 +6,16 @@
 
 const TYPES = { u8: 1, u16: 2, u32: 4, f32: 4 };
 
+// The wood of a cell (`World.woodAt`): a tree with a leaf on it keeps its height, and a bare one
+// rots away with this half-life (steps). WOOD_BARE (and WOOD_RAMP over it) is how little of the
+// wood can still be living matter and count as a tree with a leaf on it; WOOD_BACK and WOOD_KEYS
+// are how far back the memory is run when the watcher arrives somewhere new.
+const WOOD_ROT = 100;
+const WOOD_BARE = 0.12;
+const WOOD_RAMP = 0.06;
+const WOOD_BACK = 4000;
+const WOOD_KEYS = 40;
+
 export class World {
   constructor(header) {
     this.h = header;
@@ -25,6 +35,7 @@ export class World {
     this.keys = new Map();   // step -> [Uint8Array per layer]  (frames that carry the layers)
     this.keySteps = [];
     this.decoded = { step: -1, v: {} };
+    this.peak = { at: -1, cur: null, plant: null, was: null }; // the wood at the keyframe the watcher is in
     this.luts = [];     // byte -> value, one table per layer
     this.unpacked = []; // the values of the layers being shown, reused rather than reallocated
     // The agent record, read off the header.
@@ -192,8 +203,61 @@ export class World {
       else for (let c = 0; c < this.cells; c++) out[c] = lut[src[c]];
       v[spec.name] = out;
     });
+    if (v.plant) v.wood = this.woodAt(i, u * (next - at), v.plant);
     this.decoded = { step: at + u, v };
     return v;
+  }
+
+  /** The wood on a cell: not what stands there now, but what stood there while anything did.
+   *
+   * The world holds one number for a cell - the matter standing on it - and a body eats it: on
+   * e041 half of the cells drawn as a tree hold less at the next keyframe than at this one.
+   * Drawn as height, that is a tree sinking back into the ground, which no tree does. So the
+   * wood is held while any of it is still alive, and only rots (a half-life of WOOD_ROT steps)
+   * once none of it is: a grazed column loses its leaves, and then a dead pole stands and goes.
+   *
+   * The rule runs on the blended plant and not only on the keyframes, because a whole tree can
+   * be eaten inside one interval: blending between the wood at two keyframes made a green tree
+   * slide into the ground over the 200 steps between them.
+   *
+   * The memory is run from the recording itself rather than carried along, so seeking to a step
+   * gives what playing to it does (measured: the same to 0.01 units of matter). */
+  woodAt(i, du, plant) {
+    // Keyed by the step and not by the index: `trim` drops old keyframes, and every index moves.
+    if (this.peak.at !== this.keySteps[i]) this.remember(i);
+    const out = this.woodv || (this.woodv = new Float32Array(this.cells));
+    out.set(this.peak.cur);
+    age(out, this.peak.plant, plant, du, this.cells);
+    return out;
+  }
+
+  /** The wood at the keyframe `i`: one step on from where the memory stands, or, if the watcher
+   * is somewhere else, run over the keyframes before it. Once a keyframe, not once a frame. */
+  remember(i) {
+    const k = this.layerOf.plant;
+    const lut = this.luts[k] || (this.luts[k] = table(this.h.layers[k]));
+    const cur = this.peak.cur || (this.peak.cur = new Float32Array(this.cells));
+    // The plant at that keyframe, which is where the rot inside the interval after it counts
+    // from, and a spare to read the next one into.
+    let now = this.peak.plant || (this.peak.plant = new Float32Array(this.cells));
+    let spare = this.peak.was || (this.peak.was = new Float32Array(this.cells));
+    const at = this.keySteps[i];
+    const on = i > 0 && this.peak.at === this.keySteps[i - 1]; // playing on, which is most of it
+    let first = i;
+    if (!on) while (first > 0 && i - first < WOOD_KEYS && at - this.keySteps[first - 1] < WOOD_BACK) first--;
+    for (let j = on ? i : first; j <= i; j++) {
+      const src = (this.keys.get(this.keySteps[j]) || [])[k];
+      if (!src) continue;
+      for (let c = 0; c < this.cells; c++) spare[c] = lut[src[c]];
+      if (!on && j === first) cur.set(spare);
+      else age(cur, now, spare, this.keySteps[j] - this.keySteps[j - 1], this.cells);
+      const swap = now;
+      now = spare;
+      spare = swap; // what was just read is the keyframe the next step counts from
+    }
+    this.peak.plant = now;
+    this.peak.was = spare;
+    this.peak.at = at;
   }
 
   /** Forget what is far from `step`, so a long watch does not fill the browser. */
@@ -237,6 +301,29 @@ export class World {
       out.push({ r: r2, c: c2, kind: k });
     }
     return { side: s, blocks: out };
+  }
+}
+
+/** The wood after `du` steps in which the matter standing on the cell went from `was` to `now`:
+ * what stands there now, or the wood that was there, rotted by however much of those steps it
+ * spent bare (WOOD_BARE of it, or less, being living matter).
+ *
+ * It is the time spent bare and not the state at the end of it, because the tree can be eaten
+ * inside one interval: charging the whole interval's rot at the moment the last leaf goes drops
+ * a tree by three quarters in one frame. */
+function age(wood, was, now, du, cells) {
+  for (let c = 0; c < cells; c++) {
+    const w = wood[c], p = now[c];
+    if (p >= w) {
+      // Growing, or nothing there: the wood is what stands. Most of a world is this.
+      wood[c] = p;
+      continue;
+    }
+    const a = Math.min(1, Math.max(0, (was[c] / w - WOOD_BARE) / WOOD_RAMP));
+    const b = Math.min(1, Math.max(0, (p / w - WOOD_BARE) / WOOD_RAMP));
+    const bare = du * (1 - 0.5 * (a + b));
+    const left = bare > 0 ? w * Math.pow(0.5, bare / WOOD_ROT) : w;
+    wood[c] = p > left ? p : left;
   }
 }
 

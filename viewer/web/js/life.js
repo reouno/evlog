@@ -13,6 +13,7 @@ const LEAF0 = new THREE.Color(0x2f6d33), LEAF1 = new THREE.Color(0x1c4a24);
 const LUSH = new THREE.Color(0x3f9a2e), AMBER = new THREE.Color(0xb5761f), SNOW = new THREE.Color(0xeff4f7);
 const EVER = new THREE.Color(0x1e4230); // what a conifer goes to in the cold: darker, not amber
 const BARK0 = new THREE.Color(0x6a4a30), BARK1 = new THREE.Color(0x46321f);
+const DEADW = new THREE.Color(0x8d8071); // wood with nothing living in it: grey, dry, going
 const DRY = new THREE.Color(0xe8e0b4), FRESH = new THREE.Color(0xa8d089), HAY = new THREE.Color(0xd2bd7e);
 const FR0 = new THREE.Color(0xc06a2a), FR1 = new THREE.Color(0xa82f22);
 const CAR0 = new THREE.Color(0x6d3a2c), CAR1 = new THREE.Color(0x4e2b23);
@@ -287,7 +288,7 @@ export class Life {
    * `step` where in the year the world is (every cell has its own season: see `World.cellSun`). */
   plants(v, at, ground, step) {
     const { w, d } = this;
-    const plant = v.plant, fruit = v.fruit, carrion = v.carrion;
+    const plant = v.plant, wood = v.wood || v.plant, fruit = v.fruit, carrion = v.carrion;
     const swing = this.world.swing(step), amp = this.world.season.at;
     this.standing.forEach((p) => p.reset());
     const cx = Math.round(at.x), cz = Math.round(at.z);
@@ -300,13 +301,14 @@ export class Life {
         if (r2 > mid2) continue;
         const c = row + ((((cx + dx) % w) + w) % w);
         const p = plant ? plant[c] : 0;
-        if (p <= 0.002 && (!fruit || fruit[c] <= 0) && (!carrion || carrion[c] <= 0)) continue;
+        const wd = wood ? wood[c] : p;
+        if (wd <= 0.002 && (!fruit || fruit[c] <= 0) && (!carrion || carrion[c] <= 0)) continue;
         const px = cx + dx + 0.5, pz = cz + dz + 0.5; // drawn around the eye, not around the origin
         const y = centreY[c];
         const near = r2 <= near2;
         // This cell's own season: how much of its sun it is losing now, or gaining.
         const cold = Math.max(0, -amp[c] * swing), warm = Math.max(0, amp[c] * swing);
-        if (p >= this.treeMin) this.tree(c, px, pz, y, p, cold, warm, near);
+        if (wd >= this.treeMin) this.tree(c, px, pz, y, p, wd, cold, warm, near);
         else if (p > 0.002 && near) this.tuft(c, px, pz, y, p, cold, warm);
         if (near && fruit && fruit[c] > 0.001) this.fallen(c, px, pz, y, fruit[c]);
         if (near && carrion && carrion[c] > 0.002) this.dead(c, px, pz, y, carrion[c]);
@@ -325,16 +327,25 @@ export class Life {
    * Everything else is the cell's own number, so a tree is the same tree every time it is drawn
    * and no two neighbours are alike: which of three kinds it is, where in its cell it stands, how
    * it leans, how dark its bark and its leaves are. The leaves come and go with that cell's
-   * season, and a broadleaf stands bare in a winter a conifer sits through. */
-  tree(c, px, pz, y, p, cold, warm, near) {
+   * season, and a broadleaf stands bare in a winter a conifer sits through.
+   *
+   * `wd` is the wood (`World.woodAt`) and `p` the matter standing there now. The wood is the
+   * height, and what is left of it - p/wd - is how alive the tree is: a grazed column loses its
+   * leaves, then its limbs, then leans and rots away as the wood forgets it. Nothing shrinks. */
+  tree(c, px, pz, y, p, wd, cold, warm, near) {
     const r0 = hash(c), r1 = rnd(c, 1), r2 = rnd(c, 2), r3 = rnd(c, 3), r4 = rnd(c, 4);
     const kind = r0 < 0.52 ? 0 : r0 < 0.76 ? 1 : 2; // broadleaf, conifer, spreading
-    const hgt = Math.min(p, 40) * UP.plant;
+    const hgt = Math.min(wd, 40) * UP.plant;
+    // How much of the wood is still living matter: 1 while the column grows, 0 once it has all
+    // been eaten. The leaves go with the first half of it, the wood only after that.
+    const live = wd > 0.001 ? Math.min(1, p / wd) : 0;
+    const rot = Math.min(1, Math.max(0, (0.22 - live) / 0.22)); // dead wood, on its way down
     const x = px + (r1 - 0.5) * 0.68, z = pz + (r2 - 0.5) * 0.68; // anywhere in its cell
     const bark = BARK.copy(BARK0).lerp(BARK1, r3);
+    if (rot > 0) bark.lerp(DEADW, Math.min(1, rot * 1.3));
     const snow = Math.min(1, Math.max(0, (cold - 0.45) / 0.35));
     const shed = kind === 1 ? (cold - 0.7) / 0.9 : (cold - 0.3) / 0.42;
-    const leaf = 1 - Math.min(1, Math.max(0, shed));
+    const leaf = (1 - Math.min(1, Math.max(0, shed))) * Math.min(1, Math.max(0, (live - 0.12) / 0.45));
     LEAF.copy(LEAF0).lerp(LEAF1, r4);
     if (warm > 0) LEAF.lerp(LUSH, warm * 0.4);
     // The turn of the leaves, and then the loss of them. A conifer does neither: it only darkens
@@ -349,7 +360,10 @@ export class Life {
     const trunkH = hgt - crownH;
     const cr = Math.min(0.4 + 0.045 * hgt, 0.6) * (wide ? 1.5 : 1) * (0.8 + r4 * 0.4) * (0.4 + 0.6 * leaf);
     const most = near ? (this.detail === 0 ? 2 : this.detail === 1 ? 6 : 9) : this.detail === 0 ? 2 : 3;
-    if (kind === 1) {
+    // Bare first, then the limbs go, then it leans over and the wood forgets it.
+    const tilt = Math.max(0, rot - 0.5) * 1.7;
+    const thin = 1 - rot * 0.4;
+    if (kind === 1 && leaf >= 0.14) {
       // A conifer: one stem the whole way up, with spires stacked on it, widest at the bottom.
       this.trunk.put(x, y, z, tw * 0.8, hgt, tw * 0.8, bark);
       const n = Math.max(2, Math.min(most, Math.round(crownH / (cr * 1.6))));
@@ -363,15 +377,17 @@ export class Life {
       return;
     }
     // A broadleaf carries its leaves high on one trunk; a spreading one is short, thick and wide.
+    // A bare conifer comes through here too: a pole with a few limbs is what it is now.
     const lean = (r3 - 0.5) * (wide ? 0.1 : 0.18);
-    this.trunk.put(x, y, z, tw, trunkH + crownH * 0.85, tw, bark);
-    // The limbs hold the crown up, and are what is left to see when the leaves have gone.
-    const limbs = this.detail > 0 && (near || leaf < 0.5) ? (wide ? 3 : 2) : 0;
+    this.bole(x, y, z, tw * thin, kind === 1 ? hgt : trunkH + crownH * 0.85, tilt, r1 * 6.283, bark);
+    // The limbs hold the crown up, are what is left to see when the leaves have gone, and drop
+    // off as the wood rots.
+    const limbs = Math.round((this.detail > 0 && (near || leaf < 0.5) ? (wide ? 3 : 2) : 0) * (1 - Math.max(0, rot - 0.45) * 1.8));
     for (let i = 0; i < limbs; i++) {
-      const a = (r4 + i / limbs) * 6.283, tilt = wide ? 0.8 : 0.45;
+      const a = (r4 + i / limbs) * 6.283, bend = wide ? 0.8 : 0.45;
       const len = crownH * (wide ? 0.7 : 0.55) * (0.8 + rnd(c, 5 + i) * 0.4);
       M.makeRotationY(a);
-      M.multiply(TURN.makeRotationX(tilt));
+      M.multiply(TURN.makeRotationX(bend + tilt));
       M.scale(V.set(tw * 0.62, len, tw * 0.62));
       M.setPosition(x, y + trunkH + crownH * 0.2, z);
       this.limb.putM(M, bark);
@@ -394,6 +410,19 @@ export class Life {
       M.setPosition(x + lean * f + Math.cos(a) * rad, y + trunkH + crownH * f, z + lean * f + Math.sin(a) * rad);
       this.crown.putM(M, i % 2 ? dark : green);
     }
+  }
+
+  /** A trunk. A living one stands up; a dead one leans over, and is gone when the wood is. */
+  bole(x, y, z, r, h, tilt, turn, col) {
+    if (tilt < 0.02) {
+      this.trunk.put(x, y, z, r, h, r, col);
+      return;
+    }
+    M.makeRotationY(turn);
+    M.multiply(TURN.makeRotationX(tilt));
+    M.scale(V.set(r, h, r));
+    M.setPosition(x, y, z);
+    this.trunk.putM(M, col);
   }
 
   /** The lawn on a cell: a few tufts, each somewhere of its own in the cell and turned its own

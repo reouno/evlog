@@ -159,4 +159,22 @@ time it is drawn and no two neighbours are alike. Its height is the matter stand
 stands on that one cell, so a tall column is drawn tall and narrow (the leaves stacked up the
 trunk) rather than as a wide crown that would cover its neighbours and lie about the world. The
 lawn, the fallen fruit and the dead are scattered inside their cells the same way.
+**A tree does not shrink.** What stands on a cell is eaten, and fast: half of the cells drawn as
+a tree hold less at the next keyframe than at this one, and a body strips a whole column in a few
+hundred steps. Drawn straight, the tree's height is that number and the tree sinks back into the
+ground, which no tree does. So the browser keeps the wood (`World.woodAt`): a cell's wood is held
+while any of it is still living matter, and once none of it is, it rots with a half-life of 100
+steps - charged by the time the cell spent bare, not by the state at the end of it, because a
+whole tree can be eaten inside one interval. `Life.tree` draws the wood as the height and what is
+left of the matter against it as how alive the tree is: the leaves go first, then the limbs, then
+a grey pole leans over and is gone.
+
+Measured on a stride-1 recording, a tree with leaves on it shrank by 0.25 world units per 20 steps
+(worst 2.3); it is now 0.002 (worst 0.002). On the time-lapse (a frame every 50 steps, the layers
+every 200) a tree still carrying most of its crown shrinks 9 times in 5,400 steps, by at most 0.23
+of its 4 units. What it costs: a fifth to a third of the drawn columns are dead wood, and about a
+quarter more wood is drawn than the world holds. The memory is run from the recording itself and
+not carried along, so seeking to a step gives what playing to it does (measured: the same to 0.01
+units of matter). It costs 0.25 ms of a frame that reads the layers (one every 55 ms at most) and
+1.1 ms when a keyframe arrives (one every `layer_stride` frames).
 
