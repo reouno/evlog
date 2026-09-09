@@ -2396,13 +2396,40 @@ fn main() {
     // The soil and the plants of every cell, every AGENT_DUMP_INTERVAL, at two decimals (the
     // long frames carry the soil on a coarse log scale, for the viewer).
     let mut soil_jsonl = open("soil.jsonl");
+    // The run's laws and arguments as one JSON object: the terrain file writes them with the
+    // terrain, and the viewer's header (an experiment away from this one reads it) carries them.
+    let params = format!("{{\"relief\":{relief},\"flow\":{flow_rate},\"rain\":\"{}\",\"breath\":{breath},\"shade\":{shade_rate},\"spill\":{spill},\"mutation\":{mutation},\"grain\":{RELIEF_GRAIN},\"weather\":\"{}\",\"amplitude\":{amplitude},\"weather_grain\":{WEATHER_GRAIN},\"weather_span\":{WEATHER_SPAN},\"wind\":{WIND},\"season\":{SEASON},\"digest\":{digest_law},\"digest_floor\":{DIGEST_FLOOR},\"side\":\"{}\",\"side_max\":{SIDE_MAX},\"store\":{store},\"yolk\":{yolk},\"breed\":{breed_law},\"winter\":\"{}\",\"water\":{water_rate},\"leach\":{leach},\"depth\":{depth},\"mix\":{mix},\"root\":{root_cap},\"dig\":{dig},\"root_at\":\"{}\",\"k\":{k},\"reach\":{reach},\"reachfix\":{reach_fix},\"thirst\":{thirst},\"stock\":{stock},\"stock_floor\":{STOCK_FLOOR},\"drink\":{DRINK},\"water_rain\":{WATER_RAIN},\"water_evap\":{WATER_EVAP}}}", rain.name(), weather.name(), side_law.name(), winter.name(), root_at.name());
     // The terrain, once: the height and the band of every cell.
     {
         let mut f = open("terrain.json");
         let list = |v: &[f32]| v.iter().map(|x| format!("{x:.2}")).collect::<Vec<_>>().join(",");
         let bands = terrain.band.iter().map(|b| b.to_string()).collect::<Vec<_>>().join(",");
-        writeln!(f, "{{\"relief\":{relief},\"flow\":{flow_rate},\"rain\":\"{}\",\"breath\":{breath},\"shade\":{shade_rate},\"spill\":{spill},\"mutation\":{mutation},\"grain\":{RELIEF_GRAIN},\"weather\":\"{}\",\"amplitude\":{amplitude},\"weather_grain\":{WEATHER_GRAIN},\"weather_span\":{WEATHER_SPAN},\"wind\":{WIND},\"season\":{SEASON},\"digest\":{digest_law},\"digest_floor\":{DIGEST_FLOOR},\"side\":\"{}\",\"side_max\":{SIDE_MAX},\"store\":{store},\"yolk\":{yolk},\"breed\":{breed_law},\"winter\":\"{}\",\"water\":{water_rate},\"leach\":{leach},\"depth\":{depth},\"mix\":{mix},\"root\":{root_cap},\"dig\":{dig},\"root_at\":\"{}\",\"k\":{k},\"reach\":{reach},\"reachfix\":{reach_fix},\"thirst\":{thirst},\"stock\":{stock},\"stock_floor\":{STOCK_FLOOR},\"drink\":{DRINK},\"water_rain\":{WATER_RAIN},\"water_evap\":{WATER_EVAP},\"height\":[{}],\"band\":[{bands}]}}", rain.name(), weather.name(), side_law.name(), winter.name(), root_at.name(), list(&terrain.height)).unwrap();
+        writeln!(f, "{},\"height\":[{}],\"band\":[{bands}]}}", params.trim_end_matches('}'), list(&terrain.height)).unwrap();
     }
+    // Watching the world (EVLOG_VIEW; nothing at all when it is unset): the frames the browser
+    // draws. The layers are the cells' materials, in the order the frames carry them.
+    let mut view = viewer::View::from_env(
+        &prefix,
+        viewer::Init {
+            experiment: "e041_stock",
+            w,
+            h,
+            sub: SUB,
+            height: &terrain.height,
+            band: &terrain.band,
+            layers: vec![
+                viewer::LayerSpec::new("plant", 48.0, viewer::Scale::Sqrt),
+                viewer::LayerSpec::new("fruit", 16.0, viewer::Scale::Sqrt),
+                viewer::LayerSpec::new("carrion", 16.0, viewer::Scale::Sqrt),
+                viewer::LayerSpec::new("soil", 64.0, viewer::Scale::Log),
+                viewer::LayerSpec::new("water", 8.0 * WET as f32, viewer::Scale::Linear),
+                viewer::LayerSpec::new("root", root_cap.max(1.0), viewer::Scale::Linear),
+            ],
+            globals: vec!["sun", "air", "pop"],
+            blocks: vec!["empty", "hard", "muscle", "sensor", "digestive"],
+            params: params.clone(),
+        },
+    );
     // The air: what bodies burn, until it rains. The most that can fall on each cell per step,
     // and the sum of it.
     let mut air = 0.0f64;
@@ -3386,6 +3413,18 @@ fn main() {
         }
         if step >= CLIP_START && step < CLIP_START + CLIP_LEN {
             snaps.write_frame(true, step, &food, &patches, &agents);
+        }
+        if let Some(v) = view.as_mut() {
+            if v.wants(step) {
+                let layers: [&[f64]; 6] = [&food.res, &food.fruit, &food.carrion, &food.soil, &food.water, &food.root];
+                v.frame(step, &layers, &[sun_factor, air as f32, agents.len() as f32], |push| {
+                    for a in agents.iter().filter(|a| a.alive) {
+                        let s = a.body.s();
+                        push(viewer::AgentIn { id: a.id as u32, lineage: a.lineage, x: a.x as u16, y: a.y as u16, facing: a.facing, diet: a.diet_class() as u8, fill: a.water, energy: a.energy as f32, side: a.body.side, cells: &a.body.cells[..s * s] });
+                    }
+                });
+            }
+            v.tick(step);
         }
 
         if step % LOG_INTERVAL == 0 || agents.is_empty() {
