@@ -2418,7 +2418,10 @@ fn main() {
             height: &terrain.height,
             band: &terrain.band,
             layers: vec![
-                viewer::LayerSpec::new("plant", 48.0, viewer::Scale::Sqrt),
+                // `res` is everything edible on a cell; what stands on it is what is left when
+                // the fruit and the carrion lying there are taken out (both have their own
+                // layer). A cell grows to `cap` and no further, so that is the layer's range.
+                viewer::LayerSpec::new("plant", cap, viewer::Scale::Sqrt),
                 viewer::LayerSpec::new("fruit", 16.0, viewer::Scale::Sqrt),
                 viewer::LayerSpec::new("carrion", 16.0, viewer::Scale::Sqrt),
                 viewer::LayerSpec::new("soil", 64.0, viewer::Scale::Log),
@@ -2430,6 +2433,9 @@ fn main() {
             params: params.clone(),
         },
     );
+    // The standing plant of every cell, worked out for a frame (see the layers above). Nothing
+    // is held for it when there is no viewer.
+    let mut standing = if view.is_some() { vec![0.0f64; w * h] } else { Vec::new() };
     // The air: what bodies burn, until it rains. The most that can fall on each cell per step,
     // and the sum of it.
     let mut air = 0.0f64;
@@ -3416,7 +3422,10 @@ fn main() {
         }
         if let Some(v) = view.as_mut() {
             if v.wants(step) {
-                let layers: [&[f64]; 6] = [&food.res, &food.fruit, &food.carrion, &food.soil, &food.water, &food.root];
+                for c in 0..w * h {
+                    standing[c] = (food.res[c] - food.fruit[c] - food.carrion[c]).max(0.0);
+                }
+                let layers: [&[f64]; 6] = [&standing, &food.fruit, &food.carrion, &food.soil, &food.water, &food.root];
                 v.frame(step, &layers, &[sun_factor, air as f32, agents.len() as f32], |push| {
                     for a in agents.iter().filter(|a| a.alive) {
                         let s = a.body.s();

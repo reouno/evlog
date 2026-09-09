@@ -49,6 +49,13 @@ Add the layer or the field to `Init` and to the frame in the experiment, and the
 it. The browser draws what it knows by name and ignores the rest, so an old browser still shows
 a new world, and a new browser still shows an old recording.
 
+A layer must be what its name says, and the names do not overlap: `plant` is what stands on a
+cell, `fruit` and `carrion` are what lies on it. e041 holds all three in one number (`res`) and
+sent that as `plant`, so every pile of fruit was drawn twice - once as fruit on the ground and
+again as the height of the tree above it. It is worth checking: of 9,933 units of `res`, 6,063
+were fruit and 2,087 carrion, so 82% of every drawn tree was food lying under it. The trees grew
+and shrank with the fruit rain, which is not something a tree does.
+
 ### What an experiment does (three lines)
 
 ```rust
@@ -152,3 +159,4 @@ time it is drawn and no two neighbours are alike. Its height is the matter stand
 stands on that one cell, so a tall column is drawn tall and narrow (the leaves stacked up the
 trunk) rather than as a wide crown that would cover its neighbours and lie about the world. The
 lawn, the fallen fruit and the dead are scattered inside their cells the same way.
+
