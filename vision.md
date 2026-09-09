@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-09-09 (e038).
+Last updated: 2026-09-09 (e039).
 
 ## What the viewer should see
 
@@ -11,12 +11,16 @@ predation, and species all come out of the genome and the world's rules.
 
 The measure of a law is diversity (principles 7): how many different bodies prosper at once, and in
 how many different places. Every experiment from e039 on reports one fixed number for it beside the
-lineage count: the number of coexisting winner lineages whose bodies differ in shape, by place. The
+lineage count: the number of coexisting winner lineages whose bodies differ in shape, by place. It
+is written in e039's `report.py` (#42) and copied from there: the lineages holding at least 5% of
+the body-steps of the last third, grouped by single linkage on size within a factor of 1.5 and
+block mixes within 0.4. It reads 1-3 in e039, where the lineage count reads 2-14. The
 series so far says where diversity came from: from places (e012), from time (e026, e032), and not
 from a wider body space or a cheaper body (e029, e037), and that a uniform gain is eaten by more of
 the same body (e038). An environment differs by place, by time, and by the size of the body looking
 at it; the third axis is the one the world lacks entirely (every body sees the same field at the
-same grain), and #41 is its first law.
+same grain); #41 was its first law and e039 answered it: with no body axis that costs matter, a
+food out of reach buys a shape (a pole), not a mass.
 
 ## Three mechanisms, none of them predefined
 
@@ -281,16 +285,32 @@ negative are its products. So the order is:
    on the same grid: the world converts sun into bodies at the size it has. The income per block is pinned by the
    crowd, not by the sun, so a law that gives the world more food is eaten by more small bodies; what escapes the
    pinning is an income the crowd cannot dilute - a food only a big body reaches. The soil never bound the
-   regrowth, 2.2-6.2 per cell against a sun of 0.01-0.04. `sun` stays an argument, 1 by default.) What is
+   regrowth, 2.2-6.2 per cell against a sun of 0.01-0.04. `sun` stays an argument, 1 by default.) (Done: #41, e039 - a food only a big body reaches. The law: a gut block's bite from the
+   standing plant is its bite times min(1, reach / the column's height in cells), the body's reach
+   `reach` cells per world cell of its length front to back, the fruit and the dead taken whole as
+   before. Not kept; `reach` stays an argument at 0. The law selects what it prices and nothing
+   else: the length rises in four seeds of four at 100,000 steps (+0.34, +0.56, +0.66, +2.18
+   sub-cells) where the knockout - the same reach for every body, e009's rule - does not (+1.48,
+   +0.62, -0.38, -1.12); at 300,000 steps on three seeds one world stands at 13.4 long against its
+   control's 5.1, its winner a pole of 12.7 cells, 14.7 long and 2.8 wide over four world cells,
+   nine gut blocks and no bite, holding 75% of the body-steps of the last third over a forest six
+   times the control's. Size does not follow: the mean body is +1.0, -0.9 and +1.9 cells at
+   300,000 against a control that is itself 13.6-16.2, and the knockout moves it as much (+10.0,
+   +6.3, +0.5, -2.0 at 100,000): the pilot's step from 11 to 17 cells on seed 9 is the loss's, not
+   the reach's. The world pays 4-26% of its bodies; seed 2's winter floors fall from 691-874 to
+   144-551 and its winners from two to one. A tax on taking the standing plant is mostly a subsidy
+   to it: the forest grows 1.5-7.7 times under the law and under the knockout alike. The lesson:
+   nothing here makes a long body cost more than a short one with the same cells, so a food out of
+   reach buys a shape, not a mass. A reach has to be priced on mass - the first concrete argument
+   for #5, a body axis that costs matter to stand up in.) What is
    still missing for size is
    the real world's other half: a food a big body reaches and a small one does not (tall trees, tough grass,
    large prey). The canopy's trees (e021) are the candidate already in the world, eaten today by any gut; a
    law about the tree as a material (what a bite takes from a column of height h) is #41. Read #41 as the first
    law of the third axis of an environment (principles: by place, by time, by the size of the body looking at
    it): the tree's height is an environment only a tall body sees, and what follows it are the ground a body
-   can dig into, the water a body can enter, the gap only a small body fits. Order: #41 next (e038
-   is the reason for it: the crowd cannot dilute a food it cannot reach), then #37 a body that needs water, then
-   #38 the rain on the ridge. Open from e037 and e038: whether seed 9's hunter world outlasts 100,000 steps, and
+   can dig into, the water a body can enter, the gap only a small body fits. Order now (after e039): #37 a body that needs water, then #38 the rain on
+   the ridge, then #5 with the reach in mind. Open from e037 and e038: whether seed 9's hunter world outlasts 100,000 steps, and
    what the weight law costs a big body per step (the other candidate for what binds size).
 4. #5 3D bodies (the vertical axis for legs and wings), after size pays (e037 says: after a food for big bodies exists): 12-16 cells in 3D is a blob. An arm is an
    outcome to watch for there, not a rule.
