@@ -91,8 +91,17 @@ named on it. A world with no season law says so and none of this happens.
 
 Everything that stands is instanced and only what is near the eye is drawn in full. The `草木の
 精細` slider is the knob: it sets how many parts a tree has, how many tufts a cell of lawn has,
-and how far out either is drawn (a 128 world on a laptop runs at 35-55 fps across its range).
-Nothing is rebuilt while the eye and the season hold still.
+and how far out either is drawn.
+
+Three passes make a frame, and on a 128 world with 4,800 bodies they cost about 2 ms (the ground's
+colour), 6 ms (the plants) and 5 ms (the bodies). The first two run only when the layers, the
+season or the eye move, and never in the same frame; the third runs every frame. That is what
+keeps the world from stalling when the season turns.
+
+Anything that runs per cell, per vertex or per instance is written for it: no closure and no
+colour object inside those loops, the palette as plain numbers made once, a cell layer unpacked
+through a table of 256 values, and the bodies picked out of flat arrays rather than an object
+each. It is worth a factor of five to ten in every one of them.
 
 ### How a thing is drawn
 
