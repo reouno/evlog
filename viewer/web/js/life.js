@@ -123,10 +123,6 @@ function rnd(c, k) {
   return hash(c + k * 104729);
 }
 
-/** Ease a fade so a body holds its size for most of the interval and moves in the middle of it. */
-function ease(f) {
-  return f * f * (3 - 2 * f);
-}
 
 /** The pool a kind of block is drawn from (a kind the browser does not know goes in with the gut). */
 function pools_of(life, k) {
@@ -209,6 +205,11 @@ export class Life {
   /** The shortest way from a to b on a torus of side n. */
   static wrap(d, n) {
     return d > n / 2 ? d - n : d < -n / 2 ? d + n : d;
+  }
+
+  /** Ease a fade, so a body holds its size at the ends of the interval and goes in the middle. */
+  static ease(f) {
+    return f * f * (3 - 2 * f);
   }
 
   /** Rebuild the plants and what has fallen. `v` is the layer values, `at` the eye's target,
@@ -405,7 +406,7 @@ export class Life {
           x += Life.wrap(b.a.x[j] * cell - x, w) * t;
           z += Life.wrap(b.a.y[j] * cell - z, d) * t;
         } else {
-          fade = ease(1 - t); // it dies inside this interval
+          fade = Life.ease(1 - t); // it dies inside this interval
         }
       }
       this.body(world, a, i, x, z, fade, cell, at, ground, picked);
@@ -413,7 +414,7 @@ export class Life {
     if (b && t > 0) {
       for (let j = 0; j < b.n; j++) {
         if (a.index.has(b.a.id[j])) continue; // it is born inside this interval
-        this.body(world, b, j, b.a.x[j] * cell, b.a.y[j] * cell, ease(t), cell, at, ground, picked);
+        this.body(world, b, j, b.a.x[j] * cell, b.a.y[j] * cell, Life.ease(t), cell, at, ground, picked);
       }
     }
     pools.forEach((p) => p && p.done());

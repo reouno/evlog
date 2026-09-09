@@ -101,8 +101,14 @@ by far the largest change on the screen. Measured on what the drawing code actua
 body area that changes in a step went from 2,238 at the frame boundary and 0 everywhere else, to
 a peak of 44 spread over the interval.
 
+The map in the corner is drawn by the same rule, and it is the one that mattered most: it is a
+few thousand bright dots on a small dark panel, and taking them from the near frame alone made
+every one of them jump at once. Measured on screenshots either side of a boundary, it was 385
+times an ordinary step's change, against 1.5 for the world.
+
 What is still cut rather than carried: a body's facing and its shape. In those same 50 steps 10%
-of the bodies turn and 6% change shape, and they do it in one frame.
+of the bodies turn and 6% change shape, and they do it in one frame. It measures 1.5x an ordinary
+step, so it is what to look at next if a boundary is still visible.
 
 ### Cost
 

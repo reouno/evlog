@@ -138,7 +138,7 @@ function loop(now) {
   }
   light(here);
   renderer.render(scene, camera);
-  hud(a, here, swing);
+  hud(a, b, t, here, swing);
   requestAnimationFrame(loop);
 }
 
@@ -190,7 +190,7 @@ function light(here) {
 // ---- what the watcher reads ------------------------------------------------
 
 let hudAt = 0;
-function hud(a, here, swing) {
+function hud(a, b, t, here, swing) {
   const now = performance.now();
   if (now - hudAt < 120) return;
   hudAt = now;
@@ -203,7 +203,7 @@ function hud(a, here, swing) {
   if (!source.live && !seeking) $('seek').value = step;
   $('speedv').textContent = (source.live ? '' : (speed < 0 ? '逆 ' : '')) + Math.abs(speed).toFixed(speed >= 10 ? 0 : 1) + ' 歩/秒';
   selection(a);
-  minimap(a);
+  minimap(a, b, t);
 }
 
 // The year as a dial: a ring of the four seasons with a hand on it, and the name under it.
@@ -285,7 +285,14 @@ function unfollow() {
   selection(null);
 }
 
-function minimap(a) {
+/** The map in the corner: the world from above, with a dot for every body.
+ *
+ * The dots are where the bodies are drawn, interpolated between the two frames the same way. A
+ * recording knows the world every `stride` steps, so taking the dots from the near frame alone
+ * makes every one of a few thousand of them jump at once every `stride` steps - a bright panel
+ * rearranging itself in the corner of the eye, and by a long way the largest thing on the screen
+ * that moves at a frame boundary. */
+function minimap(a, b, t) {
   const c = $('mini'), g = c.getContext('2d');
   const w = world.w, d = world.d;
   if (!miniBase) {
@@ -300,13 +307,13 @@ function minimap(a) {
       const pl = v.plant ? Math.min(1, v.plant[i] / 3) : 0;
       const wa = v.water ? Math.max(0, v.water[i] - world.wet) : 0;
       const sh = 0.45 + 0.55 * (hgt[i] / relief);
-      let r = 150 * sh, gg = 135 * sh, b = 105 * sh;
-      r = r * (1 - pl) + 45 * pl * sh * 1.6; gg = gg * (1 - pl) + 110 * pl * sh * 1.6; b = b * (1 - pl) + 40 * pl * sh * 1.6;
-      if (wa > 0) { const t = Math.min(0.85, wa / 200 + 0.25); r = r * (1 - t) + 40 * t; gg = gg * (1 - t) + 100 * t; b = b * (1 - t) + 160 * t; }
+      let cr = 150 * sh, cg = 135 * sh, cb = 105 * sh;
+      cr = cr * (1 - pl) + 45 * pl * sh * 1.6; cg = cg * (1 - pl) + 110 * pl * sh * 1.6; cb = cb * (1 - pl) + 40 * pl * sh * 1.6;
+      if (wa > 0) { const k = Math.min(0.85, wa / 200 + 0.25); cr = cr * (1 - k) + 40 * k; cg = cg * (1 - k) + 100 * k; cb = cb * (1 - k) + 160 * k; }
       // The snow line, so the whole map says how far the winter has come down the hills.
       const snow = Math.min(1, Math.max(0, (-amp[i] * swing - 0.42) / 0.34)) * 0.9;
-      if (snow > 0) { r = r * (1 - snow) + 244 * snow; gg = gg * (1 - snow) + 247 * snow; b = b * (1 - snow) + 250 * snow; }
-      img.data[i * 4] = r; img.data[i * 4 + 1] = gg; img.data[i * 4 + 2] = b; img.data[i * 4 + 3] = 255;
+      if (snow > 0) { cr = cr * (1 - snow) + 244 * snow; cg = cg * (1 - snow) + 247 * snow; cb = cb * (1 - snow) + 250 * snow; }
+      img.data[i * 4] = cr; img.data[i * 4 + 1] = cg; img.data[i * 4 + 2] = cb; img.data[i * 4 + 3] = 255;
     }
     og.putImageData(img, 0, 0);
     miniBase = off;
@@ -317,7 +324,26 @@ function minimap(a) {
   if (a) {
     g.fillStyle = '#ffd9a0';
     const cell = 1 / world.sub;
-    for (let i = 0; i < a.n; i += 1) g.fillRect(a.a.x[i] * cell * s - 0.5, a.a.y[i] * cell * s - 0.5, 1.6, 1.6);
+    const dot = (x, z, f) => g.fillRect(x * s - 0.8 * f, z * s - 0.8 * f, 1.6 * f, 1.6 * f);
+    for (let i = 0; i < a.n; i += 1) {
+      let x = a.a.x[i] * cell, z = a.a.y[i] * cell, f = 1;
+      if (b) {
+        const j = b.index.get(a.a.id[i]);
+        if (j !== undefined) {
+          x += Life.wrap(b.a.x[j] * cell - x, w) * t;
+          z += Life.wrap(b.a.y[j] * cell - z, d) * t;
+        } else {
+          f = Life.ease(1 - t); // it dies inside this interval
+        }
+      }
+      dot(x, z, f);
+    }
+    if (b && t > 0) {
+      for (let j = 0; j < b.n; j += 1) {
+        if (a.index.has(b.a.id[j])) continue; // it is born inside this interval
+        dot(b.a.x[j] * cell, b.a.y[j] * cell, Life.ease(t));
+      }
+    }
   }
   g.strokeStyle = '#fff'; g.lineWidth = 1.5;
   g.strokeRect(rig.target.x * s - 5, rig.target.z * s - 5, 10, 10);
