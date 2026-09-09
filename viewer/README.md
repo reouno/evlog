@@ -90,16 +90,21 @@ named on it. A world with no season law says so and none of this happens.
 ### Between two frames
 
 A recording knows the world every `stride` steps and the browser draws the steps in between, so
-what happens inside an interval has to be shown rather than skipped. Bodies move by interpolation
-between the two frames. Births and deaths cannot be interpolated - a body is there or it is not -
-so a body that dies inside the interval goes down to nothing over it and one that is born inside
-it comes up from nothing.
+what happens inside an interval has to be shown rather than skipped.
 
-That is not a decoration. In 50 steps of e041, 12% of the bodies die and 15% are born; drawn as
-they come, a quarter of the world blinks in and out at every frame of the recording, and that is
-by far the largest change on the screen. Measured on what the drawing code actually draws, the
-body area that changes in a step went from 2,238 at the frame boundary and 0 everywhere else, to
-a peak of 44 spread over the interval.
+**A body moves along a curve through four frames, not a chord between two.** A chord gives every
+body one velocity for the whole interval and then turns all of them at the same instant. The
+position is continuous, so two pictures either side of a frame look almost the same and no diff
+of pictures will find it - but the velocity is not continuous, and a jump in velocity is what the
+eye reads as a stutter. Measured as the change in the drawn bodies' velocity, a chord gives
+exactly 0 inside an interval and 37 at the boundary; a Catmull-Rom through the frame before and
+the frame after as well gives about 2 either side, and the boundary is no longer a place.
+
+Births and deaths are the ends of that: a body that dies inside the interval carries on the way
+it was going and shrinks to nothing over the interval, and one that is born inside it comes up
+from nothing along the way it will be going. Standing them still at the near frame is a jerk of
+their whole speed, and popping them in and out whole is a quarter of the world blinking (in 50
+steps of e041, 12% of the bodies die and 15% are born).
 
 The map in the corner is drawn by the same rule, and it is the one that mattered most: it is a
 few thousand bright dots on a small dark panel, and taking them from the near frame alone made

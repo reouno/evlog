@@ -103,7 +103,7 @@ function loop(now) {
   camera.updateMatrixWorld();
   sky.follow(camera);
 
-  const [a, b, t] = world.around(step);
+  const [a, b, t, before, after] = world.around(step);
   // Where in the year the world is, straight off the law (World.seasonOf), and what that means
   // for the place being watched: under `winter high` the ridge is in winter while the valley
   // is not, so the light and the sky are the eye's own cell's, not one number for the world.
@@ -128,17 +128,20 @@ function loop(now) {
     plantAt = { x: rig.target.x, z: rig.target.z };
     plantsDue = false;
   }
-  life.bodies(world, a, b, t, rig.target, ground, picked);
+  life.bodies(world, a, b, t, rig.target, ground, picked, before, after);
   if (rig.follow !== null && a) {
     const i = a.index.get(rig.follow);
     if (i !== undefined) {
-      const cell = 1 / world.sub;
-      rig.goTo(a.a.x[i] * cell + 0.5, a.a.y[i] * cell + 0.5);
+      // On the same curve as the body itself: from the near frame alone the eye would jump at
+      // every frame of the recording, which is the one place a jump is impossible to miss.
+      const cell = 1 / world.sub, p = [0, 0];
+      Life.track(p, a, i, b, b ? b.index.get(rig.follow) : undefined, t, before, after, cell, world.w, world.d);
+      rig.goTo(p[0] + 0.5, p[1] + 0.5);
     }
   }
   light(here);
   renderer.render(scene, camera);
-  hud(a, b, t, here, swing);
+  hud(a, b, t, here, swing, before, after);
   requestAnimationFrame(loop);
 }
 
@@ -190,7 +193,7 @@ function light(here) {
 // ---- what the watcher reads ------------------------------------------------
 
 let hudAt = 0;
-function hud(a, b, t, here, swing) {
+function hud(a, b, t, here, swing, before, after) {
   const now = performance.now();
   if (now - hudAt < 120) return;
   hudAt = now;
@@ -203,7 +206,7 @@ function hud(a, b, t, here, swing) {
   if (!source.live && !seeking) $('seek').value = step;
   $('speedv').textContent = (source.live ? '' : (speed < 0 ? '逆 ' : '')) + Math.abs(speed).toFixed(speed >= 10 ? 0 : 1) + ' 歩/秒';
   selection(a);
-  minimap(a, b, t);
+  minimap(a, b, t, before, after);
 }
 
 // The year as a dial: a ring of the four seasons with a hand on it, and the name under it.
@@ -292,7 +295,7 @@ function unfollow() {
  * makes every one of a few thousand of them jump at once every `stride` steps - a bright panel
  * rearranging itself in the corner of the eye, and by a long way the largest thing on the screen
  * that moves at a frame boundary. */
-function minimap(a, b, t) {
+function minimap(a, b, t, before, after) {
   const c = $('mini'), g = c.getContext('2d');
   const w = world.w, d = world.d;
   if (!miniBase) {
@@ -325,23 +328,17 @@ function minimap(a, b, t) {
     g.fillStyle = '#ffd9a0';
     const cell = 1 / world.sub;
     const dot = (x, z, f) => g.fillRect(x * s - 0.8 * f, z * s - 0.8 * f, 1.6 * f, 1.6 * f);
+    const p = [0, 0];
     for (let i = 0; i < a.n; i += 1) {
-      let x = a.a.x[i] * cell, z = a.a.y[i] * cell, f = 1;
-      if (b) {
-        const j = b.index.get(a.a.id[i]);
-        if (j !== undefined) {
-          x += Life.wrap(b.a.x[j] * cell - x, w) * t;
-          z += Life.wrap(b.a.y[j] * cell - z, d) * t;
-        } else {
-          f = Life.ease(1 - t); // it dies inside this interval
-        }
-      }
-      dot(x, z, f);
+      const j = b ? b.index.get(a.a.id[i]) : undefined;
+      Life.track(p, a, i, b, j, t, before, after, cell, w, d); // the same curve the world uses
+      dot(p[0], p[1], b && j === undefined ? Life.ease(1 - t) : 1);
     }
     if (b && t > 0) {
       for (let j = 0; j < b.n; j += 1) {
         if (a.index.has(b.a.id[j])) continue; // it is born inside this interval
-        dot(b.a.x[j] * cell, b.a.y[j] * cell, Life.ease(t));
+        Life.trackIn(p, b, j, after, t, cell, w, d);
+        dot(p[0], p[1], Life.ease(t));
       }
     }
   }

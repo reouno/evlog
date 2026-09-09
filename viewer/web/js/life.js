@@ -124,6 +124,14 @@ function rnd(c, k) {
 }
 
 
+/** A Catmull-Rom through four points: it passes through p1 and p2, and its speed at each of them
+ * is set by the points either side, which is what makes one interval join the next without a
+ * corner. */
+function curve(p0, p1, p2, p3, t) {
+  const t2 = t * t, t3 = t2 * t;
+  return 0.5 * (2 * p1 + (p2 - p0) * t + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t2 + (3 * p1 - p0 - 3 * p2 + p3) * t3);
+}
+
 /** The pool a kind of block is drawn from (a kind the browser does not know goes in with the gut). */
 function pools_of(life, k) {
   return life.blockPools[k] || life.blockPools[4];
@@ -185,6 +193,7 @@ export class Life {
     this.drawnId = new Uint32Array(20000);
     this.drawnX = new Float32Array(20000);
     this.drawnZ = new Float32Array(20000);
+    this.scratch = [0, 0]; // where one body is, while it is being worked out
     this.setDetail(1);
   }
 
@@ -210,6 +219,68 @@ export class Life {
   /** Ease a fade, so a body holds its size at the ends of the interval and goes in the middle. */
   static ease(f) {
     return f * f * (3 - 2 * f);
+  }
+
+  /** A body that is only in the far frame: it is born inside this interval, so it comes in along
+   * the way it will be going rather than standing still at the far frame's place until the
+   * interval ends. Written into `out` as [x, z] in cells. */
+  static trackIn(out, b, j, after, t, cell, w, d) {
+    const x = b.a.x[j] * cell, z = b.a.y[j] * cell;
+    out[0] = x;
+    out[1] = z;
+    if (after) {
+      const k = after.index.get(b.a.id[j]);
+      if (k !== undefined) {
+        out[0] = x - 0.5 * (1 - t) * Life.wrap(after.a.x[k] * cell - x, w);
+        out[1] = z - 0.5 * (1 - t) * Life.wrap(after.a.y[k] * cell - z, d);
+      }
+    }
+    return out;
+  }
+
+  /** Where a body is drawn between two frames, written into `out` as [x, z] in cells.
+   *
+   * Not a chord between the two frames but a curve through the frames either side as well. With
+   * a chord a body holds one velocity for the whole interval and then turns at the instant the
+   * frame changes, and every body in the world turns at that same instant: the position is
+   * continuous, so two pictures either side of the boundary look the same, but the velocity is
+   * not, and a jump in velocity is what the eye reads as a stutter. Measured on this world,
+   * the drawn bodies' velocity changed by nothing at all inside an interval and by 1,835 at the
+   * boundary. Through four frames the velocity is continuous and a body turns as it goes.
+   *
+   * `i` is the body's index in `a`, `j` its index in `b` (undefined: it does not reach `b`). */
+  static track(out, a, i, b, j, t, before, after, cell, w, d) {
+    const x1 = a.a.x[i] * cell, z1 = a.a.y[i] * cell;
+    const id = a.a.id[i];
+    out[0] = x1;
+    out[1] = z1;
+    if (j === undefined) {
+      // It dies inside this interval. It carries on the way it was going rather than stopping
+      // dead at the last frame it is in, which would be a jerk of its whole speed.
+      if (before) {
+        const k = before.index.get(id);
+        if (k !== undefined) {
+          out[0] = x1 - 0.5 * t * Life.wrap(before.a.x[k] * cell - x1, w);
+          out[1] = z1 - 0.5 * t * Life.wrap(before.a.y[k] * cell - z1, d);
+        }
+      }
+      return out;
+    }
+    const x2 = x1 + Life.wrap(b.a.x[j] * cell - x1, w), z2 = z1 + Life.wrap(b.a.y[j] * cell - z1, d);
+    // A body that is not in the frame before or after holds the end it has: the curve then only
+    // eases into that end, which is what a body that is just born or about to die should do.
+    let x0 = x1, z0 = z1, x3 = x2, z3 = z2;
+    if (before) {
+      const k = before.index.get(id);
+      if (k !== undefined) { x0 = x1 + Life.wrap(before.a.x[k] * cell - x1, w); z0 = z1 + Life.wrap(before.a.y[k] * cell - z1, d); }
+    }
+    if (after) {
+      const k = after.index.get(id);
+      if (k !== undefined) { x3 = x1 + Life.wrap(after.a.x[k] * cell - x1, w); z3 = z1 + Life.wrap(after.a.y[k] * cell - z1, d); }
+    }
+    out[0] = curve(x0, x1, x2, x3, t);
+    out[1] = curve(z0, z1, z2, z3, t);
+    return out;
   }
 
   /** Rebuild the plants and what has fallen. `v` is the layer values, `at` the eye's target,
@@ -384,7 +455,7 @@ export class Life {
    * thing the eye cannot ignore, and by far the largest change on the screen at a frame boundary.
    * So a body that dies inside the interval goes down to nothing over it, and one that is born
    * inside it comes up from nothing, and neither appears or vanishes whole. */
-  bodies(world, a, b, t, at, ground, picked) {
+  bodies(world, a, b, t, at, ground, picked, before, after) {
     const pools = this.blockPools;
     pools.forEach((p) => p && p.reset());
     this.far.reset();
@@ -396,25 +467,18 @@ export class Life {
       this.mark.done();
       return;
     }
-    const cell = 1 / world.sub, w = this.w, d = this.d;
+    const cell = 1 / world.sub, w = this.w, d = this.d, p = this.scratch;
     for (let i = 0; i < a.n; i++) {
-      let x = a.a.x[i] * cell, z = a.a.y[i] * cell;
-      let fade = 1;
-      if (b) {
-        const j = b.index.get(a.a.id[i]);
-        if (j !== undefined) {
-          x += Life.wrap(b.a.x[j] * cell - x, w) * t;
-          z += Life.wrap(b.a.y[j] * cell - z, d) * t;
-        } else {
-          fade = Life.ease(1 - t); // it dies inside this interval
-        }
-      }
-      this.body(world, a, i, x, z, fade, cell, at, ground, picked);
+      const j = b ? b.index.get(a.a.id[i]) : undefined;
+      Life.track(p, a, i, b, j, t, before, after, cell, w, d);
+      const fade = b && j === undefined ? Life.ease(1 - t) : 1; // undefined: it dies in this interval
+      this.body(world, a, i, p[0], p[1], fade, cell, at, ground, picked);
     }
     if (b && t > 0) {
       for (let j = 0; j < b.n; j++) {
         if (a.index.has(b.a.id[j])) continue; // it is born inside this interval
-        this.body(world, b, j, b.a.x[j] * cell, b.a.y[j] * cell, Life.ease(t), cell, at, ground, picked);
+        Life.trackIn(p, b, j, after, t, cell, w, d);
+        this.body(world, b, j, p[0], p[1], Life.ease(t), cell, at, ground, picked);
       }
     }
     pools.forEach((p) => p && p.done());

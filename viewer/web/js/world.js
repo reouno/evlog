@@ -135,14 +135,24 @@ export class World {
     return step;
   }
 
-  /** The frame at or before `step`, and the one after it, for a smooth move between them. */
+  /** The frame at or before `step` and the one after it, how far between them `step` is, and the
+   * frames on either side of those two.
+   *
+   * The outer pair is what makes the move between the inner pair smooth: with only two frames a
+   * body runs in a straight line and every one of them changes direction at the same instant, at
+   * every frame of the recording. They are given only when they are a whole interval away, so a
+   * gap in what has been loaded cannot bend the curve. */
   around(step) {
     const i = upperBound(this.steps, step) - 1;
-    if (i < 0) return [null, null, 0];
+    if (i < 0) return [null, null, 0, null, null];
     const a = this.frames.get(this.steps[i]);
     const b = i + 1 < this.steps.length ? this.frames.get(this.steps[i + 1]) : null;
     const t = b && b.step > a.step ? Math.min(1, (step - a.step) / (b.step - a.step)) : 0;
-    return [a, b, t];
+    if (!b) return [a, null, 0, null, null];
+    const span = b.step - a.step;
+    const before = i > 0 ? this.frames.get(this.steps[i - 1]) : null;
+    const after = i + 2 < this.steps.length ? this.frames.get(this.steps[i + 2]) : null;
+    return [a, b, t, before && a.step - before.step === span ? before : null, after && after.step - b.step === span ? after : null];
   }
 
   hasFrame(step) {
