@@ -262,8 +262,14 @@ e019's flow moves the nutrient itself at 10-100x what a plant can use, and the l
 negative are its products. So the order is:
 1. (Done: #35, e034 - the still soil climbs to where nothing eats; the world stands at half. Done: #29, e035 -
    water as the carrier, kept: wet and dry are places, the soil is uniform and uphill, the crowd lives on the
-   lake's mixing.) Open from e035, as issues: #37 a body that needs water (a reason to move between places), #38
-   the rain on the ridge again (e033's question, with a carrier that keeps the soil there) with the mixing's rate.
+   lake's mixing.) (Done 2026-09-09: #37, e040 - a body that needs water, not kept: a fill that drains by `thirst` a step and
+   fills on a pool (water above WET), the eye seeing the pools and the thirst as five more inputs. No trips: the
+   ridge's bodies born elsewhere stay at the control's 15-19% over five winters at three doses and the eye decides
+   less (26% to 16-22%); the ridge does not empty either, it lives on its own pools (one cell in 25); the bodies
+   off the water die dry (23-72% of all deaths), the world loses 28-71% of its bodies, and the winner at every
+   dose is a gut with no muscle. The world's answer to a need for water is to sit on it, not walk to it: a trip
+   needs a body that must move for its food before a second need can shape its route.) Open from e035, as an
+   issue: #38 the rain on the ridge again (e033's question, with a carrier that keeps the soil there) with the mixing's rate.
 2. (Done: #36, e036 - a store in the ground, not kept for the ridge: standing through the summer and feeding a
    body are the same comparison, so no digging rate does both.) Read the bands with this in mind: at `winter high`
    2 the season's amplitude is 0.45 in the valley and 0.91-1.00 above it (e032's own table), so the winter makes
@@ -309,8 +315,7 @@ negative are its products. So the order is:
    law about the tree as a material (what a bite takes from a column of height h) is #41. Read #41 as the first
    law of the third axis of an environment (principles: by place, by time, by the size of the body looking at
    it): the tree's height is an environment only a tall body sees, and what follows it are the ground a body
-   can dig into, the water a body can enter, the gap only a small body fits. Order now (after e039): #37 a body that needs water, then #38 the rain on
-   the ridge, then #5 with the reach in mind. Open from e037 and e038: whether seed 9's hunter world outlasts 100,000 steps, and
+   can dig into, the water a body can enter, the gap only a small body fits. Order now (after e040): #38 the rain on the ridge, then #5 with the reach in mind. Open from e037 and e038: whether seed 9's hunter world outlasts 100,000 steps, and
    what the weight law costs a big body per step (the other candidate for what binds size).
 4. #5 3D bodies (the vertical axis for legs and wings), after size pays (e037 says: after a food for big bodies exists): 12-16 cells in 3D is a blob. An arm is an
    outcome to watch for there, not a rule.
