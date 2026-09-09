@@ -6,6 +6,7 @@ import { UP, sample } from './render.js';
 
 const M = new THREE.Matrix4();
 const COL = new THREE.Color();
+const HI = new THREE.Color(), WARM = new THREE.Color(0xffd24a);
 
 /** A pool of one shape, drawn many times. */
 class Pool {
@@ -109,6 +110,16 @@ export class Life {
     this.blockPools = [null, new Pool(scene, box, shell, 40000), new Pool(scene, box, flesh, 60000), new Pool(scene, ball, eye, 20000), new Pool(scene, box, flesh, 60000)];
     this.far = new Pool(scene, box, flesh, 8000);
     this.pools = [this.grass, this.grass2, this.trunk, this.crown, this.fruit, this.carrion, this.far, ...this.blockPools.filter(Boolean)];
+    // The body being followed wears a ring, so it can be found again in a crowd. It is a mark,
+    // not a thing in the world: it shows through the water and over a hill.
+    // A pin that hangs over it, not a ring on the ground: at the angle the world is watched
+    // from, a ring lies under the body itself. It shows through everything.
+    const pin = new THREE.ConeGeometry(0.3, 0.62, 4);
+    pin.rotateX(Math.PI);
+    pin.translate(0, 0.31, 0);
+    const markMat = new THREE.MeshBasicMaterial({ color: 0xffd24a, depthTest: false, depthWrite: false, fog: false, toneMapped: false });
+    this.mark = new Pool(scene, pin, markMat, 2);
+    this.mark.mesh.renderOrder = 999;
     this.treeMin = 1.0;
     this.near = 34;   // cells: grass and fruit
     this.mid = 90;    // cells: trees
@@ -197,9 +208,11 @@ export class Life {
     pools.forEach((p) => p && p.reset());
     this.far.reset();
     this.drawn = [];
+    this.mark.reset();
     if (!a) {
       pools.forEach((p) => p && p.done());
       this.far.done();
+      this.mark.done();
       return;
     }
     const sub = world.sub, w = this.w, d = this.d;
@@ -225,6 +238,11 @@ export class Life {
       const y = ground.heightAt(x + 0.5, z + 0.5);
       const id = a.a.id[i];
       const lit = picked === id;
+      if (lit) {
+        const w = shape.side * cell;
+        const bob = 0.09 * Math.sin(performance.now() / 320);
+        this.mark.put(px + w / 2, y + 0.55 + w * 0.22 + bob, pz + w / 2, 1, 1, 1, 0xffd24a);
+      }
       if (r2 > this.bodyNear * this.bodyNear) {
         // Too far to make out its blocks: one low body, the colour of what it eats.
         const s = shape.side * cell;
@@ -247,7 +265,7 @@ export class Life {
         const base = k === 1 ? 0.42 : k === 2 ? 0.36 : k === 3 ? 0.3 : 0.3;
         const hgt = base * dome * grow;
         let hex = kinds[k] ?? 0xcbb98a;
-        if (lit) hex = 0xffe9a8;
+        if (lit) hex = HI.setHex(hex).lerp(WARM, 0.55).getHex(); // marked, but still readable
         if (k === 3) {
           // An eye sits on the body, round and dark.
           this.blockPools[4].put(bx, y, bz, cell, hgt * 0.8, cell, lit ? 0xffe9a8 : 0x8f7f5e);
@@ -259,5 +277,6 @@ export class Life {
     }
     pools.forEach((p) => p && p.done());
     this.far.done();
+    this.mark.done();
   }
 }

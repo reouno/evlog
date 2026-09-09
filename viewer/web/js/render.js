@@ -257,7 +257,7 @@ export class Rig {
       if (!drag) return;
       const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
       drag.x = e.clientX; drag.y = e.clientY;
-      if (drag.pan) this.pan(-dx * this.dist * 0.0016, -dy * this.dist * 0.0016);
+      if (drag.pan) this.pan(-dx * this.dist * 0.0016, dy * this.dist * 0.0016); // the ground follows the hand
       else {
         this.yaw -= dx * 0.005;
         this.pitch = Math.max(0.06, Math.min(1.52, this.pitch + dy * 0.005));
@@ -278,10 +278,11 @@ export class Rig {
     });
     addEventListener('keyup', (e) => this.keys.delete(e.key.toLowerCase()));
   }
-  pan(dx, dz) {
+  /** Move the point being watched: `right` is the screen's right, `forward` is into the view. */
+  pan(right, forward) {
     const s = Math.sin(this.yaw), c = Math.cos(this.yaw);
-    this.target.x += dx * c - dz * s;
-    this.target.z += dx * s + dz * c;
+    this.target.x += forward * s - right * c;
+    this.target.z += forward * c + right * s;
     this.follow = null;
   }
   goTo(x, z) {
@@ -291,8 +292,8 @@ export class Rig {
   update(dt, ground) {
     const k = this.keys;
     const v = (k.has('shift') ? 3 : 1) * dt * Math.max(6, this.dist * 0.9);
-    if (k.has('w') || k.has('arrowup')) this.pan(0, -v);
-    if (k.has('s') || k.has('arrowdown')) this.pan(0, v);
+    if (k.has('w') || k.has('arrowup')) this.pan(0, v);
+    if (k.has('s') || k.has('arrowdown')) this.pan(0, -v);
     if (k.has('a') || k.has('arrowleft')) this.pan(-v, 0);
     if (k.has('d') || k.has('arrowright')) this.pan(v, 0);
     if (k.has('q')) this.dist = Math.max(1.2, this.dist * (1 - dt));

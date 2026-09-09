@@ -12,7 +12,7 @@ const DIET = ['植物', 'まぜ', '肉', 'まだ'];
 
 let world, ground, sky, life, rig, renderer, scene, camera, source;
 let step = 0, latest = 0, playing = true, speed = 20, picked = null;
-let drawnKey = -1, plantAt = null, last = performance.now(), fps = 60, miniBase = null, seeking = false;
+let shapeOf = -1, drawnKey = -1, plantAt = null, last = performance.now(), fps = 60, miniBase = null, seeking = false;
 
 async function boot() {
   let state = { live: false };
@@ -186,25 +186,45 @@ function hud(a, season) {
 }
 
 function selection(a) {
-  const el = $('sel');
-  if (picked === null || !a) { el.innerHTML = 'クリックで選ぶ'; return; }
-  const i = a.index.get(picked);
-  if (i === undefined) { el.innerHTML = '<span class="muted">いなくなった</span>'; return; }
-  const body = world.bodies.get(a.a.body[i]);
+  const empty = $('selempty'), box = $('selbody');
+  if (picked === null) {
+    empty.hidden = false;
+    box.hidden = true;
+    shapeOf = -1;
+    return;
+  }
+  empty.hidden = true;
+  box.hidden = false;
+  const i = a ? a.index.get(picked) : undefined;
+  if (i === undefined) {
+    $('selrows').innerHTML = '<span class="muted">いなくなった</span>';
+    $('shape').innerHTML = '';
+    shapeOf = -1;
+    return;
+  }
   const names = world.h.blocks;
+  const body = world.bodies.get(a.a.body[i]);
+  // The shape only changes when the body does, and the panel is rebuilt 8 times a second.
+  if (body && shapeOf !== a.a.body[i]) {
+    shapeOf = a.a.body[i];
+    $('shape').style.gridTemplateColumns = `repeat(${body.side},1fr)`;
+    $('shape').style.width = body.side * 9 + 'px';
+    $('shape').innerHTML = [...body.cells].map((k) => `<i style="background:${k ? KIND_COLORS[names[k]] : '#ffffff10'}"></i>`).join('');
+  }
   const counts = {};
   if (body) for (const k of body.cells) if (k) counts[names[k]] = (counts[names[k]] || 0) + 1;
-  const grid = body ? `<div id="shape" style="grid-template-columns:repeat(${body.side},1fr);width:${body.side * 9}px">` +
-    [...body.cells].map((k) => `<i style="background:${k ? KIND_COLORS[names[k]] : '#ffffff10'}"></i>`).join('') + '</div>' : '';
-  el.innerHTML = grid +
-    `<div class="row">系統 ${a.a.lineage[i] || '—'}</div>` +
-    `<div class="row">食 ${DIET[a.a.diet[i]]}</div>` +
-    `<div class="row">力 ${(a.a.energy[i] / 255 * 8).toFixed(2)}</div>` +
-    (world.h.agent_record.some((f) => f.name === 'fill') ? `<div class="row">水 ${(a.a.fill[i] / 255).toFixed(2)}</div>` : '') +
-    Object.entries(counts).map(([k, n]) => `<div><i class="k" style="background:${KIND_COLORS[k]}"></i>${k} ${n}</div>`).join('') +
-    `<div style="margin-top:6px"><button id="unfollow">追うのをやめる</button></div>`;
-  const un = $('unfollow');
-  if (un) un.onclick = () => { picked = null; rig.follow = null; };
+  $('selrows').innerHTML =
+    `<div>系統 ${a.a.lineage[i] || '—'}</div>` +
+    `<div>食 ${DIET[a.a.diet[i]]}</div>` +
+    `<div>力 ${(a.a.energy[i] / 255 * 8).toFixed(2)}</div>` +
+    (world.h.agent_record.some((f) => f.name === 'fill') ? `<div>水 ${(a.a.fill[i] / 255).toFixed(2)}</div>` : '') +
+    Object.entries(counts).map(([k, n]) => `<div><i class="k" style="background:${KIND_COLORS[k]}"></i>${k} ${n}</div>`).join('');
+}
+
+function unfollow() {
+  picked = null;
+  rig.follow = null;
+  selection(null);
 }
 
 function minimap(a) {
@@ -283,6 +303,10 @@ function bindUI(header) {
     addEventListener('pointerup', () => (seeking = false));
   }
   $('v-shadow').onchange = (e) => setShadows(e.target.checked);
+  $('unfollow').onclick = unfollow;
+  addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') unfollow();
+  });
   setShadows($('v-shadow').checked);
   $('mini').onclick = (e) => {
     const r = e.target.getBoundingClientRect();
