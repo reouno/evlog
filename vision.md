@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-09-09 (e039).
+Last updated: 2026-09-09 (e041).
 
 ## What the viewer should see
 
@@ -318,7 +318,18 @@ negative are its products. So the order is:
    can dig into, the water a body can enter, the gap only a small body fits. Order now (after e040, the user's reading): #43 a reason to leave - plant regrowth that follows the standing
    plant, with the thirst, as a 2x2 (the sitter wins because nothing in the world forbids sitting; a law that needs
    movement must be tested in a world where movement pays; frame a hypothesis as "Y pays when A and B" and test the
-   minimal combination) - then #38 the rain on the ridge, then #5 with the reach in mind. Open from e037 and e038: whether seed 9's hunter world outlasts 100,000 steps, and
+   minimal combination). (Done 2026-09-09: #43, e041 - a plant that grows from what stands, not kept. A cell uses
+   max(0.1, min(1, res / stock)) of the light it has. At a knee of 1 and 4 it binds on 92-98% of the cells, takes
+   10.0 and 16.8 of the sun's 164 a step, cuts the cells' own regrowth from 9.0 to 3.5 and 3.0 and the trees from
+   239 to 111 and 74, and costs the world 39% and 49% of its bodies - and buys no movement: the energy a body pays
+   for moving is flat, and the muscle-free lineages end holding 76% and 88% of the bodies against the control's 68%;
+   with the thirst on top, one gutted lineage holds every body alive and the mean muscle is 0.27. The reason is where
+   the food comes from: 91% of what the bodies eat is fruit lying on the ground. Since e021 and e022 the world's food
+   is a fountain - a column takes the light of every cell within its height, and a column under a body cannot grow,
+   so everything it takes falls at the body's feet. A body standing on a tree is paid for standing, and a law on a
+   cell's own regrowth throttles a tenth of the world. The condition "the food under a body runs out" is not a
+   property of the regrowth law but of the fall: the next test is e022's exception, the held column that still
+   claims, taken away.) Then #44 the fountain, then #38 the rain on the ridge, then #5 with the reach in mind. Open from e037 and e038: whether seed 9's hunter world outlasts 100,000 steps, and
    what the weight law costs a big body per step (the other candidate for what binds size).
 4. #5 3D bodies (the vertical axis for legs and wings), after size pays (e037 says: after a food for big bodies exists): 12-16 cells in 3D is a blob. An arm is an
    outcome to watch for there, not a rule.
