@@ -93,15 +93,21 @@ Everything that stands is instanced and only what is near the eye is drawn in fu
 精細` slider is the knob: it sets how many parts a tree has, how many tufts a cell of lawn has,
 and how far out either is drawn.
 
-Three passes make a frame, and on a 128 world with 4,800 bodies they cost about 2 ms (the ground's
-colour), 6 ms (the plants) and 5 ms (the bodies). The first two run only when the layers, the
-season or the eye move, and never in the same frame; the third runs every frame. That is what
-keeps the world from stalling when the season turns.
+Three passes make a frame: the ground's colour, the plants, and the bodies. The first two run
+only when the layers, the season or the eye move, and never in the same frame; the third runs
+every frame. On a 128 world with 4,800 bodies a frame is about 1 ms and the worst one in a
+thousand is 12 ms, so nothing stalls when the season turns.
 
-Anything that runs per cell, per vertex or per instance is written for it: no closure and no
-colour object inside those loops, the palette as plain numbers made once, a cell layer unpacked
-through a table of 256 values, and the bodies picked out of flat arrays rather than an object
-each. It is worth a factor of five to ten in every one of them.
+Two things cost far more than the work in them, and both are worth knowing:
+
+- **A pool is sent to the card by how big it is, not by how full it is.** The pools are sized for
+  the worst case and are usually a tenth full, so `Pool.done` sends only the instances it wrote
+  (`addUpdateRange`). Sending the whole buffer was most of the cost of a frame that rebuilt the
+  plants: 12 ms of a 19 ms frame.
+- **An allocation inside a per-item loop.** An object per body drawn, 2,900 a frame, cost 24 ms
+  a frame in garbage alone. Nothing that runs per cell, per vertex or per instance allocates, and
+  nothing there makes a `THREE.Color`: the palette is plain numbers made once, a cell layer is
+  unpacked through a table of 256 values, and the bodies are picked out of flat arrays.
 
 ### How a thing is drawn
 

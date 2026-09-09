@@ -36,6 +36,7 @@ class Pool {
     this.mesh.count = 0;
     this.cap = cap;
     this.n = 0;
+    this.sent = 0; // how many instances the card has, so an empty pool is not sent again
     scene.add(this.mesh);
   }
   reset() {
@@ -64,10 +65,20 @@ class Pool {
     if (col !== undefined) this.tint(col);
     this.n++;
   }
+  /** Hand the pool to the card. A pool is made big enough for the worst case and is usually far
+   * from full, so only what was written this time is sent: sending the whole buffer was most of
+   * the cost of a frame that rebuilt the plants, and it is the size of the pool, not of the work. */
   done() {
     this.mesh.count = this.n;
-    this.mesh.instanceMatrix.needsUpdate = true;
-    this.mesh.instanceColor.needsUpdate = true;
+    const m = this.mesh.instanceMatrix, c = this.mesh.instanceColor;
+    if (this.n === 0 && this.sent === 0) return; // nothing there, and nothing was there before
+    this.sent = this.n;
+    m.clearUpdateRanges();
+    m.addUpdateRange(0, this.n * 16);
+    m.needsUpdate = true;
+    c.clearUpdateRanges();
+    c.addUpdateRange(0, this.n * 3);
+    c.needsUpdate = true;
   }
 }
 

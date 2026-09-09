@@ -113,7 +113,7 @@ function loop(now) {
   // Colouring the ground and rebuilding the plants are each a pass over the world, so they are
   // never done in the same frame: whichever is due goes now and the other goes next. Neither is
   // due at all while the layers, the season and the eye hold still.
-  if (v && (world.decoded.step !== drawnKey || Math.abs(swing - drawnSwing) > 0.03)) {
+  if (v && (world.decoded.step !== drawnKey || Math.abs(swing - drawnSwing) > 0.12)) {
     drawnKey = world.decoded.step;
     drawnSwing = swing;
     groundDue = plantsDue = true;
