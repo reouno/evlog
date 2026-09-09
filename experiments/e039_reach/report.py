@@ -770,7 +770,7 @@ GALLERY = [
     ("reach 1, seed 9", HERE, run(1), 590, "the winner under the reach", "Twenty-one cells, nine muscle, eleven gut, 5.2 long over 3.9 world cells: the top lineage from step 77,000."),
     ("reach 2, seed 9", HERE, run(2), 484, "the armored hunter", "Thirty-five cells, sixteen hard, thirteen muscle, a bite of 2.7 and 57% flesh: the hunter state reach 2 entered at step 40,000 and held."),
     ("control, seed 2", E035, f"{BASE}_seed2", 158, "the bar it replaced", "Nine cells, 2.6 long and 6.2 wide, 54% of the body-steps of the control's last third, beside a mover of 24.8 cells."),
-    ("reach 1, seed 2", HERE, run(1, 2), 2433, "the pole", "Thirteen cells, 14.7 long and 2.8 wide over four world cells, nine gut blocks, no bite: the body the reach bought, 75% of the body-steps of the last third."),
+    ("reach 1, seed 2", HERE, run(1, 2), 2433, "the pole", "Thirteen cells in two clumps at the ends of a 16-grid, eleven empty rows between them: 14.7 long, nine gut blocks, no bite. The body the reach bought, 75% of the body-steps of the last third."),
     ("reach 1, seed 3", HERE, run(1, 3), 1976, "the world that refused", "Seventeen cells, seven muscle, 4.1 long: seed 3 under the same law keeps the control's body and its length."),
 ]
 GALLERY_CAPTION = "The most common body of the lineage at its peak, on the grid it grew on, front up (blue hard, orange muscle, yellow sensor, aqua gut). The control's winner lies across its facing, 2.1 sub-cells long: the shortest mouth the world can grow, and the body the reach punishes most. Under the law they stand 4.1-14.7 long, and the pole is what the reach bought."
@@ -814,9 +814,10 @@ TEXTS = {
     "p_batch": ("One world of three takes the offer. Seed 2 grows a body 14.7 long and 2.8 wide over four world cells, nine gut blocks and no "
                 "bite, holding 75% of the last third's body-steps over a forest six times the control's - and its floors fall from 691-874 to "
                 "144-551, its winners from two to one. Seeds 1 and 3 stay at 4 long."),
-    "discussion": ("<p>Nothing here makes a long body cost more than a short one with the same cells: the upkeep is per cell, the weight per "
-                   "block, and a line of twelve cells over four world cells reaches the crown of a four-cell column. The law's offer was "
-                   "taken in the cheapest currency. That is the answer to #41 as written: a food out of reach buys a shape, not a mass.</p>"
+    "discussion": ("<p>Nothing here makes a long body cost more than a short one with the same cells, and the reach is read from the "
+                   "body's bounding box: seed 2's winner is thirteen cells in two clumps at the ends of a 16-grid, eleven empty rows "
+                   "between them. Empty grid is free, so the cheapest way to buy a reach is a gap. That is the answer to #41 as "
+                   "written: a food out of reach buys a shape, not a mass.</p>"
                    "<p>The knockout splits the pilot in two. A tax on the standing plant, with no gradient at all, grows the forest two to six "
                    "times and moves the mean body as much as the law does; the gradient adds the length and nothing else. Without it the "
                    "reach would have been credited with a size effect that is the loss's.</p>"

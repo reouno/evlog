@@ -170,9 +170,11 @@ world answers it exactly: what the reach prices is the body's length front to ba
 length is what grows - in four seeds of four at 100,000 steps, and to 13.4 sub-cells in one seed
 of three at 300,000. Hypothesis 1 is answered no all the same, because length is not size. The
 body that took the trees of seed 2 is a pole of 12.7 cells, 14.7 long and 2.8 wide: it reaches
-the crown of a four-cell column with less matter than the control's winner carries. Nothing in
-the world makes a long body cost more than a short one of the same cells, so a food out of reach
-buys a shape, not a mass.
+the crown of a four-cell column with less matter than the control's winner carries. Its shape
+says how cheap the reach was - two clumps at the ends of a 16-grid with eleven empty rows between
+them, because the reach is read from the body's bounding box and empty grid costs nothing: the
+cheapest way to buy a reach here is a gap. Nothing in the world makes a long body cost more than
+a short one of the same cells, so a food out of reach buys a shape, not a mass.
 
 What the world pays is real: 4-26% of its bodies, the winter floors of seed 2 more than halved,
 and, where the law bites hardest, a winner lost (diversity 2 to 1). The knockout says the rest of
