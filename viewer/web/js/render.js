@@ -8,25 +8,27 @@ import * as THREE from 'three';
 
 export const UP = { terrain: 0.28, plant: 0.5 }; // soil units to world units, cells to world units
 
-/** Bilinear read of a per-cell field at a point in cell coordinates (wraps). */
+/** Bilinear read of a per-cell field at a point in cell coordinates (wraps).
+ * Called once per body every frame, so it wraps its indices by hand and allocates nothing. */
 export function sample(field, w, d, x, z) {
   const fx = x - 0.5, fz = z - 0.5;
   const x0 = Math.floor(fx), z0 = Math.floor(fz);
   const tx = fx - x0, tz = fz - z0;
-  const i = (a, b) => ((b % d) + d) % d * w + (((a % w) + w) % w);
-  const a = field[i(x0, z0)], b = field[i(x0 + 1, z0)], c = field[i(x0, z0 + 1)], e = field[i(x0 + 1, z0 + 1)];
+  const c0 = ((x0 % w) + w) % w, c1 = (c0 + 1) % w;
+  const z1 = ((z0 % d) + d) % d, r0 = z1 * w, r1 = ((z1 + 1) % d) * w;
+  const a = field[r0 + c0], b = field[r0 + c1], c = field[r1 + c0], e = field[r1 + c1];
   return (a * (1 - tx) + b * tx) * (1 - tz) + (c * (1 - tx) + e * tx) * tz;
 }
 
-const C = new THREE.Color();
-const LAWN = new THREE.Color(0x7fa03a), STAND = new THREE.Color(0x24521f), VEG = new THREE.Color();
-const LUSH = new THREE.Color(0x3f8a2c), STRAW = new THREE.Color(0xbda874); // high summer, deep winter
-const DEEP = new THREE.Color(0x123f5c), ICE = new THREE.Color(0xd4e6ee), C2 = new THREE.Color();
-function mix(out, hex, t) {
-  C.setHex(hex);
-  out.lerp(C, t);
-  return out;
-}
+// The ground's palette, once, as the three numbers the vertex buffer wants: `Ground.update`
+// runs over every vertex of the world and cannot afford a colour object per step.
+const rgb = (hex) => { const c = new THREE.Color(hex); return [c.r, c.g, c.b]; };
+const SAND = rgb(0xa8926a), LOAM = rgb(0x4d3b26), DAMP = rgb(0x3a2f22);
+const LAWN = rgb(0x7fa03a), STAND = rgb(0x24521f);
+const LUSH = rgb(0x3f8a2c), STRAW = rgb(0xbda874); // high summer, deep winter
+const ROT = rgb(0x6d4436), FALL = rgb(0xa8803f);
+const FROST = rgb(0xb9bdb8), SNOW = rgb(0xe7edf3);
+const SHALLOW = rgb(0x4e9ab0), DEEP = rgb(0x123f5c), ICE = rgb(0xd4e6ee);
 
 export class Ground {
   constructor(scene, world) {
@@ -97,6 +99,7 @@ export class Ground {
       }
     }
     this.terrainY = new Float32Array(nv); // the ground's height at every vertex, for everything else
+    this.centreY = new Float32Array(world.cells); // and at every cell's centre, for what grows there
     this.buildHeight();
   }
 
@@ -131,6 +134,8 @@ export class Ground {
         nor[v * 3 + 2] = -dz / l;
       }
     }
+    // The height at each cell's own centre, which is where everything that grows on it stands.
+    for (let c = 0; c < this.world.cells; c++) this.centreY[c] = this.world.height[c] * s;
     this.geo.attributes.position.needsUpdate = true;
     this.geo.attributes.normal.needsUpdate = true;
     this.geo.computeBoundingSphere();
@@ -141,7 +146,11 @@ export class Ground {
     return sample(this.world.height, this.w, this.d, x, z) * UP.terrain;
   }
 
-  /** Colour the ground and lay the water, from one set of layer values. */
+  /** Colour the ground and lay the water, from one set of layer values.
+   *
+   * This runs over every vertex of the world (16,641 of them at 128x128) whenever the layers or
+   * the season move, so it is written in plain numbers: a `THREE.Color` here would be a hundred
+   * thousand colour-space conversions and the frame it lands on would be dropped. */
   update(v, opts) {
     const { w, d } = this;
     const col = this.geo.attributes.color.array;
@@ -152,50 +161,82 @@ export class Ground {
     // The season, cell by cell: under `winter high` the ridge is in winter while the valley is
     // not, so the ground says so place by place rather than by one number for the whole world.
     const swing = opts.swing || 0, amp = this.world.season.at;
-    const at = (i, j) => (((j % d) + d) % d) * w + (((i % w) + w) % w);
-    const c = C2;
     for (let j = 0; j <= d; j++) {
+      const j0 = (((j - 1) % d) + d) % d * w, j1 = (j % d) * w;
       for (let i = 0; i <= w; i++) {
-        const v0 = at(i - 1, j - 1), v1 = at(i, j - 1), v2 = at(i - 1, j), v3 = at(i, j);
-        const q = (f) => 0.25 * (f[v0] + f[v1] + f[v2] + f[v3]);
-        const so = soil ? q(soil) : 0;
-        const pl = plant ? q(plant) : 0;
-        const wa = water ? q(water) : 0;
+        const i0 = (((i - 1) % w) + w) % w, i1 = i % w;
+        const v0 = j0 + i0, v1 = j0 + i1, v2 = j1 + i0, v3 = j1 + i1;
+        const so = soil ? 0.25 * (soil[v0] + soil[v1] + soil[v2] + soil[v3]) : 0;
+        const pl = plant ? 0.25 * (plant[v0] + plant[v1] + plant[v2] + plant[v3]) : 0;
+        const wa = water ? 0.25 * (water[v0] + water[v1] + water[v2] + water[v3]) : 0;
         // How much of its sun this place loses now (cold) or gains (warm).
         const am = 0.25 * (amp[v0] + amp[v1] + amp[v2] + amp[v3]);
-        const cold = Math.max(0, -am * swing), warm = Math.max(0, am * swing);
+        const cold = am * swing < 0 ? -am * swing : 0, warm = am * swing > 0 ? am * swing : 0;
         // Bare ground: sand where the soil is thin, dark loam where it is deep.
-        c.setHex(0xa8926a);
-        mix(c, 0x4d3b26, Math.min(1, so / 8));
+        let r = SAND[0], g = SAND[1], b = SAND[2];
+        let t = so > 8 ? 1 : so / 8;
+        r += (LOAM[0] - r) * t; g += (LOAM[1] - g) * t; b += (LOAM[2] - b) * t;
         // Wet ground darkens before it holds a pool.
-        if (wa > 0) mix(c, 0x3a2f22, Math.min(0.5, wa / (wet * 2)));
-        // What grows on it: a lawn is thin and yellowish, a stand of plants is deep green,
-        // and the green leaves it for straw as its own winter comes on.
-        if (pl > 0) {
-          const g = Math.min(1, Math.sqrt(pl / 1.2));
-          VEG.copy(LAWN).lerp(STAND, Math.min(1, pl / 4));
-          if (warm > 0) VEG.lerp(LUSH, warm * 0.35);
-          if (cold > 0) VEG.lerp(STRAW, Math.min(0.92, cold * 1.15));
-          c.lerp(VEG, g * 0.85);
+        if (wa > 0) {
+          t = Math.min(0.5, wa / (wet * 2));
+          r += (DAMP[0] - r) * t; g += (DAMP[1] - g) * t; b += (DAMP[2] - b) * t;
         }
-        if (carrion) mix(c, 0x6d4436, Math.min(0.34, q(carrion) * 0.32));
-        if (fruit) mix(c, 0xa8803f, Math.min(0.22, q(fruit) * 0.28));
+        // What grows on it: a lawn is thin and yellowish, a stand of plants is deep green, and
+        // the green leaves it for straw as its own winter comes on.
+        if (pl > 0) {
+          const k = pl > 4 ? 1 : pl / 4;
+          let vr = LAWN[0] + (STAND[0] - LAWN[0]) * k, vg = LAWN[1] + (STAND[1] - LAWN[1]) * k, vb = LAWN[2] + (STAND[2] - LAWN[2]) * k;
+          if (warm > 0) {
+            const u = warm * 0.35;
+            vr += (LUSH[0] - vr) * u; vg += (LUSH[1] - vg) * u; vb += (LUSH[2] - vb) * u;
+          }
+          if (cold > 0) {
+            const u = Math.min(0.92, cold * 1.15);
+            vr += (STRAW[0] - vr) * u; vg += (STRAW[1] - vg) * u; vb += (STRAW[2] - vb) * u;
+          }
+          const q = Math.min(1, Math.sqrt(pl / 1.2)) * 0.85;
+          r += (vr - r) * q; g += (vg - g) * q; b += (vb - b) * q;
+        }
+        if (carrion) {
+          t = Math.min(0.34, 0.25 * (carrion[v0] + carrion[v1] + carrion[v2] + carrion[v3]) * 0.32);
+          if (t > 0) { r += (ROT[0] - r) * t; g += (ROT[1] - g) * t; b += (ROT[2] - b) * t; }
+        }
+        if (fruit) {
+          t = Math.min(0.22, 0.25 * (fruit[v0] + fruit[v1] + fruit[v2] + fruit[v3]) * 0.28);
+          if (t > 0) { r += (FALL[0] - r) * t; g += (FALL[1] - g) * t; b += (FALL[2] - b) * t; }
+        }
         // The frost, then the snow: the ground pales as its sun goes, and goes white where the
         // sun has nearly gone out. Half a world can be under snow while the other half is green.
-        if (cold > 0.12) mix(c, 0xb9bdb8, Math.min(0.4, (cold - 0.12) * 0.9));
-        const snow = Math.min(1, Math.max(0, (cold - 0.42) / 0.34));
-        if (snow > 0) mix(c, 0xe7edf3, snow * 0.84);
-        const vi = j * (w + 1) + i;
-        col[vi * 3] = c.r; col[vi * 3 + 1] = c.g; col[vi * 3 + 2] = c.b;
+        if (cold > 0.12) {
+          t = Math.min(0.4, (cold - 0.12) * 0.9);
+          r += (FROST[0] - r) * t; g += (FROST[1] - g) * t; b += (FROST[2] - b) * t;
+        }
+        const snow = cold > 0.42 ? Math.min(1, (cold - 0.42) / 0.34) : 0;
+        if (snow > 0) {
+          t = snow * 0.84;
+          r += (SNOW[0] - r) * t; g += (SNOW[1] - g) * t; b += (SNOW[2] - b) * t;
+        }
+        const vi = j * (w + 1) + i, c3 = vi * 3;
+        col[c3] = r; col[c3 + 1] = g; col[c3 + 2] = b;
         // Standing water: what came down from above, above what the sky gives a cell alone.
-        const pool = Math.max(0, wa - wet);
-        const dep = pool * depth;
-        wpos[vi * 3 + 1] = this.terrainY[vi] + Math.max(dep, 0.02);
-        const alpha = Math.min(0.9, dep / (0.35 + dep) + (pool > 0 ? 0.25 : 0));
-        c.setHex(0x4e9ab0).lerp(DEEP, Math.min(1, dep / 2.5));
-        if (snow > 0) c.lerp(ICE, snow * 0.8); // a pool under the snow line reads as ice
-        wcol[vi * 4] = c.r; wcol[vi * 4 + 1] = c.g; wcol[vi * 4 + 2] = c.b;
-        wcol[vi * 4 + 3] = pool > 0 ? Math.max(alpha, snow * 0.75) : 0;
+        const pool = wa - wet;
+        const dep = pool > 0 ? pool * depth : 0;
+        wpos[c3 + 1] = this.terrainY[vi] + (dep > 0.02 ? dep : 0.02);
+        const c4 = vi * 4;
+        if (pool > 0) {
+          t = Math.min(1, dep / 2.5);
+          let r2 = SHALLOW[0] + (DEEP[0] - SHALLOW[0]) * t;
+          let g2 = SHALLOW[1] + (DEEP[1] - SHALLOW[1]) * t;
+          let b2 = SHALLOW[2] + (DEEP[2] - SHALLOW[2]) * t;
+          if (snow > 0) { // a pool under the snow line reads as ice
+            const u = snow * 0.8;
+            r2 += (ICE[0] - r2) * u; g2 += (ICE[1] - g2) * u; b2 += (ICE[2] - b2) * u;
+          }
+          wcol[c4] = r2; wcol[c4 + 1] = g2; wcol[c4 + 2] = b2;
+          wcol[c4 + 3] = Math.max(Math.min(0.9, dep / (0.35 + dep) + 0.25), snow * 0.75);
+        } else {
+          wcol[c4 + 3] = 0;
+        }
       }
     }
     this.geo.attributes.color.needsUpdate = true;

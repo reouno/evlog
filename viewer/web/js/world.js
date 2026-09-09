@@ -25,6 +25,8 @@ export class World {
     this.keys = new Map();   // step -> [Uint8Array per layer]  (frames that carry the layers)
     this.keySteps = [];
     this.decoded = { step: -1, v: {} };
+    this.luts = [];     // byte -> value, one table per layer
+    this.unpacked = []; // the values of the layers being shown, reused rather than reallocated
     // The agent record, read off the header.
     let off = 0;
     this.plan = header.agent_record.map((f) => {
@@ -155,14 +157,14 @@ export class World {
     if (this.decoded.step === at) return this.decoded.v;
     const packed = this.keys.get(at);
     const v = {};
+    // A layer arrives as one byte a cell, so the whole unpacking is a table of 256 values: the
+    // scale is worked out once per layer instead of once per cell (this runs on every keyframe).
     this.h.layers.forEach((spec, k) => {
       const src = packed[k];
       if (!src) return;
-      const out = new Float32Array(this.cells);
-      const max = spec.max;
-      if (spec.scale === 'linear') for (let c = 0; c < this.cells; c++) out[c] = (src[c] / 255) * max;
-      else if (spec.scale === 'sqrt') { for (let c = 0; c < this.cells; c++) { const q = src[c] / 255; out[c] = q * q * max; } }
-      else { const l = Math.log(1 + max); for (let c = 0; c < this.cells; c++) out[c] = Math.exp((src[c] / 255) * l) - 1; }
+      const out = this.unpacked[k] || (this.unpacked[k] = new Float32Array(this.cells));
+      const lut = this.luts[k] || (this.luts[k] = table(spec));
+      for (let c = 0; c < this.cells; c++) out[c] = lut[src[c]];
       v[spec.name] = out;
     });
     this.decoded = { step: at, v };
@@ -211,6 +213,16 @@ export class World {
     }
     return { side: s, blocks: out };
   }
+}
+
+/** The 256 values a layer's byte can stand for, under its own scale. */
+function table(spec) {
+  const t = new Float32Array(256), max = spec.max, l = Math.log(1 + max);
+  for (let b = 0; b < 256; b++) {
+    const q = b / 255;
+    t[b] = spec.scale === 'linear' ? q * max : spec.scale === 'sqrt' ? q * q * max : Math.exp(q * l) - 1;
+  }
+  return t;
 }
 
 function insort(arr, v) {

@@ -6,7 +6,6 @@ import { UP } from './render.js';
 
 const M = new THREE.Matrix4(), TURN = new THREE.Matrix4();
 const V = new THREE.Vector3();
-const COL = new THREE.Color();
 const HI = new THREE.Color(), WARM = new THREE.Color(0xffd24a);
 // The palette of what grows. A season moves a colour between these, and a cell's own number
 // picks where in a range it sits, so two neighbours are never the same green.
@@ -18,48 +17,57 @@ const DRY = new THREE.Color(0xe8e0b4), FRESH = new THREE.Color(0xa8d089), HAY = 
 const FR0 = new THREE.Color(0xc06a2a), FR1 = new THREE.Color(0xa82f22);
 const CAR0 = new THREE.Color(0x6d3a2c), CAR1 = new THREE.Color(0x4e2b23);
 const LEAF = new THREE.Color(), DARK = new THREE.Color(), BARK = new THREE.Color();
-const TINT = new THREE.Color(), TINT2 = new THREE.Color(), SPOT = new THREE.Color();
+// The bodies: a colour per kind of block, the socket an eye sits in, and the flat slab a body
+// too far off to make out is drawn as, by what it eats.
+const KIND = [null, new THREE.Color(0x2a2622), new THREE.Color(0xa8553c), new THREE.Color(0x1b1b20), new THREE.Color(0xb09760)];
+const SOCKET = new THREE.Color(0x8f7f5e), SOCKETLIT = new THREE.Color(0xffe9a8);
+const FAR = [0x9ecf6a, 0xd9a441, 0xc4553f, 0x9aa0a6].map((h) => new THREE.Color(h).multiplyScalar(0.5));
+const FARLIT = new THREE.Color(0xffffff).multiplyScalar(0.5);
+const TINT = new THREE.Color(), SPOT = new THREE.Color();
 
 /** A pool of one shape, drawn many times. */
 class Pool {
   constructor(scene, geo, mat, cap) {
     this.mesh = new THREE.InstancedMesh(geo, mat, cap);
     this.mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    this.mesh.instanceColor = new THREE.InstancedBufferAttribute(new Float32Array(cap * 3).fill(1), 3);
+    this.mesh.instanceColor.setUsage(THREE.DynamicDrawUsage);
     this.mesh.frustumCulled = false;
     this.mesh.count = 0;
     this.cap = cap;
+    this.n = 0;
     scene.add(this.mesh);
   }
   reset() {
     this.n = 0;
   }
+  /** The colour of the instance being written. It is taken apart here and not kept, so every
+   * caller can hand over the same scratch colour. */
+  tint(col) {
+    const a = this.mesh.instanceColor.array, o = this.n * 3;
+    a[o] = col.r; a[o + 1] = col.g; a[o + 2] = col.b;
+  }
   /** An axis-aligned box or sprite: position, size, colour. No rotation, so the matrix is written by hand. */
-  put(x, y, z, sx, sy, sz, hex) {
+  put(x, y, z, sx, sy, sz, col) {
     if (this.n >= this.cap) return;
     const a = this.mesh.instanceMatrix.array, o = this.n * 16;
     a[o] = sx; a[o + 1] = 0; a[o + 2] = 0; a[o + 3] = 0;
     a[o + 4] = 0; a[o + 5] = sy; a[o + 6] = 0; a[o + 7] = 0;
     a[o + 8] = 0; a[o + 9] = 0; a[o + 10] = sz; a[o + 11] = 0;
     a[o + 12] = x; a[o + 13] = y; a[o + 14] = z; a[o + 15] = 1;
-    if (hex !== undefined) {
-      COL.setHex(hex);
-      this.mesh.setColorAt(this.n, COL);
-    }
+    if (col !== undefined) this.tint(col);
     this.n++;
   }
-  putM(m, hex) {
+  putM(m, col) {
     if (this.n >= this.cap) return;
     m.toArray(this.mesh.instanceMatrix.array, this.n * 16);
-    if (hex !== undefined) {
-      COL.setHex(hex);
-      this.mesh.setColorAt(this.n, COL);
-    }
+    if (col !== undefined) this.tint(col);
     this.n++;
   }
   done() {
     this.mesh.count = this.n;
     this.mesh.instanceMatrix.needsUpdate = true;
-    if (this.mesh.instanceColor) this.mesh.instanceColor.needsUpdate = true;
+    this.mesh.instanceColor.needsUpdate = true;
   }
 }
 
@@ -154,6 +162,12 @@ export class Life {
     this.mark.mesh.renderOrder = 999;
     this.treeMin = 1.0;
     this.bodyNear = 55;
+    // The bodies drawn in full this frame, so a click can find the nearest one: three flat arrays
+    // rather than an object each, because there are thousands of them every frame.
+    this.drawnN = 0;
+    this.drawnId = new Uint32Array(20000);
+    this.drawnX = new Float32Array(20000);
+    this.drawnZ = new Float32Array(20000);
     this.setDetail(1);
   }
 
@@ -184,17 +198,19 @@ export class Life {
     const swing = this.world.swing(step), amp = this.world.season.at;
     this.standing.forEach((p) => p.reset());
     const cx = Math.round(at.x), cz = Math.round(at.z);
+    const mid2 = this.mid * this.mid, near2 = this.near * this.near, centreY = ground.centreY;
     for (let dz = -this.mid; dz <= this.mid; dz++) {
+      const row = ((((cz + dz) % d) + d) % d) * w;
+      const dz2 = dz * dz;
       for (let dx = -this.mid; dx <= this.mid; dx++) {
-        const r2 = dx * dx + dz * dz;
-        if (r2 > this.mid * this.mid) continue;
-        const gx = ((cx + dx) % w + w) % w, gz = ((cz + dz) % d + d) % d;
-        const c = gz * w + gx;
-        const px = cx + dx + 0.5, pz = cz + dz + 0.5; // drawn around the eye, not around the origin
+        const r2 = dx * dx + dz2;
+        if (r2 > mid2) continue;
+        const c = row + ((((cx + dx) % w) + w) % w);
         const p = plant ? plant[c] : 0;
         if (p <= 0.002 && (!fruit || fruit[c] <= 0) && (!carrion || carrion[c] <= 0)) continue;
-        const y = ground.heightAt(gx + 0.5, gz + 0.5);
-        const near = r2 <= this.near * this.near;
+        const px = cx + dx + 0.5, pz = cz + dz + 0.5; // drawn around the eye, not around the origin
+        const y = centreY[c];
+        const near = r2 <= near2;
         // This cell's own season: how much of its sun it is losing now, or gaining.
         const cold = Math.max(0, -amp[c] * swing), warm = Math.max(0, amp[c] * swing);
         if (p >= this.treeMin) this.tree(c, px, pz, y, p, cold, warm, near);
@@ -222,7 +238,7 @@ export class Life {
     const kind = r0 < 0.52 ? 0 : r0 < 0.76 ? 1 : 2; // broadleaf, conifer, spreading
     const hgt = Math.min(p, 40) * UP.plant;
     const x = px + (r1 - 0.5) * 0.68, z = pz + (r2 - 0.5) * 0.68; // anywhere in its cell
-    const bark = BARK.copy(BARK0).lerp(BARK1, r3).getHex();
+    const bark = BARK.copy(BARK0).lerp(BARK1, r3);
     const snow = Math.min(1, Math.max(0, (cold - 0.45) / 0.35));
     const shed = kind === 1 ? (cold - 0.7) / 0.9 : (cold - 0.3) / 0.42;
     const leaf = 1 - Math.min(1, Math.max(0, shed));
@@ -232,7 +248,7 @@ export class Life {
     // and takes the snow, which is what makes it the tree still standing green in a white world.
     if (cold > 0) LEAF.lerp(kind === 1 ? EVER : AMBER, Math.min(1, cold / 0.3) * (kind === 1 ? 0.55 : 0.8));
     if (snow > 0) LEAF.lerp(SNOW, snow * 0.3);
-    const green = LEAF.getHex(), dark = DARK.copy(LEAF).multiplyScalar(0.84).getHex();
+    const green = LEAF, dark = DARK.copy(LEAF).multiplyScalar(0.84);
     const tw = (0.05 + 0.045 * Math.sqrt(hgt)) * (kind === 2 ? 1.4 : 1);
     // The leafy part reaches the column's own height; the trunk is what carries it up to there.
     const wide = kind === 2;
@@ -304,7 +320,7 @@ export class Life {
     for (let i = 0; i < n; i++) {
       const jx = (rnd(c, 60 + i) - 0.5) * 0.78, jz = (rnd(c, 70 + i) - 0.5) * 0.78;
       const a = rnd(c, 80 + i) * 3.1416, sc = 0.72 + rnd(c, 90 + i) * 0.56;
-      const hex = SPOT.copy(TINT).multiplyScalar(0.86 + rnd(c, 100 + i) * 0.28).getHex();
+      const hex = SPOT.copy(TINT).multiplyScalar(0.86 + rnd(c, 100 + i) * 0.28);
       for (const turn of [a, a + 1.5708]) {
         M.makeRotationY(turn);
         M.scale(V.set(wide * sc, hgt * sc, 1));
@@ -320,7 +336,7 @@ export class Life {
     for (let i = 0; i < n; i++) {
       const a = rnd(c, 110 + i) * 6.283, rr = 0.08 + rnd(c, 120 + i) * 0.4;
       const s = (0.05 + Math.min(0.06, q * 0.03)) * (0.7 + rnd(c, 130 + i) * 0.6);
-      const hex = SPOT.copy(FR0).lerp(FR1, rnd(c, 140 + i)).getHex();
+      const hex = SPOT.copy(FR0).lerp(FR1, rnd(c, 140 + i));
       this.fruit.put(px + Math.cos(a) * rr, y + s * 0.85, pz + Math.sin(a) * rr, s, s * 0.88, s, hex);
     }
   }
@@ -334,7 +350,7 @@ export class Life {
       M.makeRotationY(rnd(c, 180 + i) * 6.283);
       M.scale(V.set(s, s * 0.45, s * 0.8));
       M.setPosition(px + Math.cos(a) * rr, y, pz + Math.sin(a) * rr);
-      this.carrion.putM(M, SPOT.copy(CAR0).lerp(CAR1, rnd(c, 190 + i)).getHex());
+      this.carrion.putM(M, SPOT.copy(CAR0).lerp(CAR1, rnd(c, 190 + i)));
     }
   }
 
@@ -343,7 +359,7 @@ export class Life {
     const pools = this.blockPools;
     pools.forEach((p) => p && p.reset());
     this.far.reset();
-    this.drawn = [];
+    this.drawnN = 0;
     this.mark.reset();
     if (!a) {
       pools.forEach((p) => p && p.done());
@@ -353,8 +369,6 @@ export class Life {
     }
     const sub = world.sub, w = this.w, d = this.d;
     const cell = 1 / sub;
-    const kinds = [0, 0x2a2622, 0xa8553c, 0x1b1b20, 0xb09760]; // hard, muscle, sensor, digestive
-    const diet = [0x9ecf6a, 0xd9a441, 0xc4553f, 0x9aa0a6];
     for (let i = 0; i < a.n; i++) {
       let x = a.a.x[i] * cell, z = a.a.y[i] * cell;
       if (b) {
@@ -377,16 +391,20 @@ export class Life {
       if (lit) {
         const w = shape.side * cell;
         const bob = 0.09 * Math.sin(performance.now() / 320);
-        this.mark.put(px + w / 2, y + 0.55 + w * 0.22 + bob, pz + w / 2, 1, 1, 1, 0xffd24a);
+        this.mark.put(px + w / 2, y + 0.55 + w * 0.22 + bob, pz + w / 2, 1, 1, 1, WARM);
       }
       if (r2 > this.bodyNear * this.bodyNear) {
         // Too far to make out its blocks: one low body, the colour of what it eats.
         const s = shape.side * cell;
-        const c = new THREE.Color(lit ? 0xffffff : diet[a.a.diet[i]]).multiplyScalar(0.5);
-        this.far.put(px + s / 2, y, pz + s / 2, s * 0.45, 0.1, s * 0.45, c.getHex());
+        this.far.put(px + s / 2, y, pz + s / 2, s * 0.45, 0.1, s * 0.45, lit ? FARLIT : FAR[a.a.diet[i]]);
         continue;
       }
-      this.drawn.push({ id, x: px, z: pz, y, i });
+      if (this.drawnN < this.drawnId.length) {
+        this.drawnId[this.drawnN] = id;
+        this.drawnX[this.drawnN] = px;
+        this.drawnZ[this.drawnN] = pz;
+        this.drawnN++;
+      }
       // The world is flat, so a body would be a pallet if every block were the same height.
       // It is given a back: the blocks stand tallest in the middle and fall away to the rim,
       // and a bigger body stands higher.
@@ -400,14 +418,14 @@ export class Life {
         const dome = 0.42 + 0.78 * Math.sqrt(Math.max(0, 1 - dr * dr - dc * dc));
         const base = k === 1 ? 0.42 : k === 2 ? 0.36 : k === 3 ? 0.3 : 0.3;
         const hgt = base * dome * grow;
-        let hex = kinds[k] ?? 0xb09760;
-        if (lit) hex = HI.setHex(hex).lerp(WARM, 0.55).getHex(); // marked, but still readable
+        let col = KIND[k] || KIND[4];
+        if (lit) col = HI.copy(col).lerp(WARM, 0.55); // marked, but still readable
         if (k === 3) {
           // An eye sits on the body, round and dark.
-          this.blockPools[4].put(bx, y, bz, cell, hgt * 0.8, cell, lit ? 0xffe9a8 : 0x8f7f5e);
-          pool.put(bx, y + hgt * 0.8 + cell * 0.2, bz, cell * 0.44, cell * 0.44, cell * 0.44, hex);
+          this.blockPools[4].put(bx, y, bz, cell, hgt * 0.8, cell, lit ? SOCKETLIT : SOCKET);
+          pool.put(bx, y + hgt * 0.8 + cell * 0.2, bz, cell * 0.44, cell * 0.44, cell * 0.44, col);
         } else {
-          pool.put(bx, y, bz, cell * 0.98, hgt, cell * 0.98, hex);
+          pool.put(bx, y, bz, cell * 0.98, hgt, cell * 0.98, col);
         }
       }
     }

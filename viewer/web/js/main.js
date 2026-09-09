@@ -13,6 +13,7 @@ const DIET = ['植物', 'まぜ', '肉', 'まだ'];
 let world, ground, sky, life, rig, renderer, scene, camera, source;
 let step = 0, latest = 0, playing = true, speed = 20, picked = null;
 let shapeOf = -1, drawnKey = -1, drawnSwing = 99, plantAt = null, last = performance.now(), fps = 60, miniBase = null, seeking = false;
+let groundDue = true, plantsDue = true;
 
 async function boot() {
   let state = { live: false };
@@ -109,18 +110,23 @@ function loop(now) {
   const swing = world.swing(step);
   const here = world.season.on ? world.sunAt(rig.target.x, rig.target.z, swing) : a ? a.globals.sun ?? 1 : 1;
   const v = world.layersAt(step);
-  let redrawPlants = false;
+  // Colouring the ground and rebuilding the plants are each a pass over the world, so they are
+  // never done in the same frame: whichever is due goes now and the other goes next. Neither is
+  // due at all while the layers, the season and the eye hold still.
   if (v && (world.decoded.step !== drawnKey || Math.abs(swing - drawnSwing) > 0.03)) {
     drawnKey = world.decoded.step;
     drawnSwing = swing;
+    groundDue = plantsDue = true;
+  }
+  if (!plantAt || Math.hypot(plantAt.x - rig.target.x, plantAt.z - rig.target.z) > 2) plantsDue = true;
+  if (v && groundDue) {
     ground.update(v, { swing });
     miniBase = null;
-    redrawPlants = true;
-  }
-  if (!plantAt || Math.hypot(plantAt.x - rig.target.x, plantAt.z - rig.target.z) > 2) redrawPlants = true;
-  if (v && redrawPlants) {
+    groundDue = false;
+  } else if (v && plantsDue) {
     life.plants(v, rig.target, ground, step);
     plantAt = { x: rig.target.x, z: rig.target.z };
+    plantsDue = false;
   }
   life.bodies(world, a, b, t, rig.target, ground, picked);
   if (rig.follow !== null && a) {
@@ -323,9 +329,9 @@ function bindUI(header) {
   for (const k of ['grass', 'trees', 'fruit', 'carrion', 'bodies']) {
     $('v-' + k).onchange = (e) => life.setVisible(k, e.target.checked);
   }
-  $('s-terrain').oninput = (e) => { UP.terrain = +e.target.value; ground.buildHeight(); drawnKey = -1; plantAt = null; };
-  $('s-plant').oninput = (e) => { UP.plant = +e.target.value; plantAt = null; };
-  $('s-detail').oninput = (e) => { life.setDetail(+e.target.value); plantAt = null; };
+  $('s-terrain').oninput = (e) => { UP.terrain = +e.target.value; ground.buildHeight(); groundDue = plantsDue = true; };
+  $('s-plant').oninput = (e) => { UP.plant = +e.target.value; plantsDue = true; };
+  $('s-detail').oninput = (e) => { life.setDetail(+e.target.value); plantsDue = true; };
   $('legend').innerHTML = header.blocks.slice(1).map((b) => `<span><i style="background:${KIND_COLORS[b]}"></i>${b}</span>`).join('');
   $('play').onclick = () => {
     playing = !playing;
@@ -378,12 +384,13 @@ function bindUI(header) {
     const hits = ray.intersectObjects(ground.tiles, false);
     if (!hits.length) return;
     const p = hits[0].point;
-    let best = null, bd = 4;
-    for (const b of life.drawn || []) {
-      const dd = Math.hypot(b.x - p.x, b.z - p.z);
-      if (dd < bd) { bd = dd; best = b; }
+    let best = null, bd = 16; // squared: within 4 units of where the ground was hit
+    for (let i = 0; i < life.drawnN; i++) {
+      const ex = life.drawnX[i] - p.x, ez = life.drawnZ[i] - p.z;
+      const dd = ex * ex + ez * ez;
+      if (dd < bd) { bd = dd; best = life.drawnId[i]; }
     }
-    picked = best ? best.id : null;
+    picked = best;
     rig.follow = picked;
   });
 }
