@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-09-09 (e041).
+Last updated: 2026-09-10 (e042).
 
 ## What the viewer should see
 
@@ -339,6 +339,19 @@ negative are its products. So the order is:
    movement was tested against. Order: #45 (`sat` and `hold`, four runs), which contains #44 as its `hold` half, then
    #38 the rain on the ridge, then #5 with the reach in mind. Open from e037 and e038: whether seed 9's hunter world outlasts 100,000 steps, and
    what the weight law costs a big body per step (the other candidate for what binds size).
+
+   Done 2026-09-10: #46 a body pays what it owes (e042) - kept: the season world is `strict` 1 from here. From e030 to
+   e041 the upkeep a body could not pay from its energy, its food and its fat was dropped, and with `flesh` 1 the food
+   it had just eaten was fixed as fat, so any body that ate lived on (seen in the viewer: a body of 36 blocks sat 454
+   steps owing three times what it ate); the work of moving was free at zero energy. In the control 6-18% of the upkeep
+   owed went unpaid over the second half (up to 35% early) and about half the moving was free. Under `strict` (a body
+   that cannot pay dies; the fat pays the moves too) the world stands on seeds 9 and 10 at 100,000 steps with 20-35%
+   fewer bodies on the same food and floors 13-20% lower; the median body is 10-12 cells against 5-9, the muscle 4.3
+   and 3.0 against 3.1 and 1.5, the moving 1.6-1.7 times, and the top lineage is a mover in both seeds (a sitter in
+   both controls); diversity 2. Without the store the floors are as high and the world eats its dead (68% flesh): the
+   store decides where the matter cycles, and the valley carries the winter. Read what e030-e041 say about bodies at
+   zero energy, the floors, the sitter and size as measured with the gap. Order now: #45 under `strict`, then #47
+   ageing, #38, #5.
 4. #5 3D bodies (the vertical axis for legs and wings), after size pays (e037 says: after a food for big bodies exists): 12-16 cells in 3D is a blob. An arm is an
    outcome to watch for there, not a rule.
 5. Later: #34 kinds of matter (several conserved substances - water, plant stuff, animal stuff of different
