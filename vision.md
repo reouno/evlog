@@ -367,6 +367,18 @@ negative are its products. So the order is:
    seed 10 (69%); muscle-free lineages hold 47% and 74% of the bodies (a gut without muscle still steps a sub-cell
    at a time). The laws since e022 that needed movement (e023, e037-e041) were tested in the rain and can be tried
    again. Order now: #47 ageing, #38, #5.
+
+   Done 2026-09-11: #47 wear (e044) - kept: the season world ages by wear from here (`wear` 3,000), and the fixed
+   age is gone. Every step each block of a living body fails with a chance that doubles every 300 steps of the body's
+   age (half the blocks of age 3,000 have failed) and falls as dead matter with its share of energy and fat; a body
+   dies of wear when no block is left, or of hunger when it cannot pay for what is left. On seed 9, where the winning
+   grazer lives past 1,000 steps, the fixed age took 10.9% of the deaths on the one step 3,001; under wear no 50-step
+   bin past age 1,000 holds more than 0.8%, the old die between 2,000 and 4,200, and 96% of those deaths follow a worn
+   block (61% hunger, 35% wear). Births rise 31%, the winner's plan holds 32% of the last third against 61%, and the
+   lineages alive swing 5-34 against 2-10 (one seed: a reading). On seed 10 the bodies rarely get old (p90 age at
+   death 456-480) and wear touches 1.5% of the deaths. The world stands on both; diversity 2 against 3, with more
+   winners. Whether size buys a longer life cannot be read yet (the bodies that reach 2,000 are one lineage's).
+   Order now: #38, #5.
 4. #5 3D bodies (the vertical axis for legs and wings), after size pays (e037 says: after a food for big bodies exists): 12-16 cells in 3D is a blob. An arm is an
    outcome to watch for there, not a rule.
 5. Later: #34 kinds of matter (several conserved substances - water, plant stuff, animal stuff of different

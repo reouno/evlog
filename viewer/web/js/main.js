@@ -258,7 +258,7 @@ function dial(swing) {
 
 // What a body has, as gauges: each one that runs out is a way to die (the header's `deaths`), so
 // the watcher sees which one this body is running out of. The chart under them uses the same colours.
-const CAUSES = { hunger: '餓死', age: '寿命', broken: '体を壊された', thirst: '渇き' };
+const CAUSES = { hunger: '餓死', age: '寿命', broken: '体を壊された', thirst: '渇き', wear: '摩耗' };
 const GAUGE = { energy: '#dcc64a', fat: '#e0873a', body: '#d8584c', age: '#9fb3c4', fill: '#5aa6e0' };
 
 function selection(a, b, t) {
@@ -307,7 +307,7 @@ function selection(a, b, t) {
   else gauge('力', energy / world.fields.energy.max, GAUGE.energy, energy.toFixed(2), '食べると増え、毎歩の維持費で減る');
   if (fat !== undefined) gauge('蓄え', fat, GAUGE.fat, `${Math.round(fat * 100)}%`, '維持費を払うたびに体に貯まる。力が尽きるとここから払い、これも尽きると餓死');
   if (born) gauge('体', n / born, GAUGE.body, `${n} / ${born}`, 'ブロックの数。ほかの体に押されると一つずつ壊され (相手に胃があれば食べられ、なければ地面に落ちる)、0 で死ぬ。育つことはない');
-  if (age !== undefined) gauge('齢', maxAge ? age / maxAge : 0, GAUGE.age, maxAge ? `${Math.round(age)} / ${maxAge}` : `${Math.round(age)}`, maxAge ? `${maxAge} 歩で寿命。それまで衰えはない` : '');
+  if (age !== undefined) gauge('齢', maxAge ? age / maxAge : 0, GAUGE.age, maxAge ? `${Math.round(age)} / ${maxAge}` : `${Math.round(age)}`, maxAge ? `${maxAge} 歩で寿命。それまで衰えはない` : world.params.wear > 0 ? `齢とともにブロックが壊れやすくなる (${world.params.wear} 歩で半分)` : '');
   if (world.params.thirst > 0) gauge('水', val('fill'), GAUGE.fill, `${Math.round(val('fill') * 100)}%`, '毎歩乾き、水たまりで飲む。0 で死ぬ');
   $('gauges').innerHTML = rows.join('');
   $('gauges').classList.toggle('gone', !alive);
@@ -319,7 +319,7 @@ function selection(a, b, t) {
     // half of them live at zero, some for thousands of steps.
     if (energy < 0.05) now.push(fat === undefined ? '力が尽きている' : fat > 0.01 ? '力が尽き、蓄えで生きている' : '蓄えもなく、食べた分で食いつないでいる');
     else if (ripe && energy / ripe > 0.85) now.push('もうすぐ子を産む');
-    if (born && n < born) now.push(`${born - n} 個壊された`);
+    if (born && n < born) now.push(`${born - n} 個${world.params.wear > 0 ? '失った' : '壊された'}`);
   }
   $('fate').textContent = now.join('・');
   const counts = {};
