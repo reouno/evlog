@@ -390,6 +390,20 @@ negative are its products. So the order is:
    (kills 30-41% of the intake) on 4 of 6 seeds under both laws, or a grazer world (16-20%). A law about predation has
    to be judged by that count over seeds and by the kills' share within a state.
    Order now: #49 plant matter harder to digest than flesh, #14 the regions (with #38 as its first pilot), #5.
+
+   Done 2026-09-11: #49 plant matter harder to digest than flesh (e046) - not kept: `plant_yield` stays 1. Every gut
+   digested half of the plant it took (the rest as dung to the soil of the cell) and all of the flesh, on seeds 9-14
+   against e045's connect runs. The world stands at half its bodies (1,164 against 2,246; floors 125-233 against
+   345-590), digesting 73 a step against 126; the plant left uneaten stands as forest (trees on 27-31% of the cells
+   against 3-16%). Hunter worlds come on 5 of 6 seeds against 4, but three seeds swap
+   states, and within a state the kills' share of what is digested holds (28-36% against 30-37%): the crowd thins
+   until a gut breaks even again, a kill is worth what it was, and a hunter meets others as often (0.36-0.56 contacts
+   a step against 0.44-0.69). The sitter answers with a bigger gut, 12-19 gut blocks per body against 7-12 on all six
+   seeds, and on three seeds the winner is a gut of 22-25 blocks without muscle beside small hunters: a body's fixed
+   cost (0.032 a step) carried by more gut, the Jarman-Bell principle out of the costs. Muscle-free lineages hold
+   34-64% of the bodies in the hunter worlds against 24-47%. 0.3 was not run. A law that lowers what food yields
+   everywhere acts as a weaker sun; hunting may pay where places differ and the crowd cannot even them out.
+   Order now: #14 the regions (with #38 as its first pilot), #5.
 4. #5 3D bodies (the vertical axis for legs and wings), after size pays (e037 says: after a food for big bodies exists): 12-16 cells in 3D is a blob. An arm is an
    outcome to watch for there, not a rule.
 5. Later: #34 kinds of matter (several conserved substances - water, plant stuff, animal stuff of different
