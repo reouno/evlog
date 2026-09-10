@@ -352,6 +352,21 @@ negative are its products. So the order is:
    store decides where the matter cycles, and the valley carries the winter. Read what e030-e041 say about bodies at
    zero energy, the floors, the sitter and size as measured with the gap. Order now: #45 under `strict`, then #47
    ageing, #38, #5.
+
+   Done 2026-09-11: #45 and #44, what a crown takes (e043) - kept: the season world is `sat` 1 and `hold` 1 from
+   here. When e022 added the fall it changed the canopy twice: a full crown kept claiming light (e021's saturation
+   dropped) and so did a column under a body (e021's rest dropped). Put back under the fall one at a time (seed 9,
+   100,000 steps, under `strict`), each leaves a third or more of the rain: the fruit is 94 a step in the control,
+   49 with the saturation alone (the bitten columns under bodies now claim hardest, and all of it falls), 80 with
+   the held column's rest alone (the free full crowns still pour), 0.5 with both. With both, on seeds 9 and 10, the
+   light stays on the cells (78 a step grown on them against 12), food lies on 65-68% of the cells against 37%,
+   40-44 of the 146 of light is lost under bodies (e016's shadow), the bodies move on 40-46% of their decisions
+   against 23-24%, and diversity is 3 against the controls' 2. The world stands on eight seeds (six only through
+   the first winter, 409-796 bodies at the trough: no lottery), with winter floors 8% and 33% lower. Who wins turns
+   on the seed: a grazer of 8 muscle and 8 gut cells on seed 9 (61% of the last third), a light gut of 16 cells on
+   seed 10 (69%); muscle-free lineages hold 47% and 74% of the bodies (a gut without muscle still steps a sub-cell
+   at a time). The laws since e022 that needed movement (e023, e037-e041) were tested in the rain and can be tried
+   again. Order now: #47 ageing, #38, #5.
 4. #5 3D bodies (the vertical axis for legs and wings), after size pays (e037 says: after a food for big bodies exists): 12-16 cells in 3D is a blob. An arm is an
    outcome to watch for there, not a rule.
 5. Later: #34 kinds of matter (several conserved substances - water, plant stuff, animal stuff of different
