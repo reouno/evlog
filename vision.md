@@ -379,6 +379,17 @@ negative are its products. So the order is:
    death 456-480) and wear touches 1.5% of the deaths. The world stands on both; diversity 2 against 3, with more
    winners. Whether size buys a longer life cannot be read yet (the bodies that reach 2,000 are one lineage's).
    Order now: #38, #5.
+
+   Done 2026-09-11: #48 a body is what holds together (e045) - kept: from here a body is the largest part its blocks
+   make through their sides (`connect` 1). Every block a genome wrote had been part of the body, touching or not; in
+   e044's wear runs 4-15% of the living bodies were in pieces. Under the law only the largest part is built at birth
+   (0.6-4.4% of the births cut on five seeds; 12% on seed 11, whose winner writes parts), and a part cut off by a break
+   or a worn block falls as dead matter. A break drops 3-6% more blocks than it breaks (a push breaks surface blocks,
+   which rarely hold two parts together); a worn block 0.1-0.4 more. The world stands on six seeds with 4-18% fewer
+   bodies. After the ungrazed start the season world settles in one of two states, picked by the seed: a hunter world
+   (kills 30-41% of the intake) on 4 of 6 seeds under both laws, or a grazer world (16-20%). A law about predation has
+   to be judged by that count over seeds and by the kills' share within a state.
+   Order now: #49 plant matter harder to digest than flesh, #14 the regions (with #38 as its first pilot), #5.
 4. #5 3D bodies (the vertical axis for legs and wings), after size pays (e037 says: after a food for big bodies exists): 12-16 cells in 3D is a blob. An arm is an
    outcome to watch for there, not a rule.
 5. Later: #34 kinds of matter (several conserved substances - water, plant stuff, animal stuff of different
