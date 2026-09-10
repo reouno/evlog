@@ -298,6 +298,7 @@ export class Rig {
     this.yaw = Math.PI * 0.25;
     this.pitch = 0.55;
     this.follow = null;
+    this.want = null; // a distance the eye is on its way to: a picked body is brought close, not jumped to
     this.keys = new Set();
     let drag = null;
     dom.addEventListener('pointerdown', (e) => {
@@ -311,9 +312,10 @@ export class Rig {
       drag.x = e.clientX; drag.y = e.clientY;
       if (drag.pan) this.pan(-dx * this.dist * 0.0016, dy * this.dist * 0.0016); // the ground follows the hand
       else {
+        // Turning goes around the point being watched, so it keeps a followed body; moving the
+        // point (`pan`) lets it go.
         this.yaw -= dx * 0.005;
         this.pitch = Math.max(0.06, Math.min(1.52, this.pitch + dy * 0.005));
-        this.follow = null;
       }
     });
     const stop = (e) => { if (drag) { dom.releasePointerCapture(e.pointerId); drag = null; } };
@@ -322,6 +324,7 @@ export class Rig {
     dom.addEventListener('contextmenu', (e) => e.preventDefault());
     dom.addEventListener('wheel', (e) => {
       e.preventDefault();
+      this.want = null;
       this.dist = Math.max(1.2, Math.min(420, this.dist * Math.exp(e.deltaY * 0.0012)));
     }, { passive: false });
     addEventListener('keydown', (e) => {
@@ -348,8 +351,13 @@ export class Rig {
     if (k.has('s') || k.has('arrowdown')) this.pan(0, -v);
     if (k.has('a') || k.has('arrowleft')) this.pan(-v, 0);
     if (k.has('d') || k.has('arrowright')) this.pan(v, 0);
+    if (k.has('q') || k.has('e')) this.want = null;
     if (k.has('q')) this.dist = Math.max(1.2, this.dist * (1 - dt));
     if (k.has('e')) this.dist = Math.min(420, this.dist * (1 + dt));
+    if (this.want !== null) {
+      this.dist += (this.want - this.dist) * Math.min(1, dt * 3);
+      if (Math.abs(this.want - this.dist) < 0.05) this.want = null;
+    }
     const { w, d } = this.world;
     this.target.x = ((this.target.x % w) + w) % w;
     this.target.z = ((this.target.z % d) + d) % d;

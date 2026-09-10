@@ -76,8 +76,21 @@ grass while it is short and a tree when it stands a cell or more, as tall as its
 fruit and the dead lie on the ground. A body is its blocks: hard is a shell, muscle is flesh,
 sensor is an eye, digestive is a gut. Far bodies are drawn as one slab, coloured by diet.
 
-Drag to turn, right-drag or shift-drag to move, wheel to zoom, WASD to walk, click a body to
-follow it, click the minimap to go somewhere.
+Drag to turn, right-drag or shift-drag to move, wheel to zoom, WASD to walk, click the minimap
+to go somewhere. Click a body to follow it: the eye comes in to 24 units and keeps the body in the
+middle, turning the view goes around it, and moving the view or Esc lets it go. The body followed
+is drawn unlit and brighter than anything else, under a pin that is never smaller than about 20
+pixels on the screen.
+
+A click picks the body whose drawn blocks a ray through the pointer meets first, so where bodies
+overlap on the screen it is the one in front. Of 365 clicks on random blocks of random bodies, in
+three views, 246 picked that body and 108 had another body in front of that spot and picked that
+one; 11 (3%) went elsewhere, where two bodies' blocks touch or overlap on the screen. A click costs
+about 20 ms. It was 8 in 120 before, for two reasons worth knowing. The canvas was twice the window on a
+retina screen (a canvas is as big as its drawing buffer unless CSS gives it a size), so the picture
+was the top-left quarter of the view, the followed body sat past the bottom-right corner, and a
+click's ray went somewhere else. And the picker took the body whose corner was nearest the ground
+under the click: the ground is behind a body, and in a crowd the nearest corner is a neighbour's.
 
 ### The season
 

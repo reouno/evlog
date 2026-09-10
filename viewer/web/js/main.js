@@ -135,6 +135,7 @@ function loop(now) {
     plantAt = { x: rig.target.x, z: rig.target.z };
     plantsDue = false;
   }
+  life.markScale = Math.max(1, rig.dist / 32); // the pin stays about 20 pixels high however far the eye is
   life.bodies(world, a, b, t, rig.target, ground, picked, before, after);
   if (rig.follow !== null && a) {
     const i = a.index.get(rig.follow);
@@ -143,7 +144,9 @@ function loop(now) {
       // every frame of the recording, which is the one place a jump is impossible to miss.
       const cell = 1 / world.sub, p = [0, 0];
       Life.track(p, a, i, b, b ? b.index.get(rig.follow) : undefined, t, before, after, cell, world.w, world.d);
-      rig.goTo(p[0] + 0.5, p[1] + 0.5);
+      const shape = world.blocks(a.a.body[i], a.a.facing[i]);
+      const half = shape ? (shape.side * cell) / 2 : 0.5; // p is the body's corner; the eye goes to its middle
+      rig.goTo(p[0] + half, p[1] + half);
     }
   }
   light(here);
@@ -406,22 +409,41 @@ function bindUI(header) {
     rig.goTo(((e.clientX - r.left) / r.width) * world.w, ((e.clientY - r.top) / r.height) * world.d);
     rig.follow = null;
   };
-  // Clicking the world picks the body nearest to where the ground was hit.
+  // Clicking the world picks the body under the pointer: the one whose blocks a ray through the
+  // pointer meets first, which is the one in front where bodies overlap on the screen. A click
+  // just off a small body finds the body drawn nearest it on the screen, within its own size (at
+  // least 16 pixels). The ground is no guide: the ground a click hits is behind the body, and on
+  // a hillside far behind it. A press that turned the view is a drag, not a click.
+  let pressedAt = null;
+  const onScreen = new THREE.Vector3(), ray = new THREE.Raycaster(), pointer = new THREE.Vector2();
+  $('view').addEventListener('pointerdown', (e) => (pressedAt = [e.clientX, e.clientY]));
   $('view').addEventListener('click', (e) => {
     if (e.target.closest('.ui')) return;
-    const ray = new THREE.Raycaster();
-    ray.setFromCamera(new THREE.Vector2((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1), camera);
-    const hits = ray.intersectObjects(ground.tiles, false);
-    if (!hits.length) return;
-    const p = hits[0].point;
-    let best = null, bd = 16; // squared: within 4 units of where the ground was hit
+    if (pressedAt && Math.hypot(e.clientX - pressedAt[0], e.clientY - pressedAt[1]) > 5) return;
+    const r = e.target.getBoundingClientRect();
+    pointer.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+    ray.setFromCamera(pointer, camera);
+    picked = life.under(ray);
+    rig.follow = picked;
+    if (picked !== null) {
+      rig.want = Math.min(rig.dist, 24); // brought close enough to see what it is
+      return;
+    }
+    const focal = r.height / 2 / Math.tan((camera.fov * Math.PI) / 360); // pixels per unit at distance 1
+    let best = null, bestFit = 1;
     for (let i = 0; i < life.drawnN; i++) {
-      const ex = life.drawnX[i] - p.x, ez = life.drawnZ[i] - p.z;
-      const dd = ex * ex + ez * ez;
-      if (dd < bd) { bd = dd; best = life.drawnId[i]; }
+      onScreen.set(life.drawnX[i], life.drawnY[i], life.drawnZ[i]);
+      const far = onScreen.distanceTo(camera.position);
+      onScreen.project(camera);
+      if (onScreen.z > 1) continue; // behind the eye
+      const sx = r.left + ((onScreen.x + 1) / 2) * r.width, sy = r.top + ((1 - onScreen.y) / 2) * r.height;
+      const reach = Math.max(16, (0.75 * life.drawnS[i] * focal) / far);
+      const fit = ((sx - e.clientX) ** 2 + (sy - e.clientY) ** 2) / (reach * reach);
+      if (fit < bestFit) { bestFit = fit; best = life.drawnId[i]; }
     }
     picked = best;
     rig.follow = picked;
+    if (picked !== null) rig.want = Math.min(rig.dist, 24);
   });
 }
 

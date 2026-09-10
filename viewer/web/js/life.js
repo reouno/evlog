@@ -38,10 +38,17 @@ class Pool {
     this.cap = cap;
     this.n = 0;
     this.sent = 0; // how many instances the card has, so an empty pool is not sent again
+    this.owner = null; // which body each instance is part of, in the pools a click can find one in
+    this.tag = 0; // the body being written now
     scene.add(this.mesh);
   }
   reset() {
     this.n = 0;
+  }
+  /** Keep, for every instance, the body it is part of. */
+  own() {
+    this.owner = new Uint32Array(this.cap);
+    return this;
   }
   /** The colour of the instance being written. It is taken apart here and not kept, so every
    * caller can hand over the same scratch colour. */
@@ -58,12 +65,14 @@ class Pool {
     a[o + 8] = 0; a[o + 9] = 0; a[o + 10] = sz; a[o + 11] = 0;
     a[o + 12] = x; a[o + 13] = y; a[o + 14] = z; a[o + 15] = 1;
     if (col !== undefined) this.tint(col);
+    if (this.owner) this.owner[this.n] = this.tag;
     this.n++;
   }
   putM(m, col) {
     if (this.n >= this.cap) return;
     m.toArray(this.mesh.instanceMatrix.array, this.n * 16);
     if (col !== undefined) this.tint(col);
+    if (this.owner) this.owner[this.n] = this.tag;
     this.n++;
   }
   /** Hand the pool to the card. A pool is made big enough for the worst case and is usually far
@@ -134,8 +143,8 @@ function curve(p0, p1, p2, p3, t) {
 }
 
 /** The pool a kind of block is drawn from (a kind the browser does not know goes in with the gut). */
-function pools_of(life, k) {
-  return life.blockPools[k] || life.blockPools[4];
+function pools_of(pools, k) {
+  return pools[k] || pools[4];
 }
 
 export class Life {
@@ -173,9 +182,16 @@ export class Life {
     this.carrion = new Pool(scene, box, flesh, 9000);
     this.standing = [this.grass, this.grass2, this.trunk, this.limb, this.crown, this.spire, this.fruit, this.carrion];
     // The bodies: one pool per kind of block, and one flat box for the ones far away.
-    this.blockPools = [null, new Pool(scene, box, shell, 40000), new Pool(scene, box, flesh, 60000), new Pool(scene, ball, eye, 20000), new Pool(scene, box, flesh, 60000)];
-    this.far = new Pool(scene, box, flesh, 8000);
-    this.pools = [...this.standing, this.far, ...this.blockPools.filter(Boolean)];
+    this.blockPools = [null, new Pool(scene, box, shell, 40000).own(), new Pool(scene, box, flesh, 60000).own(), new Pool(scene, ball, eye, 20000).own(), new Pool(scene, box, flesh, 60000).own()];
+    // The body being followed is drawn from pools of its own that no light or haze reaches, and
+    // brighter than a colour in the scene can be: only tinted, it was lost in the shade of a tree
+    // or among bodies of its own colour.
+    const glow = new THREE.MeshBasicMaterial({ toneMapped: false, fog: false });
+    this.litPools = [null, new Pool(scene, box, glow, 512).own(), new Pool(scene, box, glow, 512).own(), new Pool(scene, ball, glow, 512).own(), new Pool(scene, box, glow, 512).own()];
+    this.far = new Pool(scene, box, flesh, 8000).own();
+    this.bodyPools = [...this.blockPools.filter(Boolean), ...this.litPools.filter(Boolean)];
+    this.pools = [...this.standing, this.far, ...this.bodyPools];
+    this.owned = [...this.bodyPools, this.far]; // where a click looks for a body
     // The body being followed wears a ring, so it can be found again in a crowd. It is a mark,
     // not a thing in the world: it shows through the water and over a hill.
     // A pin that hangs over it, not a ring on the ground: at the angle the world is watched
@@ -187,13 +203,16 @@ export class Life {
     this.mark = new Pool(scene, pin, markMat, 2);
     this.mark.mesh.renderOrder = 999;
     this.treeMin = 1.0;
+    this.markScale = 1; // how much bigger than a unit the pin is drawn, so it keeps a size on the screen
     this.bodyNear = 55;
-    // The bodies drawn in full this frame, so a click can find the nearest one: three flat arrays
-    // rather than an object each, because there are thousands of them every frame.
+    // The bodies drawn this frame, so a click can find the one under it: the middle of each and
+    // its side, in flat arrays rather than an object each, because there are thousands of them.
     this.drawnN = 0;
     this.drawnId = new Uint32Array(20000);
     this.drawnX = new Float32Array(20000);
+    this.drawnY = new Float32Array(20000);
     this.drawnZ = new Float32Array(20000);
+    this.drawnS = new Float32Array(20000);
     this.scratch = [0, 0]; // where one body is, while it is being worked out
     this.setDetail(1);
   }
@@ -208,7 +227,7 @@ export class Life {
   }
 
   setVisible(what, on) {
-    const map = { grass: [this.grass, this.grass2], trees: [this.trunk, this.limb, this.crown, this.spire], fruit: [this.fruit], carrion: [this.carrion], bodies: [...this.blockPools.filter(Boolean), this.far] };
+    const map = { grass: [this.grass, this.grass2], trees: [this.trunk, this.limb, this.crown, this.spire], fruit: [this.fruit], carrion: [this.carrion], bodies: [...this.bodyPools, this.far] };
     (map[what] || []).forEach((p) => (p.mesh.visible = on));
   }
 
@@ -485,7 +504,7 @@ export class Life {
    * So a body that dies inside the interval goes down to nothing over it, and one that is born
    * inside it comes up from nothing, and neither appears or vanishes whole. */
   bodies(world, a, b, t, at, ground, picked, before, after) {
-    const pools = this.blockPools;
+    const pools = this.bodyPools;
     pools.forEach((p) => p && p.reset());
     this.far.reset();
     this.drawnN = 0;
@@ -515,6 +534,19 @@ export class Life {
     this.mark.done();
   }
 
+  /** The body whose drawn blocks `ray` meets first, or null: what a click is on. */
+  under(ray) {
+    const hits = [];
+    for (const p of this.owned) {
+      p.mesh.boundingSphere = null; // the instances have moved since it was last worked out
+      p.mesh.raycast(ray, hits);
+    }
+    let first = null;
+    for (const h of hits) if (first === null || h.distance < first.distance) first = h;
+    if (first === null) return null;
+    return this.owned.find((p) => p.mesh === first.object).owner[first.instanceId];
+  }
+
   /** One body of frame `fr`, at `fade` of its size about its own middle: 1 while it is alive
    * across the whole interval, going to 0 as it dies and coming up from 0 as it is born. */
   body(world, fr, i, x, z, fade, cell, at, ground, picked) {
@@ -524,13 +556,24 @@ export class Life {
     if (r2 > this.mid * this.mid) return;
     const shape = world.blocks(fr.a.body[i], fr.a.facing[i]);
     if (!shape) return;
+    for (const p of this.owned) p.tag = fr.a.id[i]; // whose blocks these are, for a click
     const y = ground.heightAt(x + 0.5, z + 0.5);
     const lit = picked === fr.a.id[i];
     const side = shape.side * cell;
     const mx = px + side / 2, mz = pz + side / 2; // the body's own middle: it shrinks towards this
     if (lit) {
-      const bob = 0.09 * Math.sin(performance.now() / 320);
-      this.mark.put(mx, y + 0.55 + side * 0.22 + bob, mz, 1, 1, 1, WARM);
+      const k = this.markScale, bob = 0.09 * k * Math.sin(performance.now() / 320);
+      this.mark.put(mx, y + 0.55 + side * 0.22 + bob, mz, k, k, k, WARM);
+    }
+    if (fade > 0.5 && this.drawnN < this.drawnId.length) {
+      // Where a click finds it: its middle, a little above the ground, and how big it is. Not its
+      // corner: in a crowd the corner nearest a click is usually a neighbour's.
+      this.drawnId[this.drawnN] = fr.a.id[i];
+      this.drawnX[this.drawnN] = mx;
+      this.drawnY[this.drawnN] = y + 0.2;
+      this.drawnZ[this.drawnN] = mz;
+      this.drawnS[this.drawnN] = side;
+      this.drawnN++;
     }
     if (r2 > this.bodyNear * this.bodyNear) {
       // Too far to make out its blocks: one low body, the colour of what it eats. It is seen
@@ -539,33 +582,28 @@ export class Life {
       this.far.put(mx, y, mz, s, 0.1, s, lit ? FARLIT : FAR[fr.a.diet[i]]);
       return;
     }
-    if (fade > 0.5 && this.drawnN < this.drawnId.length) {
-      this.drawnId[this.drawnN] = fr.a.id[i];
-      this.drawnX[this.drawnN] = px;
-      this.drawnZ[this.drawnN] = pz;
-      this.drawnN++;
-    }
     // The world is flat, so a body would be a pallet if every block were the same height.
     // It is given a back: the blocks stand tallest in the middle and fall away to the rim,
     // and a bigger body stands higher.
     const half = (shape.side - 1) / 2, span = half + 0.6;
     const grow = 0.62 + 0.05 * shape.side;
     const wide = cell * 0.98 * fade;
+    const drawn = lit ? this.litPools : this.blockPools;
     for (const bl of shape.blocks) {
       const bx = mx + (px + (bl.c + 0.5) * cell - mx) * fade;
       const bz = mz + (pz + (bl.r + 0.5) * cell - mz) * fade;
       const k = bl.kind;
-      const pool = pools_of(this, k);
+      const pool = pools_of(drawn, k);
       const dr = (bl.r - half) / span, dc = (bl.c - half) / span;
       const dome = 0.42 + 0.78 * Math.sqrt(Math.max(0, 1 - dr * dr - dc * dc));
       const base = k === 1 ? 0.42 : k === 2 ? 0.36 : k === 3 ? 0.3 : 0.3;
       const hgt = base * dome * grow * fade;
       let col = KIND[k] || KIND[4];
-      if (lit) col = HI.copy(col).lerp(WARM, 0.55); // marked, but still readable
+      if (lit) col = HI.copy(col).lerp(WARM, 0.6).multiplyScalar(1.4); // gold, and its kinds still apart
       if (k === 3) {
         // An eye sits on the body, round and dark.
         const eye = cell * 0.44 * fade;
-        this.blockPools[4].put(bx, y, bz, wide, hgt * 0.8, wide, lit ? SOCKETLIT : SOCKET);
+        drawn[4].put(bx, y, bz, wide, hgt * 0.8, wide, lit ? SOCKETLIT : SOCKET);
         pool.put(bx, y + hgt * 0.8 + cell * 0.2 * fade, bz, eye, eye, eye, col);
       } else {
         pool.put(bx, y, bz, wide, hgt, wide, col);
