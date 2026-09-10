@@ -41,7 +41,9 @@ Nothing happens without EVLOG_VIEW, and a run with it writes the same results as
 - **A body shape** is sent once, the first time it is seen, and frames name it by id.
 - **A frame** is the step, the globals, the cell layers (every `layers` frames: they change
   slowly) and every living body: where it is, which way it faces, its shape, its lineage, what
-  it eats, its water and its energy.
+  it eats, its water, its energy and the energy at which it breeds, its fat (a share of what its
+  flesh can hold), its age and the blocks it was born with. Then the bodies that died since the
+  frame before, each with a number for what it died of; the header's `deaths` names them.
 
 ### When an experiment grows
 
@@ -67,6 +69,9 @@ if let Some(v) = view.as_mut() {                                       // in the
 }
 ```
 
+A world that names what its bodies die of (`Init::deaths`) also calls `v.died(step, id, cause)`
+where one dies, and the next frame carries it.
+
 ## What the browser draws
 
 One world cell is one unit; the world's y is the scene's z; the torus is drawn nine times so
@@ -81,6 +86,19 @@ to go somewhere. Click a body to follow it: the eye comes in to 24 units and kee
 middle, turning the view goes around it, and moving the view or Esc lets it go. The body followed
 is drawn unlit and brighter than anything else, under a pin that is never smaller than about 20
 pixels on the screen.
+
+The body followed has a card on the left, under the clock: its shape, a line on what is happening
+to it, and a gauge for each thing it can run out of - its energy against the energy at which it
+breeds, its fat against what its flesh can hold, its blocks against those it was born with, its
+age against the age it dies at (and its water, in a world with thirst). Each gauge that empties
+is a way to die, so the one running down is the one to watch, and a chart under them draws the
+three that move over the frames the browser holds. When the body dies the card says what of and
+keeps its last gauges, dimmed. In the two recordings every body missing from a frame had its death
+in that frame (380,469 over 40,000 steps at stride 50, 1,771 over 800 at stride 1), and at stride 1
+the causes agree with the step before: the starved had neither energy nor fat, the old were 3,000,
+the broken were down to a seventh of their blocks (median). In e041's season world (seed 9, steps 50,000-100,000) 76% of the
+bodies that lived died of hunger, 23% were broken, 1% reached the age of 3,000; at step 100,000,
+46% of the bodies had no energy left and lived on their fat.
 
 A click picks the body whose drawn blocks a ray through the pointer meets first, so where bodies
 overlap on the screen it is the one in front. Of 365 clicks on random blocks of random bodies, in

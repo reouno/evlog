@@ -1,8 +1,9 @@
 //! Watching the world: the world writes frames, the browser draws them.
 //!
-//! An experiment adds three lines (`View::from_env`, `view.frame(..)`, `view.tick(step)`) and
-//! nothing else changes: with EVLOG_VIEW unset the viewer does not exist and the run is what it
-//! was. What the frames are is in `wire.rs`, and it is the whole interface.
+//! An experiment adds three lines (`View::from_env`, `view.frame(..)`, `view.tick(step)`), and a
+//! fourth where its bodies die if it says what they die of (`view.died(..)`), and nothing else
+//! changes: with EVLOG_VIEW unset the viewer does not exist and the run is what it was. What
+//! the frames are is in `wire.rs`, and it is the whole interface.
 //!
 //! EVLOG_VIEW:
 //!   rec                          record the whole run to <prefix>_view.bin
@@ -33,6 +34,8 @@ pub struct View {
     bodies: wire::Bodies,
     buf: Vec<u8>,
     keyed: bool, // whether a frame with the cell layers has gone out yet
+    causes: bool, // whether the world names what its bodies die of
+    dead: Vec<(u32, u8)>, // who died since the last frame, and of what
     out: Out,
 }
 
@@ -83,7 +86,16 @@ impl View {
             }
             other => panic!("EVLOG_VIEW: unknown mode {other:?} (rec or serve)"),
         };
-        Some(View { layers: init.layers, from, until, stride, layer_stride, bodies: wire::Bodies::default(), buf: Vec::new(), keyed: false, out })
+        let causes = !init.deaths.is_empty();
+        Some(View { layers: init.layers, from, until, stride, layer_stride, bodies: wire::Bodies::default(), buf: Vec::new(), keyed: false, causes, dead: Vec::new(), out })
+    }
+
+    /// A body died of `cause` (the number of its name in `Init::deaths`). It goes out with the
+    /// next frame; nothing is kept outside the watched window.
+    pub fn died(&mut self, step: u64, id: u32, cause: u8) {
+        if self.causes && step >= self.from && step <= self.until {
+            self.dead.push((id, cause));
+        }
     }
 
     /// Whether this step is a frame. The caller skips the work of a frame when it is not.
@@ -105,7 +117,7 @@ impl View {
     {
         let key = self.is_key(step);
         self.keyed |= key;
-        let View { layers: specs, bodies, buf, out, .. } = self;
+        let View { layers: specs, bodies, buf, causes, dead, out, .. } = self;
         let mut new_bodies: Vec<Vec<u8>> = Vec::new();
         let rec = {
             let fw = wire::FrameWriter::start(buf, step, globals);
@@ -118,8 +130,10 @@ impl View {
                 }
                 fw.agent(&a, id);
             });
+            let fw = if *causes { fw.deaths(dead) } else { fw };
             fw.finish()
         };
+        dead.clear();
         match out {
             Out::File(f) => {
                 for b in &new_bodies {

@@ -48,12 +48,26 @@
   #shape { display: grid; gap: 1px; margin: 6px 0; padding: 3px; background: #ffffff14; border-radius: 4px; }
   #shape i { width: 100%; aspect-ratio: 1; border-radius: 1px; outline: 1px solid #00000030; }
   .muted { color: var(--dim); font-size: 12px; }
+  /* The left column: what the world is doing, and under it the body being followed. */
+  #left { position: fixed; top: 12px; left: 12px; display: flex; flex-direction: column; gap: 10px; align-items: flex-start;
+    max-height: calc(100vh - 90px); }
+  #left .ui { position: static; }
+  #who { width: 226px; overflow-y: auto; }
+  #who h4 { margin: 2px 0 6px; font-size: 11px; letter-spacing: .12em; color: var(--dim); font-weight: 600; }
+  #fate { color: var(--ink); font-size: 12px; min-height: 18px; }
+  .gauge { display: grid; grid-template-columns: 28px 1fr 80px; align-items: center; gap: 6px; font-size: 12px; line-height: 1.75; }
+  .gauge b { display: block; height: 7px; border-radius: 4px; background: #ffffff1c; overflow: hidden; }
+  .gauge b i { display: block; height: 100%; }
+  .gauge span:last-child { text-align: right; color: var(--ink); font: 11px ui-monospace, monospace; }
+  #gauges.gone { opacity: .45; }
+  #life { display: block; width: 100%; height: 44px; margin-top: 6px; background: #ffffff0c; border-radius: 4px; }
   #legend span { display: inline-block; margin-right: 9px; white-space: nowrap; }
   #legend i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 4px; }
 </style>
 
 <canvas id="view"></canvas>
 
+<div id="left">
 <div class="ui" id="hud">
   <b id="step">—</b>
   <div class="row"><span>bodies</span><span id="pop">—</span></div>
@@ -67,6 +81,22 @@
   </div>
   <div class="row"><span>at</span><span id="where">—</span></div>
   <div class="row"><span>fps</span><span id="fps">—</span></div>
+</div>
+<div class="ui" id="who">
+  <h4>追っている体</h4>
+  <div id="sel">
+    <div id="selempty" class="muted">体をクリックすると追う</div>
+    <div id="selbody" hidden>
+      <div id="shape"></div>
+      <div id="fate"></div>
+      <div id="gauges"></div>
+      <canvas id="life" width="404" height="88"></canvas>
+      <div id="lifespan" class="muted"></div>
+      <div id="selrows"></div>
+      <button id="unfollow">追うのをやめる (Esc)</button>
+    </div>
+  </div>
+</div>
 </div>
 
 <div class="ui" id="panel">
@@ -82,16 +112,6 @@
   <label class="rng">植物の高さ <input type="range" id="s-plant" min="0.1" max="1.5" step="0.05" value="0.5"></label>
   <label class="rng">草木の精細 <input type="range" id="s-detail" min="0" max="2" step="1" value="1"></label>
   <label class="chk"><input type="checkbox" id="v-shadow" checked> 影</label>
-  <hr>
-  <h4>選んだ体</h4>
-  <div id="sel">
-    <div id="selempty" class="muted">クリックで選ぶ</div>
-    <div id="selbody" hidden>
-      <div id="shape"></div>
-      <div id="selrows"></div>
-      <button id="unfollow">追うのをやめる (Esc)</button>
-    </div>
-  </div>
   <hr>
   <h4>凡例</h4>
   <div id="legend"></div>

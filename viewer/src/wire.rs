@@ -2,7 +2,9 @@
 //!
 //! One stream of records, the same for a live run and for a replay of a recorded one:
 //!
+//! ```text
 //!     [u8 kind][u32 length][payload]
+//! ```
 //!
 //! kind 0  header, a JSON object (once, first)
 //! kind 1  a body shape: [u32 id][u8 side][u8; side*side] block kinds, row by row
@@ -10,13 +12,18 @@
 //!
 //! A frame:
 //!
+//! ```text
 //!     [u64 step]
 //!     [u8 n_globals][f32 x n_globals]
 //!     [u8 n_layers][(u8 layer index, u8 value per cell) x n_layers]   // only on layer steps
 //!     [u32 n_agents][agent record x n_agents]
+//!     [u32 n_dead][(u32 id, u8 cause) x n_dead]                        // when the header names causes
+//! ```
 //!
 //! The header says what the layers, the globals and the agent record are, so a world that
 //! grows a new layer or a new field says so there and the viewer follows without a new format.
+//! The dead are the bodies that died since the frame before, with what they died of (the
+//! header's `deaths` names the causes by number): a watcher following one sees why it is gone.
 //! Cell layers change slowly (a plant grows by 0.01 a step) and are written every
 //! `layer_stride` frames; the bodies move every step.
 
@@ -73,6 +80,7 @@ pub struct Init<'a> {
     pub layers: Vec<LayerSpec>,
     pub globals: Vec<&'static str>,
     pub blocks: Vec<&'static str>, // block kinds by index, 0 = empty
+    pub deaths: Vec<&'static str>, // what a body dies of, by the number `View::died` is given (empty: none are sent)
     pub params: String,            // the run's laws and arguments, a JSON object
 }
 
@@ -87,12 +95,16 @@ pub struct AgentIn<'a> {
     pub diet: u8, // 0 plants, 1 mixed, 2 meat, 3 nothing yet
     pub fill: f32,
     pub energy: f32,
+    pub ripe: f32, // the energy at which the body breeds
+    pub fat: f32,  // its store, as a share of what its flesh can hold
+    pub age: u32,
+    pub born: u16, // blocks at birth (what it holds now is its shape's)
     pub side: u8,
     pub cells: &'a [u8],
 }
 
-pub const AGENT_BYTES: usize = 20;
-pub const ENERGY_MAX: f32 = 8.0;
+pub const AGENT_BYTES: usize = 26;
+pub const ENERGY_MAX: f32 = 16.0; // a big body breeds at 14
 
 pub const KIND_HEADER: u8 = 0;
 pub const KIND_BODY: u8 = 1;
@@ -126,17 +138,19 @@ pub fn header_json(init: &Init, stride: u64, layer_stride: u64, live: bool) -> S
     let agent = "[{\"name\":\"id\",\"type\":\"u32\"},{\"name\":\"lineage\",\"type\":\"u32\"},{\"name\":\"body\",\"type\":\"u32\"},\
                  {\"name\":\"x\",\"type\":\"u16\"},{\"name\":\"y\",\"type\":\"u16\"},{\"name\":\"facing\",\"type\":\"u8\"},\
                  {\"name\":\"diet\",\"type\":\"u8\"},{\"name\":\"fill\",\"type\":\"u8\",\"max\":1},\
-                 {\"name\":\"energy\",\"type\":\"u8\",\"max\":8}]";
+                 {\"name\":\"energy\",\"type\":\"u8\",\"max\":16},{\"name\":\"ripe\",\"type\":\"u8\",\"max\":16},\
+                 {\"name\":\"fat\",\"type\":\"u8\",\"max\":1},{\"name\":\"age\",\"type\":\"u16\"},{\"name\":\"born\",\"type\":\"u16\"}]";
     let bands = init.band.iter().map(|b| b.to_string()).collect::<Vec<_>>().join(",");
     format!(
         "{{\"version\":1,\"experiment\":\"{}\",\"live\":{live},\"w\":{},\"h\":{},\"sub\":{},\"stride\":{stride},\"layer_stride\":{layer_stride},\
-         \"layers\":[{layers}],\"globals\":[{}],\"blocks\":[{}],\"agent_record\":{agent},\"params\":{},\"height\":[{}],\"band\":[{bands}]}}",
+         \"layers\":[{layers}],\"globals\":[{}],\"blocks\":[{}],\"deaths\":[{}],\"agent_record\":{agent},\"params\":{},\"height\":[{}],\"band\":[{bands}]}}",
         init.experiment,
         init.w,
         init.h,
         init.sub,
         strings(&init.globals),
         strings(&init.blocks),
+        strings(&init.deaths),
         init.params,
         floats(init.height),
     )
@@ -220,7 +234,20 @@ impl<'a> FrameWriter<'a> {
         b.push(a.diet);
         b.push((a.fill.clamp(0.0, 1.0) * 255.0) as u8);
         b.push(((a.energy / ENERGY_MAX).clamp(0.0, 1.0) * 255.0) as u8);
+        b.push(((a.ripe / ENERGY_MAX).clamp(0.0, 1.0) * 255.0) as u8);
+        b.push((a.fat.clamp(0.0, 1.0) * 255.0) as u8);
+        b.extend_from_slice(&(a.age.min(u16::MAX as u32) as u16).to_le_bytes());
+        b.extend_from_slice(&a.born.to_le_bytes());
         self.n_agents += 1;
+    }
+    /// The bodies that died since the frame before, after the living ones.
+    pub fn deaths(self, dead: &[(u32, u8)]) -> Self {
+        self.buf.extend_from_slice(&(dead.len() as u32).to_le_bytes());
+        for &(id, cause) in dead {
+            self.buf.extend_from_slice(&id.to_le_bytes());
+            self.buf.push(cause);
+        }
+        self
     }
     pub fn finish(self) -> Vec<u8> {
         let at = self.agents_at;

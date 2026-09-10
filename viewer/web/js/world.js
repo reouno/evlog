@@ -46,6 +46,7 @@ export class World {
       return p;
     });
     this.stride = off;
+    this.fields = Object.fromEntries(this.plan.map((p) => [p.name, p]));
     this.relief = this.params.relief || 1;
     this.wet = (this.params.water_rain || 1) / (this.params.water_evap || 1); // a cell's own water
     this.depth = this.params.depth || 0; // height per unit of water
@@ -105,7 +106,10 @@ export class World {
     const dv = new DataView(p.buffer, p.byteOffset, p.byteLength);
     const id = dv.getUint32(0, true);
     const side = p[4];
-    this.bodies.set(id, { id, side, cells: p.slice(5, 5 + side * side) });
+    const cells = p.slice(5, 5 + side * side);
+    let n = 0;
+    for (const k of cells) if (k) n++;
+    this.bodies.set(id, { id, side, cells, n });
   }
 
   addFrame(p) {
@@ -139,11 +143,42 @@ export class World {
         a[f.name][i] = f.type === 'u8' ? p[at] : f.type === 'u16' ? dv.getUint16(at, true) : dv.getUint32(at, true);
       }
     }
+    o += n * this.stride;
+    // The bodies that died since the frame before, and of what (a number into the header's `deaths`).
+    let deaths = null;
+    if (this.h.deaths && this.h.deaths.length) {
+      const m = dv.getUint32(o, true); o += 4;
+      deaths = new Map();
+      for (let k = 0; k < m; k++, o += 5) deaths.set(dv.getUint32(o, true), p[o + 4]);
+    }
     const index = new Map();
     for (let i = 0; i < n; i++) index.set(a.id[i], i);
-    this.frames.set(step, { step, globals, n, a, index });
+    this.frames.set(step, { step, globals, n, a, index, deaths });
     insort(this.steps, step);
     return step;
+  }
+
+  /** A body's field in a frame as the world meant it: a byte with a `max` is that share of it. */
+  value(f, name, i) {
+    const p = this.fields[name];
+    if (!p || i === undefined) return undefined;
+    const v = f.a[name][i];
+    return p.max !== undefined ? (v / 255) * p.max : v;
+  }
+
+  /** The last frame at or before `step` that holds body `id`, and what it died of if a frame
+   * after that one says so. A living body is in the frame at `step`, so it is found first. */
+  fate(id, step) {
+    let died = null;
+    for (let k = this.steps.length - 1; k >= 0; k--) {
+      if (this.steps[k] > step) continue;
+      const f = this.frames.get(this.steps[k]);
+      const i = f.index.get(id);
+      if (i !== undefined) return { f, i, died };
+      const c = f.deaths ? f.deaths.get(id) : undefined;
+      if (c !== undefined) died = { at: f.step, cause: this.h.deaths[c] };
+    }
+    return { f: null, i: undefined, died };
   }
 
   /** The frame at or before `step` and the one after it, how far between them `step` is, and the

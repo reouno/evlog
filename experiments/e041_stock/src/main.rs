@@ -2430,7 +2430,10 @@ fn main() {
             ],
             globals: vec!["sun", "air", "pop"],
             blocks: vec!["empty", "hard", "muscle", "sensor", "digestive"],
-            params: params.clone(),
+            deaths: vec!["hunger", "age", "broken", "thirst"], // the numbers the step loop gives `died`
+            // The age a body dies at is a constant, not an argument, so it is not in the results'
+            // params; the viewer needs it to show how much of a life is left.
+            params: format!("{},\"max_age\":{MAX_AGE}}}", params.trim_end_matches('}')),
         },
     );
     // The standing plant of every cell, worked out for a frame (see the layers above). Nothing
@@ -3145,23 +3148,27 @@ fn main() {
         agents.append(&mut newborn);
         // The dead leave their sub-cells; the list is compacted and the survivors relabeled.
         for a in agents.iter_mut() {
+            // What it died of, by the number of its name in the viewer's `deaths`.
             let dead = if !a.alive {
-                true
+                Some(2) // broken to its last cell (or born without one)
             } else if a.energy <= 0.0 && !(store > 0.0 && a.fat > 0.0) {
                 // With the store a body at zero energy lives on its fat until that is gone.
                 deaths[0] += 1;
-                true
+                Some(0)
             } else if a.age > MAX_AGE {
                 deaths[1] += 1;
-                true
+                Some(1)
             } else if thirst > 0.0 && a.water <= 0.0 {
                 // e040: a dry body dies as a starved one does.
                 deaths[4] += 1;
-                true
+                Some(3)
             } else {
-                false
+                None
             };
-            if dead {
+            if let Some(cause) = dead {
+                if let (Some(v), true) = (view.as_mut(), a.born_size > 0) {
+                    v.died(step, a.id as u32, cause);
+                }
                 occ.release(g, a);
                 a.alive = false;
                 lay_body(a, g, &mut food, &patches.place, cell_energy, &mut cc);
@@ -3429,7 +3436,8 @@ fn main() {
                 v.frame(step, &layers, &[sun_factor, air as f32, agents.len() as f32], |push| {
                     for a in agents.iter().filter(|a| a.alive) {
                         let s = a.body.s();
-                        push(viewer::AgentIn { id: a.id as u32, lineage: a.lineage, x: a.x as u16, y: a.y as u16, facing: a.facing, diet: a.diet_class() as u8, fill: a.water, energy: a.energy as f32, side: a.body.side, cells: &a.body.cells[..s * s] });
+                        let fat = if store > 0.0 { (a.fat / (store * a.body.mass) as f64) as f32 } else { 0.0 };
+                        push(viewer::AgentIn { id: a.id as u32, lineage: a.lineage, x: a.x as u16, y: a.y as u16, facing: a.facing, diet: a.diet_class() as u8, fill: a.water, energy: a.energy as f32, ripe: a.body.threshold(), fat, age: a.age, born: a.born_size, side: a.body.side, cells: &a.body.cells[..s * s] });
                     }
                 });
             }

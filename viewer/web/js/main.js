@@ -215,7 +215,7 @@ function hud(a, b, t, here, swing, before, after) {
   $('fps').textContent = fps.toFixed(0);
   if (!source.live && !seeking) $('seek').value = step;
   $('speedv').textContent = (source.live ? '' : (speed < 0 ? '逆 ' : '')) + Math.abs(speed).toFixed(speed >= 10 ? 0 : 1) + ' 歩/秒';
-  selection(a);
+  selection(a, b, t);
   minimap(a, b, t, before, after);
 }
 
@@ -256,7 +256,12 @@ function dial(swing) {
   $('year').textContent = (step / world.season.period).toFixed(2) + ' 年';
 }
 
-function selection(a) {
+// What a body has, as gauges: each one that runs out is a way to die (the header's `deaths`), so
+// the watcher sees which one this body is running out of. The chart under them uses the same colours.
+const CAUSES = { hunger: '餓死', age: '寿命', broken: '体を壊された', thirst: '渇き' };
+const GAUGE = { energy: '#dcc64a', fat: '#e0873a', body: '#d8584c', age: '#9fb3c4', fill: '#5aa6e0' };
+
+function selection(a, b, t) {
   const empty = $('selempty'), box = $('selbody');
   if (picked === null) {
     empty.hidden = false;
@@ -266,30 +271,100 @@ function selection(a) {
   }
   empty.hidden = true;
   box.hidden = false;
-  const i = a ? a.index.get(picked) : undefined;
-  if (i === undefined) {
-    $('selrows').innerHTML = '<span class="muted">いなくなった</span>';
-    $('shape').innerHTML = '';
+  // The body in the frame being shown, or the frame it was last seen in and, if a frame since
+  // says so, what it died of.
+  const seen = a ? world.fate(picked, a.step) : { f: null, died: null };
+  const f = seen.f, i = seen.i;
+  if (f === null) {
+    $('fate').textContent = 'いなくなった';
+    $('gauges').innerHTML = $('selrows').innerHTML = $('shape').innerHTML = '';
     shapeOf = -1;
+    lifeChart(null);
     return;
   }
+  const alive = f === a;
+  const j = alive && b ? b.index.get(picked) : undefined;
+  // Between two frames the gauges are carried like everything else.
+  const val = (name) => {
+    const x = world.value(f, name, i);
+    return x === undefined || j === undefined ? x : x + (world.value(b, name, j) - x) * t;
+  };
   const names = world.h.blocks;
-  const body = world.bodies.get(a.a.body[i]);
+  const body = world.bodies.get(f.a.body[i]);
   // The shape only changes when the body does, and the panel is rebuilt 8 times a second.
-  if (body && shapeOf !== a.a.body[i]) {
-    shapeOf = a.a.body[i];
+  if (body && shapeOf !== f.a.body[i]) {
+    shapeOf = f.a.body[i];
     $('shape').style.gridTemplateColumns = `repeat(${body.side},1fr)`;
     $('shape').style.width = body.side * 9 + 'px';
     $('shape').innerHTML = [...body.cells].map((k) => `<i style="background:${k ? KIND_COLORS[names[k]] : '#ffffff10'}"></i>`).join('');
   }
+  const energy = val('energy'), ripe = val('ripe'), fat = val('fat'), age = val('age'), born = val('born');
+  const n = body ? body.n : 0, maxAge = world.params.max_age;
+  const rows = [];
+  const gauge = (label, share, colour, text, tip) => rows.push(
+    `<div class="gauge" title="${tip}"><span>${label}</span><b><i style="width:${(Math.max(0, Math.min(1, share)) * 100).toFixed(0)}%;background:${colour}"></i></b><span>${text}</span></div>`);
+  if (ripe) gauge('力', energy / ripe, GAUGE.energy, `${energy.toFixed(1)} / ${ripe.toFixed(1)}`, '食べると増え、毎歩の維持費で減る。右端 (子を産む量) に届くと子を産み、半分を渡す');
+  else gauge('力', energy / world.fields.energy.max, GAUGE.energy, energy.toFixed(2), '食べると増え、毎歩の維持費で減る');
+  if (fat !== undefined) gauge('蓄え', fat, GAUGE.fat, `${Math.round(fat * 100)}%`, '維持費を払うたびに体に貯まる。力が尽きるとここから払い、これも尽きると餓死');
+  if (born) gauge('体', n / born, GAUGE.body, `${n} / ${born}`, 'ブロックの数。ほかの体に押されると一つずつ壊され (相手に胃があれば食べられ、なければ地面に落ちる)、0 で死ぬ。育つことはない');
+  if (age !== undefined) gauge('齢', maxAge ? age / maxAge : 0, GAUGE.age, maxAge ? `${Math.round(age)} / ${maxAge}` : `${Math.round(age)}`, maxAge ? `${maxAge} 歩で寿命。それまで衰えはない` : '');
+  if (world.params.thirst > 0) gauge('水', val('fill'), GAUGE.fill, `${Math.round(val('fill') * 100)}%`, '毎歩乾き、水たまりで飲む。0 で死ぬ');
+  $('gauges').innerHTML = rows.join('');
+  $('gauges').classList.toggle('gone', !alive);
+  // What is happening to it, in words.
+  const now = [];
+  if (!alive) now.push(seen.died ? `死んだ: ${CAUSES[seen.died.cause] || seen.died.cause}` : 'いなくなった');
+  else {
+    // Nothing left is not a death sentence: a body dies only in a step it eats nothing, and about
+    // half of them live at zero, some for thousands of steps.
+    if (energy < 0.05) now.push(fat === undefined ? '力が尽きている' : fat > 0.01 ? '力が尽き、蓄えで生きている' : '蓄えもなく、食べた分で食いつないでいる');
+    else if (ripe && energy / ripe > 0.85) now.push('もうすぐ子を産む');
+    if (born && n < born) now.push(`${born - n} 個壊された`);
+  }
+  $('fate').textContent = now.join('・');
   const counts = {};
   if (body) for (const k of body.cells) if (k) counts[names[k]] = (counts[names[k]] || 0) + 1;
   $('selrows').innerHTML =
-    `<div>系統 ${a.a.lineage[i] || '—'}</div>` +
-    `<div>食 ${DIET[a.a.diet[i]]}</div>` +
-    `<div>力 ${(a.a.energy[i] / 255 * 8).toFixed(2)}</div>` +
-    (world.h.agent_record.some((f) => f.name === 'fill') ? `<div>水 ${(a.a.fill[i] / 255).toFixed(2)}</div>` : '') +
-    Object.entries(counts).map(([k, n]) => `<div><i class="k" style="background:${KIND_COLORS[k]}"></i>${k} ${n}</div>`).join('');
+    `<div>系統 ${f.a.lineage[i] || '—'}・食 ${DIET[f.a.diet[i]]}</div>` +
+    Object.entries(counts).map(([k, c]) => `<div><i class="k" style="background:${KIND_COLORS[k]}"></i>${k} ${c}</div>`).join('');
+  lifeChart(picked, f.step);
+}
+
+/** The followed body's gauges over the frames the browser holds, up to `upto`: whether one is
+ * running down is what a number on its own cannot say. */
+function lifeChart(id, upto) {
+  const c = $('life'), g = c.getContext('2d');
+  g.clearRect(0, 0, c.width, c.height);
+  $('lifespan').textContent = '';
+  if (id === null) return;
+  const lines = { body: [], fat: [], energy: [] };
+  let s0 = -1, s1 = -1;
+  for (const s of world.steps) {
+    if (s > upto) break;
+    const f = world.frames.get(s), i = f.index.get(id);
+    if (i === undefined) continue;
+    if (s0 < 0) s0 = s;
+    s1 = s;
+    const e = world.value(f, 'energy', i), ripe = world.value(f, 'ripe', i);
+    lines.energy.push([s, ripe ? e / ripe : e / world.fields.energy.max]);
+    const fat = world.value(f, 'fat', i);
+    if (fat !== undefined) lines.fat.push([s, fat]);
+    const born = world.value(f, 'born', i), shape = world.bodies.get(f.a.body[i]);
+    if (born && shape) lines.body.push([s, shape.n / born]);
+  }
+  if (s1 <= s0) return;
+  const W = c.width, H = c.height, pad = 3;
+  g.lineWidth = 2;
+  for (const [k, pts] of Object.entries(lines)) {
+    g.strokeStyle = GAUGE[k];
+    g.beginPath();
+    pts.forEach(([s, v], m) => {
+      const x = ((s - s0) / (s1 - s0)) * W, y = H - pad - Math.max(0, Math.min(1, v)) * (H - 2 * pad);
+      m ? g.lineTo(x, y) : g.moveTo(x, y);
+    });
+    g.stroke();
+  }
+  $('lifespan').textContent = `この ${(s1 - s0).toLocaleString()} 歩`;
 }
 
 function unfollow() {
