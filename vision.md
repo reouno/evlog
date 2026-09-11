@@ -476,6 +476,24 @@ negative are its products. So the order is:
    change itself, e049), starting from a time that scales with size (agreed 2026-09-12); open: a worsening that falls
    on the stayer (fouling, #56), a density control for knee 4 (#57), and a world where the food runs as the brain's
    test (#58).
+   Done 2026-09-12: #55 life history, a time that scales with size (e052) - not kept (`clock` stays as the
+   argument 47): a body of mass m takes (16 / m)^clock turns per world step, at most one, and everything it
+   does happens on its turns (eating, paying, ageing by wear, deciding, acting, breeding) while the world's
+   own clocks run on. At 0.25 the bodies of e048's world run at 0.78-0.88 of a turn a step. Lives lengthen:
+   the mean age of the living rises from 278-739 to 874-1,432 on three seeds of four, the 90th percentile of
+   the age at death from 580-863 to 1,163-3,835, and wear kills for the first time (281-1,837 deaths a log
+   interval against 0.6-534). The world holds 8-37% more bodies, with higher winter floors (465-776 against
+   347-742) and more lineages alive. But the masses do not spread (the 90th percentile above the control's on
+   one seed of four), the diversity number falls to 1 on all four seeds against 2, 2, 1, 1, and the hunters
+   go: no winning lineage carries a hard block, and hunter worlds come on 0 of 4 seeds against 2. A control at
+   a flat pace of 0.84 (the same slowdown for every body, whatever it weighs) separates the two: it keeps the
+   hunters (3 of 4, one seed turning hunter) and gives half of the extra bodies (2,338 against 2,180 and the
+   clock's 2,569). Scaling time by size is a tax on the body whose living is made of its own actions - a
+   grazer's income is the world's clock, a hunter's is its own - while the slowdown itself is what fills the
+   world. These answers hold for this exponent, this reference mass (16, so the pace spans only 0.78-0.88
+   here), e048's world without the brain, four seeds of 100,000 steps. Long lives are now an argument we can
+   switch on. Order now: e049's moving rain under the clock, with and without the brain (does a long-lived
+   body follow the change itself, instead of being followed by births?), then #52, #5.
 4. #5 3D bodies (the vertical axis for legs and wings), after size pays (e037 says: after a food for big bodies exists): 12-16 cells in 3D is a blob. An arm is an
    outcome to watch for there, not a rule.
 5. Later: #34 kinds of matter (several conserved substances - water, plant stuff, animal stuff of different
