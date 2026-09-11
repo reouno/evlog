@@ -439,7 +439,15 @@ negative are its products. So the order is:
    the crowd does not. Speed is not selected; the world holds half the bodies, packs into the band and hunts (the hunter
    world on four seeds of four under thirst), and nearly dies in winter (one world of eight dead). A place that changes
    slower than a life is followed by births: travel by one body needs lives longer than the change, or a sense of where
-   it goes. Order now: #52, #5.
+   it goes.
+
+   After e049 the user: a body needs a motive to move built into the world (staying is the safe answer now), and a brain
+   that can use one (look for food, go to it, hunt, flee, move to better water or warmth). The brain today is a reflex:
+   10 inputs to 4 actions, fixed at birth, with no memory, no learning and no noise, and a body cannot tell a predator
+   from a neighbor. A brain pays only where the world changes within a life, so the two are tested together. Order now,
+   a behavior track first: #53 a brain that remembers and learns, as a material (e050, in e048's world and in e049's
+   band with thirst); #54 a place that gets worse the longer a body stays (e051; first e041's `stock`, untested since
+   e043 closed the fruit fountain); #55 life history (how many children, how long a life). Then #52, #5.
 4. #5 3D bodies (the vertical axis for legs and wings), after size pays (e037 says: after a food for big bodies exists): 12-16 cells in 3D is a blob. An arm is an
    outcome to watch for there, not a rule.
 5. Later: #34 kinds of matter (several conserved substances - water, plant stuff, animal stuff of different
