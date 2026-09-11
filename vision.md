@@ -455,8 +455,11 @@ negative are its products. So the order is:
    decisions) but not selected where the world changes: under e049's band with thirst the learners fall to 1-27% on four
    seeds of four, while in e048's world the fast muscle blocks of two seeds learn and the gut sitters beside them do not.
    Memory is hardly used (0.6-5% of decisions), sensors are not kept above the old brain's, and bodies do not walk with the
-   band (0.98-1.35 times the old brain's). A brain alone gives no motive to move; next #54, a place that gets worse the
-   longer a body stays, with the brain on and off.
+   band (0.98-1.35 times the old brain's). These answers hold for this brain in this world, both of our making (a one-step
+   energy reward, learning only into the outputs, units that are the eye's tissue, four seeds of 100,000 steps): they do not
+   say a brain is not needed. What a brain is worth depends on what the world asks of it, and a change of the world changes
+   every condition of the bodies above it, so the world comes first: next #54, a place that gets worse the longer a body
+   stays, with the brain on and off.
 4. #5 3D bodies (the vertical axis for legs and wings), after size pays (e037 says: after a food for big bodies exists): 12-16 cells in 3D is a blob. An arm is an
    outcome to watch for there, not a rule.
 5. Later: #34 kinds of matter (several conserved substances - water, plant stuff, animal stuff of different

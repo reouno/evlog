@@ -165,6 +165,8 @@ world and seed. The old brain's runs are e048's motor runs and e049's band + thi
 
 ## Conclusion
 
+The answers hold under the conditions of these runs (see "What these runs can and cannot say").
+
 1. **Learning is selected where the world changes within a life: no.** Under band + thirst learners
    end at 1-27%, below half on every seed and below e048's world on three.
 2. **Memory is kept: no.** Sensors above the old brain's on one seed of four.
@@ -175,18 +177,28 @@ world and seed. The old brain's runs are e048's motor runs and e049's band + thi
 5. **The world stands: no.** Two winters under band + thirst fall to 37 and 1 body (none dies).
 
 **Not kept as the default**; it stays as the argument `brain` (46), to combine with a law that gives
-it something to learn.
+it something to learn. This is a decision about the default world, not a verdict on brains.
+
+**What these runs can and cannot say.** The answers above hold under the conditions we built, and
+most of those conditions were our choices: the reward is one step's energy balance (thirst and
+damage do not count); only the weights into the outputs learn, within -1..1, at most 0.1 a step; the
+hidden units are the eye's tissue and start as none or eight per body; the inputs are raw sums that
+push the units toward their bounds; four seeds a world and 100,000 steps, where the lineage that wins
+the start decides much. Change any of them and the answer may change. The runs do not show that a
+brain is not needed; they show that this brain, in this world, was not selected.
 
 What this changes:
 
-- **A brain alone gives no motive to move.** Learning works (it rewrites a quarter to three fifths
-  of a learner's decisions), but a step's energy balance says little in this world: a sitter's food
+- **In this world the brain found little to learn.** Learning works (it rewrites a quarter to three
+  fifths of a learner's decisions), but here a step's energy balance says little: a sitter's food
   regrows under it, and the band's water decides who dies of thirst, which the reward does not
   count. Where it is kept, it rides on the fast bodies, not on the sitters.
-- **Memory needs something slow to remember.** The units are set by the present inputs; the past
+- **Memory found nothing slow to remember here.** The units are set by the present inputs; the past
   changes a few percent of decisions even with the sums scaled.
-- **Next**: #54, a place that gets worse the longer a body stays (e041's `stock` first), with the
-  brain on and off: the case the toy illustrated, where leaving a place in decline pays and the
+- **The world comes first.** What a brain is worth depends on what the world asks of it, and a
+  change of the world changes every condition of the bodies above it (agreed with the user after
+  this run). Next: #54, a place that gets worse the longer a body stays (e041's `stock` first), with
+  the brain on and off: the case the toy illustrated, where leaving a place in decline pays and the
   baseline makes a learner leave. Open: thirst or damage in the reward; a nerve block that is not
-  also an eye.
+  also an eye; the inputs' scale.
 - **Compute**: no measurable cost at this population; the batch took 33 minutes (e049's: 29).

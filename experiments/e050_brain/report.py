@@ -810,13 +810,13 @@ GALLERY_CAPTION = ("The usual grown body of six leading lineages under the brain
                    "In e048's world the fast muscle blocks learn and the gut sitters beside them do not.")
 
 TEXTS = {
-    "sub_answer": ("no. Learning changes a quarter to three fifths of a learner's decisions, but it is not selected where the world "
-                   "changes: learners fall to 1-27% under band + thirst. Memory is hardly used, and bodies do not walk with the band. "
-                   "Kept as an argument."),
+    "sub_answer": ("no, under the conditions of these runs. Learning changes a quarter to three fifths of a learner's decisions, but "
+                   "it is not selected where the world changes: learners fall to 1-27% under band + thirst. Memory is hardly used, and "
+                   "bodies do not walk with the band. Kept as an argument."),
     "tldr": ("Bodies got a brain: hidden units in the sensor blocks that carry a state between steps, and output weights that learn "
              "from the energy balance. Learning is used (26-62% of a learner's decisions change) but not selected where the world "
-             "changes: learners fall to 1-27% under band + thirst, while two of four seeds in e048's world keep them. Memory changes "
-             "under 5% of decisions; nobody walks with the band. Next: #54, a place that worsens."),
+             "changes: learners fall to 1-27% under band + thirst. Memory changes under 5% of decisions; nobody walks with the band. "
+             "That is this brain in this world, both of our making, not a verdict on brains. Next: #54, a place that worsens."),
     "verdicts": ("<li><span class=\"verdict no\">No</span> Learners end at 1-27% of the bodies under band + thirst on all four seeds, "
                  "below e048's world on three (there: 7-95%).</li>"
                  "<li><span class=\"verdict no\">No</span> Bodies with a sensor under band + thirst: 1-10%, above the old brain's only "
@@ -851,12 +851,14 @@ TEXTS = {
                    "decides who dies of thirst, which the reward does not count.</p>"
                    "<p>Memory was not used. Even with the units' sums scaled, the units sit near their bounds (mean |state| 0.5-0.9), "
                    "set by the present inputs; the few bodies that carry them use them for the present, not for the past.</p>"
-                   "<p>What this does not show: whether learning pays where a place worsens under the body (#54, the case the toy "
-                   "illustrated); whether thirst in the reward would teach walking; whether a sensor that is not also an eye would be "
-                   "kept.</p>"),
-    "conclusion": ("Not kept as the default; it stays as the argument brain (46). Learning is used but not selected, memory is not "
-                   "used, and bodies do not walk with the band: a brain alone gives no motive to move. Next: #54, a place that gets "
-                   "worse the longer a body stays (e041's stock first), with the brain on and off."),
+                   "<p>What this does not show: that a brain is not needed. The answer hangs on our choices: one step's energy balance "
+                   "as the reward, learning only into the outputs, units that are the eye's tissue, raw inputs that saturate them, "
+                   "four seeds of 100,000 steps. Nor whether learning pays where a place worsens under the body (#54), or whether "
+                   "thirst in the reward would teach walking.</p>"),
+    "conclusion": ("Not kept as the default; it stays as the argument brain (46). Under these conditions learning is used but not "
+                   "selected, memory is not used, and bodies do not walk with the band. What a brain is worth depends on what the "
+                   "world asks of it, so the world comes first. Next: #54, a place that gets worse the longer a body stays (e041's "
+                   "stock first), with the brain on and off."),
 }
 TEXTS.update({
     "question": ("The brain was a reflex: ten inputs (five more under thirst) to four actions, fixed at birth, with no memory, no "
