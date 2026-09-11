@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-09-10 (e042).
+Last updated: 2026-09-11 (e048).
 
 ## What the viewer should see
 
@@ -420,6 +420,16 @@ negative are its products. So the order is:
    leading lineages' bodies does; the winners stay compact, and the cut at birth follows the winning genome (0.6-41%).
    The rectangles are what pays, not the rule: every block's work pays best packed. Order now: #51 moving takes a
    motor, #14 (the rain band), #52, #5.
+
+   Done 2026-09-11: #51 moving takes a motor (e048) - kept: from here a step and a turn need the motor (`motor` 1):
+   each sub-cell of a forward action and each turn happens with chance speed, muscle over mass, where a clear forward
+   had moved any body one sub-cell. On seeds 9-14 no lineage is muscle-free (e047: 21-55% of the bodies), speed rises
+   on every seed (0.16-0.25), and the leading bodies are hunters of 25-28 blocks with 9-10 muscle behind a hard front
+   or grazers of 14-23 blocks with 5-7.5 muscle beside the gut. But every body moves about a third as far (seed 9:
+   0.09 sub-cells a step against 0.30; grown bodies 13 cells from their birthplace against 38): the motor is the price
+   of leaving the cells a body has grazed bare, not of travel, and nothing asks a body to go far. The world stands
+   (lowest floor 347); the hunter world comes on three seeds of six. Order now: #14 (the rain band, under this law:
+   speed pays when the food moves and a step needs muscle), #52, #5.
 4. #5 3D bodies (the vertical axis for legs and wings), after size pays (e037 says: after a food for big bodies exists): 12-16 cells in 3D is a blob. An arm is an
    outcome to watch for there, not a rule.
 5. Later: #34 kinds of matter (several conserved substances - water, plant stuff, animal stuff of different
