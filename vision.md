@@ -448,6 +448,15 @@ negative are its products. So the order is:
    a behavior track first: #53 a brain that remembers and learns, as a material (e050, in e048's world and in e049's
    band with thirst); #54 a place that gets worse the longer a body stays (e051; first e041's `stock`, untested since
    e043 closed the fruit fountain); #55 life history (how many children, how long a life). Then #52, #5.
+
+   Done 2026-09-11: #53 a brain that remembers and learns (e050) - not kept (it stays as the argument `brain`): hidden units
+   in the sensor blocks that carry a state from step to step, and output weights that learn from the energy balance less its
+   running mean, at a heritable rate (0 for half of the random genomes). Learning is used (it changes 26-62% of a learner's
+   decisions) but not selected where the world changes: under e049's band with thirst the learners fall to 1-27% on four
+   seeds of four, while in e048's world the fast muscle blocks of two seeds learn and the gut sitters beside them do not.
+   Memory is hardly used (0.6-5% of decisions), sensors are not kept above the old brain's, and bodies do not walk with the
+   band (0.98-1.35 times the old brain's). A brain alone gives no motive to move; next #54, a place that gets worse the
+   longer a body stays, with the brain on and off.
 4. #5 3D bodies (the vertical axis for legs and wings), after size pays (e037 says: after a food for big bodies exists): 12-16 cells in 3D is a blob. An arm is an
    outcome to watch for there, not a rule.
 5. Later: #34 kinds of matter (several conserved substances - water, plant stuff, animal stuff of different
