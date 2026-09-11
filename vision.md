@@ -404,6 +404,22 @@ negative are its products. So the order is:
    34-64% of the bodies in the hunter worlds against 24-47%. 0.3 was not run. A law that lowers what food yields
    everywhere acts as a weaker sun; hunting may pay where places differ and the crowd cannot even them out.
    Order now: #14 the regions (with #38 as its first pilot), #5.
+
+   After e046 the user found the bodies too still and too square. Measured in e045's runs: the policy picks forward on
+   73-84% of its decisions, 40-67% of those tries are blocked, a shove almost never happens, and 23-63% of the bodies
+   carry no muscle (a body without muscle still steps one sub-cell). The bodies are jammed, not choosing to sit: food
+   renews evenly, the crowd fills the world to the density where a gut breaks even, and a child is placed beside its
+   parent (at half the bodies, e046, the jam stayed). A body lives on about 7 cells' worth of light, its own footprint
+   and a ring: in these ratios the world is nearer a microbial mat than a savanna. New order (issues #50-#52 and a
+   design comment on #14): corners hold, moving takes a motor, a place difference that moves (a band of rain crossing
+   the world), then materials whose worth depends on shape.
+
+   Done 2026-09-11: #50 corners hold (e047) - kept: from here blocks that touch at a corner join a body (`connect` 2),
+   the physics the user asked for. It changes nothing measured: on seeds 9-14 the world stands (lowest floor 420), the
+   hunter world comes on the same four seeds, and 2-7% of the living bodies hold through a corner, but none of the 30
+   leading lineages' bodies does; the winners stay compact, and the cut at birth follows the winning genome (0.6-41%).
+   The rectangles are what pays, not the rule: every block's work pays best packed. Order now: #51 moving takes a
+   motor, #14 (the rain band), #52, #5.
 4. #5 3D bodies (the vertical axis for legs and wings), after size pays (e037 says: after a food for big bodies exists): 12-16 cells in 3D is a blob. An arm is an
    outcome to watch for there, not a rule.
 5. Later: #34 kinds of matter (several conserved substances - water, plant stuff, animal stuff of different
