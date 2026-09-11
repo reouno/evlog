@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-09-11 (e049).
+Last updated: 2026-09-12 (e051).
 
 ## What the viewer should see
 
@@ -460,6 +460,21 @@ negative are its products. So the order is:
    say a brain is not needed. What a brain is worth depends on what the world asks of it, and a change of the world changes
    every condition of the bodies above it, so the world comes first: next #54, a place that gets worse the longer a body
    stays, with the brain on and off.
+
+   Done 2026-09-12: #54 a place that gets worse the longer a body stays (e051) - not kept (`stock` stays as the argument
+   37): e041's law, a cell uses the light it grows by in the share it stands of a knee, run with and without e050's brain
+   in e048's world. There the bodies live on standing trees (77-81% of the plant eaten), whose growth already follows
+   their height, and a tree under a body does not grow. At knee 1 the law binds on the ground between the trees: it
+   takes a third of the growth, the world loses 13-44% of its bodies, and nothing moves more. At knee 4 it slows the
+   bitten trees too: the growth falls by 60%, the world holds 24-46% of its bodies, two first winters fall below 50, and
+   bodies move 1.1-1.8 times as much with no more muscle, in a crowd whose moves are blocked less (the law and the
+   thinner crowd are not separated). Learning is selected at neither knee (above half on one run of eight); where it is
+   kept, in e050 and here, it rides on hunters (5 of the 6 fast-learning lineages take 51-72% of their food from
+   flesh). A slow return worsens a place for the next visitor, not for the one who stays, and lowers every grazed place
+   alike. These answers hold for this law in this world (trees as the food, a knee on the light, a one-step energy
+   reward, two knees, four seeds of 100,000 steps). Next #55, life history (a body must live long enough to follow a
+   change itself, e049); open: a worsening that falls on the stayer (fouling), a density control for knee 4, and a
+   world where the food runs as the brain's test.
 4. #5 3D bodies (the vertical axis for legs and wings), after size pays (e037 says: after a food for big bodies exists): 12-16 cells in 3D is a blob. An arm is an
    outcome to watch for there, not a rule.
 5. Later: #34 kinds of matter (several conserved substances - water, plant stuff, animal stuff of different

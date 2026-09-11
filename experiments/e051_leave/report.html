@@ -1,0 +1,2090 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>e051 A place that gets worse the longer a body stays - Report</title>
+<style>
+:root {
+  --surface: #fcfcfb; --page: #f9f9f7; --ink: #0b0b0b; --ink2: #52514e; --grid: #e1e0d9; --border: rgba(11,11,11,0.10);
+  --s1: #2a78d6; --cell: #f1f0ea;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --surface: #1a1a19; --page: #0d0d0d; --ink: #ffffff; --ink2: #c3c2b7; --grid: #2c2c2a; --border: rgba(255,255,255,0.10);
+    --s1: #2a78d6; --cell: #262624;
+  }
+}
+:root[data-theme="dark"] {
+  --surface: #1a1a19; --page: #0d0d0d; --ink: #ffffff; --ink2: #c3c2b7; --grid: #2c2c2a; --border: rgba(255,255,255,0.10);
+  --s1: #2a78d6; --cell: #262624;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--page); color: var(--ink); font: 15px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+main { max-width: 960px; margin: 0 auto; padding: 32px 20px 64px; }
+h1 { font-size: 26px; margin: 0 0 4px; }
+h2 { font-size: 19px; margin: 40px 0 8px; }
+h3 { font-size: 16px; margin: 24px 0 8px; }
+p, li { color: var(--ink); max-width: 72ch; }
+.sub { color: var(--ink2); margin: 0 0 24px; }
+.tldr { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--s1); border-radius: 8px; padding: 12px 18px; }
+.tldr h2 { margin: 0 0 6px; font-size: 15px; }
+.tldr p { margin: 0; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 20px; }
+@media (max-width: 480px) { .grid2 { grid-template-columns: 1fr; } }
+.grid2 > .fig:only-child { max-width: 470px; }
+.fig { margin: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 14px 8px; }
+.fig svg { width: 100%; height: auto; display: block; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+figcaption strong { display: block; font-size: 15px; }
+figcaption span { display: block; color: var(--ink2); font-size: 13px; min-height: 2.6em; margin-bottom: 6px; }
+.diagram { margin: 12px 0; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px 8px; color: var(--ink); }
+.diagram figcaption { color: var(--ink2); font-size: 13px; margin-top: 4px; }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+.card { margin: 0; display: grid; grid-template-columns: 120px 1fr; gap: 12px; align-items: start; }
+.card figcaption { font-size: 12.5px; color: var(--ink2); margin: 0; } .card figcaption strong { display: inline; font-size: 13px; color: var(--ink); }
+.measures { columns: 2; column-gap: 24px; max-width: none; padding-left: 20px; } .measures li { break-inside: avoid; }
+@media (max-width: 640px) { .measures { columns: 1; } }
+table { border-collapse: collapse; font-size: 13.5px; font-variant-numeric: tabular-nums; }
+th, td { padding: 6px 10px; text-align: right; border-bottom: 1px solid var(--grid); }
+td { white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; white-space: nowrap; }
+th { color: var(--ink2); font-weight: 600; }
+.tw { overflow-x: auto; margin: 8px 0; }
+details { margin: 8px 0; } summary { cursor: pointer; color: var(--ink2); }
+.verdicts { list-style: none; padding: 0; margin: 12px 0 0; } .verdicts li { margin: 4px 0; }
+.verdict { display: inline-block; padding: 1px 8px; border-radius: 4px; font-size: 12.5px; font-weight: 600; background: rgba(12,163,12,0.12); color: #006300; }
+.verdict.no { background: rgba(208,59,59,0.12); color: #a12b2b; }
+.verdict.partly { background: rgba(250,178,25,0.15); color: #8a5a00; }
+:root[data-theme="dark"] .verdict.partly { color: #fab219; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .verdict.partly { color: #fab219; } }
+:root[data-theme="dark"] .verdict { color: #0ca30c; } :root[data-theme="dark"] .verdict.no { color: #e66767; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .verdict { color: #0ca30c; } :root:not([data-theme="light"]) .verdict.no { color: #e66767; } }
+</style>
+</head>
+<body>
+<main>
+<h1>e051: A place that gets worse the longer a body stays</h1>
+<p class="sub">Experiment report - 2026-09-12 - e041's stock law (a grazed cell comes back slowly) with and without e050's brain, in e048's world, seeds 9-12, against the runs without it. Answer: partly, under these runs' conditions. At knee 1 the law is a tax that moves nothing; at 4 bodies move more in a world of a quarter to half of the bodies. Learning is selected at neither. Kept as an argument.</p>
+
+<section class="tldr">
+<h2>TL;DR</h2>
+<p>A grazed cell now comes back slowly: it uses its light in the share it stands of a knee. At knee 1 the world loses 13-44% of its bodies and nothing moves more. At 4 bodies move 1.1-1.8 times as much in a world of 24-46% of the bodies, and two first winters fall below 50. Learners stay below half in seven runs of eight; where learning is kept, it rides on hunters. Next: #55, life history.</p>
+</section>
+
+<h2>1. Question</h2>
+<p>In e050 a brain that learns was used but not selected; in e048's world a sitter's food regrows under it. e041's stock law makes a grazed cell come back slowly, so the damage outlasts the grazer. Leaving should pay when a spot comes back slowly and the body can learn, so the law runs with and without e050's brain, at knees 1 and 4:</p>
+<ol>
+  <li><strong>Bodies go farther under the law:</strong> with the old brain, more moving and grown bodies farther from their birthplace than without it, on three seeds of four.</li>
+  <li><strong>Learning is selected where the place worsens:</strong> learners above half, and above the brain alone's, on three seeds of four.</li>
+  <li><strong>Learners leave sooner:</strong> they leave more food on the cell they move off than the rest, on three seeds where both hold 5%.</li>
+  <li><strong>The world stands:</strong> every winter floor above 50.</li>
+</ol>
+
+<h2>2. The law</h2>
+<p>The light a cell grows by is used in the share it stands of the knee, never below a tenth; the rest is lost. At knee 1 standing trees, which give 77-81% of the plant eaten, are untouched; at 4 every bitten tree grows slower too.</p>
+
+<figure class="fig diagram">
+<svg viewBox="0 0 880 236" width="100%" role="img" aria-label="The light a cell grows by passes the stock law: it is used in the share the plant stands of the knee, at least a tenth, and the rest is lost; the plant is eaten by the guts of a body standing on it, which stops its growth; the food a body leaves when it moves on is the giving-up density" font-size="12" fill="currentColor" stroke="currentColor">
+  <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--s1)" stroke="none"/></marker>
+  <marker id="ai" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="currentColor" stroke="none"/></marker></defs>
+  <rect x="16" y="24" width="236" height="46" rx="6" fill="none" stroke-opacity="0.6"/>
+  <rect x="16" y="112" width="236" height="46" rx="6" fill="none" stroke-opacity="0.6"/>
+  <path d="M252,47 L318,80" fill="none" stroke-width="1.4" marker-end="url(#ai)"/>
+  <path d="M252,135 L318,104" fill="none" stroke-width="1.4" marker-end="url(#ai)"/>
+  <rect x="320" y="64" width="196" height="56" rx="10" fill="none" stroke="var(--s1)" stroke-width="2.2"/>
+  <path d="M516,92 L576,92" fill="none" stroke="var(--s1)" stroke-width="2" marker-end="url(#ah)"/>
+  <path d="M418,120 L418,170" fill="none" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#ai)"/>
+  <rect x="578" y="66" width="132" height="52" rx="6" fill="none" stroke-opacity="0.6"/>
+  <path d="M710,92 L748,92" fill="none" stroke-width="1.4" marker-end="url(#ai)"/>
+  <rect x="750" y="66" width="114" height="52" rx="6" fill="none" stroke-opacity="0.6"/>
+  <path d="M807,118 L807,176" fill="none" stroke-width="1.4" marker-end="url(#ai)"/>
+  <g stroke="none">
+    <text x="26" y="43">the cell's own sun, less what</text>
+    <text x="26" y="60">the crowns of taller cells take</text>
+    <text x="26" y="131">its crown: sun from the cells around,</text>
+    <text x="26" y="148">as far as its column is tall</text>
+    <text x="418" y="87" text-anchor="middle" fill="var(--s1)">used: x min(1, res / stock)</text>
+    <text x="418" y="105" text-anchor="middle" fill="var(--s1)">never below 0.1</text>
+    <text x="546" y="84" text-anchor="middle">grows</text>
+    <text x="418" y="190" text-anchor="middle">the rest is lost (bare)</text>
+    <text x="644" y="88" text-anchor="middle">the plant on</text>
+    <text x="644" y="104" text-anchor="middle">the cell (res)</text>
+    <text x="729" y="84" text-anchor="middle">eaten</text>
+    <text x="807" y="88" text-anchor="middle">the guts of</text>
+    <text x="807" y="104" text-anchor="middle">a body on it</text>
+    <text x="644" y="140" text-anchor="middle">no growth while a</text>
+    <text x="644" y="156" text-anchor="middle">body stands on it</text>
+    <text x="864" y="196" text-anchor="end">it moves on: the food it leaves</text>
+    <text x="864" y="213" text-anchor="end">is the giving-up density</text>
+  </g>
+</svg>
+<figcaption>Figure 1. What stock changes. A gut eats up to 0.02 a step. At stock 1 a standing tree (1 or more) is untouched and a bare cell stands at 1 again in about 330 steps at full sun (100 without the law); at 4 every tree below 4 grows slower too.</figcaption>
+</figure>
+
+<p><strong>Runs.</strong> Knees 1 and 4, the old brain and the brain, seeds 9-12, 100,000 steps: 16 runs in two batches of eight (15 and 12 minutes), against e048's and e050's runs without the law. Before them, a check (no law: e050 byte for byte) and pilots at both knees on seed 9.</p>
+<ul class="measures">
+  <li><strong>moved</strong> - sub-cells a body moves by its own actions, per step.</li>
+  <li><strong>travel</strong> - how far a body aged 1,000 steps or more stands from its birthplace (median, world cells).</li>
+  <li><strong>learners</strong> - the share of the bodies whose genome learns; half at the random start.</li>
+  <li><strong>giving-up density</strong> - the food on a cell when the last of a body's guts moves off it.</li>
+  <li><strong>lowest floor</strong> - the fewest bodies alive in any winter.</li>
+  <li><strong>state, diversity</strong> - the flesh of kills in what bodies eat; the diversity number (#42).</li>
+</ul>
+
+<h2>3. Results</h2>
+<p>Means over the second half (steps 50,000-100,000). Each cell is without the law / stock 1 / stock 4 on the same seed and brain; food left is the learners' giving-up density over the rest's, at stock 1 / stock 4.</p>
+<div class="tw"><table>
+<thead><tr><th>seed</th><th>brain</th><th>moved</th><th>travel</th><th>learners</th><th>food left, learners over rest</th><th>bodies</th><th>lowest floor</th><th>kills' share</th><th>diversity</th></tr></thead>
+<tbody><tr><td>9</td><td>old</td><td>0.089 / 0.123 / 0.122</td><td>13.1 / 20.0 / 18.7</td><td>-</td><td>-</td><td>1,937 / 1,082 / 799</td><td>422 / 165 / 47</td><td>32% / 34% / 12%</td><td>2 / 2 / 1</td></tr><tr><td>9</td><td>brain</td><td>0.093 / 0.084 / 0.117</td><td>7.8 / 12.0 / 28.0</td><td>7% / 9% / 1%</td><td>1.03 / -</td><td>2,047 / 1,361 / 490</td><td>494 / 229 / 53</td><td>34% / 28% / 29%</td><td>1 / 2 / 2</td></tr><tr><td>10</td><td>old</td><td>0.065 / 0.065 / 0.075</td><td>10.2 / 10.9 / 15.3</td><td>-</td><td>-</td><td>2,085 / 1,484 / 745</td><td>558 / 236 / 99</td><td>4% / 7% / 10%</td><td>2 / 1 / 1</td></tr><tr><td>10</td><td>brain</td><td>0.066 / 0.129 / 0.155</td><td>13.5 / 17.6 / 20.8</td><td>31% / 35% / 4%</td><td>0.99 / 0.95</td><td>2,199 / 1,318 / 653</td><td>520 / 133 / 85</td><td>26% / 29% / 28%</td><td>2 / 1 / 2</td></tr><tr><td>11</td><td>old</td><td>0.059 / 0.059 / 0.107</td><td>13.5 / 9.3 / 15.8</td><td>-</td><td>-</td><td>2,693 / 1,768 / 1,067</td><td>742 / 365 / 47</td><td>10% / 8% / 26%</td><td>1 / 1 / 1</td></tr><tr><td>11</td><td>brain</td><td>0.075 / 0.056 / 0.080</td><td>22.6 / 24.3 / 16.6</td><td>95% / 67% / 4%</td><td>1.50 / -</td><td>2,620 / 1,528 / 1,006</td><td>220 / 151 / 61</td><td>27% / 22% / 16%</td><td>2 / 2 / 1</td></tr><tr><td>12</td><td>old</td><td>0.075 / 0.073 / 0.084</td><td>29.2 / 10.4 / 17.8</td><td>-</td><td>-</td><td>2,004 / 1,750 / 913</td><td>347 / 329 / 85</td><td>33% / 10% / 18%</td><td>1 / 1 / 1</td></tr><tr><td>12</td><td>brain</td><td>0.067 / 0.062 / 0.144</td><td>26.6 / 11.3 / 14.2</td><td>59% / 12% / 16%</td><td>1.05 / 1.12</td><td>2,473 / 1,716 / 908</td><td>304 / 274 / 117</td><td>24% / 11% / 33%</td><td>2 / 2 / 1</td></tr></tbody></table></div>
+<ol class="verdicts">
+<li><span class="verdict partly">At 4 only</span> At knee 1 moving is within 4% on three seeds of four; at 4 it is 1.11-1.82 times, and grown bodies go farther on three.</li><li><span class="verdict no">No</span> Learners are above half on one run of eight (knee 1, seed 11) and at 1-16% at knee 4.</li><li><span class="verdict partly">Narrowly</span> At knee 1 learners leave more food on three seeds, by 3%, 5% and 50%; the 50% is seed 11, whose learners hunt.</li><li><span class="verdict partly">At 1 only</span> Lowest winters 133-365 at knee 1; 47-117 at 4, two below 50, none dead.</li>
+</ol>
+
+<h3>3.1 Bodies go farther only where the law slows the trees</h3>
+<div class="grid2">
+
+<figure class="fig">
+  <figcaption><strong>Moving, against the same seed without the law</strong><span>Sub-cells a body moves by its own actions per step, second half, over the same seed and brain without it. Above the dotted line the law made bodies move more.</span></figcaption>
+  <?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="382.373125pt" height="196.545406pt" viewBox="0 0 382.373125 196.545406" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-09-12T01:19:46.516147</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.1, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 196.545406 
+L 382.373125 196.545406 
+L 382.373125 0 
+L 0 0 
+L 0 196.545406 
+z
+" style="fill: none"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 21.653125 163.944703 
+L 378.773125 163.944703 
+L 378.773125 19.800703 
+L 21.653125 19.800703 
+L 21.653125 163.944703 
+z
+" style="fill: none"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1">
+      <defs>
+       <path id="m779f99bd31" d="M 0 0 
+L 0 3.5 
+" style="stroke: #898781; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#m779f99bd31" x="62.774701" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_1">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="62.774701" y="177.782594" transform="rotate(-0 62.774701 177.782594)">9</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_2">
+      <g>
+       <use xlink:href="#m779f99bd31" x="154.400317" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_2">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="154.400317" y="177.782594" transform="rotate(-0 154.400317 177.782594)">10</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_3">
+      <g>
+       <use xlink:href="#m779f99bd31" x="246.025933" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_3">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="246.025933" y="177.782594" transform="rotate(-0 246.025933 177.782594)">11</text>
+     </g>
+    </g>
+    <g id="xtick_4">
+     <g id="line2d_4">
+      <g>
+       <use xlink:href="#m779f99bd31" x="337.651549" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_4">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="337.651549" y="177.782594" transform="rotate(-0 337.651549 177.782594)">12</text>
+     </g>
+    </g>
+    <g id="text_5">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="378.773125" y="190.783297" transform="rotate(-0 378.773125 190.783297)">seed</text>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_5">
+      <path d="M 21.653125 163.944703 
+L 378.773125 163.944703 
+" clip-path="url(#p264e744194)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_6">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="14.653125" y="167.363648" transform="rotate(-0 14.653125 167.363648)">0x</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_6">
+      <path d="M 21.653125 110.55323 
+L 378.773125 110.55323 
+" clip-path="url(#p264e744194)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_7">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="14.653125" y="113.972175" transform="rotate(-0 14.653125 113.972175)">1x</text>
+     </g>
+    </g>
+    <g id="ytick_3">
+     <g id="line2d_7">
+      <path d="M 21.653125 57.161756 
+L 378.773125 57.161756 
+" clip-path="url(#p264e744194)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_8">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="14.653125" y="60.580701" transform="rotate(-0 14.653125 60.580701)">2x</text>
+     </g>
+    </g>
+   </g>
+   <g id="line2d_8">
+    <defs>
+     <path id="m4cb32d1fab" d="M 0 3.5 
+C 0.928211 3.5 1.81853 3.131218 2.474874 2.474874 
+C 3.131218 1.81853 3.5 0.928211 3.5 0 
+C 3.5 -0.928211 3.131218 -1.81853 2.474874 -2.474874 
+C 1.81853 -3.131218 0.928211 -3.5 0 -3.5 
+C -0.928211 -3.5 -1.81853 -3.131218 -2.474874 -2.474874 
+C -3.131218 -1.81853 -3.5 -0.928211 -3.5 0 
+C -3.5 0.928211 -3.131218 1.81853 -2.474874 2.474874 
+C -1.81853 3.131218 -0.928211 3.5 0 3.5 
+z
+" style="stroke: #eda100"/>
+    </defs>
+    <g clip-path="url(#p264e744194)">
+     <use xlink:href="#m4cb32d1fab" x="46.282091" y="90.291788" style="fill: #eda100; stroke: #eda100"/>
+     <use xlink:href="#m4cb32d1fab" x="137.907706" y="110.19103" style="fill: #eda100; stroke: #eda100"/>
+     <use xlink:href="#m4cb32d1fab" x="229.533322" y="109.935146" style="fill: #eda100; stroke: #eda100"/>
+     <use xlink:href="#m4cb32d1fab" x="321.158938" y="112.479799" style="fill: #eda100; stroke: #eda100"/>
+    </g>
+   </g>
+   <g id="line2d_9">
+    <defs>
+     <path id="mf3ddd38d22" d="M 0 3.5 
+C 0.928211 3.5 1.81853 3.131218 2.474874 2.474874 
+C 3.131218 1.81853 3.5 0.928211 3.5 0 
+C 3.5 -0.928211 3.131218 -1.81853 2.474874 -2.474874 
+C 1.81853 -3.131218 0.928211 -3.5 0 -3.5 
+C -0.928211 -3.5 -1.81853 -3.131218 -2.474874 -2.474874 
+C -3.131218 -1.81853 -3.5 -0.928211 -3.5 0 
+C -3.5 0.928211 -3.131218 1.81853 -2.474874 2.474874 
+C -1.81853 3.131218 -0.928211 3.5 0 3.5 
+z
+" style="stroke: #eb6834"/>
+    </defs>
+    <g clip-path="url(#p264e744194)">
+     <use xlink:href="#mf3ddd38d22" x="57.277164" y="91.094578" style="fill: #eb6834; stroke: #eb6834"/>
+     <use xlink:href="#mf3ddd38d22" x="148.90278" y="102.33789" style="fill: #eb6834; stroke: #eb6834"/>
+     <use xlink:href="#mf3ddd38d22" x="240.528396" y="66.869297" style="fill: #eb6834; stroke: #eb6834"/>
+     <use xlink:href="#mf3ddd38d22" x="332.154012" y="104.731023" style="fill: #eb6834; stroke: #eb6834"/>
+    </g>
+   </g>
+   <g id="line2d_10">
+    <defs>
+     <path id="md889058f86" d="M 0 3.5 
+C 0.928211 3.5 1.81853 3.131218 2.474874 2.474874 
+C 3.131218 1.81853 3.5 0.928211 3.5 0 
+C 3.5 -0.928211 3.131218 -1.81853 2.474874 -2.474874 
+C 1.81853 -3.131218 0.928211 -3.5 0 -3.5 
+C -0.928211 -3.5 -1.81853 -3.131218 -2.474874 -2.474874 
+C -3.131218 -1.81853 -3.5 -0.928211 -3.5 0 
+C -3.5 0.928211 -3.131218 1.81853 -2.474874 2.474874 
+C -1.81853 3.131218 -0.928211 3.5 0 3.5 
+z
+" style="stroke: #2a78d6"/>
+    </defs>
+    <g clip-path="url(#p264e744194)">
+     <use xlink:href="#md889058f86" x="68.272238" y="115.726465" style="fill: #2a78d6; stroke: #2a78d6"/>
+     <use xlink:href="#md889058f86" x="159.897854" y="59.530384" style="fill: #2a78d6; stroke: #2a78d6"/>
+     <use xlink:href="#md889058f86" x="251.52347" y="124.221105" style="fill: #2a78d6; stroke: #2a78d6"/>
+     <use xlink:href="#md889058f86" x="343.149086" y="114.723941" style="fill: #2a78d6; stroke: #2a78d6"/>
+    </g>
+   </g>
+   <g id="line2d_11">
+    <defs>
+     <path id="m1f1a983329" d="M 0 3.5 
+C 0.928211 3.5 1.81853 3.131218 2.474874 2.474874 
+C 3.131218 1.81853 3.5 0.928211 3.5 0 
+C 3.5 -0.928211 3.131218 -1.81853 2.474874 -2.474874 
+C 1.81853 -3.131218 0.928211 -3.5 0 -3.5 
+C -0.928211 -3.5 -1.81853 -3.131218 -2.474874 -2.474874 
+C -3.131218 -1.81853 -3.5 -0.928211 -3.5 0 
+C -3.5 0.928211 -3.131218 1.81853 -2.474874 2.474874 
+C -1.81853 3.131218 -0.928211 3.5 0 3.5 
+z
+" style="stroke: #1baf7a"/>
+    </defs>
+    <g clip-path="url(#p264e744194)">
+     <use xlink:href="#m1f1a983329" x="79.267312" y="96.416126" style="fill: #1baf7a; stroke: #1baf7a"/>
+     <use xlink:href="#m1f1a983329" x="170.892928" y="38.602094" style="fill: #1baf7a; stroke: #1baf7a"/>
+     <use xlink:href="#m1f1a983329" x="262.518544" y="107.196706" style="fill: #1baf7a; stroke: #1baf7a"/>
+     <use xlink:href="#m1f1a983329" x="354.144159" y="49.138708" style="fill: #1baf7a; stroke: #1baf7a"/>
+    </g>
+   </g>
+   <g id="line2d_12">
+    <path d="M 21.653125 110.55323 
+L 378.773125 110.55323 
+" clip-path="url(#p264e744194)" style="fill: none; stroke-dasharray: 1,1.65; stroke-dashoffset: 0; stroke: #898781"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 21.653125 163.944703 
+L 378.773125 163.944703 
+" style="fill: none; stroke: #898781; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="legend_1">
+    <g id="line2d_13">
+     <g>
+      <use xlink:href="#m4cb32d1fab" x="33.353125" y="10.888594" style="fill: #eda100; stroke: #eda100"/>
+     </g>
+    </g>
+    <g id="text_9">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="48.653125" y="14.038594" transform="rotate(-0 48.653125 14.038594)">stock 1</text>
+    </g>
+    <g id="line2d_14">
+     <g>
+      <use xlink:href="#mf3ddd38d22" x="100.023438" y="10.888594" style="fill: #eb6834; stroke: #eb6834"/>
+     </g>
+    </g>
+    <g id="text_10">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="115.323438" y="14.038594" transform="rotate(-0 115.323438 14.038594)">stock 4</text>
+    </g>
+    <g id="line2d_15">
+     <g>
+      <use xlink:href="#md889058f86" x="166.69375" y="10.888594" style="fill: #2a78d6; stroke: #2a78d6"/>
+     </g>
+    </g>
+    <g id="text_11">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="181.99375" y="14.038594" transform="rotate(-0 181.99375 14.038594)">stock 1 + brain</text>
+    </g>
+    <g id="line2d_16">
+     <g>
+      <use xlink:href="#m1f1a983329" x="269.759219" y="10.888594" style="fill: #1baf7a; stroke: #1baf7a"/>
+     </g>
+    </g>
+    <g id="text_12">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="285.059219" y="14.038594" transform="rotate(-0 285.059219 14.038594)">stock 4 + brain</text>
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p264e744194">
+   <rect x="21.653125" y="19.800703" width="357.12" height="144.144"/>
+  </clipPath>
+ </defs>
+</svg>
+
+</figure>
+<figure class="fig">
+  <figcaption><strong>Grown bodies&#x27; travel, against the same seed without it</strong><span>Median distance from the birthplace of the bodies aged 1,000 steps or more at step 100,000, over the same seed and brain without the law.</span></figcaption>
+  <?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="382.373125pt" height="196.545406pt" viewBox="0 0 382.373125 196.545406" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-09-12T01:19:46.538720</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.1, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 196.545406 
+L 382.373125 196.545406 
+L 382.373125 0 
+L 0 0 
+L 0 196.545406 
+z
+" style="fill: none"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 21.653125 163.944703 
+L 378.773125 163.944703 
+L 378.773125 19.800703 
+L 21.653125 19.800703 
+L 21.653125 163.944703 
+z
+" style="fill: none"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1">
+      <defs>
+       <path id="m026e305b05" d="M 0 0 
+L 0 3.5 
+" style="stroke: #898781; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#m026e305b05" x="62.774701" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_1">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="62.774701" y="177.782594" transform="rotate(-0 62.774701 177.782594)">9</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_2">
+      <g>
+       <use xlink:href="#m026e305b05" x="154.400317" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_2">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="154.400317" y="177.782594" transform="rotate(-0 154.400317 177.782594)">10</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_3">
+      <g>
+       <use xlink:href="#m026e305b05" x="246.025933" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_3">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="246.025933" y="177.782594" transform="rotate(-0 246.025933 177.782594)">11</text>
+     </g>
+    </g>
+    <g id="xtick_4">
+     <g id="line2d_4">
+      <g>
+       <use xlink:href="#m026e305b05" x="337.651549" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_4">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="337.651549" y="177.782594" transform="rotate(-0 337.651549 177.782594)">12</text>
+     </g>
+    </g>
+    <g id="text_5">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="378.773125" y="190.783297" transform="rotate(-0 378.773125 190.783297)">seed</text>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_5">
+      <path d="M 21.653125 163.944703 
+L 378.773125 163.944703 
+" clip-path="url(#pf919ad9008)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_6">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="14.653125" y="167.363648" transform="rotate(-0 14.653125 167.363648)">0x</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_6">
+      <path d="M 21.653125 94.354702 
+L 378.773125 94.354702 
+" clip-path="url(#pf919ad9008)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_7">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="14.653125" y="97.773647" transform="rotate(-0 14.653125 97.773647)">2x</text>
+     </g>
+    </g>
+    <g id="ytick_3">
+     <g id="line2d_7">
+      <path d="M 21.653125 24.7647 
+L 378.773125 24.7647 
+" clip-path="url(#pf919ad9008)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_8">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="14.653125" y="28.183646" transform="rotate(-0 14.653125 28.183646)">4x</text>
+     </g>
+    </g>
+   </g>
+   <g id="line2d_8">
+    <defs>
+     <path id="mdf4c8c823e" d="M 0 3.5 
+C 0.928211 3.5 1.81853 3.131218 2.474874 2.474874 
+C 3.131218 1.81853 3.5 0.928211 3.5 0 
+C 3.5 -0.928211 3.131218 -1.81853 2.474874 -2.474874 
+C 1.81853 -3.131218 0.928211 -3.5 0 -3.5 
+C -0.928211 -3.5 -1.81853 -3.131218 -2.474874 -2.474874 
+C -3.131218 -1.81853 -3.5 -0.928211 -3.5 0 
+C -3.5 0.928211 -3.131218 1.81853 -2.474874 2.474874 
+C -1.81853 3.131218 -0.928211 3.5 0 3.5 
+z
+" style="stroke: #eda100"/>
+    </defs>
+    <g clip-path="url(#pf919ad9008)">
+     <use xlink:href="#mdf4c8c823e" x="46.282091" y="110.903544" style="fill: #eda100; stroke: #eda100"/>
+     <use xlink:href="#mdf4c8c823e" x="137.907706" y="126.544362" style="fill: #eda100; stroke: #eda100"/>
+     <use xlink:href="#mdf4c8c823e" x="229.533322" y="139.992556" style="fill: #eda100; stroke: #eda100"/>
+     <use xlink:href="#mdf4c8c823e" x="321.158938" y="151.62073" style="fill: #eda100; stroke: #eda100"/>
+    </g>
+   </g>
+   <g id="line2d_9">
+    <defs>
+     <path id="mea0560ad5d" d="M 0 3.5 
+C 0.928211 3.5 1.81853 3.131218 2.474874 2.474874 
+C 3.131218 1.81853 3.5 0.928211 3.5 0 
+C 3.5 -0.928211 3.131218 -1.81853 2.474874 -2.474874 
+C 1.81853 -3.131218 0.928211 -3.5 0 -3.5 
+C -0.928211 -3.5 -1.81853 -3.131218 -2.474874 -2.474874 
+C -3.131218 -1.81853 -3.5 -0.928211 -3.5 0 
+C -3.5 0.928211 -3.131218 1.81853 -2.474874 2.474874 
+C -1.81853 3.131218 -0.928211 3.5 0 3.5 
+z
+" style="stroke: #eb6834"/>
+    </defs>
+    <g clip-path="url(#pf919ad9008)">
+     <use xlink:href="#mea0560ad5d" x="57.277164" y="114.430781" style="fill: #eb6834; stroke: #eb6834"/>
+     <use xlink:href="#mea0560ad5d" x="148.90278" y="111.632219" style="fill: #eb6834; stroke: #eb6834"/>
+     <use xlink:href="#mea0560ad5d" x="240.528396" y="123.226053" style="fill: #eb6834; stroke: #eb6834"/>
+     <use xlink:href="#mea0560ad5d" x="332.154012" y="142.817892" style="fill: #eb6834; stroke: #eb6834"/>
+    </g>
+   </g>
+   <g id="line2d_10">
+    <defs>
+     <path id="me90b4cc175" d="M 0 3.5 
+C 0.928211 3.5 1.81853 3.131218 2.474874 2.474874 
+C 3.131218 1.81853 3.5 0.928211 3.5 0 
+C 3.5 -0.928211 3.131218 -1.81853 2.474874 -2.474874 
+C 1.81853 -3.131218 0.928211 -3.5 0 -3.5 
+C -0.928211 -3.5 -1.81853 -3.131218 -2.474874 -2.474874 
+C -3.131218 -1.81853 -3.5 -0.928211 -3.5 0 
+C -3.5 0.928211 -3.131218 1.81853 -2.474874 2.474874 
+C -1.81853 3.131218 -0.928211 3.5 0 3.5 
+z
+" style="stroke: #2a78d6"/>
+    </defs>
+    <g clip-path="url(#pf919ad9008)">
+     <use xlink:href="#me90b4cc175" x="68.272238" y="110.296813" style="fill: #2a78d6; stroke: #2a78d6"/>
+     <use xlink:href="#me90b4cc175" x="159.897854" y="118.734347" style="fill: #2a78d6; stroke: #2a78d6"/>
+     <use xlink:href="#me90b4cc175" x="251.52347" y="126.512315" style="fill: #2a78d6; stroke: #2a78d6"/>
+     <use xlink:href="#me90b4cc175" x="343.149086" y="149.154208" style="fill: #2a78d6; stroke: #2a78d6"/>
+    </g>
+   </g>
+   <g id="line2d_11">
+    <defs>
+     <path id="m813f7c3cba" d="M 0 3.5 
+C 0.928211 3.5 1.81853 3.131218 2.474874 2.474874 
+C 3.131218 1.81853 3.5 0.928211 3.5 0 
+C 3.5 -0.928211 3.131218 -1.81853 2.474874 -2.474874 
+C 1.81853 -3.131218 0.928211 -3.5 0 -3.5 
+C -0.928211 -3.5 -1.81853 -3.131218 -2.474874 -2.474874 
+C -3.131218 -1.81853 -3.5 -0.928211 -3.5 0 
+C -3.5 0.928211 -3.131218 1.81853 -2.474874 2.474874 
+C -1.81853 3.131218 -0.928211 3.5 0 3.5 
+z
+" style="stroke: #1baf7a"/>
+    </defs>
+    <g clip-path="url(#pf919ad9008)">
+     <use xlink:href="#m813f7c3cba" x="79.267312" y="38.602094" style="fill: #1baf7a; stroke: #1baf7a"/>
+     <use xlink:href="#m813f7c3cba" x="170.892928" y="110.582082" style="fill: #1baf7a; stroke: #1baf7a"/>
+     <use xlink:href="#m813f7c3cba" x="262.518544" y="138.388269" style="fill: #1baf7a; stroke: #1baf7a"/>
+     <use xlink:href="#m813f7c3cba" x="354.144159" y="145.368155" style="fill: #1baf7a; stroke: #1baf7a"/>
+    </g>
+   </g>
+   <g id="line2d_12">
+    <path d="M 21.653125 129.149702 
+L 378.773125 129.149702 
+" clip-path="url(#pf919ad9008)" style="fill: none; stroke-dasharray: 1,1.65; stroke-dashoffset: 0; stroke: #898781"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 21.653125 163.944703 
+L 378.773125 163.944703 
+" style="fill: none; stroke: #898781; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="legend_1">
+    <g id="line2d_13">
+     <g>
+      <use xlink:href="#mdf4c8c823e" x="33.353125" y="10.888594" style="fill: #eda100; stroke: #eda100"/>
+     </g>
+    </g>
+    <g id="text_9">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="48.653125" y="14.038594" transform="rotate(-0 48.653125 14.038594)">stock 1</text>
+    </g>
+    <g id="line2d_14">
+     <g>
+      <use xlink:href="#mea0560ad5d" x="100.023438" y="10.888594" style="fill: #eb6834; stroke: #eb6834"/>
+     </g>
+    </g>
+    <g id="text_10">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="115.323438" y="14.038594" transform="rotate(-0 115.323438 14.038594)">stock 4</text>
+    </g>
+    <g id="line2d_15">
+     <g>
+      <use xlink:href="#me90b4cc175" x="166.69375" y="10.888594" style="fill: #2a78d6; stroke: #2a78d6"/>
+     </g>
+    </g>
+    <g id="text_11">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="181.99375" y="14.038594" transform="rotate(-0 181.99375 14.038594)">stock 1 + brain</text>
+    </g>
+    <g id="line2d_16">
+     <g>
+      <use xlink:href="#m813f7c3cba" x="269.759219" y="10.888594" style="fill: #1baf7a; stroke: #1baf7a"/>
+     </g>
+    </g>
+    <g id="text_12">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="285.059219" y="14.038594" transform="rotate(-0 285.059219 14.038594)">stock 4 + brain</text>
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="pf919ad9008">
+   <rect x="21.653125" y="19.800703" width="357.12" height="144.144"/>
+  </clipPath>
+ </defs>
+</svg>
+
+</figure>
+</div>
+<p>At knee 1 the law takes a third of the growth from the ground between the trees, and bodies move as before. At 4 it slows every bitten tree and the world falls to 24-46% of its bodies; they move more with no more muscle (speed 0.17-0.22), and their moves are blocked 29-41% of the time against 36-58%. These runs do not separate the law from the thinner crowd.</p>
+
+<h3>3.2 Learning is not selected at either knee</h3>
+<div class="grid2">
+
+<figure class="fig">
+  <figcaption><strong>Learners among the living</strong><span>Share of the bodies whose genome learns (a learning rate above 0), every 10,000 steps. Half of the random genomes do: above the dotted line, learning was selected.</span></figcaption>
+  <?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="408.245312pt" height="196.545406pt" viewBox="0 0 408.245312 196.545406" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-09-12T01:19:46.571551</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.1, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 196.545406 
+L 408.245312 196.545406 
+L 408.245312 0 
+L 0 0 
+L 0 196.545406 
+z
+" style="fill: none"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 36.330156 163.944703 
+L 393.450156 163.944703 
+L 393.450156 19.800703 
+L 36.330156 19.800703 
+L 36.330156 163.944703 
+z
+" style="fill: none"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1">
+      <defs>
+       <path id="m60994e333d" d="M 0 0 
+L 0 3.5 
+" style="stroke: #898781; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#m60994e333d" x="36.330156" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_1">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="36.330156" y="177.783297" transform="rotate(-0 36.330156 177.783297)">10k</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_2">
+      <g>
+       <use xlink:href="#m60994e333d" x="76.010156" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_2">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="76.010156" y="177.783297" transform="rotate(-0 76.010156 177.783297)">20k</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_3">
+      <g>
+       <use xlink:href="#m60994e333d" x="115.690156" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_3">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="115.690156" y="177.783297" transform="rotate(-0 115.690156 177.783297)">30k</text>
+     </g>
+    </g>
+    <g id="xtick_4">
+     <g id="line2d_4">
+      <g>
+       <use xlink:href="#m60994e333d" x="155.370156" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_4">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="155.370156" y="177.783297" transform="rotate(-0 155.370156 177.783297)">40k</text>
+     </g>
+    </g>
+    <g id="xtick_5">
+     <g id="line2d_5">
+      <g>
+       <use xlink:href="#m60994e333d" x="195.050156" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_5">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="195.050156" y="177.783297" transform="rotate(-0 195.050156 177.783297)">50k</text>
+     </g>
+    </g>
+    <g id="xtick_6">
+     <g id="line2d_6">
+      <g>
+       <use xlink:href="#m60994e333d" x="234.730156" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_6">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="234.730156" y="177.783297" transform="rotate(-0 234.730156 177.783297)">60k</text>
+     </g>
+    </g>
+    <g id="xtick_7">
+     <g id="line2d_7">
+      <g>
+       <use xlink:href="#m60994e333d" x="274.410156" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_7">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="274.410156" y="177.783297" transform="rotate(-0 274.410156 177.783297)">70k</text>
+     </g>
+    </g>
+    <g id="xtick_8">
+     <g id="line2d_8">
+      <g>
+       <use xlink:href="#m60994e333d" x="314.090156" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_8">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="314.090156" y="177.783297" transform="rotate(-0 314.090156 177.783297)">80k</text>
+     </g>
+    </g>
+    <g id="xtick_9">
+     <g id="line2d_9">
+      <g>
+       <use xlink:href="#m60994e333d" x="353.770156" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_9">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="353.770156" y="177.783297" transform="rotate(-0 353.770156 177.783297)">90k</text>
+     </g>
+    </g>
+    <g id="xtick_10">
+     <g id="line2d_10">
+      <g>
+       <use xlink:href="#m60994e333d" x="393.450156" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_10">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="393.450156" y="177.783297" transform="rotate(-0 393.450156 177.783297)">100k</text>
+     </g>
+    </g>
+    <g id="text_11">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="393.450156" y="190.783297" transform="rotate(-0 393.450156 190.783297)">step</text>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_11">
+      <path d="M 36.330156 163.944703 
+L 393.450156 163.944703 
+" clip-path="url(#pc15afee4ea)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_12">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="29.330156" y="167.363648" transform="rotate(-0 29.330156 167.363648)">0%</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_12">
+      <path d="M 36.330156 91.872703 
+L 393.450156 91.872703 
+" clip-path="url(#pc15afee4ea)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_13">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="29.330156" y="95.291648" transform="rotate(-0 29.330156 95.291648)">50%</text>
+     </g>
+    </g>
+    <g id="ytick_3">
+     <g id="line2d_13">
+      <path d="M 36.330156 19.800703 
+L 393.450156 19.800703 
+" clip-path="url(#pc15afee4ea)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_14">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="29.330156" y="23.219648" transform="rotate(-0 29.330156 23.219648)">100%</text>
+     </g>
+    </g>
+   </g>
+   <g id="line2d_14">
+    <path d="M 36.330156 97.061887 
+L 76.010156 150.827599 
+L 115.690156 124.160959 
+L 155.370156 145.350127 
+L 195.050156 131.944735 
+L 234.730156 151.980751 
+L 274.410156 150.395167 
+L 314.090156 154.431199 
+L 353.770156 157.169935 
+L 393.450156 156.016783 
+" clip-path="url(#pc15afee4ea)" style="fill: none; stroke: #c9c8c0; stroke-opacity: 0.9; stroke-width: 1.5; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_15">
+    <path d="M 36.330156 66.647503 
+L 76.010156 107.872687 
+L 115.690156 119.115919 
+L 155.370156 133.097887 
+L 195.050156 84.377215 
+L 234.730156 129.205999 
+L 274.410156 78.179023 
+L 314.090156 136.413199 
+L 353.770156 112.773583 
+L 393.450156 138.431215 
+" clip-path="url(#pc15afee4ea)" style="fill: none; stroke: #c9c8c0; stroke-opacity: 0.9; stroke-width: 1.5; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_16">
+    <path d="M 36.330156 25.278175 
+L 76.010156 40.989871 
+L 115.690156 23.980879 
+L 155.370156 31.043935 
+L 195.050156 24.413311 
+L 234.730156 28.305199 
+L 274.410156 26.431327 
+L 314.090156 26.287183 
+L 353.770156 25.998895 
+L 393.450156 25.998895 
+" clip-path="url(#pc15afee4ea)" style="fill: none; stroke: #c9c8c0; stroke-opacity: 0.9; stroke-width: 1.5; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_17">
+    <path d="M 36.330156 21.242143 
+L 76.010156 37.962847 
+L 115.690156 43.872751 
+L 155.370156 103.836655 
+L 195.050156 61.890751 
+L 234.730156 82.215055 
+L 274.410156 73.710559 
+L 314.090156 86.683519 
+L 353.770156 72.413263 
+L 393.450156 79.620463 
+" clip-path="url(#pc15afee4ea)" style="fill: none; stroke: #c9c8c0; stroke-opacity: 0.9; stroke-width: 1.5; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_18">
+    <path d="M 36.330156 148.233007 
+L 76.010156 129.782575 
+L 115.690156 145.205983 
+L 155.370156 154.575343 
+L 195.050156 141.314095 
+L 234.730156 140.449231 
+L 274.410156 149.530303 
+L 314.090156 155.007775 
+L 353.770156 155.296063 
+L 393.450156 155.728495 
+" clip-path="url(#pc15afee4ea)" style="fill: none; stroke: #2a78d6; stroke-opacity: 0.9; stroke-width: 1.5; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_19">
+    <path d="M 36.330156 33.926815 
+L 76.010156 121.133935 
+L 115.690156 121.422223 
+L 155.370156 154.863631 
+L 195.050156 151.548319 
+L 234.730156 117.097903 
+L 274.410156 100.665487 
+L 314.090156 126.611407 
+L 353.770156 102.971791 
+L 393.450156 120.413215 
+" clip-path="url(#pc15afee4ea)" style="fill: none; stroke: #2a78d6; stroke-opacity: 0.9; stroke-width: 1.5; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_20">
+    <path d="M 36.330156 27.728623 
+L 76.010156 54.395263 
+L 115.690156 29.314207 
+L 155.370156 24.701599 
+L 195.050156 34.359247 
+L 234.730156 79.188031 
+L 274.410156 93.169999 
+L 314.090156 62.899759 
+L 353.770156 22.251151 
+L 393.450156 76.305151 
+" clip-path="url(#pc15afee4ea)" style="fill: none; stroke: #2a78d6; stroke-opacity: 0.9; stroke-width: 1.5; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_21">
+    <path d="M 36.330156 105.710527 
+L 76.010156 162.935695 
+L 115.690156 159.764527 
+L 155.370156 163.512271 
+L 195.050156 112.917727 
+L 234.730156 147.800575 
+L 274.410156 150.251023 
+L 314.090156 142.467247 
+L 353.770156 150.539311 
+L 393.450156 143.332111 
+" clip-path="url(#pc15afee4ea)" style="fill: none; stroke: #2a78d6; stroke-opacity: 0.9; stroke-width: 1.5; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_22">
+    <path d="M 36.330156 59.584447 
+L 76.010156 45.170047 
+L 115.690156 72.845695 
+L 155.370156 145.926703 
+L 195.050156 160.485247 
+L 234.730156 161.205967 
+L 274.410156 161.638399 
+L 314.090156 161.782543 
+L 353.770156 163.368127 
+L 393.450156 163.656415 
+" clip-path="url(#pc15afee4ea)" style="fill: none; stroke: #1baf7a; stroke-opacity: 0.9; stroke-width: 1.5; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_23">
+    <path d="M 36.330156 21.674575 
+L 76.010156 21.242143 
+L 115.690156 21.530431 
+L 155.370156 112.341151 
+L 195.050156 69.242095 
+L 234.730156 162.070831 
+L 274.410156 151.692463 
+L 314.090156 156.737503 
+L 353.770156 160.196959 
+L 393.450156 162.503263 
+" clip-path="url(#pc15afee4ea)" style="fill: none; stroke: #1baf7a; stroke-opacity: 0.9; stroke-width: 1.5; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_24">
+    <path d="M 36.330156 37.097983 
+L 76.010156 97.206031 
+L 115.690156 109.169983 
+L 155.370156 157.169935 
+L 195.050156 158.899663 
+L 234.730156 158.323087 
+L 274.410156 158.323087 
+L 314.090156 157.746511 
+L 353.770156 159.187951 
+L 393.450156 158.467231 
+" clip-path="url(#pc15afee4ea)" style="fill: none; stroke: #1baf7a; stroke-opacity: 0.9; stroke-width: 1.5; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_25">
+    <path d="M 36.330156 85.097935 
+L 76.010156 133.242031 
+L 115.690156 159.187951 
+L 155.370156 149.962735 
+L 195.050156 131.368159 
+L 234.730156 158.467231 
+L 274.410156 151.548319 
+L 314.090156 160.917679 
+L 353.770156 110.034847 
+L 393.450156 122.431231 
+" clip-path="url(#pc15afee4ea)" style="fill: none; stroke: #1baf7a; stroke-opacity: 0.9; stroke-width: 1.5; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_26">
+    <path d="M 36.330156 91.872703 
+L 393.450156 91.872703 
+" clip-path="url(#pc15afee4ea)" style="fill: none; stroke-dasharray: 1,1.65; stroke-dashoffset: 0; stroke: #898781"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 36.330156 163.944703 
+L 393.450156 163.944703 
+" style="fill: none; stroke: #898781; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="legend_1">
+    <g id="line2d_27">
+     <path d="M 39.930156 10.888594 
+L 48.030156 10.888594 
+L 56.130156 10.888594 
+" style="fill: none; stroke: #c9c8c0; stroke-opacity: 0.9; stroke-width: 1.5; stroke-linecap: square"/>
+    </g>
+    <g id="text_15">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="63.330156" y="14.038594" transform="rotate(-0 63.330156 14.038594)">brain alone</text>
+    </g>
+    <g id="line2d_28">
+     <path d="M 124.887344 10.888594 
+L 132.987344 10.888594 
+L 141.087344 10.888594 
+" style="fill: none; stroke: #2a78d6; stroke-opacity: 0.9; stroke-width: 1.5; stroke-linecap: square"/>
+    </g>
+    <g id="text_16">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="148.287344" y="14.038594" transform="rotate(-0 148.287344 14.038594)">stock 1 + brain</text>
+    </g>
+    <g id="line2d_29">
+     <path d="M 227.952812 10.888594 
+L 236.052812 10.888594 
+L 244.152812 10.888594 
+" style="fill: none; stroke: #1baf7a; stroke-opacity: 0.9; stroke-width: 1.5; stroke-linecap: square"/>
+    </g>
+    <g id="text_17">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="251.352812" y="14.038594" transform="rotate(-0 251.352812 14.038594)">stock 4 + brain</text>
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="pc15afee4ea">
+   <rect x="36.330156" y="19.800703" width="357.12" height="144.144"/>
+  </clipPath>
+ </defs>
+</svg>
+
+</figure>
+<figure class="fig">
+  <figcaption><strong>Learners, second half</strong><span>The same share, averaged over steps 50,000-100,000, with and without the law on the same seed.</span></figcaption>
+  <?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="397.050156pt" height="196.545406pt" viewBox="0 0 397.050156 196.545406" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-09-12T01:19:46.595192</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.1, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 196.545406 
+L 397.050156 196.545406 
+L 397.050156 0 
+L 0 0 
+L 0 196.545406 
+z
+" style="fill: none"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 36.330156 163.944703 
+L 393.450156 163.944703 
+L 393.450156 19.800703 
+L 36.330156 19.800703 
+L 36.330156 163.944703 
+z
+" style="fill: none"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1">
+      <defs>
+       <path id="mdc5e928c5b" d="M 0 0 
+L 0 3.5 
+" style="stroke: #898781; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#mdc5e928c5b" x="72.361421" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_1">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="72.361421" y="177.782594" transform="rotate(-0 72.361421 177.782594)">9</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_2">
+      <g>
+       <use xlink:href="#mdc5e928c5b" x="167.380578" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_2">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="167.380578" y="177.782594" transform="rotate(-0 167.380578 177.782594)">10</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_3">
+      <g>
+       <use xlink:href="#mdc5e928c5b" x="262.399735" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_3">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="262.399735" y="177.782594" transform="rotate(-0 262.399735 177.782594)">11</text>
+     </g>
+    </g>
+    <g id="xtick_4">
+     <g id="line2d_4">
+      <g>
+       <use xlink:href="#mdc5e928c5b" x="357.418892" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_4">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="357.418892" y="177.782594" transform="rotate(-0 357.418892 177.782594)">12</text>
+     </g>
+    </g>
+    <g id="text_5">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="393.450156" y="190.783297" transform="rotate(-0 393.450156 190.783297)">seed</text>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_5">
+      <path d="M 36.330156 163.944703 
+L 393.450156 163.944703 
+" clip-path="url(#p0f05217889)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_6">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="29.330156" y="167.363648" transform="rotate(-0 29.330156 167.363648)">0%</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_6">
+      <path d="M 36.330156 98.168775 
+L 393.450156 98.168775 
+" clip-path="url(#p0f05217889)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_7">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="29.330156" y="101.58772" transform="rotate(-0 29.330156 101.58772)">50%</text>
+     </g>
+    </g>
+    <g id="ytick_3">
+     <g id="line2d_7">
+      <path d="M 36.330156 32.392847 
+L 393.450156 32.392847 
+" clip-path="url(#p0f05217889)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_8">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="29.330156" y="35.811792" transform="rotate(-0 29.330156 35.811792)">100%</text>
+     </g>
+    </g>
+   </g>
+   <g id="line2d_8">
+    <defs>
+     <path id="m61445fdd56" d="M 0 3.5 
+C 0.928211 3.5 1.81853 3.131218 2.474874 2.474874 
+C 3.131218 1.81853 3.5 0.928211 3.5 0 
+C 3.5 -0.928211 3.131218 -1.81853 2.474874 -2.474874 
+C 1.81853 -3.131218 0.928211 -3.5 0 -3.5 
+C -0.928211 -3.5 -1.81853 -3.131218 -2.474874 -2.474874 
+C -3.131218 -1.81853 -3.5 -0.928211 -3.5 0 
+C -3.5 0.928211 -3.131218 1.81853 -2.474874 2.474874 
+C -1.81853 3.131218 -0.928211 3.5 0 3.5 
+z
+" style="stroke: #c9c8c0"/>
+    </defs>
+    <g clip-path="url(#p0f05217889)">
+     <use xlink:href="#m61445fdd56" x="60.959122" y="154.867625" style="fill: #c9c8c0; stroke: #c9c8c0"/>
+     <use xlink:href="#m61445fdd56" x="155.978279" y="122.926834" style="fill: #c9c8c0; stroke: #c9c8c0"/>
+     <use xlink:href="#m61445fdd56" x="250.997436" y="38.602094" style="fill: #c9c8c0; stroke: #c9c8c0"/>
+     <use xlink:href="#m61445fdd56" x="346.016593" y="86.355418" style="fill: #c9c8c0; stroke: #c9c8c0"/>
+    </g>
+   </g>
+   <g id="line2d_9">
+    <defs>
+     <path id="m80dc81c697" d="M 0 3.5 
+C 0.928211 3.5 1.81853 3.131218 2.474874 2.474874 
+C 3.131218 1.81853 3.5 0.928211 3.5 0 
+C 3.5 -0.928211 3.131218 -1.81853 2.474874 -2.474874 
+C 1.81853 -3.131218 0.928211 -3.5 0 -3.5 
+C -0.928211 -3.5 -1.81853 -3.131218 -2.474874 -2.474874 
+C -3.131218 -1.81853 -3.5 -0.928211 -3.5 0 
+C -3.5 0.928211 -3.131218 1.81853 -2.474874 2.474874 
+C -1.81853 3.131218 -0.928211 3.5 0 3.5 
+z
+" style="stroke: #2a78d6"/>
+    </defs>
+    <g clip-path="url(#p0f05217889)">
+     <use xlink:href="#m80dc81c697" x="72.361421" y="152.315519" style="fill: #2a78d6; stroke: #2a78d6"/>
+     <use xlink:href="#m80dc81c697" x="167.380578" y="117.954174" style="fill: #2a78d6; stroke: #2a78d6"/>
+     <use xlink:href="#m80dc81c697" x="262.399735" y="75.252442" style="fill: #2a78d6; stroke: #2a78d6"/>
+     <use xlink:href="#m80dc81c697" x="357.418892" y="148.368963" style="fill: #2a78d6; stroke: #2a78d6"/>
+    </g>
+   </g>
+   <g id="line2d_10">
+    <defs>
+     <path id="medc0c64743" d="M 0 3.5 
+C 0.928211 3.5 1.81853 3.131218 2.474874 2.474874 
+C 3.131218 1.81853 3.5 0.928211 3.5 0 
+C 3.5 -0.928211 3.131218 -1.81853 2.474874 -2.474874 
+C 1.81853 -3.131218 0.928211 -3.5 0 -3.5 
+C -0.928211 -3.5 -1.81853 -3.131218 -2.474874 -2.474874 
+C -3.131218 -1.81853 -3.5 -0.928211 -3.5 0 
+C -3.5 0.928211 -3.131218 1.81853 -2.474874 2.474874 
+C -1.81853 3.131218 -0.928211 3.5 0 3.5 
+z
+" style="stroke: #1baf7a"/>
+    </defs>
+    <g clip-path="url(#p0f05217889)">
+     <use xlink:href="#medc0c64743" x="83.763719" y="162.471322" style="fill: #1baf7a; stroke: #1baf7a"/>
+     <use xlink:href="#medc0c64743" x="178.782877" y="159.103595" style="fill: #1baf7a; stroke: #1baf7a"/>
+     <use xlink:href="#medc0c64743" x="273.802034" y="158.893112" style="fill: #1baf7a; stroke: #1baf7a"/>
+     <use xlink:href="#medc0c64743" x="368.821191" y="142.712234" style="fill: #1baf7a; stroke: #1baf7a"/>
+    </g>
+   </g>
+   <g id="line2d_11">
+    <path d="M 36.330156 98.168775 
+L 393.450156 98.168775 
+" clip-path="url(#p0f05217889)" style="fill: none; stroke-dasharray: 1,1.65; stroke-dashoffset: 0; stroke: #898781"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 36.330156 163.944703 
+L 393.450156 163.944703 
+" style="fill: none; stroke: #898781; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="legend_1">
+    <g id="line2d_12">
+     <g>
+      <use xlink:href="#m61445fdd56" x="48.030156" y="10.888594" style="fill: #c9c8c0; stroke: #c9c8c0"/>
+     </g>
+    </g>
+    <g id="text_9">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="63.330156" y="14.038594" transform="rotate(-0 63.330156 14.038594)">brain alone</text>
+    </g>
+    <g id="line2d_13">
+     <g>
+      <use xlink:href="#m80dc81c697" x="132.987344" y="10.888594" style="fill: #2a78d6; stroke: #2a78d6"/>
+     </g>
+    </g>
+    <g id="text_10">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="148.287344" y="14.038594" transform="rotate(-0 148.287344 14.038594)">stock 1 + brain</text>
+    </g>
+    <g id="line2d_14">
+     <g>
+      <use xlink:href="#medc0c64743" x="236.052812" y="10.888594" style="fill: #1baf7a; stroke: #1baf7a"/>
+     </g>
+    </g>
+    <g id="text_11">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="251.352812" y="14.038594" transform="rotate(-0 251.352812 14.038594)">stock 4 + brain</text>
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p0f05217889">
+   <rect x="36.330156" y="19.800703" width="357.12" height="144.144"/>
+  </clipPath>
+ </defs>
+</svg>
+
+</figure>
+</div>
+<p>Learners follow the lineage that wins, as in e050: above half at step 10,000 on six runs of eight, then down. Where learning is kept (knee 1, seed 11), the lineages that learn fastest (eta 0.07) hunt. In e048's world, 5 of the 6 fast-learning lineages of this experiment and e050 take 51-72% of their food from flesh.</p>
+
+<h3>3.3 Learners leave more food, clearly only where they hunt</h3>
+<div class="grid2">
+
+<figure class="fig">
+  <figcaption><strong>Food left by learners, over the rest&#x27;s</strong><span>The giving-up density of the learners over the rest&#x27;s in the same run, over the rows where each holds 5% of the bodies. Above the line learners leave more food.</span></figcaption>
+  <?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="390.959688pt" height="196.545406pt" viewBox="0 0 390.959688 196.545406" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-09-12T01:19:46.614340</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.1, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 196.545406 
+L 390.959688 196.545406 
+L 390.959688 0 
+L 0 0 
+L 0 196.545406 
+z
+" style="fill: none"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 30.239687 163.944703 
+L 387.359688 163.944703 
+L 387.359688 19.800703 
+L 30.239687 19.800703 
+L 30.239687 163.944703 
+z
+" style="fill: none"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1">
+      <defs>
+       <path id="m970c1860b1" d="M 0 0 
+L 0 3.5 
+" style="stroke: #898781; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#m970c1860b1" x="60.789077" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_1">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="60.789077" y="177.782594" transform="rotate(-0 60.789077 177.782594)">9</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_2">
+      <g>
+       <use xlink:href="#m970c1860b1" x="159.462817" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_2">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="159.462817" y="177.782594" transform="rotate(-0 159.462817 177.782594)">10</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_3">
+      <g>
+       <use xlink:href="#m970c1860b1" x="258.136558" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_3">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="258.136558" y="177.782594" transform="rotate(-0 258.136558 177.782594)">11</text>
+     </g>
+    </g>
+    <g id="xtick_4">
+     <g id="line2d_4">
+      <g>
+       <use xlink:href="#m970c1860b1" x="356.810298" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_4">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="356.810298" y="177.782594" transform="rotate(-0 356.810298 177.782594)">12</text>
+     </g>
+    </g>
+    <g id="text_5">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="387.359688" y="190.783297" transform="rotate(-0 387.359688 190.783297)">seed</text>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_5">
+      <path d="M 30.239687 163.944703 
+L 387.359688 163.944703 
+" clip-path="url(#pd02049b53c)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_6">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="23.239687" y="167.363648" transform="rotate(-0 23.239687 167.363648)">0x</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_6">
+      <path d="M 30.239687 122.228068 
+L 387.359688 122.228068 
+" clip-path="url(#pd02049b53c)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_7">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="23.239687" y="125.647013" transform="rotate(-0 23.239687 125.647013)">0.5x</text>
+     </g>
+    </g>
+    <g id="ytick_3">
+     <g id="line2d_7">
+      <path d="M 30.239687 80.511433 
+L 387.359688 80.511433 
+" clip-path="url(#pd02049b53c)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_8">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="23.239687" y="83.930378" transform="rotate(-0 23.239687 83.930378)">1x</text>
+     </g>
+    </g>
+    <g id="ytick_4">
+     <g id="line2d_8">
+      <path d="M 30.239687 38.794798 
+L 387.359688 38.794798 
+" clip-path="url(#pd02049b53c)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_9">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="23.239687" y="42.213743" transform="rotate(-0 23.239687 42.213743)">1.5x</text>
+     </g>
+    </g>
+   </g>
+   <g id="line2d_9">
+    <defs>
+     <path id="m1c29fa4f50" d="M 0 3.5 
+C 0.928211 3.5 1.81853 3.131218 2.474874 2.474874 
+C 3.131218 1.81853 3.5 0.928211 3.5 0 
+C 3.5 -0.928211 3.131218 -1.81853 2.474874 -2.474874 
+C 1.81853 -3.131218 0.928211 -3.5 0 -3.5 
+C -0.928211 -3.5 -1.81853 -3.131218 -2.474874 -2.474874 
+C -3.131218 -1.81853 -3.5 -0.928211 -3.5 0 
+C -3.5 0.928211 -3.131218 1.81853 -2.474874 2.474874 
+C -1.81853 3.131218 -0.928211 3.5 0 3.5 
+z
+" style="stroke: #2a78d6"/>
+    </defs>
+    <g clip-path="url(#pd02049b53c)">
+     <use xlink:href="#m1c29fa4f50" x="54.868653" y="78.130726" style="fill: #2a78d6; stroke: #2a78d6"/>
+     <use xlink:href="#m1c29fa4f50" x="153.542393" y="81.300244" style="fill: #2a78d6; stroke: #2a78d6"/>
+     <use xlink:href="#m1c29fa4f50" x="252.216133" y="38.602094" style="fill: #2a78d6; stroke: #2a78d6"/>
+     <use xlink:href="#m1c29fa4f50" x="350.889873" y="76.613923" style="fill: #2a78d6; stroke: #2a78d6"/>
+    </g>
+   </g>
+   <g id="line2d_10">
+    <defs>
+     <path id="m1d7105b903" d="M 0 3.5 
+C 0.928211 3.5 1.81853 3.131218 2.474874 2.474874 
+C 3.131218 1.81853 3.5 0.928211 3.5 0 
+C 3.5 -0.928211 3.131218 -1.81853 2.474874 -2.474874 
+C 1.81853 -3.131218 0.928211 -3.5 0 -3.5 
+C -0.928211 -3.5 -1.81853 -3.131218 -2.474874 -2.474874 
+C -3.131218 -1.81853 -3.5 -0.928211 -3.5 0 
+C -3.5 0.928211 -3.131218 1.81853 -2.474874 2.474874 
+C -1.81853 3.131218 -0.928211 3.5 0 3.5 
+z
+" style="stroke: #1baf7a"/>
+    </defs>
+    <g clip-path="url(#pd02049b53c)">
+     <use xlink:href="#m1d7105b903" x="165.383242" y="84.447382" style="fill: #1baf7a; stroke: #1baf7a"/>
+     <use xlink:href="#m1d7105b903" x="362.730722" y="70.874031" style="fill: #1baf7a; stroke: #1baf7a"/>
+    </g>
+   </g>
+   <g id="line2d_11">
+    <path d="M 30.239687 80.511433 
+L 387.359688 80.511433 
+" clip-path="url(#pd02049b53c)" style="fill: none; stroke-dasharray: 1,1.65; stroke-dashoffset: 0; stroke: #898781"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 30.239687 163.944703 
+L 387.359688 163.944703 
+" style="fill: none; stroke: #898781; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="legend_1">
+    <g id="line2d_12">
+     <g>
+      <use xlink:href="#m1c29fa4f50" x="41.939687" y="10.888594" style="fill: #2a78d6; stroke: #2a78d6"/>
+     </g>
+    </g>
+    <g id="text_10">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="57.239687" y="14.038594" transform="rotate(-0 57.239687 14.038594)">stock 1 + brain</text>
+    </g>
+    <g id="line2d_13">
+     <g>
+      <use xlink:href="#m1d7105b903" x="145.005156" y="10.888594" style="fill: #1baf7a; stroke: #1baf7a"/>
+     </g>
+    </g>
+    <g id="text_11">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="160.305156" y="14.038594" transform="rotate(-0 160.305156 14.038594)">stock 4 + brain</text>
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="pd02049b53c">
+   <rect x="30.239687" y="19.800703" width="357.12" height="144.144"/>
+  </clipPath>
+ </defs>
+</svg>
+
+</figure>
+</div>
+<p>The giving-up density is the food on a cell when a body's last gut leaves it. At knee 1 learners leave more than the rest on three seeds, by 3%, 5% and 50%, and leave cells more often on three. The large gap is seed 11, where learners hunt and the plant is not their main food. At 4 learners are too few to compare on two seeds.</p>
+
+<h3>3.4 A tax at knee 1, a thin world at 4</h3>
+<div class="grid2">
+
+<figure class="fig">
+  <figcaption><strong>Bodies, against the same seed without the law</strong><span>Bodies alive over the second half, over the same seed and brain without the law. Below the line the law costs the world bodies.</span></figcaption>
+  <?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="390.959687pt" height="196.545406pt" viewBox="0 0 390.959687 196.545406" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-09-12T01:19:46.636729</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.1, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 196.545406 
+L 390.959687 196.545406 
+L 390.959687 0 
+L 0 0 
+L 0 196.545406 
+z
+" style="fill: none"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 30.239687 163.944703 
+L 387.359688 163.944703 
+L 387.359688 19.800703 
+L 30.239687 19.800703 
+L 30.239687 163.944703 
+z
+" style="fill: none"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1">
+      <defs>
+       <path id="m2f714ca0c6" d="M 0 0 
+L 0 3.5 
+" style="stroke: #898781; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#m2f714ca0c6" x="71.361264" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_1">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="71.361264" y="177.782594" transform="rotate(-0 71.361264 177.782594)">9</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_2">
+      <g>
+       <use xlink:href="#m2f714ca0c6" x="162.98688" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_2">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="162.98688" y="177.782594" transform="rotate(-0 162.98688 177.782594)">10</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_3">
+      <g>
+       <use xlink:href="#m2f714ca0c6" x="254.612495" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_3">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="254.612495" y="177.782594" transform="rotate(-0 254.612495 177.782594)">11</text>
+     </g>
+    </g>
+    <g id="xtick_4">
+     <g id="line2d_4">
+      <g>
+       <use xlink:href="#m2f714ca0c6" x="346.238111" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_4">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="346.238111" y="177.782594" transform="rotate(-0 346.238111 177.782594)">12</text>
+     </g>
+    </g>
+    <g id="text_5">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="387.359688" y="190.783297" transform="rotate(-0 387.359688 190.783297)">seed</text>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_5">
+      <path d="M 30.239687 163.944703 
+L 387.359688 163.944703 
+" clip-path="url(#pe24aa9c819)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_6">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="23.239687" y="167.363648" transform="rotate(-0 23.239687 167.363648)">0x</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_6">
+      <path d="M 30.239687 101.273399 
+L 387.359688 101.273399 
+" clip-path="url(#pe24aa9c819)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_7">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="23.239687" y="104.692344" transform="rotate(-0 23.239687 104.692344)">0.5x</text>
+     </g>
+    </g>
+    <g id="ytick_3">
+     <g id="line2d_7">
+      <path d="M 30.239687 38.602094 
+L 387.359688 38.602094 
+" clip-path="url(#pe24aa9c819)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_8">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="23.239687" y="42.02104" transform="rotate(-0 23.239687 42.02104)">1x</text>
+     </g>
+    </g>
+   </g>
+   <g id="line2d_8">
+    <defs>
+     <path id="mffd6a9ba47" d="M 0 3.5 
+C 0.928211 3.5 1.81853 3.131218 2.474874 2.474874 
+C 3.131218 1.81853 3.5 0.928211 3.5 0 
+C 3.5 -0.928211 3.131218 -1.81853 2.474874 -2.474874 
+C 1.81853 -3.131218 0.928211 -3.5 0 -3.5 
+C -0.928211 -3.5 -1.81853 -3.131218 -2.474874 -2.474874 
+C -3.131218 -1.81853 -3.5 -0.928211 -3.5 0 
+C -3.5 0.928211 -3.131218 1.81853 -2.474874 2.474874 
+C -1.81853 3.131218 -0.928211 3.5 0 3.5 
+z
+" style="stroke: #eda100"/>
+    </defs>
+    <g clip-path="url(#pe24aa9c819)">
+     <use xlink:href="#mffd6a9ba47" x="54.868653" y="93.911991" style="fill: #eda100; stroke: #eda100"/>
+     <use xlink:href="#mffd6a9ba47" x="146.494269" y="74.709405" style="fill: #eda100; stroke: #eda100"/>
+     <use xlink:href="#mffd6a9ba47" x="238.119885" y="81.644509" style="fill: #eda100; stroke: #eda100"/>
+     <use xlink:href="#mffd6a9ba47" x="329.7455" y="54.526478" style="fill: #eda100; stroke: #eda100"/>
+    </g>
+   </g>
+   <g id="line2d_9">
+    <defs>
+     <path id="mb35584c23f" d="M 0 3.5 
+C 0.928211 3.5 1.81853 3.131218 2.474874 2.474874 
+C 3.131218 1.81853 3.5 0.928211 3.5 0 
+C 3.5 -0.928211 3.131218 -1.81853 2.474874 -2.474874 
+C 1.81853 -3.131218 0.928211 -3.5 0 -3.5 
+C -0.928211 -3.5 -1.81853 -3.131218 -2.474874 -2.474874 
+C -3.131218 -1.81853 -3.5 -0.928211 -3.5 0 
+C -3.5 0.928211 -3.131218 1.81853 -2.474874 2.474874 
+C -1.81853 3.131218 -0.928211 3.5 0 3.5 
+z
+" style="stroke: #eb6834"/>
+    </defs>
+    <g clip-path="url(#pe24aa9c819)">
+     <use xlink:href="#mb35584c23f" x="65.863727" y="112.225232" style="fill: #eb6834; stroke: #eb6834"/>
+     <use xlink:href="#mb35584c23f" x="157.489343" y="119.139459" style="fill: #eb6834; stroke: #eb6834"/>
+     <use xlink:href="#mb35584c23f" x="249.114958" y="114.260326" style="fill: #eb6834; stroke: #eb6834"/>
+     <use xlink:href="#mb35584c23f" x="340.740574" y="106.844807" style="fill: #eb6834; stroke: #eb6834"/>
+    </g>
+   </g>
+   <g id="line2d_10">
+    <defs>
+     <path id="m0be80374a9" d="M 0 3.5 
+C 0.928211 3.5 1.81853 3.131218 2.474874 2.474874 
+C 3.131218 1.81853 3.5 0.928211 3.5 0 
+C 3.5 -0.928211 3.131218 -1.81853 2.474874 -2.474874 
+C 1.81853 -3.131218 0.928211 -3.5 0 -3.5 
+C -0.928211 -3.5 -1.81853 -3.131218 -2.474874 -2.474874 
+C -3.131218 -1.81853 -3.5 -0.928211 -3.5 0 
+C -3.5 0.928211 -3.131218 1.81853 -2.474874 2.474874 
+C -1.81853 3.131218 -0.928211 3.5 0 3.5 
+z
+" style="stroke: #2a78d6"/>
+    </defs>
+    <g clip-path="url(#pe24aa9c819)">
+     <use xlink:href="#m0be80374a9" x="76.858801" y="80.585058" style="fill: #2a78d6; stroke: #2a78d6"/>
+     <use xlink:href="#m0be80374a9" x="168.484417" y="88.824407" style="fill: #2a78d6; stroke: #2a78d6"/>
+     <use xlink:href="#m0be80374a9" x="260.110032" y="90.830972" style="fill: #2a78d6; stroke: #2a78d6"/>
+     <use xlink:href="#m0be80374a9" x="351.735648" y="76.970316" style="fill: #2a78d6; stroke: #2a78d6"/>
+    </g>
+   </g>
+   <g id="line2d_11">
+    <defs>
+     <path id="m9622d45ab7" d="M 0 3.5 
+C 0.928211 3.5 1.81853 3.131218 2.474874 2.474874 
+C 3.131218 1.81853 3.5 0.928211 3.5 0 
+C 3.5 -0.928211 3.131218 -1.81853 2.474874 -2.474874 
+C 1.81853 -3.131218 0.928211 -3.5 0 -3.5 
+C -0.928211 -3.5 -1.81853 -3.131218 -2.474874 -2.474874 
+C -3.131218 -1.81853 -3.5 -0.928211 -3.5 0 
+C -3.5 0.928211 -3.131218 1.81853 -2.474874 2.474874 
+C -1.81853 3.131218 -0.928211 3.5 0 3.5 
+z
+" style="stroke: #1baf7a"/>
+    </defs>
+    <g clip-path="url(#pe24aa9c819)">
+     <use xlink:href="#m9622d45ab7" x="87.853875" y="133.928176" style="fill: #1baf7a; stroke: #1baf7a"/>
+     <use xlink:href="#m9622d45ab7" x="179.47949" y="126.728255" style="fill: #1baf7a; stroke: #1baf7a"/>
+     <use xlink:href="#m9622d45ab7" x="271.105106" y="115.808212" style="fill: #1baf7a; stroke: #1baf7a"/>
+     <use xlink:href="#m9622d45ab7" x="362.730722" y="117.933244" style="fill: #1baf7a; stroke: #1baf7a"/>
+    </g>
+   </g>
+   <g id="line2d_12">
+    <path d="M 30.239687 38.602094 
+L 387.359688 38.602094 
+" clip-path="url(#pe24aa9c819)" style="fill: none; stroke-dasharray: 1,1.65; stroke-dashoffset: 0; stroke: #898781"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 30.239687 163.944703 
+L 387.359687 163.944703 
+" style="fill: none; stroke: #898781; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="legend_1">
+    <g id="line2d_13">
+     <g>
+      <use xlink:href="#mffd6a9ba47" x="41.939687" y="10.888594" style="fill: #eda100; stroke: #eda100"/>
+     </g>
+    </g>
+    <g id="text_9">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="57.239687" y="14.038594" transform="rotate(-0 57.239687 14.038594)">stock 1</text>
+    </g>
+    <g id="line2d_14">
+     <g>
+      <use xlink:href="#mb35584c23f" x="108.61" y="10.888594" style="fill: #eb6834; stroke: #eb6834"/>
+     </g>
+    </g>
+    <g id="text_10">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="123.91" y="14.038594" transform="rotate(-0 123.91 14.038594)">stock 4</text>
+    </g>
+    <g id="line2d_15">
+     <g>
+      <use xlink:href="#m0be80374a9" x="175.280312" y="10.888594" style="fill: #2a78d6; stroke: #2a78d6"/>
+     </g>
+    </g>
+    <g id="text_11">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="190.580312" y="14.038594" transform="rotate(-0 190.580312 14.038594)">stock 1 + brain</text>
+    </g>
+    <g id="line2d_16">
+     <g>
+      <use xlink:href="#m9622d45ab7" x="278.345781" y="10.888594" style="fill: #1baf7a; stroke: #1baf7a"/>
+     </g>
+    </g>
+    <g id="text_12">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="293.645781" y="14.038594" transform="rotate(-0 293.645781 14.038594)">stock 4 + brain</text>
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="pe24aa9c819">
+   <rect x="30.239687" y="19.800703" width="357.12" height="144.144"/>
+  </clipPath>
+ </defs>
+</svg>
+
+</figure>
+<figure class="fig">
+  <figcaption><strong>Lowest winter</strong><span>The fewest bodies alive in any winter under the law; the dotted line is the hypothesis&#x27;s 50.</span></figcaption>
+  <?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="388.49875pt" height="196.545406pt" viewBox="0 0 388.49875 196.545406" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-09-12T01:19:46.657469</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.1, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 196.545406 
+L 388.49875 196.545406 
+L 388.49875 0 
+L 0 0 
+L 0 196.545406 
+z
+" style="fill: none"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 27.77875 163.944703 
+L 384.89875 163.944703 
+L 384.89875 19.800703 
+L 27.77875 19.800703 
+L 27.77875 163.944703 
+z
+" style="fill: none"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1">
+      <defs>
+       <path id="mb0b67bdf72" d="M 0 0 
+L 0 3.5 
+" style="stroke: #898781; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#mb0b67bdf72" x="68.900326" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_1">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="68.900326" y="177.782594" transform="rotate(-0 68.900326 177.782594)">9</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_2">
+      <g>
+       <use xlink:href="#mb0b67bdf72" x="160.525942" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_2">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="160.525942" y="177.782594" transform="rotate(-0 160.525942 177.782594)">10</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_3">
+      <g>
+       <use xlink:href="#mb0b67bdf72" x="252.151558" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_3">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="252.151558" y="177.782594" transform="rotate(-0 252.151558 177.782594)">11</text>
+     </g>
+    </g>
+    <g id="xtick_4">
+     <g id="line2d_4">
+      <g>
+       <use xlink:href="#mb0b67bdf72" x="343.777174" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_4">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="343.777174" y="177.782594" transform="rotate(-0 343.777174 177.782594)">12</text>
+     </g>
+    </g>
+    <g id="text_5">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="384.89875" y="190.783297" transform="rotate(-0 384.89875 190.783297)">seed</text>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_5">
+      <path d="M 27.77875 163.944703 
+L 384.89875 163.944703 
+" clip-path="url(#p971c688cdd)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_6">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="20.77875" y="167.363648" transform="rotate(-0 20.77875 167.363648)">0</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_6">
+      <path d="M 27.77875 95.263822 
+L 384.89875 95.263822 
+" clip-path="url(#p971c688cdd)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_7">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="20.77875" y="98.682767" transform="rotate(-0 20.77875 98.682767)">200</text>
+     </g>
+    </g>
+    <g id="ytick_3">
+     <g id="line2d_7">
+      <path d="M 27.77875 26.58294 
+L 384.89875 26.58294 
+" clip-path="url(#p971c688cdd)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_8">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="20.77875" y="30.001885" transform="rotate(-0 20.77875 30.001885)">400</text>
+     </g>
+    </g>
+   </g>
+   <g id="line2d_8">
+    <defs>
+     <path id="m47d1313731" d="M 0 3.5 
+C 0.928211 3.5 1.81853 3.131218 2.474874 2.474874 
+C 3.131218 1.81853 3.5 0.928211 3.5 0 
+C 3.5 -0.928211 3.131218 -1.81853 2.474874 -2.474874 
+C 1.81853 -3.131218 0.928211 -3.5 0 -3.5 
+C -0.928211 -3.5 -1.81853 -3.131218 -2.474874 -2.474874 
+C -3.131218 -1.81853 -3.5 -0.928211 -3.5 0 
+C -3.5 0.928211 -3.131218 1.81853 -2.474874 2.474874 
+C -1.81853 3.131218 -0.928211 3.5 0 3.5 
+z
+" style="stroke: #eda100"/>
+    </defs>
+    <g clip-path="url(#p971c688cdd)">
+     <use xlink:href="#m47d1313731" x="52.407716" y="107.282976" style="fill: #eda100; stroke: #eda100"/>
+     <use xlink:href="#m47d1313731" x="144.033331" y="82.901263" style="fill: #eda100; stroke: #eda100"/>
+     <use xlink:href="#m47d1313731" x="235.658947" y="38.602094" style="fill: #eda100; stroke: #eda100"/>
+     <use xlink:href="#m47d1313731" x="327.284563" y="50.964653" style="fill: #eda100; stroke: #eda100"/>
+    </g>
+   </g>
+   <g id="line2d_9">
+    <defs>
+     <path id="m3a17664047" d="M 0 3.5 
+C 0.928211 3.5 1.81853 3.131218 2.474874 2.474874 
+C 3.131218 1.81853 3.5 0.928211 3.5 0 
+C 3.5 -0.928211 3.131218 -1.81853 2.474874 -2.474874 
+C 1.81853 -3.131218 0.928211 -3.5 0 -3.5 
+C -0.928211 -3.5 -1.81853 -3.131218 -2.474874 -2.474874 
+C -3.131218 -1.81853 -3.5 -0.928211 -3.5 0 
+C -3.5 0.928211 -3.131218 1.81853 -2.474874 2.474874 
+C -1.81853 3.131218 -0.928211 3.5 0 3.5 
+z
+" style="stroke: #eb6834"/>
+    </defs>
+    <g clip-path="url(#p971c688cdd)">
+     <use xlink:href="#m3a17664047" x="63.402789" y="147.804696" style="fill: #eb6834; stroke: #eb6834"/>
+     <use xlink:href="#m3a17664047" x="155.028405" y="129.947667" style="fill: #eb6834; stroke: #eb6834"/>
+     <use xlink:href="#m3a17664047" x="246.654021" y="147.804696" style="fill: #eb6834; stroke: #eb6834"/>
+     <use xlink:href="#m3a17664047" x="338.279637" y="134.755328" style="fill: #eb6834; stroke: #eb6834"/>
+    </g>
+   </g>
+   <g id="line2d_10">
+    <defs>
+     <path id="mf5cad72eb0" d="M 0 3.5 
+C 0.928211 3.5 1.81853 3.131218 2.474874 2.474874 
+C 3.131218 1.81853 3.5 0.928211 3.5 0 
+C 3.5 -0.928211 3.131218 -1.81853 2.474874 -2.474874 
+C 1.81853 -3.131218 0.928211 -3.5 0 -3.5 
+C -0.928211 -3.5 -1.81853 -3.131218 -2.474874 -2.474874 
+C -3.131218 -1.81853 -3.5 -0.928211 -3.5 0 
+C -3.5 0.928211 -3.131218 1.81853 -2.474874 2.474874 
+C -1.81853 3.131218 -0.928211 3.5 0 3.5 
+z
+" style="stroke: #2a78d6"/>
+    </defs>
+    <g clip-path="url(#p971c688cdd)">
+     <use xlink:href="#mf5cad72eb0" x="74.397863" y="85.305094" style="fill: #2a78d6; stroke: #2a78d6"/>
+     <use xlink:href="#mf5cad72eb0" x="166.023479" y="118.271917" style="fill: #2a78d6; stroke: #2a78d6"/>
+     <use xlink:href="#mf5cad72eb0" x="257.649095" y="112.090638" style="fill: #2a78d6; stroke: #2a78d6"/>
+     <use xlink:href="#mf5cad72eb0" x="349.274711" y="69.851896" style="fill: #2a78d6; stroke: #2a78d6"/>
+    </g>
+   </g>
+   <g id="line2d_11">
+    <defs>
+     <path id="m0bb9426c7d" d="M 0 3.5 
+C 0.928211 3.5 1.81853 3.131218 2.474874 2.474874 
+C 3.131218 1.81853 3.5 0.928211 3.5 0 
+C 3.5 -0.928211 3.131218 -1.81853 2.474874 -2.474874 
+C 1.81853 -3.131218 0.928211 -3.5 0 -3.5 
+C -0.928211 -3.5 -1.81853 -3.131218 -2.474874 -2.474874 
+C -3.131218 -1.81853 -3.5 -0.928211 -3.5 0 
+C -3.5 0.928211 -3.131218 1.81853 -2.474874 2.474874 
+C -1.81853 3.131218 -0.928211 3.5 0 3.5 
+z
+" style="stroke: #1baf7a"/>
+    </defs>
+    <g clip-path="url(#p971c688cdd)">
+     <use xlink:href="#m0bb9426c7d" x="85.392937" y="145.74427" style="fill: #1baf7a; stroke: #1baf7a"/>
+     <use xlink:href="#m0bb9426c7d" x="177.018553" y="134.755328" style="fill: #1baf7a; stroke: #1baf7a"/>
+     <use xlink:href="#m0bb9426c7d" x="268.644169" y="142.997034" style="fill: #1baf7a; stroke: #1baf7a"/>
+     <use xlink:href="#m0bb9426c7d" x="360.269784" y="123.766387" style="fill: #1baf7a; stroke: #1baf7a"/>
+    </g>
+   </g>
+   <g id="line2d_12">
+    <path d="M 27.77875 146.774483 
+L 384.89875 146.774483 
+" clip-path="url(#p971c688cdd)" style="fill: none; stroke-dasharray: 1,1.65; stroke-dashoffset: 0; stroke: #898781"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 27.77875 163.944703 
+L 384.89875 163.944703 
+" style="fill: none; stroke: #898781; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="legend_1">
+    <g id="line2d_13">
+     <g>
+      <use xlink:href="#m47d1313731" x="39.47875" y="10.888594" style="fill: #eda100; stroke: #eda100"/>
+     </g>
+    </g>
+    <g id="text_9">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="54.77875" y="14.038594" transform="rotate(-0 54.77875 14.038594)">stock 1</text>
+    </g>
+    <g id="line2d_14">
+     <g>
+      <use xlink:href="#m3a17664047" x="106.149062" y="10.888594" style="fill: #eb6834; stroke: #eb6834"/>
+     </g>
+    </g>
+    <g id="text_10">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="121.449062" y="14.038594" transform="rotate(-0 121.449062 14.038594)">stock 4</text>
+    </g>
+    <g id="line2d_15">
+     <g>
+      <use xlink:href="#mf5cad72eb0" x="172.819375" y="10.888594" style="fill: #2a78d6; stroke: #2a78d6"/>
+     </g>
+    </g>
+    <g id="text_11">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="188.119375" y="14.038594" transform="rotate(-0 188.119375 14.038594)">stock 1 + brain</text>
+    </g>
+    <g id="line2d_16">
+     <g>
+      <use xlink:href="#m0bb9426c7d" x="275.884844" y="10.888594" style="fill: #1baf7a; stroke: #1baf7a"/>
+     </g>
+    </g>
+    <g id="text_12">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="291.184844" y="14.038594" transform="rotate(-0 291.184844 14.038594)">stock 4 + brain</text>
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p971c688cdd">
+   <rect x="27.77875" y="19.800703" width="357.12" height="144.144"/>
+  </clipPath>
+ </defs>
+</svg>
+
+</figure>
+</div>
+<p>At knee 1 the world holds 56-87% of its bodies and every winter stays above 130. At 4 the law takes 47-59 of the light a step and the plant grows 60% less; the world holds 24-46% of its bodies, and every first winter is its lowest, 47-117. Diversity stays at 1-2 at both knees.</p>
+<figure class="diagram"><div class="cards"><figure class="card"><svg viewBox="-1 -1 89 89" width="120" height="120" role="img" aria-label="the leader of a hunter world"><rect x="-1" y="-1" width="89" height="89" fill="var(--cell)"/><rect x="0.00" y="0.00" width="11.31" height="11.31" fill="#eb6834"/><rect x="12.57" y="0.00" width="11.31" height="11.31" fill="#eb6834"/><rect x="25.14" y="0.00" width="11.31" height="11.31" fill="#eb6834"/><rect x="37.71" y="0.00" width="11.31" height="11.31" fill="#eb6834"/><rect x="50.29" y="0.00" width="11.31" height="11.31" fill="#eb6834"/><rect x="62.86" y="0.00" width="11.31" height="11.31" fill="#eb6834"/><rect x="75.43" y="0.00" width="11.31" height="11.31" fill="#eb6834"/><rect x="0.00" y="12.57" width="11.31" height="11.31" fill="#eb6834"/><rect x="12.57" y="12.57" width="11.31" height="11.31" fill="#eb6834"/><rect x="25.14" y="12.57" width="11.31" height="11.31" fill="#eb6834"/><rect x="37.71" y="12.57" width="11.31" height="11.31" fill="#eb6834"/><rect x="50.29" y="12.57" width="11.31" height="11.31" fill="#eb6834"/><rect x="62.86" y="12.57" width="11.31" height="11.31" fill="#eb6834"/><rect x="75.43" y="12.57" width="11.31" height="11.31" fill="#eb6834"/><rect x="0.00" y="25.14" width="11.31" height="11.31" fill="#eb6834"/><rect x="12.57" y="25.14" width="11.31" height="11.31" fill="#eb6834"/><rect x="25.14" y="25.14" width="11.31" height="11.31" fill="#eb6834"/><rect x="37.71" y="25.14" width="11.31" height="11.31" fill="#eda100"/><rect x="50.29" y="25.14" width="11.31" height="11.31" fill="#eda100"/><rect x="62.86" y="25.14" width="11.31" height="11.31" fill="#eb6834"/><rect x="75.43" y="25.14" width="11.31" height="11.31" fill="#eb6834"/><rect x="0.00" y="37.71" width="11.31" height="11.31" fill="#eb6834"/><rect x="12.57" y="37.71" width="11.31" height="11.31" fill="#eb6834"/><rect x="37.71" y="37.71" width="11.31" height="11.31" fill="#eda100"/><rect x="50.29" y="37.71" width="11.31" height="11.31" fill="#eda100"/><rect x="62.86" y="37.71" width="11.31" height="11.31" fill="#1baf7a"/><rect x="75.43" y="37.71" width="11.31" height="11.31" fill="#eb6834"/><rect x="0.00" y="50.29" width="11.31" height="11.31" fill="#eb6834"/><rect x="62.86" y="50.29" width="11.31" height="11.31" fill="#1baf7a"/><rect x="75.43" y="50.29" width="11.31" height="11.31" fill="#1baf7a"/><rect x="0.00" y="62.86" width="11.31" height="11.31" fill="#eb6834"/><rect x="75.43" y="62.86" width="11.31" height="11.31" fill="#1baf7a"/><line x1="-1" y1="-0.5" x2="88" y2="-0.5" stroke="var(--ink2)" stroke-width="1.5" stroke-dasharray="3 2"/></svg>
+<figcaption><strong>the leader of a hunter world</strong><br>knee 1, old brain, seed 9, lineage 334: 36,000 steps, 1,370 agents at its peak<br>grid 7x7; mass 36: hard 1, muscle 11, sensor 3.3, digestive 15; speed 0.31; flesh 36% of the intake; mean age 256<br>Muscle across the front and down one side, eyes and gut in its corner.</figcaption></figure><figure class="card"><svg viewBox="-1 -1 89 89" width="120" height="120" role="img" aria-label="the learning hunter"><rect x="-1" y="-1" width="89" height="89" fill="var(--cell)"/><rect x="0.00" y="0.00" width="19.80" height="19.80" fill="#eb6834"/><rect x="22.00" y="0.00" width="19.80" height="19.80" fill="#eb6834"/><rect x="44.00" y="0.00" width="19.80" height="19.80" fill="#eb6834"/><rect x="66.00" y="0.00" width="19.80" height="19.80" fill="#eb6834"/><rect x="0.00" y="22.00" width="19.80" height="19.80" fill="#eb6834"/><rect x="22.00" y="22.00" width="19.80" height="19.80" fill="#eb6834"/><rect x="44.00" y="22.00" width="19.80" height="19.80" fill="#eb6834"/><rect x="66.00" y="22.00" width="19.80" height="19.80" fill="#eb6834"/><rect x="0.00" y="44.00" width="19.80" height="19.80" fill="#eb6834"/><rect x="22.00" y="44.00" width="19.80" height="19.80" fill="#eb6834"/><rect x="44.00" y="44.00" width="19.80" height="19.80" fill="#eb6834"/><rect x="66.00" y="44.00" width="19.80" height="19.80" fill="#eb6834"/><rect x="0.00" y="66.00" width="19.80" height="19.80" fill="#1baf7a"/><rect x="66.00" y="66.00" width="19.80" height="19.80" fill="#1baf7a"/><line x1="-1" y1="-0.5" x2="88" y2="-0.5" stroke="var(--ink2)" stroke-width="1.5" stroke-dasharray="3 2"/></svg>
+<figcaption><strong>the learning hunter</strong><br>knee 1, brain, seed 11, lineage 525: 33,000 steps, 1,749 agents at its peak<br>grid 4x4; mass 27: hard 0, muscle 10, sensor 0.6, digestive 3; speed 0.38; flesh 61% of the intake; mean age 475<br>Three rows of muscle and a gut at each back corner: it learns fast (eta 0.07) and lives on flesh.</figcaption></figure><figure class="card"><svg viewBox="-1 -1 89 89" width="120" height="120" role="img" aria-label="the gut square"><rect x="-1" y="-1" width="89" height="89" fill="var(--cell)"/><rect x="0.00" y="0.00" width="19.80" height="19.80" fill="#1baf7a"/><rect x="22.00" y="0.00" width="19.80" height="19.80" fill="#1baf7a"/><rect x="44.00" y="0.00" width="19.80" height="19.80" fill="#1baf7a"/><rect x="66.00" y="0.00" width="19.80" height="19.80" fill="#1baf7a"/><rect x="0.00" y="22.00" width="19.80" height="19.80" fill="#eb6834"/><rect x="22.00" y="22.00" width="19.80" height="19.80" fill="#eb6834"/><rect x="44.00" y="22.00" width="19.80" height="19.80" fill="#eb6834"/><rect x="66.00" y="22.00" width="19.80" height="19.80" fill="#1baf7a"/><rect x="0.00" y="44.00" width="19.80" height="19.80" fill="#eb6834"/><rect x="22.00" y="44.00" width="19.80" height="19.80" fill="#eb6834"/><rect x="44.00" y="44.00" width="19.80" height="19.80" fill="#eb6834"/><rect x="66.00" y="44.00" width="19.80" height="19.80" fill="#1baf7a"/><rect x="0.00" y="66.00" width="19.80" height="19.80" fill="#1baf7a"/><rect x="22.00" y="66.00" width="19.80" height="19.80" fill="#1baf7a"/><rect x="44.00" y="66.00" width="19.80" height="19.80" fill="#1baf7a"/><rect x="66.00" y="66.00" width="19.80" height="19.80" fill="#1baf7a"/><line x1="-1" y1="-0.5" x2="88" y2="-0.5" stroke="var(--ink2)" stroke-width="1.5" stroke-dasharray="3 2"/></svg>
+<figcaption><strong>the gut square</strong><br>knee 1, brain, seed 12, lineage 920: 30,000 steps, 1,784 agents at its peak<br>grid 4x4; mass 29: hard 0, muscle 5, sensor 0.0, digestive 9; speed 0.17; flesh 20% of the intake; mean age 889<br>Gut rows front and back around a band of muscle: half of the last third, and few of it learn.</figcaption></figure><figure class="card"><svg viewBox="-1 -1 89 89" width="120" height="120" role="img" aria-label="the leader of a world of 490"><rect x="-1" y="-1" width="89" height="89" fill="var(--cell)"/><rect x="0.00" y="0.00" width="13.20" height="13.20" fill="#eb6834"/><rect x="14.67" y="0.00" width="13.20" height="13.20" fill="#eb6834"/><rect x="29.33" y="0.00" width="13.20" height="13.20" fill="#eb6834"/><rect x="44.00" y="0.00" width="13.20" height="13.20" fill="#eb6834"/><rect x="58.67" y="0.00" width="13.20" height="13.20" fill="#eb6834"/><rect x="73.33" y="0.00" width="13.20" height="13.20" fill="#eb6834"/><rect x="0.00" y="14.67" width="13.20" height="13.20" fill="#eb6834"/><rect x="14.67" y="14.67" width="13.20" height="13.20" fill="#eb6834"/><rect x="29.33" y="14.67" width="13.20" height="13.20" fill="#eb6834"/><rect x="44.00" y="14.67" width="13.20" height="13.20" fill="#eb6834"/><rect x="58.67" y="14.67" width="13.20" height="13.20" fill="#eb6834"/><rect x="73.33" y="14.67" width="13.20" height="13.20" fill="#eb6834"/><rect x="0.00" y="29.33" width="13.20" height="13.20" fill="#eb6834"/><rect x="14.67" y="29.33" width="13.20" height="13.20" fill="#eb6834"/><rect x="29.33" y="29.33" width="13.20" height="13.20" fill="#eb6834"/><rect x="44.00" y="29.33" width="13.20" height="13.20" fill="#eb6834"/><rect x="58.67" y="29.33" width="13.20" height="13.20" fill="#eb6834"/><rect x="73.33" y="29.33" width="13.20" height="13.20" fill="#eb6834"/><rect x="0.00" y="44.00" width="13.20" height="13.20" fill="#eb6834"/><rect x="14.67" y="44.00" width="13.20" height="13.20" fill="#eb6834"/><rect x="29.33" y="44.00" width="13.20" height="13.20" fill="#1baf7a"/><rect x="44.00" y="44.00" width="13.20" height="13.20" fill="#1baf7a"/><rect x="58.67" y="44.00" width="13.20" height="13.20" fill="#eb6834"/><rect x="73.33" y="44.00" width="13.20" height="13.20" fill="#eb6834"/><rect x="0.00" y="58.67" width="13.20" height="13.20" fill="#eb6834"/><rect x="14.67" y="58.67" width="13.20" height="13.20" fill="#1baf7a"/><rect x="29.33" y="58.67" width="13.20" height="13.20" fill="#1baf7a"/><rect x="44.00" y="58.67" width="13.20" height="13.20" fill="#1baf7a"/><rect x="58.67" y="58.67" width="13.20" height="13.20" fill="#1baf7a"/><rect x="73.33" y="58.67" width="13.20" height="13.20" fill="#1baf7a"/><rect x="0.00" y="73.33" width="13.20" height="13.20" fill="#eb6834"/><rect x="14.67" y="73.33" width="13.20" height="13.20" fill="#1baf7a"/><rect x="29.33" y="73.33" width="13.20" height="13.20" fill="#1baf7a"/><rect x="44.00" y="73.33" width="13.20" height="13.20" fill="#1baf7a"/><rect x="58.67" y="73.33" width="13.20" height="13.20" fill="#1baf7a"/><rect x="73.33" y="73.33" width="13.20" height="13.20" fill="#1baf7a"/><line x1="-1" y1="-0.5" x2="88" y2="-0.5" stroke="var(--ink2)" stroke-width="1.5" stroke-dasharray="3 2"/></svg>
+<figcaption><strong>the leader of a world of 490</strong><br>knee 4, brain, seed 9, lineage 151: 13,000 steps, 911 agents at its peak<br>grid 6x6; mass 82: hard 0, muscle 19, sensor 1.7, digestive 21; speed 0.24; flesh 44% of the intake; mean age 346<br>Three rows of muscle over a block of gut: half of the last third.</figcaption></figure><figure class="card"><svg viewBox="-1 -1 89 89" width="120" height="120" role="img" aria-label="the gut plate"><rect x="-1" y="-1" width="89" height="89" fill="var(--cell)"/><rect x="0.00" y="0.00" width="11.31" height="11.31" fill="#1baf7a"/><rect x="12.57" y="0.00" width="11.31" height="11.31" fill="#1baf7a"/><rect x="25.14" y="0.00" width="11.31" height="11.31" fill="#1baf7a"/><rect x="37.71" y="0.00" width="11.31" height="11.31" fill="#eb6834"/><rect x="50.29" y="0.00" width="11.31" height="11.31" fill="#1baf7a"/><rect x="62.86" y="0.00" width="11.31" height="11.31" fill="#1baf7a"/><rect x="75.43" y="0.00" width="11.31" height="11.31" fill="#1baf7a"/><rect x="0.00" y="12.57" width="11.31" height="11.31" fill="#1baf7a"/><rect x="12.57" y="12.57" width="11.31" height="11.31" fill="#1baf7a"/><rect x="25.14" y="12.57" width="11.31" height="11.31" fill="#eb6834"/><rect x="37.71" y="12.57" width="11.31" height="11.31" fill="#eb6834"/><rect x="50.29" y="12.57" width="11.31" height="11.31" fill="#eb6834"/><rect x="62.86" y="12.57" width="11.31" height="11.31" fill="#1baf7a"/><rect x="75.43" y="12.57" width="11.31" height="11.31" fill="#1baf7a"/><rect x="0.00" y="25.14" width="11.31" height="11.31" fill="#1baf7a"/><rect x="12.57" y="25.14" width="11.31" height="11.31" fill="#eb6834"/><rect x="25.14" y="25.14" width="11.31" height="11.31" fill="#eb6834"/><rect x="37.71" y="25.14" width="11.31" height="11.31" fill="#eb6834"/><rect x="50.29" y="25.14" width="11.31" height="11.31" fill="#eb6834"/><rect x="62.86" y="25.14" width="11.31" height="11.31" fill="#1baf7a"/><rect x="75.43" y="25.14" width="11.31" height="11.31" fill="#1baf7a"/><rect x="0.00" y="37.71" width="11.31" height="11.31" fill="#1baf7a"/><rect x="12.57" y="37.71" width="11.31" height="11.31" fill="#1baf7a"/><rect x="25.14" y="37.71" width="11.31" height="11.31" fill="#eb6834"/><rect x="37.71" y="37.71" width="11.31" height="11.31" fill="#eb6834"/><rect x="50.29" y="37.71" width="11.31" height="11.31" fill="#eb6834"/><rect x="62.86" y="37.71" width="11.31" height="11.31" fill="#1baf7a"/><rect x="75.43" y="37.71" width="11.31" height="11.31" fill="#1baf7a"/><rect x="0.00" y="50.29" width="11.31" height="11.31" fill="#1baf7a"/><rect x="12.57" y="50.29" width="11.31" height="11.31" fill="#1baf7a"/><rect x="25.14" y="50.29" width="11.31" height="11.31" fill="#1baf7a"/><rect x="37.71" y="50.29" width="11.31" height="11.31" fill="#eb6834"/><rect x="50.29" y="50.29" width="11.31" height="11.31" fill="#1baf7a"/><rect x="62.86" y="50.29" width="11.31" height="11.31" fill="#1baf7a"/><rect x="75.43" y="50.29" width="11.31" height="11.31" fill="#1baf7a"/><rect x="0.00" y="62.86" width="11.31" height="11.31" fill="#1baf7a"/><rect x="12.57" y="62.86" width="11.31" height="11.31" fill="#1baf7a"/><rect x="25.14" y="62.86" width="11.31" height="11.31" fill="#1baf7a"/><rect x="37.71" y="62.86" width="11.31" height="11.31" fill="#1baf7a"/><rect x="50.29" y="62.86" width="11.31" height="11.31" fill="#1baf7a"/><rect x="62.86" y="62.86" width="11.31" height="11.31" fill="#1baf7a"/><rect x="75.43" y="62.86" width="11.31" height="11.31" fill="#1baf7a"/><rect x="0.00" y="75.43" width="11.31" height="11.31" fill="#1baf7a"/><rect x="12.57" y="75.43" width="11.31" height="11.31" fill="#1baf7a"/><rect x="25.14" y="75.43" width="11.31" height="11.31" fill="#1baf7a"/><rect x="37.71" y="75.43" width="11.31" height="11.31" fill="#1baf7a"/><rect x="50.29" y="75.43" width="11.31" height="11.31" fill="#1baf7a"/><rect x="62.86" y="75.43" width="11.31" height="11.31" fill="#1baf7a"/><rect x="75.43" y="75.43" width="11.31" height="11.31" fill="#1baf7a"/><line x1="-1" y1="-0.5" x2="88" y2="-0.5" stroke="var(--ink2)" stroke-width="1.5" stroke-dasharray="3 2"/></svg>
+<figcaption><strong>the gut plate</strong><br>knee 4, brain, seed 10, lineage 351: 33,000 steps, 747 agents at its peak<br>grid 7x7; mass 28: hard 0, muscle 6, sensor 2.5, digestive 18; speed 0.21; flesh 17% of the intake; mean age 239<br>Muscle in the middle of a plate of gut: 62% of the last third.</figcaption></figure><figure class="card"><svg viewBox="-1 -1 89 89" width="120" height="120" role="img" aria-label="the runner"><rect x="-1" y="-1" width="89" height="89" fill="var(--cell)"/><rect x="0.00" y="0.00" width="19.80" height="19.80" fill="#eb6834"/><rect x="22.00" y="0.00" width="19.80" height="19.80" fill="#eb6834"/><rect x="44.00" y="0.00" width="19.80" height="19.80" fill="#eb6834"/><rect x="66.00" y="0.00" width="19.80" height="19.80" fill="#eb6834"/><rect x="0.00" y="22.00" width="19.80" height="19.80" fill="#eb6834"/><rect x="22.00" y="22.00" width="19.80" height="19.80" fill="#eb6834"/><rect x="44.00" y="22.00" width="19.80" height="19.80" fill="#eb6834"/><rect x="66.00" y="22.00" width="19.80" height="19.80" fill="#eb6834"/><rect x="0.00" y="44.00" width="19.80" height="19.80" fill="#eb6834"/><rect x="22.00" y="44.00" width="19.80" height="19.80" fill="#eb6834"/><rect x="44.00" y="44.00" width="19.80" height="19.80" fill="#eb6834"/><rect x="66.00" y="44.00" width="19.80" height="19.80" fill="#eb6834"/><rect x="0.00" y="66.00" width="19.80" height="19.80" fill="#1baf7a"/><rect x="22.00" y="66.00" width="19.80" height="19.80" fill="#1baf7a"/><rect x="44.00" y="66.00" width="19.80" height="19.80" fill="#1baf7a"/><rect x="66.00" y="66.00" width="19.80" height="19.80" fill="#1baf7a"/><line x1="-1" y1="-0.5" x2="88" y2="-0.5" stroke="var(--ink2)" stroke-width="1.5" stroke-dasharray="3 2"/></svg>
+<figcaption><strong>the runner</strong><br>knee 4, old brain, seed 11, lineage 628: 19,000 steps, 1,187 agents at its peak<br>grid 4x4; mass 27: hard 0, muscle 8, sensor 0.3, digestive 5; speed 0.30; flesh 46% of the intake; mean age 521<br>Three rows of muscle before a row of gut: light and quick.</figcaption></figure></div>
+<figcaption>The usual grown body of six leading lineages under the law, front up (orange muscle, aqua gut, yellow sensor, blue hard). The one that learns fast is a hunter.</figcaption></figure>
+
+<h2>4. Discussion</h2>
+<p>A slow return worsens a place for the next visitor, not for the one who stays. A body eats down the cell under it whatever the law, since a held cell does not grow; the law only sets how fast the cell comes back once the body has left. At knee 1 that is a tax on the ground between the trees; at 4 it thins the world until the crowd has room to move.</p><p>Learning found its use on hunters, in e050 and here. A hunter's intake jumps with each kill and each chase, while a grazer's food barely changes within its life. A brain may need a world where the food runs more than one where the grass is slow.</p><p>What this does not show: that a worsening place gives no reason to leave, or that a brain is not needed. The answers hang on our choices: trees as the food, a knee on the light, one step's energy as the reward, two knees, four seeds of 100,000 steps, and at knee 4 a thinner crowd we did not control for.</p>
+
+<h2>5. Conclusion and next step</h2>
+<p>Not kept as the default; stock stays as the argument 37. Under these conditions a slow return is a tax at knee 1 and a thin world at 4, and learning is selected at neither. Next: #55, life history, since a body must live long enough to follow a change itself (e049). Open: a worsening that falls on the stayer (fouling), and a density control for knee 4.</p>
+
+<h2>Appendix: data</h2>
+<p>Every log step (10,000 steps) of the eight runs under the law; the runs without it are in e048's and e050's reports, the check's and the pilots' in <code>results/pilot/</code>. The full data are in <code>results/*.csv</code>. Build this report with <code>uv run python experiments/e051_leave/report.py</code>.</p>
+<details><summary>stock 1, seed 9</summary><div class='tw'><table><thead><tr><th>step</th><th>pop</th><th>births</th><th>deaths_energy</th><th>learners</th><th>eta</th><th>learned</th><th>memory</th><th>moved</th><th>stalled</th><th>blocked</th><th>speed_mean</th><th>muscle_mean</th><th>bare</th><th>grazed</th><th>trees</th><th>tree_eaten</th><th>regrowth</th><th>under_learn</th><th>under_rest</th><th>gud_learn</th><th>gud_rest</th><th>left_learn</th><th>left_rest</th><th>size_p50</th></tr></thead><tbody><tr><td>10000</td><td>1279</td><td>75532</td><td>66452</td><td>0.185</td><td>0.0027</td><td>0</td><td>0</td><td>0.1735</td><td>0.3083</td><td>0.57</td><td>0.313</td><td>12.82</td><td>31.822</td><td>0.7766</td><td>3493</td><td>83.596</td><td>78.6</td><td>0</td><td>0.8662</td><td>0</td><td>1.1886</td><td>0</td><td>0.07789</td><td>25</td></tr><tr><td>20000</td><td>1288</td><td>21110</td><td>18488</td><td>0.211</td><td>0.0021</td><td>0</td><td>0</td><td>0.086</td><td>0.4514</td><td>0.359</td><td>0.336</td><td>13.38</td><td>20.5417</td><td>0.8574</td><td>2219</td><td>24.042</td><td>27.85</td><td>0</td><td>0.7271</td><td>0</td><td>0.8947</td><td>0</td><td>0.12107</td><td>30</td></tr><tr><td>30000</td><td>1451</td><td>110632</td><td>87359</td><td>0.009</td><td>0</td><td>0</td><td>0</td><td>0.2206</td><td>0.3534</td><td>0.508</td><td>0.293</td><td>10.03</td><td>28.4058</td><td>0.8055</td><td>3024</td><td>77.957</td><td>85.24</td><td>0</td><td>0.9619</td><td>0</td><td>1.4425</td><td>0</td><td>0.05767</td><td>21</td></tr><tr><td>40000</td><td>893</td><td>19931</td><td>17558</td><td>0.604</td><td>0.0132</td><td>0</td><td>0</td><td>0.128</td><td>0.4474</td><td>0.343</td><td>0.362</td><td>16.19</td><td>19.9675</td><td>0.8156</td><td>2877</td><td>23.544</td><td>28.15</td><td>0</td><td>0.7889</td><td>0</td><td>0.8877</td><td>0</td><td>0.12497</td><td>43</td></tr><tr><td>50000</td><td>1022</td><td>47700</td><td>36028</td><td>0.206</td><td>0.0035</td><td>0</td><td>0</td><td>0.1871</td><td>0.3767</td><td>0.465</td><td>0.285</td><td>16.19</td><td>38.8863</td><td>0.8563</td><td>2263</td><td>69.514</td><td>78.43</td><td>0</td><td>0.8655</td><td>0</td><td>0.9693</td><td>0</td><td>0.11534</td><td>45</td></tr><tr><td>60000</td><td>1020</td><td>12927</td><td>11072</td><td>0.1</td><td>0.0006</td><td>0</td><td>0</td><td>0.087</td><td>0.4773</td><td>0.317</td><td>0.365</td><td>14.1</td><td>21.7472</td><td>0.8685</td><td>2033</td><td>22.534</td><td>27.3</td><td>0</td><td>0.6949</td><td>0</td><td>0.6744</td><td>0</td><td>0.1622</td><td>42</td></tr><tr><td>70000</td><td>1614</td><td>97360</td><td>70505</td><td>0.038</td><td>0.0004</td><td>0</td><td>0</td><td>0.2047</td><td>0.3503</td><td>0.486</td><td>0.282</td><td>10.31</td><td>30.3677</td><td>0.8115</td><td>2953</td><td>75.78</td><td>82.85</td><td>0</td><td>1.163</td><td>0</td><td>1.5087</td><td>0</td><td>0.08608</td><td>25</td></tr><tr><td>80000</td><td>1203</td><td>18661</td><td>16315</td><td>0.366</td><td>0.0043</td><td>0</td><td>0</td><td>0.0921</td><td>0.4258</td><td>0.37</td><td>0.343</td><td>13.17</td><td>19.7834</td><td>0.7708</td><td>3564</td><td>23.257</td><td>28.26</td><td>0</td><td>0.7707</td><td>0</td><td>0.83</td><td>0</td><td>0.13581</td><td>34</td></tr><tr><td>90000</td><td>1413</td><td>60280</td><td>49829</td><td>0.064</td><td>0.0009</td><td>0</td><td>0</td><td>0.1466</td><td>0.3281</td><td>0.536</td><td>0.271</td><td>12.83</td><td>37.3962</td><td>0.8292</td><td>2677</td><td>70.349</td><td>79.26</td><td>0</td><td>0.8355</td><td>0</td><td>1.0099</td><td>0</td><td>0.08101</td><td>32</td></tr><tr><td>100000</td><td>1199</td><td>14984</td><td>13172</td><td>0.148</td><td>0.0011</td><td>0</td><td>0</td><td>0.0843</td><td>0.4512</td><td>0.346</td><td>0.342</td><td>13.56</td><td>19.9095</td><td>0.7695</td><td>3630</td><td>23.34</td><td>28.69</td><td>0</td><td>0.7488</td><td>0</td><td>0.8277</td><td>0</td><td>0.13387</td><td>33</td></tr></tbody></table></div></details>
+<details><summary>stock 1, seed 10</summary><div class='tw'><table><thead><tr><th>step</th><th>pop</th><th>births</th><th>deaths_energy</th><th>learners</th><th>eta</th><th>learned</th><th>memory</th><th>moved</th><th>stalled</th><th>blocked</th><th>speed_mean</th><th>muscle_mean</th><th>bare</th><th>grazed</th><th>trees</th><th>tree_eaten</th><th>regrowth</th><th>under_learn</th><th>under_rest</th><th>gud_learn</th><th>gud_rest</th><th>left_learn</th><th>left_rest</th><th>size_p50</th></tr></thead><tbody><tr><td>10000</td><td>1365</td><td>66885</td><td>58161</td><td>0.545</td><td>0.0172</td><td>0</td><td>0</td><td>0.1064</td><td>0.3365</td><td>0.549</td><td>0.235</td><td>13.15</td><td>27.7854</td><td>0.744</td><td>4022</td><td>90.223</td><td>85.46</td><td>0</td><td>0.903</td><td>0</td><td>1.4872</td><td>0</td><td>0.06276</td><td>34</td></tr><tr><td>20000</td><td>1232</td><td>17446</td><td>16118</td><td>0.877</td><td>0.0178</td><td>0</td><td>0</td><td>0.0565</td><td>0.4799</td><td>0.377</td><td>0.223</td><td>12.34</td><td>17.8911</td><td>0.8513</td><td>2326</td><td>26.449</td><td>30.13</td><td>0</td><td>0.7623</td><td>0</td><td>1.1151</td><td>0</td><td>0.09486</td><td>33</td></tr><tr><td>30000</td><td>1907</td><td>80663</td><td>58523</td><td>0.244</td><td>0.0057</td><td>0</td><td>0</td><td>0.1306</td><td>0.4195</td><td>0.437</td><td>0.244</td><td>9.14</td><td>27.7188</td><td>0.6544</td><td>5419</td><td>81.994</td><td>90.7</td><td>0</td><td>1.1297</td><td>0</td><td>1.7636</td><td>0</td><td>0.06504</td><td>18</td></tr><tr><td>40000</td><td>1457</td><td>30342</td><td>26079</td><td>0.881</td><td>0.0423</td><td>0</td><td>0</td><td>0.0786</td><td>0.5003</td><td>0.359</td><td>0.206</td><td>9.47</td><td>12.8373</td><td>0.7283</td><td>4297</td><td>30.108</td><td>33.1</td><td>0</td><td>1.0112</td><td>0</td><td>1.5174</td><td>0</td><td>0.06135</td><td>25</td></tr><tr><td>50000</td><td>1862</td><td>64995</td><td>57087</td><td>0.852</td><td>0.0304</td><td>0</td><td>0</td><td>0.0994</td><td>0.3476</td><td>0.573</td><td>0.176</td><td>7.39</td><td>27.6539</td><td>0.7967</td><td>3143</td><td>82.119</td><td>90.14</td><td>0</td><td>0.8629</td><td>0</td><td>1.1898</td><td>0</td><td>0.04575</td><td>24</td></tr><tr><td>60000</td><td>1650</td><td>17963</td><td>16896</td><td>0.91</td><td>0.0339</td><td>0</td><td>0</td><td>0.0479</td><td>0.5124</td><td>0.383</td><td>0.173</td><td>7.42</td><td>15.1132</td><td>0.7908</td><td>3281</td><td>28.851</td><td>33.36</td><td>0</td><td>0.8171</td><td>0</td><td>0.9468</td><td>0</td><td>0.05939</td><td>25</td></tr><tr><td>70000</td><td>1813</td><td>47626</td><td>43655</td><td>0.916</td><td>0.0307</td><td>0</td><td>0</td><td>0.092</td><td>0.4203</td><td>0.499</td><td>0.162</td><td>6.67</td><td>37.4291</td><td>0.8358</td><td>2491</td><td>77.79</td><td>88.6</td><td>0</td><td>0.7675</td><td>0</td><td>0.7891</td><td>0</td><td>0.04785</td><td>24</td></tr><tr><td>80000</td><td>1456</td><td>15497</td><td>14742</td><td>0.902</td><td>0.0315</td><td>0</td><td>0</td><td>0.05</td><td>0.545</td><td>0.354</td><td>0.166</td><td>7.17</td><td>16.1509</td><td>0.8158</td><td>2877</td><td>29</td><td>33.86</td><td>0</td><td>0.8286</td><td>0</td><td>0.8811</td><td>0</td><td>0.05649</td><td>25</td></tr><tr><td>90000</td><td>1867</td><td>39285</td><td>35736</td><td>0.933</td><td>0.0314</td><td>0</td><td>0</td><td>0.0883</td><td>0.4377</td><td>0.48</td><td>0.165</td><td>6.89</td><td>39.1977</td><td>0.8392</td><td>2399</td><td>77.758</td><td>88.76</td><td>0</td><td>0.8058</td><td>0</td><td>0.8021</td><td>0</td><td>0.04924</td><td>24</td></tr><tr><td>100000</td><td>1593</td><td>14119</td><td>13237</td><td>0.934</td><td>0.0409</td><td>0</td><td>0</td><td>0.0483</td><td>0.5454</td><td>0.351</td><td>0.161</td><td>6.72</td><td>16.3975</td><td>0.83</td><td>2649</td><td>29.448</td><td>34.12</td><td>0</td><td>0.8578</td><td>0</td><td>0.8985</td><td>0</td><td>0.05921</td><td>25</td></tr></tbody></table></div></details>
+<details><summary>stock 1, seed 11</summary><div class='tw'><table><thead><tr><th>step</th><th>pop</th><th>births</th><th>deaths_energy</th><th>learners</th><th>eta</th><th>learned</th><th>memory</th><th>moved</th><th>stalled</th><th>blocked</th><th>speed_mean</th><th>muscle_mean</th><th>bare</th><th>grazed</th><th>trees</th><th>tree_eaten</th><th>regrowth</th><th>under_learn</th><th>under_rest</th><th>gud_learn</th><th>gud_rest</th><th>left_learn</th><th>left_rest</th><th>size_p50</th></tr></thead><tbody><tr><td>10000</td><td>1981</td><td>113262</td><td>85206</td><td>0.036</td><td>0.001</td><td>0</td><td>0</td><td>0.1396</td><td>0.3313</td><td>0.541</td><td>0.214</td><td>8.29</td><td>22.9389</td><td>0.6563</td><td>5351</td><td>89.788</td><td>83.68</td><td>0</td><td>1.1192</td><td>0</td><td>1.7367</td><td>0</td><td>0.05642</td><td>21</td></tr><tr><td>20000</td><td>1450</td><td>27487</td><td>23311</td><td>0.017</td><td>0.0007</td><td>0</td><td>0</td><td>0.073</td><td>0.4913</td><td>0.36</td><td>0.255</td><td>12.44</td><td>13.5016</td><td>0.7172</td><td>4446</td><td>28.606</td><td>31.81</td><td>0</td><td>0.9851</td><td>0</td><td>1.5624</td><td>0</td><td>0.07715</td><td>24</td></tr><tr><td>30000</td><td>2437</td><td>102063</td><td>76516</td><td>0.137</td><td>0.0034</td><td>0</td><td>0</td><td>0.1269</td><td>0.3477</td><td>0.534</td><td>0.223</td><td>6.34</td><td>22.7312</td><td>0.7175</td><td>4454</td><td>75.908</td><td>81.59</td><td>0</td><td>1.4253</td><td>0</td><td>2.1483</td><td>0</td><td>0.054</td><td>16</td></tr><tr><td>40000</td><td>1781</td><td>22354</td><td>21056</td><td>0.227</td><td>0.0045</td><td>0</td><td>0</td><td>0.0523</td><td>0.4748</td><td>0.411</td><td>0.193</td><td>5.85</td><td>15.9367</td><td>0.806</td><td>3081</td><td>28.423</td><td>31.96</td><td>0</td><td>1.0847</td><td>0</td><td>1.2219</td><td>0</td><td>0.04902</td><td>16</td></tr><tr><td>50000</td><td>2115</td><td>51325</td><td>44580</td><td>0.36</td><td>0.0059</td><td>0</td><td>0</td><td>0.1033</td><td>0.3747</td><td>0.53</td><td>0.217</td><td>5.8</td><td>38.2192</td><td>0.8073</td><td>2936</td><td>72.085</td><td>82.35</td><td>0</td><td>1.1656</td><td>0</td><td>1.083</td><td>0</td><td>0.04113</td><td>16</td></tr><tr><td>60000</td><td>1888</td><td>17123</td><td>15498</td><td>0.311</td><td>0.0067</td><td>0</td><td>0</td><td>0.0431</td><td>0.4541</td><td>0.439</td><td>0.205</td><td>5.75</td><td>16.8403</td><td>0.8239</td><td>2735</td><td>28.404</td><td>32.8</td><td>0</td><td>1.2332</td><td>0</td><td>0.9785</td><td>0</td><td>0.03996</td><td>16</td></tr><tr><td>70000</td><td>2126</td><td>43329</td><td>37856</td><td>0.299</td><td>0.0054</td><td>0</td><td>0</td><td>0.0902</td><td>0.3692</td><td>0.54</td><td>0.212</td><td>5.51</td><td>41.0132</td><td>0.8318</td><td>2508</td><td>70.662</td><td>81.67</td><td>0</td><td>1.1721</td><td>0</td><td>0.8554</td><td>0</td><td>0.03575</td><td>16</td></tr><tr><td>80000</td><td>1886</td><td>16203</td><td>14850</td><td>0.247</td><td>0.0054</td><td>0</td><td>0</td><td>0.0401</td><td>0.4674</td><td>0.428</td><td>0.191</td><td>5.27</td><td>17.8274</td><td>0.8167</td><td>2867</td><td>27.352</td><td>32.3</td><td>0</td><td>1.1744</td><td>0</td><td>0.8123</td><td>0</td><td>0.03753</td><td>16</td></tr><tr><td>90000</td><td>2183</td><td>42526</td><td>38058</td><td>0.289</td><td>0.0051</td><td>0</td><td>0</td><td>0.0856</td><td>0.3847</td><td>0.527</td><td>0.206</td><td>5.43</td><td>42.2999</td><td>0.8247</td><td>2644</td><td>69.798</td><td>81.23</td><td>0</td><td>1.1211</td><td>0</td><td>0.8183</td><td>0</td><td>0.03543</td><td>16</td></tr><tr><td>100000</td><td>2000</td><td>15937</td><td>14643</td><td>0.308</td><td>0.0068</td><td>0</td><td>0</td><td>0.0381</td><td>0.4595</td><td>0.439</td><td>0.195</td><td>5.45</td><td>17.807</td><td>0.8234</td><td>2729</td><td>27.518</td><td>32.31</td><td>0</td><td>1.1718</td><td>0</td><td>0.9012</td><td>0</td><td>0.0383</td><td>16</td></tr></tbody></table></div></details>
+<details><summary>stock 1, seed 12</summary><div class='tw'><table><thead><tr><th>step</th><th>pop</th><th>births</th><th>deaths_energy</th><th>learners</th><th>eta</th><th>learned</th><th>memory</th><th>moved</th><th>stalled</th><th>blocked</th><th>speed_mean</th><th>muscle_mean</th><th>bare</th><th>grazed</th><th>trees</th><th>tree_eaten</th><th>regrowth</th><th>under_learn</th><th>under_rest</th><th>gud_learn</th><th>gud_rest</th><th>left_learn</th><th>left_rest</th><th>size_p50</th></tr></thead><tbody><tr><td>10000</td><td>2848</td><td>101510</td><td>79475</td><td>0.329</td><td>0.0091</td><td>0</td><td>0</td><td>0.0878</td><td>0.3126</td><td>0.574</td><td>0.286</td><td>7.33</td><td>21.7007</td><td>0.6407</td><td>5597</td><td>94.397</td><td>88.04</td><td>0</td><td>1.0639</td><td>0</td><td>1.784</td><td>0</td><td>0.06168</td><td>12</td></tr><tr><td>20000</td><td>2118</td><td>47086</td><td>34859</td><td>0.7</td><td>0.0327</td><td>0</td><td>0</td><td>0.0845</td><td>0.4381</td><td>0.401</td><td>0.226</td><td>6.64</td><td>11.1109</td><td>0.6783</td><td>5094</td><td>28.913</td><td>31.53</td><td>0</td><td>1.322</td><td>0</td><td>1.9177</td><td>0</td><td>0.06967</td><td>16</td></tr><tr><td>30000</td><td>2320</td><td>102885</td><td>87615</td><td>0.856</td><td>0.0453</td><td>0</td><td>0</td><td>0.1073</td><td>0.2906</td><td>0.636</td><td>0.198</td><td>6.31</td><td>24.2966</td><td>0.7456</td><td>3994</td><td>87.823</td><td>94.82</td><td>0</td><td>0.9764</td><td>0</td><td>1.5777</td><td>0</td><td>0.03504</td><td>16</td></tr><tr><td>40000</td><td>1866</td><td>25394</td><td>23419</td><td>0.616</td><td>0.0321</td><td>0</td><td>0</td><td>0.0503</td><td>0.4374</td><td>0.46</td><td>0.197</td><td>6.42</td><td>13.7013</td><td>0.7383</td><td>4128</td><td>27.45</td><td>31.69</td><td>0</td><td>0.9184</td><td>0</td><td>1.2191</td><td>0</td><td>0.05307</td><td>16</td></tr><tr><td>50000</td><td>2294</td><td>81204</td><td>70085</td><td>0.281</td><td>0.0096</td><td>0</td><td>0</td><td>0.1122</td><td>0.3216</td><td>0.599</td><td>0.206</td><td>6.22</td><td>33.9112</td><td>0.7798</td><td>3465</td><td>81.822</td><td>91.76</td><td>0</td><td>0.9664</td><td>0</td><td>1.443</td><td>0</td><td>0.04187</td><td>16</td></tr><tr><td>60000</td><td>1587</td><td>20947</td><td>19487</td><td>0.632</td><td>0.0305</td><td>0</td><td>0</td><td>0.0647</td><td>0.4446</td><td>0.447</td><td>0.191</td><td>6.93</td><td>15.3678</td><td>0.7709</td><td>3614</td><td>26.843</td><td>31.25</td><td>0</td><td>1.0307</td><td>0</td><td>1.514</td><td>0</td><td>0.06102</td><td>16</td></tr><tr><td>70000</td><td>2083</td><td>66749</td><td>58783</td><td>0.628</td><td>0.0244</td><td>0</td><td>0</td><td>0.1005</td><td>0.3381</td><td>0.587</td><td>0.196</td><td>6.65</td><td>35.3698</td><td>0.7867</td><td>3320</td><td>79.679</td><td>90.28</td><td>0</td><td>0.8936</td><td>0</td><td>1.3193</td><td>0</td><td>0.04532</td><td>16</td></tr><tr><td>80000</td><td>1715</td><td>20471</td><td>18815</td><td>0.431</td><td>0.0173</td><td>0</td><td>0</td><td>0.0512</td><td>0.4355</td><td>0.462</td><td>0.201</td><td>6.82</td><td>15.5428</td><td>0.7875</td><td>3356</td><td>26.967</td><td>31.43</td><td>0</td><td>1.0296</td><td>0</td><td>1.5846</td><td>0</td><td>0.06443</td><td>16</td></tr><tr><td>90000</td><td>2349</td><td>64404</td><td>56641</td><td>0.123</td><td>0.0026</td><td>0</td><td>0</td><td>0.0949</td><td>0.3289</td><td>0.592</td><td>0.206</td><td>5.94</td><td>36.7185</td><td>0.7879</td><td>3276</td><td>81.019</td><td>92.17</td><td>0</td><td>1.0146</td><td>0</td><td>1.5888</td><td>0</td><td>0.04776</td><td>16</td></tr><tr><td>100000</td><td>1823</td><td>21836</td><td>20046</td><td>0.149</td><td>0.0041</td><td>0</td><td>0</td><td>0.052</td><td>0.4195</td><td>0.474</td><td>0.22</td><td>6.62</td><td>14.1121</td><td>0.7571</td><td>3851</td><td>28.457</td><td>33.01</td><td>0</td><td>1.1905</td><td>0</td><td>1.8768</td><td>0</td><td>0.06458</td><td>16</td></tr></tbody></table></div></details>
+<details><summary>stock 1 + brain, seed 9</summary><div class='tw'><table><thead><tr><th>step</th><th>pop</th><th>births</th><th>deaths_energy</th><th>learners</th><th>eta</th><th>learned</th><th>memory</th><th>moved</th><th>stalled</th><th>blocked</th><th>speed_mean</th><th>muscle_mean</th><th>bare</th><th>grazed</th><th>trees</th><th>tree_eaten</th><th>regrowth</th><th>under_learn</th><th>under_rest</th><th>gud_learn</th><th>gud_rest</th><th>left_learn</th><th>left_rest</th><th>size_p50</th></tr></thead><tbody><tr><td>10000</td><td>1205</td><td>73327</td><td>66098</td><td>0.109</td><td>0.0019</td><td>0.565</td><td>0.032</td><td>0.1194</td><td>0.3645</td><td>0.527</td><td>0.213</td><td>8.91</td><td>28.4958</td><td>0.8381</td><td>2554</td><td>85.32</td><td>79.41</td><td>0.9187</td><td>0.7311</td><td>1.3397</td><td>0.9526</td><td>0.10298</td><td>0.054</td><td>36</td></tr><tr><td>20000</td><td>1604</td><td>25709</td><td>23154</td><td>0.237</td><td>0.0038</td><td>0.253</td><td>0.005</td><td>0.0554</td><td>0.4314</td><td>0.431</td><td>0.231</td><td>7.58</td><td>17.2356</td><td>0.7719</td><td>3568</td><td>24.039</td><td>28.99</td><td>0.8414</td><td>0.7086</td><td>1.3815</td><td>1.0483</td><td>0.08034</td><td>0.09075</td><td>22</td></tr><tr><td>30000</td><td>1311</td><td>92878</td><td>77982</td><td>0.13</td><td>0.0015</td><td>0.242</td><td>0.005</td><td>0.1698</td><td>0.3711</td><td>0.526</td><td>0.227</td><td>8.79</td><td>30.8652</td><td>0.8276</td><td>2698</td><td>76.047</td><td>83.23</td><td>0.9349</td><td>0.8531</td><td>1.577</td><td>1.3425</td><td>0.04968</td><td>0.05494</td><td>25</td></tr><tr><td>40000</td><td>1378</td><td>21729</td><td>19827</td><td>0.065</td><td>0.0008</td><td>0.299</td><td>0.006</td><td>0.0599</td><td>0.4612</td><td>0.402</td><td>0.258</td><td>8.94</td><td>19.8529</td><td>0.8195</td><td>2844</td><td>23.486</td><td>28.38</td><td>0.6765</td><td>0.7388</td><td>0.9177</td><td>1.0027</td><td>0.09549</td><td>0.08655</td><td>25</td></tr><tr><td>50000</td><td>1788</td><td>100460</td><td>77555</td><td>0.157</td><td>0.0017</td><td>0.255</td><td>0.006</td><td>0.1585</td><td>0.3452</td><td>0.526</td><td>0.235</td><td>7.44</td><td>24.3827</td><td>0.8371</td><td>2561</td><td>80.741</td><td>86.08</td><td>1.1023</td><td>1.1111</td><td>2.0512</td><td>1.8916</td><td>0.05663</td><td>0.05439</td><td>23</td></tr><tr><td>60000</td><td>1530</td><td>25860</td><td>23731</td><td>0.163</td><td>0.0022</td><td>0.331</td><td>0.012</td><td>0.0532</td><td>0.4369</td><td>0.428</td><td>0.276</td><td>10.1</td><td>17.5139</td><td>0.8333</td><td>2596</td><td>25.133</td><td>29.69</td><td>0.7096</td><td>0.7284</td><td>1.0998</td><td>1.0371</td><td>0.095</td><td>0.07771</td><td>25</td></tr><tr><td>70000</td><td>1709</td><td>88949</td><td>73089</td><td>0.1</td><td>0.0022</td><td>0.283</td><td>0.006</td><td>0.1285</td><td>0.3776</td><td>0.507</td><td>0.229</td><td>9.04</td><td>27.1575</td><td>0.8105</td><td>2969</td><td>78.871</td><td>86.44</td><td>0.9355</td><td>0.9578</td><td>1.7948</td><td>1.6238</td><td>0.07067</td><td>0.05694</td><td>25</td></tr><tr><td>80000</td><td>1174</td><td>17303</td><td>16908</td><td>0.062</td><td>0.0003</td><td>0.352</td><td>0.007</td><td>0.0587</td><td>0.4717</td><td>0.391</td><td>0.272</td><td>11.33</td><td>18.9086</td><td>0.871</td><td>2036</td><td>24.199</td><td>28.55</td><td>0.8146</td><td>0.705</td><td>1.1781</td><td>1.0225</td><td>0.12</td><td>0.09074</td><td>34</td></tr><tr><td>90000</td><td>1481</td><td>75344</td><td>65344</td><td>0.06</td><td>0.0006</td><td>0.39</td><td>0.005</td><td>0.1208</td><td>0.3807</td><td>0.514</td><td>0.225</td><td>8.44</td><td>34.0849</td><td>0.8398</td><td>2521</td><td>72.876</td><td>82.51</td><td>0.8281</td><td>0.8026</td><td>1.2261</td><td>1.2817</td><td>0.08775</td><td>0.05839</td><td>25</td></tr><tr><td>100000</td><td>1337</td><td>18479</td><td>17371</td><td>0.057</td><td>0.0004</td><td>0.394</td><td>0.005</td><td>0.0573</td><td>0.5141</td><td>0.354</td><td>0.231</td><td>8.76</td><td>19.5625</td><td>0.8312</td><td>2643</td><td>23.731</td><td>28.78</td><td>0.663</td><td>0.7171</td><td>0.7893</td><td>0.9541</td><td>0.11312</td><td>0.08535</td><td>25</td></tr></tbody></table></div></details>
+<details><summary>stock 1 + brain, seed 10</summary><div class='tw'><table><thead><tr><th>step</th><th>pop</th><th>births</th><th>deaths_energy</th><th>learners</th><th>eta</th><th>learned</th><th>memory</th><th>moved</th><th>stalled</th><th>blocked</th><th>speed_mean</th><th>muscle_mean</th><th>bare</th><th>grazed</th><th>trees</th><th>tree_eaten</th><th>regrowth</th><th>under_learn</th><th>under_rest</th><th>gud_learn</th><th>gud_rest</th><th>left_learn</th><th>left_rest</th><th>size_p50</th></tr></thead><tbody><tr><td>10000</td><td>2289</td><td>106024</td><td>85204</td><td>0.902</td><td>0.0501</td><td>0.582</td><td>0.073</td><td>0.0733</td><td>0.3461</td><td>0.498</td><td>0.307</td><td>9.39</td><td>19.0684</td><td>0.7433</td><td>3910</td><td>92.678</td><td>83.99</td><td>1.1365</td><td>1.08</td><td>1.7263</td><td>1.9372</td><td>0.06243</td><td>0.03027</td><td>16</td></tr><tr><td>20000</td><td>1206</td><td>25887</td><td>23551</td><td>0.297</td><td>0.0061</td><td>0.508</td><td>0.044</td><td>0.075</td><td>0.4304</td><td>0.39</td><td>0.306</td><td>13.06</td><td>19.8749</td><td>0.8228</td><td>2765</td><td>24.294</td><td>28.19</td><td>0.7556</td><td>0.7371</td><td>1.067</td><td>0.9782</td><td>0.10056</td><td>0.13134</td><td>31</td></tr><tr><td>30000</td><td>1619</td><td>86469</td><td>71261</td><td>0.295</td><td>0.0078</td><td>0.585</td><td>0.024</td><td>0.1188</td><td>0.3588</td><td>0.517</td><td>0.278</td><td>10.45</td><td>30.3943</td><td>0.8436</td><td>2425</td><td>77.124</td><td>83.65</td><td>0.9546</td><td>0.8528</td><td>1.4596</td><td>1.3018</td><td>0.0626</td><td>0.06432</td><td>27</td></tr><tr><td>40000</td><td>1405</td><td>20878</td><td>18533</td><td>0.063</td><td>0.0011</td><td>0.426</td><td>0.006</td><td>0.0827</td><td>0.4455</td><td>0.364</td><td>0.294</td><td>12.11</td><td>22.2878</td><td>0.791</td><td>3253</td><td>21.838</td><td>27.43</td><td>0.6754</td><td>0.742</td><td>1.0232</td><td>0.9474</td><td>0.11831</td><td>0.12154</td><td>25</td></tr><tr><td>50000</td><td>1734</td><td>122198</td><td>93359</td><td>0.086</td><td>0.0012</td><td>0.443</td><td>0.004</td><td>0.1985</td><td>0.347</td><td>0.53</td><td>0.265</td><td>8.28</td><td>22.7301</td><td>0.7922</td><td>3229</td><td>83.396</td><td>87.47</td><td>0.9946</td><td>1.205</td><td>1.6924</td><td>2.0971</td><td>0.05975</td><td>0.04662</td><td>22</td></tr><tr><td>60000</td><td>1513</td><td>28525</td><td>25445</td><td>0.325</td><td>0.0046</td><td>0.467</td><td>0.008</td><td>0.0803</td><td>0.4117</td><td>0.418</td><td>0.295</td><td>8.14</td><td>20.0717</td><td>0.7764</td><td>3491</td><td>23.844</td><td>28.63</td><td>0.7969</td><td>0.7748</td><td>1.1137</td><td>1.1281</td><td>0.10593</td><td>0.09512</td><td>16</td></tr><tr><td>70000</td><td>1237</td><td>89788</td><td>75180</td><td>0.439</td><td>0.0056</td><td>0.454</td><td>0.047</td><td>0.1996</td><td>0.3144</td><td>0.563</td><td>0.33</td><td>10.54</td><td>33.27</td><td>0.8505</td><td>2341</td><td>76.093</td><td>83.35</td><td>0.9385</td><td>0.887</td><td>1.3564</td><td>1.5548</td><td>0.07369</td><td>0.05343</td><td>32</td></tr><tr><td>80000</td><td>1017</td><td>14632</td><td>14321</td><td>0.259</td><td>0.0021</td><td>0.365</td><td>0.037</td><td>0.0796</td><td>0.3586</td><td>0.475</td><td>0.322</td><td>11.13</td><td>23.4975</td><td>0.8731</td><td>2009</td><td>21.925</td><td>27.14</td><td>0.6147</td><td>0.5799</td><td>0.8371</td><td>0.7865</td><td>0.19061</td><td>0.12692</td><td>37</td></tr><tr><td>90000</td><td>1214</td><td>93467</td><td>74630</td><td>0.423</td><td>0.0051</td><td>0.325</td><td>0.025</td><td>0.2074</td><td>0.2962</td><td>0.58</td><td>0.311</td><td>8.65</td><td>35.764</td><td>0.8609</td><td>2199</td><td>74.525</td><td>83</td><td>0.95</td><td>0.8578</td><td>1.3712</td><td>1.4439</td><td>0.08677</td><td>0.05989</td><td>25</td></tr><tr><td>100000</td><td>1318</td><td>21090</td><td>19193</td><td>0.302</td><td>0.004</td><td>0.315</td><td>0.024</td><td>0.0767</td><td>0.4183</td><td>0.414</td><td>0.283</td><td>6.64</td><td>24.0365</td><td>0.8306</td><td>2644</td><td>21.12</td><td>26.74</td><td>0.6945</td><td>0.5807</td><td>0.9478</td><td>0.7666</td><td>0.13112</td><td>0.09293</td><td>15</td></tr></tbody></table></div></details>
+<details><summary>stock 1 + brain, seed 11</summary><div class='tw'><table><thead><tr><th>step</th><th>pop</th><th>births</th><th>deaths_energy</th><th>learners</th><th>eta</th><th>learned</th><th>memory</th><th>moved</th><th>stalled</th><th>blocked</th><th>speed_mean</th><th>muscle_mean</th><th>bare</th><th>grazed</th><th>trees</th><th>tree_eaten</th><th>regrowth</th><th>under_learn</th><th>under_rest</th><th>gud_learn</th><th>gud_rest</th><th>left_learn</th><th>left_rest</th><th>size_p50</th></tr></thead><tbody><tr><td>10000</td><td>1601</td><td>71818</td><td>60085</td><td>0.945</td><td>0.0168</td><td>0.589</td><td>0.071</td><td>0.0812</td><td>0.3424</td><td>0.503</td><td>0.291</td><td>11.62</td><td>21.0784</td><td>0.7393</td><td>4103</td><td>85.54</td><td>77.95</td><td>1.0653</td><td>1.0282</td><td>1.5348</td><td>1.4933</td><td>0.12637</td><td>0.02955</td><td>25</td></tr><tr><td>20000</td><td>1377</td><td>21094</td><td>20233</td><td>0.76</td><td>0.0115</td><td>0.492</td><td>0.093</td><td>0.0402</td><td>0.4123</td><td>0.43</td><td>0.3</td><td>12.11</td><td>16.2811</td><td>0.8232</td><td>2788</td><td>26.823</td><td>30.46</td><td>0.7334</td><td>0.694</td><td>0.9772</td><td>0.8465</td><td>0.12275</td><td>0.08222</td><td>30</td></tr><tr><td>30000</td><td>2162</td><td>95953</td><td>70099</td><td>0.934</td><td>0.0473</td><td>0.555</td><td>0.045</td><td>0.095</td><td>0.3655</td><td>0.476</td><td>0.247</td><td>7.13</td><td>21.3602</td><td>0.6144</td><td>6040</td><td>72.432</td><td>80.32</td><td>1.1922</td><td>1.0591</td><td>1.6839</td><td>1.6471</td><td>0.06294</td><td>0.04109</td><td>15</td></tr><tr><td>40000</td><td>1572</td><td>31117</td><td>24728</td><td>0.966</td><td>0.0603</td><td>0.584</td><td>0.046</td><td>0.049</td><td>0.4506</td><td>0.383</td><td>0.25</td><td>13.17</td><td>10.2982</td><td>0.6617</td><td>5297</td><td>28.468</td><td>31.2</td><td>1.0929</td><td>1.1563</td><td>1.6177</td><td>2.4578</td><td>0.07484</td><td>0.06423</td><td>27</td></tr><tr><td>50000</td><td>1490</td><td>109544</td><td>75016</td><td>0.899</td><td>0.0356</td><td>0.573</td><td>0.061</td><td>0.1192</td><td>0.3946</td><td>0.452</td><td>0.217</td><td>7.14</td><td>15.5294</td><td>0.5978</td><td>6255</td><td>75.959</td><td>80.47</td><td>1.2901</td><td>1.0005</td><td>2.0019</td><td>2.4182</td><td>0.05131</td><td>0.0147</td><td>15</td></tr><tr><td>60000</td><td>1470</td><td>27229</td><td>24965</td><td>0.588</td><td>0.0232</td><td>0.45</td><td>0.058</td><td>0.0277</td><td>0.4372</td><td>0.457</td><td>0.197</td><td>6.73</td><td>8.4987</td><td>0.6866</td><td>4860</td><td>29.69</td><td>31.09</td><td>0.8347</td><td>0.8352</td><td>1.6718</td><td>1.0186</td><td>0.04421</td><td>0.02199</td><td>16</td></tr><tr><td>70000</td><td>2077</td><td>92398</td><td>80304</td><td>0.491</td><td>0.0131</td><td>0.498</td><td>0.046</td><td>0.0736</td><td>0.3842</td><td>0.515</td><td>0.248</td><td>7.7</td><td>25.1314</td><td>0.7206</td><td>4365</td><td>75.321</td><td>82.63</td><td>0.9995</td><td>1.0593</td><td>1.5328</td><td>0.7806</td><td>0.06078</td><td>0.03558</td><td>16</td></tr><tr><td>80000</td><td>1861</td><td>27759</td><td>25016</td><td>0.701</td><td>0.0395</td><td>0.517</td><td>0.053</td><td>0.0342</td><td>0.4772</td><td>0.385</td><td>0.216</td><td>6.37</td><td>12.3623</td><td>0.6767</td><td>5067</td><td>27.177</td><td>31.46</td><td>1.019</td><td>1.0185</td><td>1.41</td><td>0.9454</td><td>0.09335</td><td>0.03293</td><td>16</td></tr><tr><td>90000</td><td>1681</td><td>79503</td><td>66023</td><td>0.983</td><td>0.0515</td><td>0.561</td><td>0.04</td><td>0.0939</td><td>0.3661</td><td>0.489</td><td>0.277</td><td>8.37</td><td>19.3963</td><td>0.6764</td><td>5004</td><td>78.736</td><td>78.74</td><td>1.2294</td><td>1.0375</td><td>1.667</td><td>1.6477</td><td>0.11223</td><td>0.0225</td><td>16</td></tr><tr><td>100000</td><td>1701</td><td>29395</td><td>25597</td><td>0.608</td><td>0.0153</td><td>0.535</td><td>0.053</td><td>0.0499</td><td>0.4031</td><td>0.425</td><td>0.295</td><td>8.55</td><td>15.4873</td><td>0.7446</td><td>3944</td><td>27.78</td><td>30.71</td><td>0.8772</td><td>0.7891</td><td>1.2719</td><td>1.1737</td><td>0.13495</td><td>0.08253</td><td>20</td></tr></tbody></table></div></details>
+<details><summary>stock 1 + brain, seed 12</summary><div class='tw'><table><thead><tr><th>step</th><th>pop</th><th>births</th><th>deaths_energy</th><th>learners</th><th>eta</th><th>learned</th><th>memory</th><th>moved</th><th>stalled</th><th>blocked</th><th>speed_mean</th><th>muscle_mean</th><th>bare</th><th>grazed</th><th>trees</th><th>tree_eaten</th><th>regrowth</th><th>under_learn</th><th>under_rest</th><th>gud_learn</th><th>gud_rest</th><th>left_learn</th><th>left_rest</th><th>size_p50</th></tr></thead><tbody><tr><td>10000</td><td>1710</td><td>105444</td><td>89070</td><td>0.404</td><td>0.0317</td><td>0.609</td><td>0.017</td><td>0.1016</td><td>0.3347</td><td>0.539</td><td>0.259</td><td>8.14</td><td>24.1394</td><td>0.7952</td><td>3210</td><td>92.742</td><td>85.08</td><td>1.0597</td><td>0.984</td><td>1.4846</td><td>1.8397</td><td>0.08826</td><td>0.04185</td><td>24</td></tr><tr><td>20000</td><td>1522</td><td>24093</td><td>23006</td><td>0.007</td><td>0</td><td>0.542</td><td>0.004</td><td>0.0511</td><td>0.4002</td><td>0.467</td><td>0.299</td><td>8.97</td><td>19.061</td><td>0.8136</td><td>2938</td><td>24</td><td>28.78</td><td>0.6388</td><td>0.7441</td><td>0.8454</td><td>1.29</td><td>0.09625</td><td>0.09101</td><td>25</td></tr><tr><td>30000</td><td>2148</td><td>94463</td><td>75880</td><td>0.029</td><td>0.0005</td><td>0.42</td><td>0.006</td><td>0.1238</td><td>0.291</td><td>0.606</td><td>0.241</td><td>7.38</td><td>27.4576</td><td>0.7112</td><td>4549</td><td>79.559</td><td>87.4</td><td>0.9319</td><td>1.0174</td><td>1.6812</td><td>1.7658</td><td>0.05755</td><td>0.05435</td><td>15</td></tr><tr><td>40000</td><td>1584</td><td>31388</td><td>26684</td><td>0.003</td><td>0</td><td>0.402</td><td>0.006</td><td>0.077</td><td>0.4314</td><td>0.442</td><td>0.193</td><td>9.13</td><td>13.0547</td><td>0.7029</td><td>4640</td><td>27.126</td><td>30.87</td><td>0.8016</td><td>1.0811</td><td>1.2518</td><td>1.6377</td><td>0.04029</td><td>0.0607</td><td>19</td></tr><tr><td>50000</td><td>1930</td><td>85419</td><td>69900</td><td>0.354</td><td>0.0094</td><td>0.305</td><td>0.012</td><td>0.1063</td><td>0.2854</td><td>0.636</td><td>0.208</td><td>8.41</td><td>20.0161</td><td>0.7268</td><td>4268</td><td>84.157</td><td>89.82</td><td>1.0552</td><td>1.1165</td><td>1.8547</td><td>2.0657</td><td>0.06815</td><td>0.04923</td><td>20</td></tr><tr><td>60000</td><td>1699</td><td>21595</td><td>20068</td><td>0.112</td><td>0.0023</td><td>0.287</td><td>0.011</td><td>0.0429</td><td>0.408</td><td>0.498</td><td>0.195</td><td>7.99</td><td>13.3216</td><td>0.7574</td><td>3825</td><td>27.442</td><td>31.26</td><td>0.8294</td><td>0.9149</td><td>1.4541</td><td>1.4608</td><td>0.06668</td><td>0.06896</td><td>20</td></tr><tr><td>70000</td><td>2087</td><td>65188</td><td>59233</td><td>0.095</td><td>0.0023</td><td>0.26</td><td>0.008</td><td>0.087</td><td>0.3282</td><td>0.601</td><td>0.199</td><td>6.75</td><td>31.0807</td><td>0.7798</td><td>3433</td><td>80.865</td><td>90.3</td><td>0.7521</td><td>0.8994</td><td>1.6327</td><td>1.6695</td><td>0.03669</td><td>0.04978</td><td>16</td></tr><tr><td>80000</td><td>1809</td><td>21139</td><td>19922</td><td>0.149</td><td>0.0036</td><td>0.269</td><td>0.01</td><td>0.0426</td><td>0.4482</td><td>0.454</td><td>0.194</td><td>6.74</td><td>14.568</td><td>0.7703</td><td>3630</td><td>26.736</td><td>31.15</td><td>0.8466</td><td>1.0165</td><td>1.8514</td><td>1.7775</td><td>0.06034</td><td>0.06639</td><td>16</td></tr><tr><td>90000</td><td>2272</td><td>67878</td><td>62993</td><td>0.093</td><td>0.0029</td><td>0.256</td><td>0.006</td><td>0.0925</td><td>0.3758</td><td>0.545</td><td>0.184</td><td>5.13</td><td>36.0734</td><td>0.7911</td><td>3245</td><td>79.125</td><td>89.57</td><td>0.7397</td><td>0.9793</td><td>1.7119</td><td>1.5881</td><td>0.03376</td><td>0.04428</td><td>16</td></tr><tr><td>100000</td><td>1893</td><td>21683</td><td>20903</td><td>0.143</td><td>0.0041</td><td>0.293</td><td>0.029</td><td>0.0442</td><td>0.487</td><td>0.412</td><td>0.181</td><td>5.42</td><td>15.7541</td><td>0.7985</td><td>3161</td><td>26.803</td><td>31.14</td><td>0.7239</td><td>1.0573</td><td>1.8376</td><td>1.613</td><td>0.03706</td><td>0.05196</td><td>16</td></tr></tbody></table></div></details>
+<details><summary>stock 4, seed 9</summary><div class='tw'><table><thead><tr><th>step</th><th>pop</th><th>births</th><th>deaths_energy</th><th>learners</th><th>eta</th><th>learned</th><th>memory</th><th>moved</th><th>stalled</th><th>blocked</th><th>speed_mean</th><th>muscle_mean</th><th>bare</th><th>grazed</th><th>trees</th><th>tree_eaten</th><th>regrowth</th><th>under_learn</th><th>under_rest</th><th>gud_learn</th><th>gud_rest</th><th>left_learn</th><th>left_rest</th><th>size_p50</th></tr></thead><tbody><tr><td>10000</td><td>438</td><td>32913</td><td>30818</td><td>0.046</td><td>0.0003</td><td>0</td><td>0</td><td>0.3232</td><td>0.4074</td><td>0.434</td><td>0.245</td><td>15.51</td><td>90.9762</td><td>0.8993</td><td>2000</td><td>45.038</td><td>40.84</td><td>0</td><td>0.7909</td><td>0</td><td>0.8612</td><td>0</td><td>0.10359</td><td>47</td></tr><tr><td>20000</td><td>564</td><td>6131</td><td>5755</td><td>0.025</td><td>0.0003</td><td>0</td><td>0</td><td>0.0765</td><td>0.585</td><td>0.242</td><td>0.251</td><td>13.47</td><td>36.1817</td><td>0.8918</td><td>2175</td><td>10.631</td><td>14.7</td><td>0</td><td>0.5594</td><td>0</td><td>0.5646</td><td>0</td><td>0.12236</td><td>36</td></tr><tr><td>30000</td><td>1059</td><td>41921</td><td>36214</td><td>0.803</td><td>0.0368</td><td>0</td><td>0</td><td>0.1832</td><td>0.464</td><td>0.388</td><td>0.255</td><td>9.84</td><td>82.457</td><td>0.8154</td><td>3350</td><td>36.165</td><td>45.32</td><td>0</td><td>0.841</td><td>0</td><td>1.0959</td><td>0</td><td>0.08099</td><td>21</td></tr><tr><td>40000</td><td>836</td><td>12748</td><td>11515</td><td>0.7</td><td>0.0218</td><td>0</td><td>0</td><td>0.0911</td><td>0.5733</td><td>0.259</td><td>0.224</td><td>9.68</td><td>31.8219</td><td>0.8794</td><td>2247</td><td>13.27</td><td>16.01</td><td>0</td><td>0.9146</td><td>0</td><td>1.2186</td><td>0</td><td>0.08918</td><td>24</td></tr><tr><td>50000</td><td>928</td><td>63048</td><td>50207</td><td>0.71</td><td>0.0363</td><td>0</td><td>0</td><td>0.2803</td><td>0.4828</td><td>0.353</td><td>0.275</td><td>11.34</td><td>73.5552</td><td>0.7842</td><td>3797</td><td>39.397</td><td>47.59</td><td>0</td><td>1.033</td><td>0</td><td>1.6283</td><td>0</td><td>0.07308</td><td>16</td></tr><tr><td>60000</td><td>960</td><td>11074</td><td>10041</td><td>0.57</td><td>0.0238</td><td>0</td><td>0</td><td>0.0787</td><td>0.5604</td><td>0.278</td><td>0.219</td><td>7.8</td><td>30.6909</td><td>0.8481</td><td>2807</td><td>13.162</td><td>15.82</td><td>0</td><td>0.9163</td><td>0</td><td>1.2832</td><td>0</td><td>0.08481</td><td>16</td></tr><tr><td>70000</td><td>945</td><td>37992</td><td>34334</td><td>0.462</td><td>0.025</td><td>0</td><td>0</td><td>0.1919</td><td>0.4496</td><td>0.433</td><td>0.201</td><td>7.48</td><td>78.8446</td><td>0.8453</td><td>2803</td><td>38.712</td><td>46.92</td><td>0</td><td>0.8722</td><td>0</td><td>1.3425</td><td>0</td><td>0.06125</td><td>16</td></tr><tr><td>80000</td><td>807</td><td>7899</td><td>7444</td><td>0.48</td><td>0.0282</td><td>0</td><td>0</td><td>0.0785</td><td>0.6164</td><td>0.239</td><td>0.198</td><td>10.33</td><td>32.2198</td><td>0.8757</td><td>2399</td><td>13.117</td><td>16.41</td><td>0</td><td>0.8092</td><td>0</td><td>1.0359</td><td>0</td><td>0.08393</td><td>25</td></tr><tr><td>90000</td><td>896</td><td>19942</td><td>18146</td><td>0.723</td><td>0.0298</td><td>0</td><td>0</td><td>0.1766</td><td>0.5524</td><td>0.311</td><td>0.207</td><td>9.92</td><td>86.2729</td><td>0.8868</td><td>2134</td><td>38.039</td><td>47.27</td><td>0</td><td>0.7996</td><td>0</td><td>1.0939</td><td>0</td><td>0.09037</td><td>25</td></tr><tr><td>100000</td><td>742</td><td>5480</td><td>5219</td><td>0.778</td><td>0.0294</td><td>0</td><td>0</td><td>0.0823</td><td>0.6717</td><td>0.168</td><td>0.186</td><td>10.5</td><td>32.184</td><td>0.8796</td><td>2396</td><td>14.018</td><td>17.74</td><td>0</td><td>0.917</td><td>0</td><td>1.3004</td><td>0</td><td>0.10691</td><td>25</td></tr></tbody></table></div></details>
+<details><summary>stock 4, seed 10</summary><div class='tw'><table><thead><tr><th>step</th><th>pop</th><th>births</th><th>deaths_energy</th><th>learners</th><th>eta</th><th>learned</th><th>memory</th><th>moved</th><th>stalled</th><th>blocked</th><th>speed_mean</th><th>muscle_mean</th><th>bare</th><th>grazed</th><th>trees</th><th>tree_eaten</th><th>regrowth</th><th>under_learn</th><th>under_rest</th><th>gud_learn</th><th>gud_rest</th><th>left_learn</th><th>left_rest</th><th>size_p50</th></tr></thead><tbody><tr><td>10000</td><td>742</td><td>46062</td><td>43358</td><td>0.902</td><td>0.017</td><td>0</td><td>0</td><td>0.1698</td><td>0.3489</td><td>0.514</td><td>0.288</td><td>8.35</td><td>86.0148</td><td>0.8692</td><td>2618</td><td>50.712</td><td>45.52</td><td>0</td><td>0.8845</td><td>0</td><td>1.3544</td><td>0</td><td>0.07764</td><td>24</td></tr><tr><td>20000</td><td>749</td><td>10969</td><td>10498</td><td>0.829</td><td>0.0356</td><td>0</td><td>0</td><td>0.0922</td><td>0.4546</td><td>0.364</td><td>0.296</td><td>10.04</td><td>37.2729</td><td>0.9028</td><td>1972</td><td>11.508</td><td>15.23</td><td>0</td><td>0.7364</td><td>0</td><td>1.0153</td><td>0</td><td>0.1143</td><td>25</td></tr><tr><td>30000</td><td>902</td><td>48455</td><td>39474</td><td>0.819</td><td>0.0253</td><td>0</td><td>0</td><td>0.2283</td><td>0.3854</td><td>0.458</td><td>0.246</td><td>9.88</td><td>83.5025</td><td>0.8981</td><td>2020</td><td>40.655</td><td>48.91</td><td>0</td><td>0.9937</td><td>0</td><td>1.3877</td><td>0</td><td>0.07795</td><td>25</td></tr><tr><td>40000</td><td>579</td><td>7606</td><td>7341</td><td>0.805</td><td>0.0309</td><td>0</td><td>0</td><td>0.1035</td><td>0.5519</td><td>0.272</td><td>0.227</td><td>9.56</td><td>38.0735</td><td>0.8864</td><td>2327</td><td>10.619</td><td>15.01</td><td>0</td><td>0.7429</td><td>0</td><td>0.895</td><td>0</td><td>0.11106</td><td>25</td></tr><tr><td>50000</td><td>881</td><td>65262</td><td>49067</td><td>0.373</td><td>0.0107</td><td>0</td><td>0</td><td>0.2891</td><td>0.4339</td><td>0.415</td><td>0.239</td><td>10.5</td><td>71.2069</td><td>0.7869</td><td>3977</td><td>44.974</td><td>52.71</td><td>0</td><td>1.3348</td><td>0</td><td>1.8979</td><td>0</td><td>0.06634</td><td>25</td></tr><tr><td>60000</td><td>834</td><td>9770</td><td>9171</td><td>0.44</td><td>0.0136</td><td>0</td><td>0</td><td>0.0567</td><td>0.5106</td><td>0.361</td><td>0.178</td><td>9.68</td><td>29.8259</td><td>0.8229</td><td>3595</td><td>15.048</td><td>17.86</td><td>0</td><td>0.9287</td><td>0</td><td>1.3461</td><td>0</td><td>0.07128</td><td>25</td></tr><tr><td>70000</td><td>817</td><td>32763</td><td>30474</td><td>0.758</td><td>0.0244</td><td>0</td><td>0</td><td>0.1309</td><td>0.415</td><td>0.49</td><td>0.183</td><td>9.52</td><td>74.8219</td><td>0.8289</td><td>3270</td><td>45.882</td><td>53.07</td><td>0</td><td>0.8733</td><td>0</td><td>1.2593</td><td>0</td><td>0.05848</td><td>25</td></tr><tr><td>80000</td><td>835</td><td>8413</td><td>8043</td><td>0.82</td><td>0.0331</td><td>0</td><td>0</td><td>0.0467</td><td>0.5387</td><td>0.352</td><td>0.154</td><td>8.44</td><td>30.47</td><td>0.8348</td><td>3283</td><td>14.999</td><td>18.28</td><td>0</td><td>0.8622</td><td>0</td><td>1.1247</td><td>0</td><td>0.06124</td><td>25</td></tr><tr><td>90000</td><td>939</td><td>29222</td><td>27725</td><td>0.724</td><td>0.036</td><td>0</td><td>0</td><td>0.0978</td><td>0.4395</td><td>0.475</td><td>0.167</td><td>8.94</td><td>77.8793</td><td>0.8567</td><td>2788</td><td>45.333</td><td>52.84</td><td>0</td><td>0.8066</td><td>0</td><td>1.1285</td><td>0</td><td>0.05087</td><td>25</td></tr><tr><td>100000</td><td>872</td><td>7883</td><td>7638</td><td>0.99</td><td>0.0772</td><td>0</td><td>0</td><td>0.0421</td><td>0.544</td><td>0.349</td><td>0.17</td><td>8.44</td><td>31.2906</td><td>0.8446</td><td>3219</td><td>14.929</td><td>18.54</td><td>0</td><td>0.936</td><td>0</td><td>1.4184</td><td>0</td><td>0.06713</td><td>25</td></tr></tbody></table></div></details>
+<details><summary>stock 4, seed 11</summary><div class='tw'><table><thead><tr><th>step</th><th>pop</th><th>births</th><th>deaths_energy</th><th>learners</th><th>eta</th><th>learned</th><th>memory</th><th>moved</th><th>stalled</th><th>blocked</th><th>speed_mean</th><th>muscle_mean</th><th>bare</th><th>grazed</th><th>trees</th><th>tree_eaten</th><th>regrowth</th><th>under_learn</th><th>under_rest</th><th>gud_learn</th><th>gud_rest</th><th>left_learn</th><th>left_rest</th><th>size_p50</th></tr></thead><tbody><tr><td>10000</td><td>733</td><td>35398</td><td>32082</td><td>0.809</td><td>0.0214</td><td>0</td><td>0</td><td>0.1912</td><td>0.4159</td><td>0.422</td><td>0.258</td><td>14.59</td><td>84.3873</td><td>0.8588</td><td>2697</td><td>49.333</td><td>44.28</td><td>0</td><td>0.9358</td><td>0</td><td>1.1211</td><td>0</td><td>0.08049</td><td>36</td></tr><tr><td>20000</td><td>658</td><td>6537</td><td>6324</td><td>0.947</td><td>0.011</td><td>0</td><td>0</td><td>0.0701</td><td>0.5688</td><td>0.265</td><td>0.212</td><td>11.57</td><td>37.5077</td><td>0.9247</td><td>1710</td><td>12.556</td><td>15.94</td><td>0</td><td>0.6638</td><td>0</td><td>0.7053</td><td>0</td><td>0.11871</td><td>36</td></tr><tr><td>30000</td><td>1259</td><td>47433</td><td>38422</td><td>0.382</td><td>0.0079</td><td>0</td><td>0</td><td>0.1506</td><td>0.4286</td><td>0.422</td><td>0.29</td><td>7.49</td><td>90.934</td><td>0.874</td><td>2593</td><td>35.262</td><td>45.25</td><td>0</td><td>1.0006</td><td>0</td><td>1.2042</td><td>0</td><td>0.07309</td><td>16</td></tr><tr><td>40000</td><td>1211</td><td>16440</td><td>14111</td><td>0.122</td><td>0.0017</td><td>0</td><td>0</td><td>0.0533</td><td>0.4904</td><td>0.363</td><td>0.217</td><td>6.04</td><td>34.6733</td><td>0.8483</td><td>3251</td><td>13.248</td><td>17.3</td><td>0</td><td>1.1112</td><td>0</td><td>1.012</td><td>0</td><td>0.05735</td><td>16</td></tr><tr><td>50000</td><td>1136</td><td>55431</td><td>47412</td><td>0.035</td><td>0.0008</td><td>0</td><td>0</td><td>0.1456</td><td>0.4428</td><td>0.427</td><td>0.262</td><td>6.72</td><td>86.9589</td><td>0.8762</td><td>2497</td><td>37.017</td><td>45.47</td><td>0</td><td>1.0505</td><td>0</td><td>1.049</td><td>0</td><td>0.05067</td><td>16</td></tr><tr><td>60000</td><td>1201</td><td>13987</td><td>12630</td><td>0.224</td><td>0.0066</td><td>0</td><td>0</td><td>0.0522</td><td>0.5562</td><td>0.298</td><td>0.203</td><td>5.47</td><td>35.4422</td><td>0.8634</td><td>2800</td><td>12.53</td><td>16.57</td><td>0</td><td>1.0124</td><td>0</td><td>1.0608</td><td>0</td><td>0.05527</td><td>16</td></tr><tr><td>70000</td><td>1625</td><td>63315</td><td>49456</td><td>0.182</td><td>0.0065</td><td>0</td><td>0</td><td>0.139</td><td>0.4231</td><td>0.43</td><td>0.228</td><td>6.16</td><td>77.0838</td><td>0.7955</td><td>3961</td><td>37.52</td><td>45.87</td><td>0</td><td>1.1614</td><td>0</td><td>1.5782</td><td>0</td><td>0.06055</td><td>16</td></tr><tr><td>80000</td><td>1029</td><td>15131</td><td>13944</td><td>0.539</td><td>0.0171</td><td>0</td><td>0</td><td>0.0729</td><td>0.5046</td><td>0.358</td><td>0.241</td><td>6.68</td><td>33.7659</td><td>0.8363</td><td>3220</td><td>13.381</td><td>16.64</td><td>0</td><td>0.9852</td><td>0</td><td>1.2055</td><td>0</td><td>0.06049</td><td>16</td></tr><tr><td>90000</td><td>1027</td><td>54746</td><td>43703</td><td>0.538</td><td>0.0195</td><td>0</td><td>0</td><td>0.219</td><td>0.3806</td><td>0.487</td><td>0.246</td><td>6.79</td><td>73.1823</td><td>0.812</td><td>3629</td><td>39.173</td><td>46.37</td><td>0</td><td>1.1767</td><td>0</td><td>1.6709</td><td>0</td><td>0.0625</td><td>16</td></tr><tr><td>100000</td><td>1290</td><td>13867</td><td>12366</td><td>0.695</td><td>0.0396</td><td>0</td><td>0</td><td>0.0509</td><td>0.5177</td><td>0.353</td><td>0.187</td><td>5.17</td><td>33.5023</td><td>0.8569</td><td>2883</td><td>13.46</td><td>16.63</td><td>0</td><td>0.9492</td><td>0</td><td>1.1106</td><td>0</td><td>0.05518</td><td>16</td></tr></tbody></table></div></details>
+<details><summary>stock 4, seed 12</summary><div class='tw'><table><thead><tr><th>step</th><th>pop</th><th>births</th><th>deaths_energy</th><th>learners</th><th>eta</th><th>learned</th><th>memory</th><th>moved</th><th>stalled</th><th>blocked</th><th>speed_mean</th><th>muscle_mean</th><th>bare</th><th>grazed</th><th>trees</th><th>tree_eaten</th><th>regrowth</th><th>under_learn</th><th>under_rest</th><th>gud_learn</th><th>gud_rest</th><th>left_learn</th><th>left_rest</th><th>size_p50</th></tr></thead><tbody><tr><td>10000</td><td>770</td><td>44513</td><td>39180</td><td>0.022</td><td>0.0002</td><td>0</td><td>0</td><td>0.1515</td><td>0.288</td><td>0.599</td><td>0.255</td><td>15.84</td><td>74.3987</td><td>0.8294</td><td>3188</td><td>54.574</td><td>48.5</td><td>0</td><td>0.8963</td><td>0</td><td>1.4952</td><td>0</td><td>0.06534</td><td>34</td></tr><tr><td>20000</td><td>499</td><td>8191</td><td>7571</td><td>0.054</td><td>0.0003</td><td>0</td><td>0</td><td>0.0957</td><td>0.4796</td><td>0.349</td><td>0.266</td><td>17.65</td><td>33.1944</td><td>0.8849</td><td>2261</td><td>12.699</td><td>15.69</td><td>0</td><td>0.6697</td><td>0</td><td>0.9623</td><td>0</td><td>0.11378</td><td>46</td></tr><tr><td>30000</td><td>1222</td><td>65395</td><td>52064</td><td>0.003</td><td>0</td><td>0</td><td>0</td><td>0.19</td><td>0.4139</td><td>0.441</td><td>0.226</td><td>7.46</td><td>72.6324</td><td>0.7644</td><td>4303</td><td>42.743</td><td>50.9</td><td>0</td><td>0.9759</td><td>0</td><td>1.6621</td><td>0</td><td>0.05629</td><td>15</td></tr><tr><td>40000</td><td>838</td><td>14128</td><td>12909</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.0726</td><td>0.544</td><td>0.333</td><td>0.115</td><td>5.46</td><td>30.8066</td><td>0.8612</td><td>2844</td><td>13.345</td><td>15.67</td><td>0</td><td>0.7495</td><td>0</td><td>1.2779</td><td>0</td><td>0.0564</td><td>21</td></tr><tr><td>50000</td><td>844</td><td>72255</td><td>52797</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.2358</td><td>0.4273</td><td>0.465</td><td>0.233</td><td>11.95</td><td>67.8758</td><td>0.7794</td><td>4076</td><td>45.18</td><td>52.34</td><td>0</td><td>0.9861</td><td>0</td><td>1.8727</td><td>0</td><td>0.04541</td><td>19</td></tr><tr><td>60000</td><td>1303</td><td>14520</td><td>11467</td><td>0.007</td><td>0.0001</td><td>0</td><td>0</td><td>0.0621</td><td>0.5617</td><td>0.282</td><td>0.209</td><td>6.49</td><td>28.1167</td><td>0.7519</td><td>4619</td><td>13.715</td><td>17.1</td><td>0</td><td>1.057</td><td>0</td><td>1.5802</td><td>0</td><td>0.07876</td><td>14</td></tr><tr><td>70000</td><td>1458</td><td>56442</td><td>46315</td><td>0.002</td><td>0.0001</td><td>0</td><td>0</td><td>0.121</td><td>0.4049</td><td>0.498</td><td>0.199</td><td>5.49</td><td>65.4355</td><td>0.7963</td><td>3893</td><td>46.857</td><td>52.31</td><td>0</td><td>0.9929</td><td>0</td><td>1.5918</td><td>0</td><td>0.04924</td><td>11</td></tr><tr><td>80000</td><td>922</td><td>11389</td><td>10859</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.0573</td><td>0.5934</td><td>0.292</td><td>0.148</td><td>6.74</td><td>31.4693</td><td>0.88</td><td>2434</td><td>14.114</td><td>16.69</td><td>0</td><td>0.7735</td><td>0</td><td>0.7761</td><td>0</td><td>0.08566</td><td>20</td></tr><tr><td>90000</td><td>991</td><td>35451</td><td>30232</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.1236</td><td>0.443</td><td>0.468</td><td>0.162</td><td>6.93</td><td>76.0321</td><td>0.8568</td><td>2784</td><td>42.864</td><td>50.83</td><td>0</td><td>0.7856</td><td>0</td><td>1.1179</td><td>0</td><td>0.05514</td><td>20</td></tr><tr><td>100000</td><td>726</td><td>6177</td><td>5876</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.054</td><td>0.5769</td><td>0.323</td><td>0.155</td><td>8.63</td><td>31.9341</td><td>0.8724</td><td>2585</td><td>14</td><td>17.39</td><td>0</td><td>0.6805</td><td>0</td><td>0.7064</td><td>0</td><td>0.08461</td><td>28</td></tr></tbody></table></div></details>
+<details><summary>stock 4 + brain, seed 9</summary><div class='tw'><table><thead><tr><th>step</th><th>pop</th><th>births</th><th>deaths_energy</th><th>learners</th><th>eta</th><th>learned</th><th>memory</th><th>moved</th><th>stalled</th><th>blocked</th><th>speed_mean</th><th>muscle_mean</th><th>bare</th><th>grazed</th><th>trees</th><th>tree_eaten</th><th>regrowth</th><th>under_learn</th><th>under_rest</th><th>gud_learn</th><th>gud_rest</th><th>left_learn</th><th>left_rest</th><th>size_p50</th></tr></thead><tbody><tr><td>10000</td><td>573</td><td>44967</td><td>39861</td><td>0.724</td><td>0.012</td><td>0.52</td><td>0.031</td><td>0.2358</td><td>0.3426</td><td>0.484</td><td>0.388</td><td>11.86</td><td>79.0697</td><td>0.8906</td><td>2177</td><td>50.663</td><td>44.19</td><td>0.9331</td><td>0.8822</td><td>1.2697</td><td>1.169</td><td>0.1121</td><td>0.07014</td><td>29</td></tr><tr><td>20000</td><td>700</td><td>11476</td><td>10105</td><td>0.824</td><td>0.0109</td><td>0.428</td><td>0.033</td><td>0.1081</td><td>0.4056</td><td>0.335</td><td>0.427</td><td>11.9</td><td>36.6875</td><td>0.8907</td><td>2158</td><td>9.66</td><td>13.65</td><td>0.7074</td><td>0.5784</td><td>0.8941</td><td>0.8297</td><td>0.15561</td><td>0.13622</td><td>21</td></tr><tr><td>30000</td><td>739</td><td>38757</td><td>34036</td><td>0.632</td><td>0.0154</td><td>0.488</td><td>0.038</td><td>0.2036</td><td>0.336</td><td>0.496</td><td>0.318</td><td>13.2</td><td>84.3565</td><td>0.8823</td><td>2396</td><td>36.11</td><td>44.6</td><td>0.8493</td><td>0.68</td><td>1.1832</td><td>1.0119</td><td>0.09322</td><td>0.08764</td><td>30</td></tr><tr><td>40000</td><td>632</td><td>8922</td><td>8199</td><td>0.125</td><td>0.0011</td><td>0.406</td><td>0.013</td><td>0.085</td><td>0.4722</td><td>0.338</td><td>0.25</td><td>13.5</td><td>35.3294</td><td>0.9009</td><td>2039</td><td>11.479</td><td>15.11</td><td>0.6369</td><td>0.6958</td><td>0.8351</td><td>0.8772</td><td>0.13184</td><td>0.1343</td><td>36</td></tr><tr><td>50000</td><td>493</td><td>19712</td><td>17967</td><td>0.024</td><td>0.0001</td><td>0.23</td><td>0.006</td><td>0.1869</td><td>0.444</td><td>0.419</td><td>0.21</td><td>20.44</td><td>85.0131</td><td>0.9042</td><td>2086</td><td>38.532</td><td>47.25</td><td>0.6153</td><td>0.7307</td><td>0.8687</td><td>0.9536</td><td>0.09367</td><td>0.09948</td><td>49</td></tr><tr><td>60000</td><td>470</td><td>4649</td><td>4338</td><td>0.019</td><td>0.0001</td><td>0.14</td><td>0.007</td><td>0.0605</td><td>0.6059</td><td>0.234</td><td>0.208</td><td>18.33</td><td>34.831</td><td>0.9122</td><td>2001</td><td>12.126</td><td>15.8</td><td>0.5351</td><td>0.6159</td><td>1.0117</td><td>0.6281</td><td>0.09292</td><td>0.1233</td><td>49</td></tr><tr><td>70000</td><td>486</td><td>16477</td><td>14634</td><td>0.016</td><td>0.0002</td><td>0.187</td><td>0.007</td><td>0.1583</td><td>0.5338</td><td>0.325</td><td>0.214</td><td>23.18</td><td>86.493</td><td>0.8805</td><td>2443</td><td>38.596</td><td>47.71</td><td>0.6525</td><td>0.6842</td><td>0.9434</td><td>0.8562</td><td>0.13439</td><td>0.10365</td><td>54</td></tr><tr><td>80000</td><td>479</td><td>4737</td><td>4235</td><td>0.015</td><td>0.0003</td><td>0.214</td><td>0.01</td><td>0.0709</td><td>0.6084</td><td>0.232</td><td>0.191</td><td>19.37</td><td>34.0143</td><td>0.9157</td><td>1863</td><td>12.689</td><td>16</td><td>0.6268</td><td>0.7146</td><td>1.1815</td><td>0.8292</td><td>0.07305</td><td>0.1123</td><td>50</td></tr><tr><td>90000</td><td>792</td><td>35227</td><td>26810</td><td>0.004</td><td>0</td><td>0.365</td><td>0.009</td><td>0.1985</td><td>0.4802</td><td>0.36</td><td>0.249</td><td>12.98</td><td>80.5996</td><td>0.8418</td><td>3022</td><td>39.214</td><td>47.94</td><td>0.6851</td><td>0.8507</td><td>0.9381</td><td>1.1808</td><td>0.08725</td><td>0.08236</td><td>25</td></tr><tr><td>100000</td><td>636</td><td>9120</td><td>8144</td><td>0.002</td><td>0</td><td>0.076</td><td>0.028</td><td>0.0979</td><td>0.5522</td><td>0.274</td><td>0.232</td><td>14.63</td><td>31.4706</td><td>0.8418</td><td>3007</td><td>12.624</td><td>16.03</td><td>0.6342</td><td>0.8373</td><td>0.6968</td><td>1.1512</td><td>0.04198</td><td>0.09185</td><td>29</td></tr></tbody></table></div></details>
+<details><summary>stock 4 + brain, seed 10</summary><div class='tw'><table><thead><tr><th>step</th><th>pop</th><th>births</th><th>deaths_energy</th><th>learners</th><th>eta</th><th>learned</th><th>memory</th><th>moved</th><th>stalled</th><th>blocked</th><th>speed_mean</th><th>muscle_mean</th><th>bare</th><th>grazed</th><th>trees</th><th>tree_eaten</th><th>regrowth</th><th>under_learn</th><th>under_rest</th><th>gud_learn</th><th>gud_rest</th><th>left_learn</th><th>left_rest</th><th>size_p50</th></tr></thead><tbody><tr><td>10000</td><td>845</td><td>57725</td><td>49628</td><td>0.987</td><td>0.0589</td><td>0.623</td><td>0.052</td><td>0.1433</td><td>0.3921</td><td>0.422</td><td>0.279</td><td>10.1</td><td>73.4895</td><td>0.8013</td><td>3950</td><td>55.603</td><td>49.16</td><td>1.0189</td><td>1.2098</td><td>1.4319</td><td>2.0032</td><td>0.12668</td><td>0.0242</td><td>22</td></tr><tr><td>20000</td><td>899</td><td>13272</td><td>11811</td><td>0.99</td><td>0.0521</td><td>0.616</td><td>0.046</td><td>0.0561</td><td>0.5521</td><td>0.255</td><td>0.248</td><td>11.23</td><td>30.6131</td><td>0.7824</td><td>4232</td><td>13.625</td><td>16.98</td><td>0.8888</td><td>0.4958</td><td>1.3036</td><td>1.0835</td><td>0.10513</td><td>0.00962</td><td>25</td></tr><tr><td>30000</td><td>2374</td><td>70231</td><td>55216</td><td>0.988</td><td>0.0758</td><td>0.588</td><td>0.051</td><td>0.0589</td><td>0.4199</td><td>0.423</td><td>0.248</td><td>6.41</td><td>61.0566</td><td>0.7698</td><td>4326</td><td>48.09</td><td>52.1</td><td>1.1073</td><td>0.7912</td><td>1.7926</td><td>1.8999</td><td>0.0739</td><td>0.01347</td><td>16</td></tr><tr><td>40000</td><td>475</td><td>16028</td><td>15468</td><td>0.358</td><td>0.012</td><td>0.581</td><td>0.046</td><td>0.0901</td><td>0.4245</td><td>0.426</td><td>0.301</td><td>15.58</td><td>30.6605</td><td>0.9077</td><td>1839</td><td>15.447</td><td>16.82</td><td>0.8439</td><td>0.7483</td><td>1.2459</td><td>0.849</td><td>0.09334</td><td>0.08095</td><td>44</td></tr><tr><td>50000</td><td>788</td><td>69143</td><td>54137</td><td>0.657</td><td>0.0479</td><td>0.534</td><td>0.05</td><td>0.2289</td><td>0.4084</td><td>0.418</td><td>0.324</td><td>9.87</td><td>81.787</td><td>0.8981</td><td>2174</td><td>41.84</td><td>49.18</td><td>0.9465</td><td>0.8185</td><td>1.2385</td><td>0.8788</td><td>0.06864</td><td>0.08131</td><td>16</td></tr><tr><td>60000</td><td>540</td><td>10621</td><td>9754</td><td>0.013</td><td>0</td><td>0.473</td><td>0.019</td><td>0.113</td><td>0.4891</td><td>0.318</td><td>0.27</td><td>12.36</td><td>38.9554</td><td>0.9481</td><td>1200</td><td>11.225</td><td>15</td><td>0.642</td><td>0.5837</td><td>0.8193</td><td>0.5895</td><td>0.09927</td><td>0.12469</td><td>36</td></tr><tr><td>70000</td><td>993</td><td>38067</td><td>30935</td><td>0.085</td><td>0.0007</td><td>0.455</td><td>0.01</td><td>0.1599</td><td>0.4165</td><td>0.419</td><td>0.263</td><td>10.27</td><td>86.8474</td><td>0.8306</td><td>3165</td><td>37.537</td><td>47.65</td><td>0.7645</td><td>0.8529</td><td>1.0206</td><td>1.0879</td><td>0.09164</td><td>0.09101</td><td>25</td></tr><tr><td>80000</td><td>545</td><td>9979</td><td>9661</td><td>0.05</td><td>0.0002</td><td>0.395</td><td>0.012</td><td>0.1235</td><td>0.5035</td><td>0.314</td><td>0.251</td><td>9.28</td><td>38.2188</td><td>0.9294</td><td>1529</td><td>11.721</td><td>14.84</td><td>0.6161</td><td>0.6897</td><td>0.777</td><td>0.7987</td><td>0.11808</td><td>0.11102</td><td>26</td></tr><tr><td>90000</td><td>923</td><td>53130</td><td>44330</td><td>0.026</td><td>0.0002</td><td>0.375</td><td>0.007</td><td>0.2558</td><td>0.4174</td><td>0.414</td><td>0.276</td><td>9.57</td><td>90.2742</td><td>0.9045</td><td>2004</td><td>38.08</td><td>47.34</td><td>0.7427</td><td>0.8479</td><td>0.9195</td><td>1.0308</td><td>0.0793</td><td>0.07851</td><td>25</td></tr><tr><td>100000</td><td>579</td><td>9188</td><td>8698</td><td>0.01</td><td>0.0001</td><td>0.432</td><td>0.01</td><td>0.1204</td><td>0.5135</td><td>0.299</td><td>0.257</td><td>8.82</td><td>40.2868</td><td>0.9412</td><td>1314</td><td>10.247</td><td>14.36</td><td>0.5245</td><td>0.5981</td><td>0.8215</td><td>0.6192</td><td>0.1455</td><td>0.11527</td><td>29</td></tr></tbody></table></div></details>
+<details><summary>stock 4 + brain, seed 11</summary><div class='tw'><table><thead><tr><th>step</th><th>pop</th><th>births</th><th>deaths_energy</th><th>learners</th><th>eta</th><th>learned</th><th>memory</th><th>moved</th><th>stalled</th><th>blocked</th><th>speed_mean</th><th>muscle_mean</th><th>bare</th><th>grazed</th><th>trees</th><th>tree_eaten</th><th>regrowth</th><th>under_learn</th><th>under_rest</th><th>gud_learn</th><th>gud_rest</th><th>left_learn</th><th>left_rest</th><th>size_p50</th></tr></thead><tbody><tr><td>10000</td><td>977</td><td>62037</td><td>51917</td><td>0.88</td><td>0.0229</td><td>0.464</td><td>0.045</td><td>0.1458</td><td>0.369</td><td>0.47</td><td>0.305</td><td>8.38</td><td>76.303</td><td>0.7739</td><td>4405</td><td>52.509</td><td>46.9</td><td>1.0025</td><td>1.0656</td><td>1.4153</td><td>1.5209</td><td>0.09445</td><td>0.05172</td><td>16</td></tr><tr><td>20000</td><td>1638</td><td>20800</td><td>17796</td><td>0.463</td><td>0.008</td><td>0.42</td><td>0.028</td><td>0.0364</td><td>0.4354</td><td>0.437</td><td>0.212</td><td>5.49</td><td>30.8162</td><td>0.8448</td><td>3280</td><td>15.673</td><td>18.02</td><td>1.0466</td><td>1.0379</td><td>1.5465</td><td>1.7432</td><td>0.08593</td><td>0.04913</td><td>15</td></tr><tr><td>30000</td><td>1161</td><td>69335</td><td>56690</td><td>0.38</td><td>0.0091</td><td>0.283</td><td>0.029</td><td>0.147</td><td>0.3881</td><td>0.5</td><td>0.272</td><td>6.78</td><td>78.8773</td><td>0.8587</td><td>2880</td><td>41.69</td><td>48.94</td><td>1.157</td><td>1.1854</td><td>1.691</td><td>1.7714</td><td>0.06524</td><td>0.05362</td><td>16</td></tr><tr><td>40000</td><td>1488</td><td>20001</td><td>15800</td><td>0.047</td><td>0.0009</td><td>0.189</td><td>0.009</td><td>0.0579</td><td>0.4882</td><td>0.361</td><td>0.24</td><td>6.03</td><td>33.7288</td><td>0.8318</td><td>3332</td><td>13.418</td><td>17.32</td><td>1.1138</td><td>1.2011</td><td>1.7816</td><td>1.7419</td><td>0.06142</td><td>0.08548</td><td>15</td></tr><tr><td>50000</td><td>1039</td><td>56020</td><td>45982</td><td>0.035</td><td>0.0008</td><td>0.167</td><td>0.011</td><td>0.1721</td><td>0.3733</td><td>0.512</td><td>0.251</td><td>7.08</td><td>84.3413</td><td>0.874</td><td>2589</td><td>38.692</td><td>46.84</td><td>1.0772</td><td>1.1163</td><td>1.7839</td><td>1.586</td><td>0.04611</td><td>0.05931</td><td>16</td></tr><tr><td>60000</td><td>1254</td><td>13591</td><td>11607</td><td>0.039</td><td>0.001</td><td>0.233</td><td>0.015</td><td>0.0488</td><td>0.4557</td><td>0.421</td><td>0.224</td><td>6.11</td><td>34.7264</td><td>0.89</td><td>2248</td><td>13.55</td><td>17.2</td><td>0.9903</td><td>1.0868</td><td>1.3973</td><td>1.1114</td><td>0.05366</td><td>0.05821</td><td>16</td></tr><tr><td>70000</td><td>1199</td><td>41064</td><td>34552</td><td>0.039</td><td>0.0008</td><td>0.141</td><td>0.015</td><td>0.1319</td><td>0.3838</td><td>0.513</td><td>0.223</td><td>6.1</td><td>90.2957</td><td>0.8967</td><td>2173</td><td>36.568</td><td>46.14</td><td>0.969</td><td>1.0057</td><td>1.1495</td><td>1.0984</td><td>0.04022</td><td>0.05164</td><td>16</td></tr><tr><td>80000</td><td>1173</td><td>11628</td><td>10220</td><td>0.043</td><td>0.0009</td><td>0.174</td><td>0.017</td><td>0.0485</td><td>0.4731</td><td>0.411</td><td>0.211</td><td>5.87</td><td>36.6366</td><td>0.9032</td><td>2207</td><td>12.879</td><td>16.91</td><td>0.9547</td><td>1.0275</td><td>0.8458</td><td>0.9651</td><td>0.0426</td><td>0.05295</td><td>16</td></tr><tr><td>90000</td><td>1201</td><td>36682</td><td>31024</td><td>0.033</td><td>0.0006</td><td>0.147</td><td>0.017</td><td>0.1228</td><td>0.3771</td><td>0.524</td><td>0.21</td><td>5.79</td><td>93.9705</td><td>0.9132</td><td>1945</td><td>35.633</td><td>45.68</td><td>0.9474</td><td>0.99</td><td>1.1781</td><td>1.0304</td><td>0.03939</td><td>0.04854</td><td>16</td></tr><tr><td>100000</td><td>1204</td><td>11338</td><td>9804</td><td>0.038</td><td>0.0006</td><td>0.107</td><td>0.021</td><td>0.047</td><td>0.4652</td><td>0.418</td><td>0.221</td><td>6.25</td><td>36.5945</td><td>0.8899</td><td>2386</td><td>12.862</td><td>17.19</td><td>0.8692</td><td>1.0718</td><td>1.0413</td><td>1.0403</td><td>0.05117</td><td>0.05422</td><td>16</td></tr></tbody></table></div></details>
+<details><summary>stock 4 + brain, seed 12</summary><div class='tw'><table><thead><tr><th>step</th><th>pop</th><th>births</th><th>deaths_energy</th><th>learners</th><th>eta</th><th>learned</th><th>memory</th><th>moved</th><th>stalled</th><th>blocked</th><th>speed_mean</th><th>muscle_mean</th><th>bare</th><th>grazed</th><th>trees</th><th>tree_eaten</th><th>regrowth</th><th>under_learn</th><th>under_rest</th><th>gud_learn</th><th>gud_rest</th><th>left_learn</th><th>left_rest</th><th>size_p50</th></tr></thead><tbody><tr><td>10000</td><td>1453</td><td>62061</td><td>53405</td><td>0.547</td><td>0.0105</td><td>0.497</td><td>0.014</td><td>0.1147</td><td>0.3629</td><td>0.486</td><td>0.265</td><td>9.01</td><td>73.6313</td><td>0.758</td><td>4536</td><td>56.43</td><td>50.87</td><td>1.0072</td><td>1.0596</td><td>1.2921</td><td>1.6194</td><td>0.12058</td><td>0.06088</td><td>16</td></tr><tr><td>20000</td><td>474</td><td>14647</td><td>14035</td><td>0.213</td><td>0.0119</td><td>0.331</td><td>0.011</td><td>0.128</td><td>0.4654</td><td>0.372</td><td>0.301</td><td>9.35</td><td>31.1216</td><td>0.8817</td><td>2491</td><td>14.048</td><td>15.95</td><td>1.0262</td><td>0.9911</td><td>1.2315</td><td>1.542</td><td>0.08157</td><td>0.09574</td><td>25</td></tr><tr><td>30000</td><td>840</td><td>50915</td><td>44904</td><td>0.033</td><td>0.0023</td><td>0.516</td><td>0.006</td><td>0.1888</td><td>0.4141</td><td>0.445</td><td>0.261</td><td>8.3</td><td>84.2015</td><td>0.892</td><td>2179</td><td>41.727</td><td>49.78</td><td>1.2022</td><td>0.9592</td><td>1.5389</td><td>1.5661</td><td>0.09734</td><td>0.08372</td><td>25</td></tr><tr><td>40000</td><td>816</td><td>10479</td><td>9872</td><td>0.097</td><td>0.0071</td><td>0.42</td><td>0.006</td><td>0.079</td><td>0.5242</td><td>0.32</td><td>0.231</td><td>5.87</td><td>35.5409</td><td>0.907</td><td>1896</td><td>12.056</td><td>15.82</td><td>0.9665</td><td>0.892</td><td>1.1527</td><td>1.2327</td><td>0.12586</td><td>0.09909</td><td>16</td></tr><tr><td>50000</td><td>1115</td><td>56090</td><td>48634</td><td>0.226</td><td>0.0141</td><td>0.404</td><td>0.006</td><td>0.1651</td><td>0.426</td><td>0.433</td><td>0.265</td><td>7.21</td><td>87.8752</td><td>0.9012</td><td>2079</td><td>40.716</td><td>49.45</td><td>1.0968</td><td>0.9355</td><td>1.5404</td><td>1.3871</td><td>0.11469</td><td>0.06752</td><td>21</td></tr><tr><td>60000</td><td>993</td><td>11809</td><td>11197</td><td>0.038</td><td>0.0005</td><td>0.368</td><td>0.007</td><td>0.0775</td><td>0.5318</td><td>0.301</td><td>0.251</td><td>6.32</td><td>35.842</td><td>0.9006</td><td>1950</td><td>11.943</td><td>15.91</td><td>0.7925</td><td>0.8917</td><td>1.0316</td><td>1.1571</td><td>0.14737</td><td>0.08882</td><td>16</td></tr><tr><td>70000</td><td>629</td><td>61939</td><td>52538</td><td>0.086</td><td>0.0052</td><td>0.29</td><td>0.005</td><td>0.3527</td><td>0.4092</td><td>0.456</td><td>0.241</td><td>11.12</td><td>79.2701</td><td>0.8268</td><td>3346</td><td>42.832</td><td>51.26</td><td>1.0215</td><td>1.0434</td><td>1.7037</td><td>1.6607</td><td>0.06883</td><td>0.06857</td><td>25</td></tr><tr><td>80000</td><td>528</td><td>9965</td><td>9276</td><td>0.021</td><td>0.0001</td><td>0.205</td><td>0.003</td><td>0.1181</td><td>0.5006</td><td>0.333</td><td>0.305</td><td>11.59</td><td>35.1274</td><td>0.9163</td><td>1775</td><td>12.541</td><td>15.35</td><td>0.7473</td><td>0.8062</td><td>1.3041</td><td>1.0502</td><td>0.05787</td><td>0.10921</td><td>25</td></tr><tr><td>90000</td><td>1421</td><td>63079</td><td>49730</td><td>0.374</td><td>0.0216</td><td>0.598</td><td>0.008</td><td>0.1222</td><td>0.4219</td><td>0.43</td><td>0.243</td><td>7.94</td><td>78.4182</td><td>0.8325</td><td>3317</td><td>45.156</td><td>53.1</td><td>1.4593</td><td>1.0794</td><td>2.0069</td><td>1.6347</td><td>0.11067</td><td>0.07613</td><td>16</td></tr><tr><td>100000</td><td>982</td><td>13350</td><td>12416</td><td>0.288</td><td>0.0042</td><td>0.351</td><td>0.015</td><td>0.0507</td><td>0.5207</td><td>0.349</td><td>0.209</td><td>8.73</td><td>32.7013</td><td>0.8911</td><td>2246</td><td>13.779</td><td>16.63</td><td>1.0036</td><td>0.9261</td><td>1.5806</td><td>1.4479</td><td>0.0964</td><td>0.0733</td><td>25</td></tr></tbody></table></div></details>
+</main>
+</body>
+</html>
