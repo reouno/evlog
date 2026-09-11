@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-09-11 (e048).
+Last updated: 2026-09-11 (e049).
 
 ## What the viewer should see
 
@@ -430,6 +430,16 @@ negative are its products. So the order is:
    of leaving the cells a body has grazed bare, not of travel, and nothing asks a body to go far. The world stands
    (lowest floor 347); the hunter world comes on three seeds of six. Order now: #14 (the rain band, under this law:
    speed pays when the food moves and a step needs muscle), #52, #5.
+
+   Done 2026-09-11: #14's first pilot, a band of rain (e049) - not kept (it stays as the argument `band`): all the sky's
+   rain on a quarter of the world, moving west. The crowd follows it, but by births: a body lives about 200 steps (the
+   median age at death), so at 50 steps a column it is born and dies under the rain (60-63% of the body-steps under the
+   band, walking west at 2% of its speed); at 25 the crowd lags, hunger kills behind the band, and bodies still walk west
+   at 2-6% of its speed. Under thirst (e040) the few bodies that live 1,000 steps walk with the band at half its speed;
+   the crowd does not. Speed is not selected; the world holds half the bodies, packs into the band and hunts (the hunter
+   world on four seeds of four under thirst), and nearly dies in winter (one world of eight dead). A place that changes
+   slower than a life is followed by births: travel by one body needs lives longer than the change, or a sense of where
+   it goes. Order now: #52, #5.
 4. #5 3D bodies (the vertical axis for legs and wings), after size pays (e037 says: after a food for big bodies exists): 12-16 cells in 3D is a blob. An arm is an
    outcome to watch for there, not a rule.
 5. Later: #34 kinds of matter (several conserved substances - water, plant stuff, animal stuff of different
