@@ -473,8 +473,9 @@ negative are its products. So the order is:
    flesh). A slow return worsens a place for the next visitor, not for the one who stays, and lowers every grazed place
    alike. These answers hold for this law in this world (trees as the food, a knee on the light, a one-step energy
    reward, two knees, four seeds of 100,000 steps). Next #55, life history (a body must live long enough to follow a
-   change itself, e049); open: a worsening that falls on the stayer (fouling), a density control for knee 4, and a
-   world where the food runs as the brain's test.
+   change itself, e049), starting from a time that scales with size (agreed 2026-09-12); open: a worsening that falls
+   on the stayer (fouling, #56), a density control for knee 4 (#57), and a world where the food runs as the brain's
+   test (#58).
 4. #5 3D bodies (the vertical axis for legs and wings), after size pays (e037 says: after a food for big bodies exists): 12-16 cells in 3D is a blob. An arm is an
    outcome to watch for there, not a rule.
 5. Later: #34 kinds of matter (several conserved substances - water, plant stuff, animal stuff of different
