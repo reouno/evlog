@@ -72,6 +72,23 @@ if let Some(v) = view.as_mut() {                                       // in the
 A world that names what its bodies die of (`Init::deaths`) also calls `v.died(step, id, cause)`
 where one dies, and the next frame carries it.
 
+## The front end
+
+`web/src/*.ts` is what is written and `web/js/*.js` is what the browser is given: tsc puts one
+beside the other, and the output is committed, so watching a world needs nothing installed.
+
+    cargo run --release -p viewer -- <run>_view.bin     # as ever: no npm, no build
+
+    cd viewer/web && npm install && npm run build       # only after changing the front end
+
+`npm run watch` leaves tsc running while the front end is worked on. A source newer than the
+output means the page is behind what was written, and the viewer says so when it starts.
+
+`web/src/wire.ts` declares what a header is - the layers, the globals, the fields of a body - and
+`cargo test -p viewer` holds that declaration against the header `wire.rs` writes, so a field
+renamed on one side and not the other fails the test rather than the picture. The browser still
+reads the record off the header while it runs, so an old browser still shows a new world.
+
 ## What the browser draws
 
 One world cell is one unit; the world's y is the scene's z; the torus is drawn nine times so

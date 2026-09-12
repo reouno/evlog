@@ -266,3 +266,123 @@ pub fn frame_has_layers(payload: &[u8]) -> bool {
     let n_globals = payload[8] as usize;
     payload[9 + n_globals * 4] > 0
 }
+
+/// The header is written here by hand and read in the browser by hand, so these two tests hold
+/// the two together: what `header_json` says a world is must be what `web/src/wire.ts` declares
+/// it is. A field renamed on one side and not the other is then a failing build rather than a
+/// layer that silently stops being drawn.
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn browser_wire() -> String {
+        let path = concat!(env!("CARGO_MANIFEST_DIR"), "/web/src/wire.ts");
+        std::fs::read_to_string(path).unwrap_or_else(|e| panic!("{path}: {e}"))
+    }
+
+    fn sample_header() -> String {
+        let init = Init {
+            experiment: "test",
+            w: 2,
+            h: 2,
+            sub: 2,
+            height: &[0.0; 4],
+            band: &[0; 4],
+            layers: vec![LayerSpec::new("plant", 8.0, Scale::Sqrt)],
+            globals: vec!["sun"],
+            blocks: vec!["empty", "hard"],
+            deaths: vec!["hunger"],
+            params: "{\"weather\":\"season\"}".to_string(),
+        };
+        header_json(&init, 1, 30, false)
+    }
+
+    /// The keys of a JSON object, the top level of it only.
+    fn json_keys(s: &str) -> Vec<String> {
+        let b = s.as_bytes();
+        let (mut keys, mut depth, mut i, mut in_str, mut start) = (Vec::new(), 0i32, 0, false, 0);
+        while i < b.len() {
+            match b[i] {
+                b'\\' if in_str => i += 1,
+                b'"' if !in_str => {
+                    in_str = true;
+                    start = i + 1;
+                }
+                b'"' => {
+                    in_str = false;
+                    let rest = s[i + 1..].trim_start();
+                    if depth == 1 && rest.starts_with(':') {
+                        keys.push(s[start..i].to_string());
+                    }
+                }
+                b'{' | b'[' if !in_str => depth += 1,
+                b'}' | b']' if !in_str => depth -= 1,
+                _ => {}
+            }
+            i += 1;
+        }
+        keys
+    }
+
+    /// The fields an `export interface` declares: all of them, and the ones it says must be there.
+    fn interface_fields(src: &str, name: &str) -> (Vec<String>, Vec<String>) {
+        let head = format!("export interface {name} {{");
+        let at = src.find(&head).unwrap_or_else(|| panic!("wire.ts has no `{head}`"));
+        let body = &src[at + head.len()..];
+        let body = &body[..body.find("\n}").expect("the interface is not closed")];
+        let (mut all, mut required) = (Vec::new(), Vec::new());
+        for line in body.lines() {
+            let line = line.trim();
+            if line.starts_with('/') || line.starts_with('*') {
+                continue;
+            }
+            let Some((key, _)) = line.split_once(':') else { continue };
+            let key = key.trim();
+            let name = key.trim_end_matches('?');
+            if name.is_empty() || !name.chars().all(|c| c.is_ascii_alphanumeric() || c == '_') {
+                continue;
+            }
+            all.push(name.to_string());
+            if !key.ends_with('?') {
+                required.push(name.to_string());
+            }
+        }
+        (all, required)
+    }
+
+    /// The names in a union of string literals (`export type X = 'a' | 'b';`), in order.
+    fn union_members(src: &str, name: &str) -> Vec<String> {
+        let head = format!("export type {name} =");
+        let at = src.find(&head).unwrap_or_else(|| panic!("wire.ts has no `{head}`"));
+        let body = &src[at..];
+        let body = &body[..body.find(';').expect("the type is not closed")];
+        body.split('\'').skip(1).step_by(2).map(|s| s.to_string()).collect()
+    }
+
+    #[test]
+    fn header_is_what_the_browser_declares() {
+        let json = sample_header();
+        let keys = json_keys(&json);
+        let src = browser_wire();
+        let (all, required) = interface_fields(&src, "Header");
+        for k in &keys {
+            assert!(all.contains(k), "the header carries `{k}`; web/src/wire.ts's Header does not declare it");
+        }
+        for k in &required {
+            assert!(keys.contains(k), "web/src/wire.ts's Header declares `{k}`; the header does not carry it");
+        }
+    }
+
+    #[test]
+    fn agent_record_is_what_the_browser_declares() {
+        let json = sample_header();
+        let at = json.find("\"agent_record\":").expect("no agent record");
+        let record = &json[at..at + json[at..].find(']').unwrap()];
+        let sent: Vec<String> = record
+            .split("\"name\":\"")
+            .skip(1)
+            .map(|p| p[..p.find('"').unwrap()].to_string())
+            .collect();
+        assert_eq!(sent, union_members(&browser_wire(), "AgentField"), "the agent record and web/src/wire.ts's AgentField differ");
+    }
+}

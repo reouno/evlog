@@ -61,7 +61,7 @@ fn mime(path: &str) -> &'static str {
         "html" => "text/html; charset=utf-8",
         "js" => "text/javascript; charset=utf-8",
         "css" => "text/css; charset=utf-8",
-        "json" => "application/json",
+        "json" | "map" => "application/json",
         "svg" => "image/svg+xml",
         "png" => "image/png",
         _ => "application/octet-stream",
@@ -73,6 +73,24 @@ pub fn web_dir() -> PathBuf {
     match std::env::var("EVLOG_VIEW_WEB") {
         Ok(p) => PathBuf::from(p),
         Err(_) => PathBuf::from(concat!(env!("CARGO_MANIFEST_DIR"), "/web")),
+    }
+}
+
+/// The browser is given `web/js`, which tsc writes from `web/src`. A source newer than the
+/// output means the page is behind what was written, so say so at the start rather than draw
+/// an old world without a word.
+pub fn warn_if_stale(web: &Path) {
+    let newest = |dir: &str, ext: &str| -> Option<std::time::SystemTime> {
+        let it = std::fs::read_dir(web.join(dir)).ok()?;
+        it.flatten()
+            .filter(|e| e.path().extension().map_or(false, |x| x == ext))
+            .filter_map(|e| e.metadata().ok()?.modified().ok())
+            .max()
+    };
+    if let (Some(src), Some(js)) = (newest("src", "ts"), newest("js", "js")) {
+        if src > js {
+            eprintln!("viewer: web/js is older than web/src - run `npm run build` in viewer/web");
+        }
     }
 }
 

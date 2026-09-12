@@ -101,6 +101,7 @@ fn main() {
     let port: u16 = args.get(2).and_then(|p| p.parse().ok()).unwrap_or(7777);
     let r = Arc::new(Replay::load(path));
     let listener = std::net::TcpListener::bind(("127.0.0.1", port)).unwrap_or_else(|e| panic!("port {port}: {e}"));
+    http::warn_if_stale(&http::web_dir());
     println!("viewer: watch at http://127.0.0.1:{port}/");
     for s in listener.incoming().flatten() {
         let r = r.clone();

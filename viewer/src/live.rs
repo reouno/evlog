@@ -45,6 +45,7 @@ impl Live {
             header_json,
         });
         let listener = TcpListener::bind(("127.0.0.1", port)).unwrap_or_else(|e| panic!("viewer: port {port}: {e}"));
+        http::warn_if_stale(&http::web_dir());
         let l = live.clone();
         std::thread::spawn(move || {
             for s in listener.incoming().flatten() {
