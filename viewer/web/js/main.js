@@ -4,6 +4,7 @@ import { LiveSource, ReplaySource } from './net.js';
 import { World } from './world.js';
 import { Ground, Sky, Rig, UP } from './render.js';
 import { Life } from './life.js';
+import { alongLine, onLine, Walk } from './line.js';
 import { RECORD } from './wire.js';
 const $ = (id) => document.getElementById(id);
 const $i = (id) => document.getElementById(id);
@@ -18,6 +19,12 @@ let shapeOf = -1, drawnKey = -1, drawnSwing = 99, last = performance.now(), fps 
 let plantAt = null;
 let miniBase = null;
 let groundDue = true, plantsDue = true, layersStep = 0, layersDrawnAt = 0;
+// Following a line of descent (see line.ts): the path a recording offers, or a walk from a body
+// picked off the screen.
+let lines = [];
+let line = null;
+let walk = null;
+let lineNote = '';
 async function boot() {
     let state = { live: false };
     try {
@@ -109,6 +116,7 @@ function loop(now) {
     last = now;
     fps += (1 / Math.max(dt, 1e-3) - fps) * 0.1;
     advance(dt);
+    descend();
     rig.update(dt, ground);
     camera.updateMatrixWorld();
     sky.follow(camera);
@@ -164,6 +172,81 @@ function loop(now) {
     renderer.render(scene, camera);
     hud(a, b, t, here, swing, before, after);
     requestAnimationFrame(loop);
+}
+// ---- the line of descent ---------------------------------------------------
+/** Whichever way a line is being followed, it says which body the eye is on now.
+ *
+ * Moving the view lets a body go (`Rig.pan`), and it lets the line go with it: a watcher who
+ * walks away is not pulled back to a body's great-grandchild a moment later. */
+function descend() {
+    if (!line && !walk)
+        return;
+    if (rig.follow === null) {
+        line = null;
+        walk = null;
+        return;
+    }
+    if (line) {
+        const id = onLine(line, step);
+        if (id !== picked) {
+            picked = id;
+            rig.follow = id;
+        }
+    }
+    else if (walk) {
+        const id = walk.follow(world, step);
+        if (id === null) {
+            walk = null;
+            lineNote = 'この線は絶えた'; // it died leaving no child to go on with
+        }
+        else if (id !== picked) {
+            picked = id;
+            rig.follow = id;
+        }
+    }
+}
+/** The lines a recording offers: a body alive in its last frame walked back to the first of its
+ * line, the longest first and then the ones that share the least with those already there. */
+async function loadLines() {
+    try {
+        lines = (await (await fetch('/lines')).json());
+    }
+    catch (e) {
+        return;
+    }
+    if (!lines.length)
+        return;
+    $('lines').hidden = false;
+    $('linelist').innerHTML = lines
+        .map((l, i) => `<button data-i="${i}" title="このうち ${l.seen} 体がフレームに残っている">${l.births.toLocaleString()} 代 <span class="muted">系統 ${l.lineage} · #${l.body}</span></button>`)
+        .join('');
+    for (const b of Array.from($('linelist').querySelectorAll('button'))) {
+        b.onclick = () => watchLine(lines[+b.dataset.i]);
+    }
+}
+/** Watch this line from the first of it: the replay goes to where the line starts and plays. */
+function watchLine(l) {
+    line = l;
+    walk = null;
+    lineNote = '';
+    if (!source.live) {
+        step = l.from;
+        source.asked.clear();
+        source.fetchFrom(step);
+        playing = true;
+        $('play').textContent = '⏸';
+    }
+    picked = onLine(l, step);
+    rig.follow = picked;
+    rig.want = Math.min(rig.dist, 24);
+}
+/** Go on with a child of the body being watched, at random, for as long as the line lasts. */
+function setWalk(on) {
+    walk = on && picked !== null ? new Walk(picked, step) : null;
+    if (on)
+        line = null;
+    lineNote = '';
+    $('walkon').textContent = walk ? '乗り換えをやめる' : '子へ乗り換えて追う';
 }
 /** Shadows read well but cost a second pass over everything that stands. */
 function setShadows(on) {
@@ -235,6 +318,11 @@ function hud(a, b, t, here, swing, before, after) {
     $('speedv').textContent = (source.live ? '' : (speed < 0 ? '逆 ' : '')) + Math.abs(speed).toFixed(speed >= 10 ? 0 : 1) + ' 歩/秒';
     selection(a, b, t);
     minimap(a, b, t, before, after);
+    const along = line ? `${(alongLine(line, step) + 1).toLocaleString()} / ${line.seen.toLocaleString()} 代目 · #${picked}` : walk ? `子へ乗り換えながら追っている · #${picked}` : lineNote;
+    $('linenow').textContent = along;
+    $('linenow').hidden = !along;
+    $('lineoff').hidden = !line && !walk;
+    $('linenext').hidden = !line;
 }
 // The year as a dial: a ring of the four seasons with a hand on it, and the name under it.
 // The world with no season law (`weather` 0 or cloud) says so and shows no ring.
@@ -286,12 +374,15 @@ function selection(a, b = null, t = 0) {
     }
     empty.hidden = true;
     box.hidden = false;
+    $('walkon').hidden = !world.h.births || line !== null;
     // The body in the frame being shown, or the frame it was last seen in and, if a frame since
     // says so, what it died of.
     const seen = a ? world.fate(picked, a.step) : { f: null, died: null };
     const { f, i } = seen;
     if (f === null) {
-        $('fate').textContent = 'いなくなった';
+        // With no frame in hand nothing can be said yet: a seek (and following a line is one seek
+        // after another) throws away the window and the next one has to come over the wire.
+        $('fate').textContent = a ? 'いなくなった' : 'フレームを待っている';
         $('gauges').innerHTML = $('selrows').innerHTML = $('shape').innerHTML = '';
         shapeOf = -1;
         lifeChart(null);
@@ -402,6 +493,9 @@ function lifeChart(id, upto = Infinity) {
 function unfollow() {
     picked = null;
     rig.follow = null;
+    line = null;
+    walk = null;
+    lineNote = '';
     selection(null);
 }
 /** The map in the corner: the world from above, with a dot for every body.
@@ -541,6 +635,23 @@ function bindUI(header) {
     }
     $i('v-shadow').onchange = (e) => setShadows(e.target.checked);
     $('unfollow').onclick = unfollow;
+    $('walkon').onclick = () => setWalk(!walk);
+    $('lineoff').onclick = () => {
+        line = null;
+        setWalk(false);
+    };
+    // A line is a thousand lives long; this goes to where the next one of them begins.
+    $('linenext').onclick = () => {
+        if (!line || source.live)
+            return;
+        step = line.path[Math.min(alongLine(line, step) + 1, line.path.length - 1)][1];
+        source.asked.clear();
+        source.fetchFrom(step);
+    };
+    // A recording knows how it ends, so it can say which lines reach the end; a world running now
+    // cannot, and there a body is followed into a child at random or not at all.
+    if (!source.live && header.births)
+        loadLines();
     addEventListener('keydown', (e) => {
         if (e.key === 'Escape')
             unfollow();
@@ -564,6 +675,9 @@ function bindUI(header) {
             return;
         if (pressedAt && Math.hypot(e.clientX - pressedAt[0], e.clientY - pressedAt[1]) > 5)
             return;
+        // A body chosen by hand is the watcher's own choice: whatever line was being followed ends.
+        line = null;
+        setWalk(false);
         const r = e.target.getBoundingClientRect();
         pointer.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
         ray.setFromCamera(pointer, camera);

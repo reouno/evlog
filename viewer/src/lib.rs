@@ -1,9 +1,10 @@
 //! Watching the world: the world writes frames, the browser draws them.
 //!
-//! An experiment adds three lines (`View::from_env`, `view.frame(..)`, `view.tick(step)`), and a
-//! fourth where its bodies die if it says what they die of (`view.died(..)`), and nothing else
-//! changes: with EVLOG_VIEW unset the viewer does not exist and the run is what it was. What
-//! the frames are is in `wire.rs`, and it is the whole interface.
+//! An experiment adds three lines (`View::from_env`, `view.frame(..)`, `view.tick(step)`), a
+//! fourth where its bodies die if it says what they die of (`view.died(..)`) and a fifth where
+//! they are born if it says who they come from (`view.born(..)`), and nothing else changes: with
+//! EVLOG_VIEW unset the viewer does not exist and the run is what it was. What the frames are is
+//! in `wire.rs`, and it is the whole interface.
 //!
 //! EVLOG_VIEW:
 //!   rec                          record the whole run to <prefix>_view.bin
@@ -36,6 +37,8 @@ pub struct View {
     keyed: bool, // whether a frame with the cell layers has gone out yet
     causes: bool, // whether the world names what its bodies die of
     dead: Vec<(u32, u8)>, // who died since the last frame, and of what
+    parents: bool, // whether the world says who a body came from
+    born: Vec<(u32, u32)>, // who was born since the last frame, and from whom
     out: Out,
 }
 
@@ -87,7 +90,8 @@ impl View {
             other => panic!("EVLOG_VIEW: unknown mode {other:?} (rec or serve)"),
         };
         let causes = !init.deaths.is_empty();
-        Some(View { layers: init.layers, from, until, stride, layer_stride, bodies: wire::Bodies::default(), buf: Vec::new(), keyed: false, causes, dead: Vec::new(), out })
+        let parents = init.births;
+        Some(View { layers: init.layers, from, until, stride, layer_stride, bodies: wire::Bodies::default(), buf: Vec::new(), keyed: false, causes, dead: Vec::new(), parents, born: Vec::new(), out })
     }
 
     /// A body died of `cause` (the number of its name in `Init::deaths`). It goes out with the
@@ -95,6 +99,14 @@ impl View {
     pub fn died(&mut self, step: u64, id: u32, cause: u8) {
         if self.causes && step >= self.from && step <= self.until {
             self.dead.push((id, cause));
+        }
+    }
+
+    /// A body was born from `parent`. Every birth goes out with the next frame, the bodies that
+    /// live and die between two frames as well: a line of descent is followed through those.
+    pub fn born(&mut self, step: u64, child: u32, parent: u32) {
+        if self.parents && step >= self.from && step <= self.until {
+            self.born.push((child, parent));
         }
     }
 
@@ -117,7 +129,7 @@ impl View {
     {
         let key = self.is_key(step);
         self.keyed |= key;
-        let View { layers: specs, bodies, buf, causes, dead, out, .. } = self;
+        let View { layers: specs, bodies, buf, causes, dead, parents, born, out, .. } = self;
         let mut new_bodies: Vec<Vec<u8>> = Vec::new();
         let rec = {
             let fw = wire::FrameWriter::start(buf, step, globals);
@@ -131,9 +143,11 @@ impl View {
                 fw.agent(&a, id);
             });
             let fw = if *causes { fw.deaths(dead) } else { fw };
+            let fw = if *parents { fw.births(born) } else { fw };
             fw.finish()
         };
         dead.clear();
+        born.clear();
         match out {
             Out::File(f) => {
                 for b in &new_bodies {

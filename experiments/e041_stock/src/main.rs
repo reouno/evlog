@@ -2431,6 +2431,7 @@ fn main() {
             globals: vec!["sun", "air", "pop"],
             blocks: vec!["empty", "hard", "muscle", "sensor", "digestive"],
             deaths: vec!["hunger", "age", "broken", "thirst"], // the numbers the step loop gives `died`
+            births: false,
             // The age a body dies at is a constant, not an argument, so it is not in the results'
             // params; the viewer needs it to show how much of a life is left.
             params: format!("{},\"max_age\":{MAX_AGE}}}", params.trim_end_matches('}')),

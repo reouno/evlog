@@ -3157,6 +3157,7 @@ fn main() {
             globals: vec!["sun", "air", "pop"],
             blocks: vec!["empty", "hard", "muscle", "sensor", "digestive"],
             deaths: CAUSES.to_vec(), // the numbers the step loop gives `died`
+            births: true, // #62: who a body came from, for following a line of descent
             // The age a body dies at is a constant, not an argument, so it is not in the results'
             // params; the viewer needs it to show how much of a life is left. Under wear there is
             // no such age (0).
@@ -4105,6 +4106,11 @@ fn main() {
                     // e045: a child cut down to its largest part, and the blocks of it not built.
                     cc.born_cut += (a.body.cut > 0) as u64;
                     cc.not_built += a.body.cut as u64;
+                    // #62: who it came from, so a watcher can follow a line of descent. Only a
+                    // child that found a place is born; the rest never enter the world.
+                    if let Some(v) = view.as_mut() {
+                        v.born(step, a.id as u32, agents[parent].id as u32);
+                    }
                     newborn.push(a);
                 }
                 _ => {

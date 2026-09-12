@@ -80,12 +80,28 @@ export interface Header {
   globals: string[];
   blocks: string[]; // block kinds by index, 0 = empty
   deaths: string[]; // what a body dies of, by the number a frame carries (empty: none are sent)
+  births: boolean; // whether a frame says who each body born since the frame before came from
   agent_record: AgentFieldSpec[];
   params: Params;
   height: number[];
   band: number[];
   /** Added by the replay server, not by `header_json`: what the recording holds. */
   replay?: { first: number; last: number; frames: number; bodies: number };
+}
+
+/** One line of descent through a recording (`/lines`, replay only): a body alive in the last
+ * frame walked back to the first of its line. `path` is the bodies of it a frame caught, in
+ * order, each with the first and the last step it is in; `births` counts the whole line, the
+ * bodies that lived and died between two frames as well. */
+export interface Line {
+  body: number; // the body alive at the end that the line was walked back from
+  lineage: number;
+  births: number;
+  seen: number; // bodies of the line a frame caught (the ones `path` holds)
+  own: number; // bodies of it that are on no line offered before it
+  from: number;
+  to: number;
+  path: [number, number, number][];
 }
 
 /** What `/state` says before the stream starts. */

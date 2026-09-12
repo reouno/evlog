@@ -43,7 +43,9 @@ Nothing happens without EVLOG_VIEW, and a run with it writes the same results as
   slowly) and every living body: where it is, which way it faces, its shape, its lineage, what
   it eats, its water, its energy and the energy at which it breeds, its fat (a share of what its
   flesh can hold), its age and the blocks it was born with. Then the bodies that died since the
-  frame before, each with a number for what it died of; the header's `deaths` names them.
+  frame before, each with a number for what it died of (the header's `deaths` names them), and
+  the bodies born since the frame before, each with the body it came from (when the header says
+  `births`) - every birth, the ones that lived and died between two frames as well.
 
 ### When an experiment grows
 
@@ -70,7 +72,8 @@ if let Some(v) = view.as_mut() {                                       // in the
 ```
 
 A world that names what its bodies die of (`Init::deaths`) also calls `v.died(step, id, cause)`
-where one dies, and the next frame carries it.
+where one dies, and one that says who a body came from (`Init::births`) calls
+`v.born(step, child, parent)` where one is born; the next frame carries them.
 
 ## The front end
 
@@ -141,6 +144,31 @@ leaves turn amber and then fall, and a conifer stands green through it; the lawn
 the sun rides low and pale in winter and high and warm in summer, over the ground the eye is
 looking at rather than the one cell it sits on. The HUD has a dial of the year with the season
 named on it. A world with no season law says so and none of this happens.
+
+### A line of descent
+
+A body is watched by clicking it, and the watching can carry on past its death, into its children.
+
+A recording knows how it ends, so the replay server walks it: one pass over every frame builds who
+came from whom, and from a body alive in the last frame the line is walked back to the first of it
+(`/lines`). Followed forward, every birth on that path goes to the child that leads to the end,
+and the watching never stops. The lines offered are the longest first and then the ones that share
+the least with those already offered: everything alive at the end of this world descends from a
+handful of the bodies it started with, so lines chosen any other way are the same line for most of
+their length (a `lineage` is a group detected again at every log, not a family, so it does not
+separate them either). The index is one pass and it is cheap: 737,000 bodies of e052's world
+(128 cells, 100,000 steps, 2,000 frames, 205 MB) in 0.2 s, and the longest line through it is 543
+lives. Playing one of those end to end is a long watch, so `次の代へ` goes to where the next of
+them begins.
+
+A body picked off the screen has no such future: at each of its births the watching goes on with
+the parent or the child evenly, and when that line dies out it says so and stops. It is the only
+way to follow a line in a world running live, which does not know what becomes of anything.
+
+This is what every birth is in the frames for. A body lives about 200 steps and a time-lapse looks
+every 50, so a line walked back through the bodies the frames caught would break wherever the
+recording did not look. The bodies no frame caught are counted in the line's length and left out
+of the path - the camera has nowhere to go for them, so it goes to the next one that was seen.
 
 ### Between two frames
 

@@ -3066,6 +3066,7 @@ fn main() {
             globals: vec!["sun", "air", "pop"],
             blocks: vec!["empty", "hard", "muscle", "sensor", "digestive"],
             deaths: CAUSES.to_vec(), // the numbers the step loop gives `died`
+            births: false,
             // The age a body dies at is a constant, not an argument, so it is not in the results'
             // params; the viewer needs it to show how much of a life is left. Under wear there is
             // no such age (0).

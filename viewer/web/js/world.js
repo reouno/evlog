@@ -151,10 +151,20 @@ export class World {
             for (let k = 0; k < m; k++, o += 5)
                 deaths.set(dv.getUint32(o, true), p[o + 4]);
         }
+        // Who was born since the frame before, and from whom: every birth, including the bodies
+        // that lived and died between two frames, so a line of descent holds through a time-lapse.
+        let births = null;
+        if (this.h.births) {
+            const m = dv.getUint32(o, true);
+            o += 4;
+            births = new Map();
+            for (let k = 0; k < m; k++, o += 8)
+                births.set(dv.getUint32(o, true), dv.getUint32(o + 4, true));
+        }
         const index = new Map();
         for (let i = 0; i < n; i++)
             index.set(a.id[i], i);
-        this.frames.set(step, { step, globals, n, a, index, deaths });
+        this.frames.set(step, { step, globals, n, a, index, deaths, births });
         insort(this.steps, step);
         return step;
     }

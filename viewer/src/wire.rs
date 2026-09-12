@@ -18,12 +18,16 @@
 //!     [u8 n_layers][(u8 layer index, u8 value per cell) x n_layers]   // only on layer steps
 //!     [u32 n_agents][agent record x n_agents]
 //!     [u32 n_dead][(u32 id, u8 cause) x n_dead]                        // when the header names causes
+//!     [u32 n_born][(u32 child, u32 parent) x n_born]                   // when the header says `births`
 //! ```
 //!
 //! The header says what the layers, the globals and the agent record are, so a world that
 //! grows a new layer or a new field says so there and the viewer follows without a new format.
 //! The dead are the bodies that died since the frame before, with what they died of (the
 //! header's `deaths` names the causes by number): a watcher following one sees why it is gone.
+//! The born are the bodies born since the frame before and who they came from - every birth, not
+//! only the ones a frame happens to catch, so a line of descent holds through a time-lapse in
+//! which most bodies live and die between two frames.
 //! Cell layers change slowly (a plant grows by 0.01 a step) and are written every
 //! `layer_stride` frames; the bodies move every step.
 
@@ -81,6 +85,7 @@ pub struct Init<'a> {
     pub globals: Vec<&'static str>,
     pub blocks: Vec<&'static str>, // block kinds by index, 0 = empty
     pub deaths: Vec<&'static str>, // what a body dies of, by the number `View::died` is given (empty: none are sent)
+    pub births: bool,              // whether the world says who a body came from (`View::born`)
     pub params: String,            // the run's laws and arguments, a JSON object
 }
 
@@ -143,7 +148,7 @@ pub fn header_json(init: &Init, stride: u64, layer_stride: u64, live: bool) -> S
     let bands = init.band.iter().map(|b| b.to_string()).collect::<Vec<_>>().join(",");
     format!(
         "{{\"version\":1,\"experiment\":\"{}\",\"live\":{live},\"w\":{},\"h\":{},\"sub\":{},\"stride\":{stride},\"layer_stride\":{layer_stride},\
-         \"layers\":[{layers}],\"globals\":[{}],\"blocks\":[{}],\"deaths\":[{}],\"agent_record\":{agent},\"params\":{},\"height\":[{}],\"band\":[{bands}]}}",
+         \"layers\":[{layers}],\"globals\":[{}],\"blocks\":[{}],\"deaths\":[{}],\"births\":{},\"agent_record\":{agent},\"params\":{},\"height\":[{}],\"band\":[{bands}]}}",
         init.experiment,
         init.w,
         init.h,
@@ -151,6 +156,7 @@ pub fn header_json(init: &Init, stride: u64, layer_stride: u64, live: bool) -> S
         strings(&init.globals),
         strings(&init.blocks),
         strings(&init.deaths),
+        init.births,
         init.params,
         floats(init.height),
     )
@@ -249,11 +255,71 @@ impl<'a> FrameWriter<'a> {
         }
         self
     }
+
+    /// The bodies born since the frame before and who they came from, after the dead. Every
+    /// birth is here, the ones that lived and died between two frames as well: without them a
+    /// line of descent breaks wherever a time-lapse did not look.
+    pub fn births(self, born: &[(u32, u32)]) -> Self {
+        self.buf.extend_from_slice(&(born.len() as u32).to_le_bytes());
+        for &(child, parent) in born {
+            self.buf.extend_from_slice(&child.to_le_bytes());
+            self.buf.extend_from_slice(&parent.to_le_bytes());
+        }
+        self
+    }
     pub fn finish(self) -> Vec<u8> {
         let at = self.agents_at;
         self.buf[at..at + 4].copy_from_slice(&self.n_agents.to_le_bytes());
         record(KIND_FRAME, self.buf)
     }
+}
+
+/// Where the parts of a frame are, for a reader that walks a whole recording (the replay's
+/// index of who came from whom). `agents` is `n_agents` records of `AGENT_BYTES`; `born` is
+/// `n_born` pairs of (child, parent).
+pub struct FrameParts<'a> {
+    pub step: u64,
+    pub n_agents: usize,
+    pub agents: &'a [u8],
+    pub n_born: usize,
+    pub born: &'a [u8],
+}
+
+/// Walk a frame record's payload. `cells` is how many cells the world has and `deaths`/`births`
+/// what the header says it sends; a record cut short gives what could be read of it.
+pub fn frame_parts(p: &[u8], cells: usize, deaths: bool, births: bool) -> FrameParts<'_> {
+    let u32_at = |o: usize| u32::from_le_bytes(p[o..o + 4].try_into().unwrap()) as usize;
+    let nothing = FrameParts { step: 0, n_agents: 0, agents: &[], n_born: 0, born: &[] };
+    if p.len() < 9 {
+        return nothing;
+    }
+    let step = frame_step(p);
+    let mut o = 8;
+    o += 1 + p[o] as usize * 4; // the globals
+    if o >= p.len() {
+        return FrameParts { step, ..nothing };
+    }
+    o += 1 + p[o] as usize * (1 + cells); // the cell layers, on the frames that carry them
+    if o + 4 > p.len() {
+        return FrameParts { step, ..nothing };
+    }
+    let n_agents = u32_at(o);
+    o += 4;
+    let agents = &p[o..(o + n_agents * AGENT_BYTES).min(p.len())];
+    o += n_agents * AGENT_BYTES;
+    let none = FrameParts { step, n_agents, agents, n_born: 0, born: &[] };
+    if deaths {
+        if o + 4 > p.len() {
+            return none;
+        }
+        o += 4 + u32_at(o) * 5;
+    }
+    if !births || o + 4 > p.len() {
+        return none;
+    }
+    let n_born = u32_at(o);
+    o += 4;
+    FrameParts { step, n_agents, agents, n_born, born: &p[o..(o + n_born * 8).min(p.len())] }
 }
 
 /// The step of a frame record, for the replay index.
@@ -292,6 +358,7 @@ mod tests {
             globals: vec!["sun"],
             blocks: vec!["empty", "hard"],
             deaths: vec!["hunger"],
+            births: true,
             params: "{\"weather\":\"season\"}".to_string(),
         };
         header_json(&init, 1, 30, false)
