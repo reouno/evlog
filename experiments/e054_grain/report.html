@@ -1,0 +1,1876 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>e054 The grain of the food - Report</title>
+<style>
+:root {
+  --surface: #fcfcfb; --page: #f9f9f7; --ink: #0b0b0b; --ink2: #52514e; --grid: #e1e0d9; --border: rgba(11,11,11,0.10);
+  --s1: #2a78d6; --cell: #f1f0ea;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --surface: #1a1a19; --page: #0d0d0d; --ink: #ffffff; --ink2: #c3c2b7; --grid: #2c2c2a; --border: rgba(255,255,255,0.10);
+    --s1: #2a78d6; --cell: #262624;
+  }
+}
+:root[data-theme="dark"] {
+  --surface: #1a1a19; --page: #0d0d0d; --ink: #ffffff; --ink2: #c3c2b7; --grid: #2c2c2a; --border: rgba(255,255,255,0.10);
+  --s1: #2a78d6; --cell: #262624;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--page); color: var(--ink); font: 15px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+main { max-width: 960px; margin: 0 auto; padding: 32px 20px 64px; }
+h1 { font-size: 26px; margin: 0 0 4px; }
+h2 { font-size: 19px; margin: 40px 0 8px; }
+h3 { font-size: 16px; margin: 24px 0 8px; }
+p, li { color: var(--ink); max-width: 72ch; }
+.sub { color: var(--ink2); margin: 0 0 24px; }
+.tldr { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--s1); border-radius: 8px; padding: 12px 18px; }
+.tldr h2 { margin: 0 0 6px; font-size: 15px; }
+.tldr p { margin: 0; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 20px; }
+@media (max-width: 480px) { .grid2 { grid-template-columns: 1fr; } }
+.grid2 > .fig:only-child { max-width: 470px; }
+.fig { margin: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 14px 8px; }
+.fig svg { width: 100%; height: auto; display: block; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+figcaption strong { display: block; font-size: 15px; }
+figcaption span { display: block; color: var(--ink2); font-size: 13px; min-height: 2.6em; margin-bottom: 6px; }
+.diagram { margin: 12px 0; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px 8px; color: var(--ink); }
+.diagram figcaption { color: var(--ink2); font-size: 13px; margin-top: 4px; }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+.card { margin: 0; display: grid; grid-template-columns: 120px 1fr; gap: 12px; align-items: start; }
+.card figcaption { font-size: 12.5px; color: var(--ink2); margin: 0; } .card figcaption strong { display: inline; font-size: 13px; color: var(--ink); }
+.measures { columns: 2; column-gap: 24px; max-width: none; padding-left: 20px; } .measures li { break-inside: avoid; }
+@media (max-width: 640px) { .measures { columns: 1; } }
+table { border-collapse: collapse; font-size: 13.5px; font-variant-numeric: tabular-nums; }
+th, td { padding: 6px 12px; text-align: right; border-bottom: 1px solid var(--grid); }
+th:first-child, td:first-child { text-align: left; white-space: nowrap; }
+th { color: var(--ink2); font-weight: 600; }
+.tw { overflow-x: auto; margin: 8px 0; }
+details { margin: 8px 0; } summary { cursor: pointer; color: var(--ink2); }
+.verdicts { list-style: none; padding: 0; margin: 12px 0 0; } .verdicts li { margin: 4px 0; }
+.verdict { display: inline-block; padding: 1px 8px; border-radius: 4px; font-size: 12.5px; font-weight: 600; background: rgba(12,163,12,0.12); color: #006300; }
+.verdict.no { background: rgba(208,59,59,0.12); color: #a12b2b; }
+.verdict.partly { background: rgba(250,178,25,0.15); color: #8a5a00; }
+:root[data-theme="dark"] .verdict.partly { color: #fab219; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .verdict.partly { color: #fab219; } }
+:root[data-theme="dark"] .verdict { color: #0ca30c; } :root[data-theme="dark"] .verdict.no { color: #e66767; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .verdict { color: #0ca30c; } :root:not([data-theme="light"]) .verdict.no { color: #e66767; } }
+</style>
+</head>
+<body>
+<main>
+<h1>e054: The grain of the food</h1>
+<p class="sub">Experiment report - 2026-09-12 - the same food, laid in patches a body could cross, seeds 9-12 (#64). Answer: no. The patches merge into ribbons 35 cells across, so a body is born on the rich land and never has to leave it; travel falls. Not kept.</p>
+
+<section class="tldr">
+<h2>TL;DR</h2>
+<p>The world's food has always been spread evenly over every cell. Here the same food falls in patches about 8 cells apart - a distance a body could walk within its life. The land becomes uneven as asked (37% of it rich, twice the standing plant, the crowd gathering on it) and the world stands. But bodies travel less, not more, and the world grows 15% less food. Not kept.</p>
+</section>
+
+<h2>1. Question</h2>
+<p>Measured in e048's world: the crowd eats the world down to its regrowth, and every place is equally thin - no bare cells anywhere, the standing plant 0.9-1.7 of a cap of 8. A body walks 2.5-5 cells of a 128-cell world in a life because nothing asks it to go anywhere. The machinery for uneven food has been in the code since e011, but at a grain of 64 cells - further than any body can cross.</p>
+<ol>
+  <li><strong>Bodies travel:</strong> the median travel of a body aged 200-500 steps above the flat world's 2.5-5 cells, on three seeds of four.</li>
+  <li><strong>The crowd is uneven, and the thin land is where hunger kills:</strong> more standing plant on the rich land, and starvation falling on the thin land above its share of the bodies.</li>
+  <li><strong>The world stands:</strong> every winter floor above 50.</li>
+</ol>
+
+<h2>2. The world</h2>
+<p>One argument: the cells of the world per food patch. The regrowth of the world, until now the same on every cell, is laid down in Gaussian patches about 8 cells apart, each carrying the food of 64 cells and drifting one cell every 50 steps. The world grows exactly as much as before; only where it lands changes.</p>
+
+<figure class="fig diagram">
+<svg viewBox="0 0 880 336" width="100%" role="img" aria-label="A line across the world: the food's regrowth comes in patches about 8 cells apart, each carrying the regrowth of 64 cells, against the flat world's even rate" font-size="12" fill="currentColor" stroke="currentColor">
+  <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="currentColor" stroke="none"/></marker></defs>
+  <g stroke="none">
+    <text x="40" y="24" font-weight="600">regrowth of a cell, along a line of 64 world cells</text>
+    <text x="820" y="24" text-anchor="end">patch: width 2, one per 64 cells</text>
+  </g>
+  <rect x="40.0" y="102" width="502.7" height="128" fill="var(--s1)" fill-opacity="0.13" stroke="none"/><rect x="600.6" y="102" width="54.8" height="128" fill="var(--s1)" fill-opacity="0.13" stroke="none"/><rect x="704.2" y="102" width="94.5" height="128" fill="var(--s1)" fill-opacity="0.13" stroke="none"/>
+  <line x1="40" y1="230" x2="820" y2="230" stroke-opacity="0.35"/>
+  <line x1="40" y1="212.8" x2="820" y2="212.8" stroke-opacity="0.6" stroke-dasharray="4 3"/>
+  <path d="M40.0,175.2 L43.0,175.6 L46.1,176.2 L49.1,177.0 L52.2,178.0 L55.2,179.3 L58.3,180.9 L61.3,182.6 L64.4,184.6 L67.4,186.6 L70.5,188.6 L73.5,190.6 L76.6,192.6 L79.6,194.3 L82.7,195.9 L85.7,197.3 L88.8,198.5 L91.8,199.5 L94.8,200.3 L97.9,200.9 L100.9,201.3 L104.0,201.5 L107.0,201.4 L110.1,201.1 L113.1,200.6 L116.2,199.6 L119.2,198.3 L122.3,196.6 L125.3,194.4 L128.4,191.8 L131.4,188.8 L134.5,185.4 L137.5,181.8 L140.5,178.0 L143.6,174.1 L146.6,170.4 L149.7,167.0 L152.7,164.0 L155.8,161.5 L158.8,159.7 L161.9,158.7 L164.9,158.5 L168.0,159.1 L171.0,160.5 L174.1,162.6 L177.1,165.4 L180.2,168.7 L183.2,172.3 L186.2,176.2 L189.3,180.1 L192.3,183.9 L195.4,187.5 L198.4,190.7 L201.5,193.5 L204.5,195.9 L207.6,197.8 L210.6,199.2 L213.7,200.1 L216.7,200.7 L219.8,200.9 L222.8,200.9 L225.9,200.7 L228.9,200.5 L232.0,200.3 L235.0,200.1 L238.0,200.1 L241.1,200.2 L244.1,200.5 L247.2,201.0 L250.2,201.6 L253.3,202.3 L256.3,203.1 L259.4,204.0 L262.4,204.8 L265.5,205.6 L268.5,206.3 L271.6,206.7 L274.6,206.9 L277.7,206.9 L280.7,206.4 L283.8,205.6 L286.8,204.4 L289.8,202.7 L292.9,200.6 L295.9,197.9 L299.0,194.7 L302.0,191.1 L305.1,186.9 L308.1,182.3 L311.2,177.2 L314.2,171.7 L317.3,166.0 L320.3,159.9 L323.4,153.8 L326.4,147.5 L329.5,141.4 L332.5,135.5 L335.5,130.0 L338.6,125.0 L341.6,120.6 L344.7,117.0 L347.7,114.4 L350.8,112.7 L353.8,112.0 L356.9,112.4 L359.9,113.8 L363.0,116.1 L366.0,119.2 L369.1,123.0 L372.1,127.3 L375.2,132.0 L378.2,136.8 L381.2,141.5 L384.3,146.0 L387.3,150.1 L390.4,153.6 L393.4,156.6 L396.5,158.8 L399.5,160.3 L402.6,161.1 L405.6,161.1 L408.7,160.5 L411.7,159.2 L414.8,157.4 L417.8,155.2 L420.9,152.6 L423.9,149.8 L427.0,146.8 L430.0,143.8 L433.0,140.8 L436.1,138.0 L439.1,135.2 L442.2,132.8 L445.2,130.6 L448.3,128.8 L451.3,127.4 L454.4,126.5 L457.4,126.1 L460.5,126.2 L463.5,126.8 L466.6,128.0 L469.6,129.8 L472.7,132.0 L475.7,134.7 L478.8,137.8 L481.8,141.3 L484.8,145.0 L487.9,148.8 L490.9,152.8 L494.0,156.8 L497.0,160.9 L500.1,164.9 L503.1,168.9 L506.2,172.9 L509.2,176.8 L512.3,180.7 L515.3,184.5 L518.4,188.3 L521.4,192.0 L524.5,195.6 L527.5,199.1 L530.5,202.4 L533.6,205.5 L536.6,208.4 L539.7,211.0 L542.7,213.3 L545.8,215.3 L548.8,217.0 L551.9,218.3 L554.9,219.3 L558.0,220.0 L561.0,220.3 L564.1,220.4 L567.1,220.3 L570.2,219.9 L573.2,219.4 L576.2,218.7 L579.3,218.0 L582.3,217.2 L585.4,216.3 L588.4,215.5 L591.5,214.7 L594.5,214.0 L597.6,213.3 L600.6,212.6 L603.7,212.1 L606.7,211.5 L609.8,211.0 L612.8,210.6 L615.9,210.1 L618.9,209.7 L622.0,209.3 L625.0,209.0 L628.0,208.7 L631.1,208.6 L634.1,208.5 L637.2,208.7 L640.2,208.9 L643.3,209.4 L646.3,210.0 L649.4,210.8 L652.4,211.8 L655.5,212.9 L658.5,214.0 L661.6,215.2 L664.6,216.3 L667.7,217.3 L670.7,218.2 L673.8,218.9 L676.8,219.4 L679.8,219.5 L682.9,219.5 L685.9,219.1 L689.0,218.4 L692.0,217.5 L695.1,216.4 L698.1,215.1 L701.2,213.7 L704.2,212.2 L707.3,210.8 L710.3,209.4 L713.4,208.2 L716.4,207.1 L719.5,206.3 L722.5,205.6 L725.5,205.2 L728.6,205.0 L731.6,204.9 L734.7,205.0 L737.7,205.1 L740.8,205.2 L743.8,205.3 L746.9,205.4 L749.9,205.3 L753.0,205.1 L756.0,204.9 L759.1,204.6 L762.1,204.3 L765.2,204.0 L768.2,203.8 L771.2,203.7 L774.3,203.9 L777.3,204.2 L780.4,204.9 L783.4,205.8 L786.5,206.9 L789.5,208.3 L792.6,209.9 L795.6,211.6 L798.7,213.4 L801.7,215.3 L804.8,217.1 L807.8,218.9 L810.9,220.6 L813.9,222.1 L817.0,223.5 L820.0,224.8" fill="none" stroke-width="1.8" stroke="var(--s1)"/>
+  <g stroke="none">
+    <text x="40" y="252">shaded: rich land, 37% of the cells</text>
+    <text x="820" y="252" text-anchor="end">between: thin land, where a body starves 1.2-1.4 times as often</text>
+  </g>
+  <line x1="40" y1="272" x2="66" y2="272" stroke-opacity="0.6" stroke-dasharray="4 3"/>
+  <line x1="138" y1="298" x2="235" y2="298" stroke-width="1.6" marker-end="url(#ah)"/>
+  <g stroke="none">
+    <text x="74" y="276">the flat world of every experiment since e019: this rate on every cell, and the same food in all</text>
+    <text x="247" y="302">8 cells to the next patch: 133 steps at full speed, against a life of 200-300 steps</text>
+    <text x="40" y="328">A cell under a body does not grow, so a body that stays empties its patch; the patch comes back at the world's own rate.</text>
+  </g>
+</svg>
+<figcaption>Figure 1. The law: the world's regrowth, until now spread evenly over every cell, is laid down in Gaussian patches about 8 cells apart. The sum over the world is unchanged - only where the food lands.</figcaption>
+</figure>
+
+<p><strong>Runs.</strong> Pilots on seed 9, 20,000 steps, at grains of 8 and 16 cells against the flat world. Both stood, and the batch took grain 8, the one a body can cross within a life: seeds 9-12, 100,000 steps, patchy and flat on the same seeds, eight runs at once on the Mac, 25 minutes.</p>
+<ul class="measures">
+  <li><strong>travel</strong> - how far a body stands from where it was born, in world cells (median, bodies aged 200-500 steps).</li>
+  <li><strong>moved</strong> - sub-cells a body moves by its own actions, per step (4 sub-cells to a cell).</li>
+  <li><strong>rich land</strong> - the cells whose regrowth is at or above the flat world's rate; the rest is thin.</li>
+  <li><strong>starving</strong> - bodies that starve per 1,000 body-steps, on the thin land and on the rich.</li>
+  <li><strong>intake per gut</strong> - matter a gut block takes per step: how well the world feeds a body.</li>
+  <li><strong>kills' share, diversity</strong> - the flesh of kills in what bodies eat; the diversity number (#42).</li>
+</ul>
+
+<h2>3. Results</h2>
+<p>Means over the second half (steps 50,000-100,000). Pairs are the patchy world / the flat world, on the same seed.</p>
+<div class="tw"><table>
+<thead><tr><th>seed</th><th>travel</th><th>moved</th><th>mean age</th><th>intake per gut</th><th>bodies</th><th>lowest floor</th><th>kills' share</th><th>diversity</th></tr></thead>
+<tbody><tr><td>9</td><td>2.5 / 6.1</td><td>0.055 / 0.089</td><td>885 / 317</td><td>0.0025 / 0.0028</td><td>1,749 / 1,937</td><td>414 / 422</td><td>11% / 32%</td><td>1 / 2</td></tr><tr><td>10</td><td>2.8 / 3.7</td><td>0.062 / 0.065</td><td>1,053 / 1,329</td><td>0.0029 / 0.0024</td><td>2,227 / 2,085</td><td>590 / 558</td><td>8% / 4%</td><td>1 / 2</td></tr><tr><td>11</td><td>6.8 / 4.0</td><td>0.076 / 0.059</td><td>483 / 739</td><td>0.0032 / 0.0027</td><td>2,255 / 2,693</td><td>704 / 742</td><td>20% / 10%</td><td>1 / 1</td></tr><tr><td>12</td><td>2.9 / 8.0</td><td>0.048 / 0.075</td><td>668 / 278</td><td>0.0023 / 0.0028</td><td>1,765 / 2,004</td><td>365 / 347</td><td>16% / 33%</td><td>2 / 1</td></tr></tbody></table></div>
+<ol class="verdicts">
+<li><span class="verdict no">No</span> Travel is below the flat world's on three seeds of four, and lower at every age: 0.6-8.5 cells against 1.3-11.6.</li><li><span class="verdict yes">Yes</span> Twice the standing plant on the rich 37% of the land, 54-58% of the bodies standing on it, and 1.2-1.4 times the starvation per body-step on the thin land.</li><li><span class="verdict yes">Yes</span> Winter floors 365-704 against the flat world's 347-742, and no run died.</li>
+</ol>
+
+<h3>3.1 The world becomes a mosaic</h3>
+<div class="grid2">
+
+<figure class="fig">
+  <figcaption><strong>Where the food falls, seed 9</strong><span>The regrowth of every cell of the 128x128 world, rebuilt from the patch centers at step 100,000. The flat world is the pale end of this scale on every cell.</span></figcaption>
+  <?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="264.165891pt" height="197.108703pt" viewBox="0 0 264.165891 197.108703" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-09-12T18:41:43.868906</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.1, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 197.108703 
+L 264.165891 197.108703 
+L 264.165891 0 
+L 0 0 
+L 0 197.108703 
+z
+" style="fill: none"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 28.763516 165.04128 
+L 190.204796 165.04128 
+L 190.204796 3.6 
+L 28.763516 3.6 
+L 28.763516 165.04128 
+z
+" style="fill: none"/>
+   </g>
+   <g clip-path="url(#pc551a0c18b)">
+    <image xlink:href="data:image/png;base64,
+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" id="image6dd4f04591" transform="scale(1 -1) translate(0 -161.28)" x="28.8" y="-3.428703" width="161.28" height="161.28"/>
+   </g>
+   <g id="matplotlib.axis_1"/>
+   <g id="matplotlib.axis_2"/>
+   <g id="patch_3">
+    <path d="M 28.763516 165.04128 
+L 28.763516 3.6 
+" style="fill: none; opacity: 0.4; stroke: #898781; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 190.204796 165.04128 
+L 190.204796 3.6 
+" style="fill: none; opacity: 0.4; stroke: #898781; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 28.763516 165.04128 
+L 190.204796 165.04128 
+" style="fill: none; opacity: 0.4; stroke: #898781; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 28.763516 3.6 
+L 190.204796 3.6 
+" style="fill: none; opacity: 0.4; stroke: #898781; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+  </g>
+  <g id="axes_2">
+   <g id="patch_7">
+    <path d="M 20.780156 181.008 
+L 198.188156 181.008 
+L 198.188156 172.1376 
+L 20.780156 172.1376 
+L 20.780156 181.008 
+z
+" style="fill: none"/>
+   </g>
+   <image xlink:href="data:image/png;base64,
+iVBORw0KGgoAAAANSUhEUgAAAPUAAAANCAYAAABxcCgRAAAAXUlEQVR4nO3TMQqAMBAAwSTf8Kd+yi+KvWgjFssMXJMUIQc7t2OfY4ynWS/3X80f75T+Ymd2tu52cB0CIaKGGFFDjKghRtQQI2qIETXEiBpiRA0xooYYUUOMqGG0nH6JAl1qfsUvAAAAAElFTkSuQmCC" id="image50542cc837" transform="scale(1 -1) translate(0 -9.36)" x="21.6" y="-171.36" width="176.4" height="9.36"/>
+   <g id="matplotlib.axis_3">
+    <g id="xtick_1">
+     <g id="line2d_1"/>
+     <g id="text_1">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="20.780156" y="191.346594" transform="rotate(-0 20.780156 191.346594)">nothing</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_2"/>
+     <g id="text_2">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="198.188156" y="191.346594" transform="rotate(-0 198.188156 191.346594)">4 times the flat world's rate</text>
+     </g>
+    </g>
+   </g>
+   <g id="matplotlib.axis_4"/>
+   <g id="LineCollection_1"/>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="pc551a0c18b">
+   <rect x="28.763516" y="3.6" width="161.44128" height="161.44128"/>
+  </clipPath>
+ </defs>
+</svg>
+
+</figure>
+<figure class="fig">
+  <figcaption><strong>The standing plant, rich land and thin</strong><span>Seed 9, per cell. The flat world&#x27;s line is what one cell held before; a gap between the two is a world worth crossing.</span></figcaption>
+  <?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="388.241406pt" height="196.545406pt" viewBox="0 0 388.241406 196.545406" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-09-12T18:41:43.899993</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.1, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 196.545406 
+L 388.241406 196.545406 
+L 388.241406 0 
+L 0 0 
+L 0 196.545406 
+z
+" style="fill: none"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 16.32625 163.944703 
+L 373.44625 163.944703 
+L 373.44625 19.800703 
+L 16.32625 19.800703 
+L 16.32625 163.944703 
+z
+" style="fill: none"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1">
+      <defs>
+       <path id="m692d6a67e2" d="M 0 0 
+L 0 3.5 
+" style="stroke: #898781; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#m692d6a67e2" x="16.32625" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_1">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="16.32625" y="177.783297" transform="rotate(-0 16.32625 177.783297)">10k</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_2">
+      <g>
+       <use xlink:href="#m692d6a67e2" x="56.00625" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_2">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="56.00625" y="177.783297" transform="rotate(-0 56.00625 177.783297)">20k</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_3">
+      <g>
+       <use xlink:href="#m692d6a67e2" x="95.68625" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_3">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="95.68625" y="177.783297" transform="rotate(-0 95.68625 177.783297)">30k</text>
+     </g>
+    </g>
+    <g id="xtick_4">
+     <g id="line2d_4">
+      <g>
+       <use xlink:href="#m692d6a67e2" x="135.36625" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_4">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="135.36625" y="177.783297" transform="rotate(-0 135.36625 177.783297)">40k</text>
+     </g>
+    </g>
+    <g id="xtick_5">
+     <g id="line2d_5">
+      <g>
+       <use xlink:href="#m692d6a67e2" x="175.04625" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_5">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="175.04625" y="177.783297" transform="rotate(-0 175.04625 177.783297)">50k</text>
+     </g>
+    </g>
+    <g id="xtick_6">
+     <g id="line2d_6">
+      <g>
+       <use xlink:href="#m692d6a67e2" x="214.72625" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_6">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="214.72625" y="177.783297" transform="rotate(-0 214.72625 177.783297)">60k</text>
+     </g>
+    </g>
+    <g id="xtick_7">
+     <g id="line2d_7">
+      <g>
+       <use xlink:href="#m692d6a67e2" x="254.40625" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_7">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="254.40625" y="177.783297" transform="rotate(-0 254.40625 177.783297)">70k</text>
+     </g>
+    </g>
+    <g id="xtick_8">
+     <g id="line2d_8">
+      <g>
+       <use xlink:href="#m692d6a67e2" x="294.08625" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_8">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="294.08625" y="177.783297" transform="rotate(-0 294.08625 177.783297)">80k</text>
+     </g>
+    </g>
+    <g id="xtick_9">
+     <g id="line2d_9">
+      <g>
+       <use xlink:href="#m692d6a67e2" x="333.76625" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_9">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="333.76625" y="177.783297" transform="rotate(-0 333.76625 177.783297)">90k</text>
+     </g>
+    </g>
+    <g id="xtick_10">
+     <g id="line2d_10">
+      <g>
+       <use xlink:href="#m692d6a67e2" x="373.44625" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_10">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="373.44625" y="177.783297" transform="rotate(-0 373.44625 177.783297)">100k</text>
+     </g>
+    </g>
+    <g id="text_11">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="373.44625" y="190.783297" transform="rotate(-0 373.44625 190.783297)">step</text>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_11">
+      <path d="M 16.32625 163.944703 
+L 373.44625 163.944703 
+" clip-path="url(#p00d188b430)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_12">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="9.32625" y="167.363648" transform="rotate(-0 9.32625 167.363648)">0</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_12">
+      <path d="M 16.32625 116.152392 
+L 373.44625 116.152392 
+" clip-path="url(#p00d188b430)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_13">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="9.32625" y="119.571337" transform="rotate(-0 9.32625 119.571337)">1</text>
+     </g>
+    </g>
+    <g id="ytick_3">
+     <g id="line2d_13">
+      <path d="M 16.32625 68.360081 
+L 373.44625 68.360081 
+" clip-path="url(#p00d188b430)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_14">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="9.32625" y="71.779026" transform="rotate(-0 9.32625 71.779026)">2</text>
+     </g>
+    </g>
+    <g id="ytick_4">
+     <g id="line2d_14">
+      <path d="M 16.32625 20.56777 
+L 373.44625 20.56777 
+" clip-path="url(#p00d188b430)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_15">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="9.32625" y="23.986715" transform="rotate(-0 9.32625 23.986715)">3</text>
+     </g>
+    </g>
+   </g>
+   <g id="line2d_15">
+    <path d="M 16.32625 61.621365 
+L 56.00625 58.706034 
+L 95.68625 83.366867 
+L 135.36625 74.047366 
+L 175.04625 25.155832 
+L 214.72625 53.114334 
+L 254.40625 80.355951 
+L 294.08625 87.477005 
+L 333.76625 98.517029 
+L 373.44625 95.362737 
+" clip-path="url(#p00d188b430)" style="fill: none; stroke: #2a78d6; stroke-width: 1.6; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_16">
+    <path d="M 16.32625 115.817846 
+L 56.00625 115.817846 
+L 95.68625 125.902023 
+L 135.36625 126.475531 
+L 175.04625 84.752844 
+L 214.72625 108.887961 
+L 254.40625 119.258892 
+L 294.08625 121.648508 
+L 333.76625 132.258401 
+L 373.44625 130.872424 
+" clip-path="url(#p00d188b430)" style="fill: none; stroke: #1baf7a; stroke-width: 1.6; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_17">
+    <path d="M 16.32625 105.829253 
+L 56.00625 79.30452 
+L 95.68625 103.105091 
+L 135.36625 78.06192 
+L 175.04625 94.120137 
+L 214.72625 91.587144 
+L 254.40625 95.984037 
+L 294.08625 89.771036 
+L 333.76625 92.590783 
+L 373.44625 100.046383 
+" clip-path="url(#p00d188b430)" style="fill: none; stroke: #8a8a86; stroke-width: 1.6; stroke-linecap: square"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 16.32625 163.944703 
+L 373.44625 163.944703 
+" style="fill: none; stroke: #898781; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="legend_1">
+    <g id="line2d_18">
+     <path d="M 19.92625 10.888594 
+L 28.02625 10.888594 
+L 36.12625 10.888594 
+" style="fill: none; stroke: #2a78d6; stroke-width: 1.6; stroke-linecap: square"/>
+    </g>
+    <g id="text_16">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="43.32625" y="14.038594" transform="rotate(-0 43.32625 14.038594)">rich land</text>
+    </g>
+    <g id="line2d_19">
+     <path d="M 93.272031 10.888594 
+L 101.372031 10.888594 
+L 109.472031 10.888594 
+" style="fill: none; stroke: #1baf7a; stroke-width: 1.6; stroke-linecap: square"/>
+    </g>
+    <g id="text_17">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="116.672031" y="14.038594" transform="rotate(-0 116.672031 14.038594)">thin land</text>
+    </g>
+    <g id="line2d_20">
+     <path d="M 167.201406 10.888594 
+L 175.301406 10.888594 
+L 183.401406 10.888594 
+" style="fill: none; stroke: #8a8a86; stroke-width: 1.6; stroke-linecap: square"/>
+    </g>
+    <g id="text_18">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="190.601406" y="14.038594" transform="rotate(-0 190.601406 14.038594)">flat world</text>
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p00d188b430">
+   <rect x="16.32625" y="19.800703" width="357.12" height="144.144"/>
+  </clipPath>
+ </defs>
+</svg>
+
+</figure>
+</div>
+<p>The flat world is one even green: wherever a body stands, the ground gives the same 0.03 a step, a seventh of what its guts could take. The patchy world has somewhere to be - and somewhere not to be, 61% of it. Nothing else about the world changed, and the sum of the regrowth is the same in both.</p>
+
+<h3>3.2 The crowd gathers on the rich land, and starves off it</h3>
+<div class="grid2">
+
+<figure class="fig">
+  <figcaption><strong>Bodies standing on the rich land, by seed</strong><span>Second half. The rich land is 37% of the world, so the dotted line is a crowd that ignores it.</span></figcaption>
+  <?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="391.323906pt" height="196.545406pt" viewBox="0 0 391.323906 196.545406" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-09-12T18:41:43.921502</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.1, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 196.545406 
+L 391.323906 196.545406 
+L 391.323906 0 
+L 0 0 
+L 0 196.545406 
+z
+" style="fill: none"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 30.603906 163.944703 
+L 387.723906 163.944703 
+L 387.723906 19.800703 
+L 30.603906 19.800703 
+L 30.603906 163.944703 
+z
+" style="fill: none"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1">
+      <defs>
+       <path id="m379db79970" d="M 0 0 
+L 0 3.5 
+" style="stroke: #898781; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#m379db79970" x="55.232872" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_1">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="55.232872" y="177.782594" transform="rotate(-0 55.232872 177.782594)">9</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_2">
+      <g>
+       <use xlink:href="#m379db79970" x="157.853561" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_2">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="157.853561" y="177.782594" transform="rotate(-0 157.853561 177.782594)">10</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_3">
+      <g>
+       <use xlink:href="#m379db79970" x="260.474251" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_3">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="260.474251" y="177.782594" transform="rotate(-0 260.474251 177.782594)">11</text>
+     </g>
+    </g>
+    <g id="xtick_4">
+     <g id="line2d_4">
+      <g>
+       <use xlink:href="#m379db79970" x="363.094941" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_4">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="363.094941" y="177.782594" transform="rotate(-0 363.094941 177.782594)">12</text>
+     </g>
+    </g>
+    <g id="text_5">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="387.723906" y="190.783297" transform="rotate(-0 387.723906 190.783297)">seed</text>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_5">
+      <path d="M 30.603906 163.944703 
+L 387.723906 163.944703 
+" clip-path="url(#p20a825cc1f)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_6">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="23.603906" y="167.363648" transform="rotate(-0 23.603906 167.363648)">0%</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_6">
+      <path d="M 30.603906 125.506303 
+L 387.723906 125.506303 
+" clip-path="url(#p20a825cc1f)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_7">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="23.603906" y="128.925248" transform="rotate(-0 23.603906 128.925248)">20%</text>
+     </g>
+    </g>
+    <g id="ytick_3">
+     <g id="line2d_7">
+      <path d="M 30.603906 87.067903 
+L 387.723906 87.067903 
+" clip-path="url(#p20a825cc1f)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_8">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="23.603906" y="90.486848" transform="rotate(-0 23.603906 90.486848)">40%</text>
+     </g>
+    </g>
+    <g id="ytick_4">
+     <g id="line2d_8">
+      <path d="M 30.603906 48.629503 
+L 387.723906 48.629503 
+" clip-path="url(#p20a825cc1f)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_9">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="23.603906" y="52.048448" transform="rotate(-0 23.603906 52.048448)">60%</text>
+     </g>
+    </g>
+   </g>
+   <g id="line2d_9">
+    <defs>
+     <path id="m2be4d67bfb" d="M 0 3.5 
+C 0.928211 3.5 1.81853 3.131218 2.474874 2.474874 
+C 3.131218 1.81853 3.5 0.928211 3.5 0 
+C 3.5 -0.928211 3.131218 -1.81853 2.474874 -2.474874 
+C 1.81853 -3.131218 0.928211 -3.5 0 -3.5 
+C -0.928211 -3.5 -1.81853 -3.131218 -2.474874 -2.474874 
+C -3.131218 -1.81853 -3.5 -0.928211 -3.5 0 
+C -3.5 0.928211 -3.131218 1.81853 -2.474874 2.474874 
+C -1.81853 3.131218 -0.928211 3.5 0 3.5 
+z
+" style="stroke: #2a78d6"/>
+    </defs>
+    <g clip-path="url(#p20a825cc1f)">
+     <use xlink:href="#m2be4d67bfb" x="55.232872" y="52.346496" style="fill: #2a78d6; stroke: #2a78d6"/>
+     <use xlink:href="#m2be4d67bfb" x="157.853561" y="52.058208" style="fill: #2a78d6; stroke: #2a78d6"/>
+     <use xlink:href="#m2be4d67bfb" x="260.474251" y="60.810632" style="fill: #2a78d6; stroke: #2a78d6"/>
+     <use xlink:href="#m2be4d67bfb" x="363.094941" y="57.674059" style="fill: #2a78d6; stroke: #2a78d6"/>
+    </g>
+   </g>
+   <g id="line2d_10">
+    <path d="M 30.603906 92.833663 
+L 387.723906 92.833663 
+" clip-path="url(#p20a825cc1f)" style="fill: none; stroke-dasharray: 1,1.65; stroke-dashoffset: 0; stroke: #898781"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 30.603906 163.944703 
+L 387.723906 163.944703 
+" style="fill: none; stroke: #898781; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="legend_1">
+    <g id="line2d_11">
+     <g>
+      <use xlink:href="#m2be4d67bfb" x="42.303906" y="10.888594" style="fill: #2a78d6; stroke: #2a78d6"/>
+     </g>
+    </g>
+    <g id="text_10">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="57.603906" y="14.038594" transform="rotate(-0 57.603906 14.038594)">patchy</text>
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p20a825cc1f">
+   <rect x="30.603906" y="19.800703" width="357.12" height="144.144"/>
+  </clipPath>
+ </defs>
+</svg>
+
+</figure>
+<figure class="fig">
+  <figcaption><strong>Starving on the thin land and the rich, by seed</strong><span>Bodies that starve per 1,000 body-steps, second half, in the patchy world.</span></figcaption>
+  <?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="385.632813pt" height="196.545406pt" viewBox="0 0 385.632813 196.545406" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-09-12T18:41:43.939481</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.1, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 196.545406 
+L 385.632813 196.545406 
+L 385.632813 0 
+L 0 0 
+L 0 196.545406 
+z
+" style="fill: none"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 24.912813 163.944703 
+L 382.032812 163.944703 
+L 382.032812 19.800703 
+L 24.912813 19.800703 
+L 24.912813 163.944703 
+z
+" style="fill: none"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1">
+      <defs>
+       <path id="m3a017e9399" d="M 0 0 
+L 0 3.5 
+" style="stroke: #898781; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#m3a017e9399" x="55.462202" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_1">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="55.462202" y="177.782594" transform="rotate(-0 55.462202 177.782594)">9</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_2">
+      <g>
+       <use xlink:href="#m3a017e9399" x="154.135942" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_2">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="154.135942" y="177.782594" transform="rotate(-0 154.135942 177.782594)">10</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_3">
+      <g>
+       <use xlink:href="#m3a017e9399" x="252.809683" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_3">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="252.809683" y="177.782594" transform="rotate(-0 252.809683 177.782594)">11</text>
+     </g>
+    </g>
+    <g id="xtick_4">
+     <g id="line2d_4">
+      <g>
+       <use xlink:href="#m3a017e9399" x="351.483423" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_4">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="351.483423" y="177.782594" transform="rotate(-0 351.483423 177.782594)">12</text>
+     </g>
+    </g>
+    <g id="text_5">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="382.032812" y="190.783297" transform="rotate(-0 382.032812 190.783297)">seed</text>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_5">
+      <path d="M 24.912813 163.944703 
+L 382.032812 163.944703 
+" clip-path="url(#p6b6a80197d)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_6">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="17.912813" y="167.363648" transform="rotate(-0 17.912813 167.363648)">0.0</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_6">
+      <path d="M 24.912813 123.072908 
+L 382.032812 123.072908 
+" clip-path="url(#p6b6a80197d)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_7">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="17.912813" y="126.491853" transform="rotate(-0 17.912813 126.491853)">1.0</text>
+     </g>
+    </g>
+    <g id="ytick_3">
+     <g id="line2d_7">
+      <path d="M 24.912813 82.201113 
+L 382.032812 82.201113 
+" clip-path="url(#p6b6a80197d)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_8">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="17.912813" y="85.620058" transform="rotate(-0 17.912813 85.620058)">2.0</text>
+     </g>
+    </g>
+    <g id="ytick_4">
+     <g id="line2d_8">
+      <path d="M 24.912813 41.329318 
+L 382.032812 41.329318 
+" clip-path="url(#p6b6a80197d)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_9">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="17.912813" y="44.748264" transform="rotate(-0 17.912813 44.748264)">3.0</text>
+     </g>
+    </g>
+   </g>
+   <g id="line2d_9">
+    <defs>
+     <path id="m56ecff948f" d="M 0 3.5 
+C 0.928211 3.5 1.81853 3.131218 2.474874 2.474874 
+C 3.131218 1.81853 3.5 0.928211 3.5 0 
+C 3.5 -0.928211 3.131218 -1.81853 2.474874 -2.474874 
+C 1.81853 -3.131218 0.928211 -3.5 0 -3.5 
+C -0.928211 -3.5 -1.81853 -3.131218 -2.474874 -2.474874 
+C -3.131218 -1.81853 -3.5 -0.928211 -3.5 0 
+C -3.5 0.928211 -3.131218 1.81853 -2.474874 2.474874 
+C -1.81853 3.131218 -0.928211 3.5 0 3.5 
+z
+" style="stroke: #2a78d6"/>
+    </defs>
+    <g clip-path="url(#p6b6a80197d)">
+     <use xlink:href="#m56ecff948f" x="49.541778" y="82.992579" style="fill: #2a78d6; stroke: #2a78d6"/>
+     <use xlink:href="#m56ecff948f" x="148.215518" y="92.477718" style="fill: #2a78d6; stroke: #2a78d6"/>
+     <use xlink:href="#m56ecff948f" x="246.889258" y="38.602094" style="fill: #2a78d6; stroke: #2a78d6"/>
+     <use xlink:href="#m56ecff948f" x="345.562998" y="51.533346" style="fill: #2a78d6; stroke: #2a78d6"/>
+    </g>
+   </g>
+   <g id="line2d_10">
+    <defs>
+     <path id="m5f3efbb828" d="M 0 3.5 
+C 0.928211 3.5 1.81853 3.131218 2.474874 2.474874 
+C 3.131218 1.81853 3.5 0.928211 3.5 0 
+C 3.5 -0.928211 3.131218 -1.81853 2.474874 -2.474874 
+C 1.81853 -3.131218 0.928211 -3.5 0 -3.5 
+C -0.928211 -3.5 -1.81853 -3.131218 -2.474874 -2.474874 
+C -3.131218 -1.81853 -3.5 -0.928211 -3.5 0 
+C -3.5 0.928211 -3.131218 1.81853 -2.474874 2.474874 
+C -1.81853 3.131218 -0.928211 3.5 0 3.5 
+z
+" style="stroke: #1baf7a"/>
+    </defs>
+    <g clip-path="url(#p6b6a80197d)">
+     <use xlink:href="#m5f3efbb828" x="61.382627" y="105.301697" style="fill: #1baf7a; stroke: #1baf7a"/>
+     <use xlink:href="#m5f3efbb828" x="160.056367" y="109.006556" style="fill: #1baf7a; stroke: #1baf7a"/>
+     <use xlink:href="#m5f3efbb828" x="258.730107" y="58.710365" style="fill: #1baf7a; stroke: #1baf7a"/>
+     <use xlink:href="#m5f3efbb828" x="357.403847" y="75.703509" style="fill: #1baf7a; stroke: #1baf7a"/>
+    </g>
+   </g>
+   <g id="patch_3">
+    <path d="M 24.912812 163.944703 
+L 382.032813 163.944703 
+" style="fill: none; stroke: #898781; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="legend_1">
+    <g id="line2d_11">
+     <g>
+      <use xlink:href="#m56ecff948f" x="36.612813" y="10.888594" style="fill: #2a78d6; stroke: #2a78d6"/>
+     </g>
+    </g>
+    <g id="text_10">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="51.912813" y="14.038594" transform="rotate(-0 51.912813 14.038594)">thin land</text>
+    </g>
+    <g id="line2d_12">
+     <g>
+      <use xlink:href="#m5f3efbb828" x="110.542187" y="10.888594" style="fill: #1baf7a; stroke: #1baf7a"/>
+     </g>
+    </g>
+    <g id="text_11">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="125.842187" y="14.038594" transform="rotate(-0 125.842187 14.038594)">rich land</text>
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p6b6a80197d">
+   <rect x="24.912813" y="19.800703" width="357.12" height="144.144"/>
+  </clipPath>
+ </defs>
+</svg>
+
+</figure>
+</div>
+<div class="tw"><table>
+<thead><tr><th>seed</th><th>rich land</th><th>standing plant rich / thin</th><th>bodies on the rich land</th><th>starving thin / rich</th><th>thin over rich</th></tr></thead>
+<tbody><tr><td>9</td><td>37%</td><td>1.69 / 0.87</td><td>58%</td><td>1.98 / 1.43</td><td>1.38x</td></tr><tr><td>10</td><td>37%</td><td>1.24 / 0.55</td><td>58%</td><td>1.75 / 1.34</td><td>1.30x</td></tr><tr><td>11</td><td>37%</td><td>2.51 / 1.24</td><td>54%</td><td>3.07 / 2.57</td><td>1.19x</td></tr><tr><td>12</td><td>37%</td><td>2.08 / 0.92</td><td>55%</td><td>2.75 / 2.16</td><td>1.27x</td></tr></tbody></table></div>
+<p>Half again as many bodies stand on the rich land as its area would give, and they are fed better: a body on the thin land starves 1.2-1.4 times as often. That is the pressure the law was meant to create, and it is there - but a body does not have to walk to answer it, because its parents can be born on the rich land instead.</p>
+
+<h3>3.3 Nothing walks: a patch is a place to hold</h3>
+<div class="grid2">
+
+<figure class="fig">
+  <figcaption><strong>How far a body stands from where it was born</strong><span>Median travel in world cells of the bodies alive at step 100,000, by age, four seeds together.</span></figcaption>
+  <?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="383.193288pt" height="196.544703pt" viewBox="0 0 383.193288 196.544703" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-09-12T18:41:44.047539</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.1, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 196.544703 
+L 383.193288 196.544703 
+L 383.193288 0 
+L 0 0 
+L 0 196.544703 
+z
+" style="fill: none"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 22.0525 163.944703 
+L 379.1725 163.944703 
+L 379.1725 19.800703 
+L 22.0525 19.800703 
+L 22.0525 163.944703 
+z
+" style="fill: none"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1">
+      <defs>
+       <path id="m6f7ba3bfad" d="M 0 0 
+L 0 3.5 
+" style="stroke: #898781; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#m6f7ba3bfad" x="38.285227" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_1">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="38.285227" y="177.782594" transform="rotate(-0 38.285227 177.782594)">0-199</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_2">
+      <g>
+       <use xlink:href="#m6f7ba3bfad" x="146.503409" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_2">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="146.503409" y="177.782594" transform="rotate(-0 146.503409 177.782594)">200-499</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_3">
+      <g>
+       <use xlink:href="#m6f7ba3bfad" x="254.721591" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_3">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="254.721591" y="177.782594" transform="rotate(-0 254.721591 177.782594)">500-999</text>
+     </g>
+    </g>
+    <g id="xtick_4">
+     <g id="line2d_4">
+      <g>
+       <use xlink:href="#m6f7ba3bfad" x="362.939773" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_4">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="362.939773" y="177.782594" transform="rotate(-0 362.939773 177.782594)">1,000+</text>
+     </g>
+    </g>
+    <g id="text_5">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="379.1725" y="190.782594" transform="rotate(-0 379.1725 190.782594)">age at step 100,000 (steps)</text>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_5">
+      <path d="M 22.0525 163.944703 
+L 379.1725 163.944703 
+" clip-path="url(#p7335b174d6)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_6">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="15.0525" y="167.363648" transform="rotate(-0 15.0525 167.363648)">0</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_6">
+      <path d="M 22.0525 104.533278 
+L 379.1725 104.533278 
+" clip-path="url(#p7335b174d6)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_7">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="15.0525" y="107.952223" transform="rotate(-0 15.0525 107.952223)">5</text>
+     </g>
+    </g>
+    <g id="ytick_3">
+     <g id="line2d_7">
+      <path d="M 22.0525 45.121853 
+L 379.1725 45.121853 
+" clip-path="url(#p7335b174d6)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_8">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="15.0525" y="48.540798" transform="rotate(-0 15.0525 48.540798)">10</text>
+     </g>
+    </g>
+   </g>
+   <g id="line2d_8">
+    <path d="M 38.285227 157.290623 
+L 146.503409 125.327277 
+L 254.721591 98.710958 
+L 362.939773 63.064103 
+" clip-path="url(#p7335b174d6)" style="fill: none; stroke: #2a78d6; stroke-width: 1.6; stroke-linecap: square"/>
+    <defs>
+     <path id="m802af383f8" d="M 0 3 
+C 0.795609 3 1.55874 2.683901 2.12132 2.12132 
+C 2.683901 1.55874 3 0.795609 3 0 
+C 3 -0.795609 2.683901 -1.55874 2.12132 -2.12132 
+C 1.55874 -2.683901 0.795609 -3 0 -3 
+C -0.795609 -3 -1.55874 -2.683901 -2.12132 -2.12132 
+C -2.683901 -1.55874 -3 -0.795609 -3 0 
+C -3 0.795609 -2.683901 1.55874 -2.12132 2.12132 
+C -1.55874 2.683901 -0.795609 3 0 3 
+z
+" style="stroke: #2a78d6"/>
+    </defs>
+    <g clip-path="url(#p7335b174d6)">
+     <use xlink:href="#m802af383f8" x="38.285227" y="157.290623" style="fill: #2a78d6; stroke: #2a78d6"/>
+     <use xlink:href="#m802af383f8" x="146.503409" y="125.327277" style="fill: #2a78d6; stroke: #2a78d6"/>
+     <use xlink:href="#m802af383f8" x="254.721591" y="98.710958" style="fill: #2a78d6; stroke: #2a78d6"/>
+     <use xlink:href="#m802af383f8" x="362.939773" y="63.064103" style="fill: #2a78d6; stroke: #2a78d6"/>
+    </g>
+   </g>
+   <g id="line2d_9">
+    <path d="M 38.285227 149.091847 
+L 146.503409 100.968592 
+L 254.721591 65.915851 
+L 362.939773 26.347842 
+" clip-path="url(#p7335b174d6)" style="fill: none; stroke: #8a8a86; stroke-width: 1.6; stroke-linecap: square"/>
+    <defs>
+     <path id="mb1d783abf3" d="M 0 3 
+C 0.795609 3 1.55874 2.683901 2.12132 2.12132 
+C 2.683901 1.55874 3 0.795609 3 0 
+C 3 -0.795609 2.683901 -1.55874 2.12132 -2.12132 
+C 1.55874 -2.683901 0.795609 -3 0 -3 
+C -0.795609 -3 -1.55874 -2.683901 -2.12132 -2.12132 
+C -2.683901 -1.55874 -3 -0.795609 -3 0 
+C -3 0.795609 -2.683901 1.55874 -2.12132 2.12132 
+C -1.55874 2.683901 -0.795609 3 0 3 
+z
+" style="stroke: #8a8a86"/>
+    </defs>
+    <g clip-path="url(#p7335b174d6)">
+     <use xlink:href="#mb1d783abf3" x="38.285227" y="149.091847" style="fill: #8a8a86; stroke: #8a8a86"/>
+     <use xlink:href="#mb1d783abf3" x="146.503409" y="100.968592" style="fill: #8a8a86; stroke: #8a8a86"/>
+     <use xlink:href="#mb1d783abf3" x="254.721591" y="65.915851" style="fill: #8a8a86; stroke: #8a8a86"/>
+     <use xlink:href="#mb1d783abf3" x="362.939773" y="26.347842" style="fill: #8a8a86; stroke: #8a8a86"/>
+    </g>
+   </g>
+   <g id="patch_3">
+    <path d="M 22.0525 163.944703 
+L 379.1725 163.944703 
+" style="fill: none; stroke: #898781; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="legend_1">
+    <g id="line2d_10">
+     <path d="M 25.6525 10.888594 
+L 33.7525 10.888594 
+L 41.8525 10.888594 
+" style="fill: none; stroke: #2a78d6; stroke-width: 1.6; stroke-linecap: square"/>
+     <g>
+      <use xlink:href="#m802af383f8" x="33.7525" y="10.888594" style="fill: #2a78d6; stroke: #2a78d6"/>
+     </g>
+    </g>
+    <g id="text_9">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="49.0525" y="14.038594" transform="rotate(-0 49.0525 14.038594)">patchy</text>
+    </g>
+    <g id="line2d_11">
+     <path d="M 90.588906 10.888594 
+L 98.688906 10.888594 
+L 106.788906 10.888594 
+" style="fill: none; stroke: #8a8a86; stroke-width: 1.6; stroke-linecap: square"/>
+     <g>
+      <use xlink:href="#mb1d783abf3" x="98.688906" y="10.888594" style="fill: #8a8a86; stroke: #8a8a86"/>
+     </g>
+    </g>
+    <g id="text_10">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="113.988906" y="14.038594" transform="rotate(-0 113.988906 14.038594)">flat</text>
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p7335b174d6">
+   <rect x="22.0525" y="19.800703" width="357.12" height="144.144"/>
+  </clipPath>
+ </defs>
+</svg>
+
+</figure>
+<figure class="fig">
+  <figcaption><strong>The rich land, seed 9</strong><span>The cells that grow at or above the flat world&#x27;s rate: 37% of the world in 39 connected regions, the largest 1,135 cells. A life&#x27;s travel fits inside one.</span></figcaption>
+  <?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="184.608pt" height="184.608pt" viewBox="0 0 184.608 184.608" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-09-12T18:41:44.062150</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.1, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 184.608 
+L 184.608 184.608 
+L 184.608 0 
+L 0 0 
+L 0 184.608 
+z
+" style="fill: none"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 3.6 181.008 
+L 181.008 181.008 
+L 181.008 3.6 
+L 3.6 3.6 
+L 3.6 181.008 
+z
+" style="fill: none"/>
+   </g>
+   <g clip-path="url(#pc40679902c)">
+    <image xlink:href="data:image/png;base64,
+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" id="image1e35210029" transform="scale(1 -1) translate(0 -177.12)" x="3.6" y="-3.888" width="177.12" height="177.12"/>
+   </g>
+   <g id="matplotlib.axis_1"/>
+   <g id="matplotlib.axis_2"/>
+   <g id="patch_3">
+    <path d="M 3.6 181.008 
+L 3.6 3.6 
+" style="fill: none; opacity: 0.4; stroke: #898781; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 181.008 181.008 
+L 181.008 3.6 
+" style="fill: none; opacity: 0.4; stroke: #898781; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 3.6 181.008 
+L 181.008 181.008 
+" style="fill: none; opacity: 0.4; stroke: #898781; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 3.6 3.6 
+L 181.008 3.6 
+" style="fill: none; opacity: 0.4; stroke: #898781; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="pc40679902c">
+   <rect x="3.6" y="3.6" width="177.408" height="177.408"/>
+  </clipPath>
+ </defs>
+</svg>
+
+</figure>
+</div>
+<p>This is the finding. At every age the patchy world's bodies stand nearer their birthplace than the flat world's, and they move less per step. Rebuilt from the patch centers, the rich land is not islands: 37% of the world in 39-46 connected regions, the largest 35 cells across. A life's travel fits inside one.</p>
+
+<h3>3.4 The world stands, with fewer bodies and no tooth</h3>
+<div class="grid2">
+
+<figure class="fig">
+  <figcaption><strong>Bodies, by seed</strong><span>Bodies alive over the second half (steps 50,000-100,000).</span></figcaption>
+  <?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="382.257813pt" height="196.545406pt" viewBox="0 0 382.257813 196.545406" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-09-12T18:41:44.079343</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.1, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 196.545406 
+L 382.257813 196.545406 
+L 382.257813 0 
+L 0 0 
+L 0 196.545406 
+z
+" style="fill: none"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 21.537813 163.944703 
+L 378.657813 163.944703 
+L 378.657813 19.800703 
+L 21.537813 19.800703 
+L 21.537813 163.944703 
+z
+" style="fill: none"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1">
+      <defs>
+       <path id="m576b4460f2" d="M 0 0 
+L 0 3.5 
+" style="stroke: #898781; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#m576b4460f2" x="52.087202" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_1">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="52.087202" y="177.782594" transform="rotate(-0 52.087202 177.782594)">9</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_2">
+      <g>
+       <use xlink:href="#m576b4460f2" x="150.760942" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_2">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="150.760942" y="177.782594" transform="rotate(-0 150.760942 177.782594)">10</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_3">
+      <g>
+       <use xlink:href="#m576b4460f2" x="249.434683" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_3">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="249.434683" y="177.782594" transform="rotate(-0 249.434683 177.782594)">11</text>
+     </g>
+    </g>
+    <g id="xtick_4">
+     <g id="line2d_4">
+      <g>
+       <use xlink:href="#m576b4460f2" x="348.108423" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_4">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="348.108423" y="177.782594" transform="rotate(-0 348.108423 177.782594)">12</text>
+     </g>
+    </g>
+    <g id="text_5">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="378.657813" y="190.783297" transform="rotate(-0 378.657813 190.783297)">seed</text>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_5">
+      <path d="M 21.537813 163.944703 
+L 378.657813 163.944703 
+" clip-path="url(#p38d743d454)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_6">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="14.537813" y="167.363648" transform="rotate(-0 14.537813 167.363648)">0</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_6">
+      <path d="M 21.537813 117.39324 
+L 378.657813 117.39324 
+" clip-path="url(#p38d743d454)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_7">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="14.537813" y="120.812536" transform="rotate(-0 14.537813 120.812536)">1k</text>
+     </g>
+    </g>
+    <g id="ytick_3">
+     <g id="line2d_7">
+      <path d="M 21.537813 70.841776 
+L 378.657813 70.841776 
+" clip-path="url(#p38d743d454)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_8">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="14.537813" y="74.261073" transform="rotate(-0 14.537813 74.261073)">2k</text>
+     </g>
+    </g>
+    <g id="ytick_4">
+     <g id="line2d_8">
+      <path d="M 21.537813 24.290312 
+L 378.657813 24.290312 
+" clip-path="url(#p38d743d454)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_9">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="14.537813" y="27.709609" transform="rotate(-0 14.537813 27.709609)">3k</text>
+     </g>
+    </g>
+   </g>
+   <g id="line2d_9">
+    <defs>
+     <path id="m1f8eb64334" d="M 0 3.5 
+C 0.928211 3.5 1.81853 3.131218 2.474874 2.474874 
+C 3.131218 1.81853 3.5 0.928211 3.5 0 
+C 3.5 -0.928211 3.131218 -1.81853 2.474874 -2.474874 
+C 1.81853 -3.131218 0.928211 -3.5 0 -3.5 
+C -0.928211 -3.5 -1.81853 -3.131218 -2.474874 -2.474874 
+C -3.131218 -1.81853 -3.5 -0.928211 -3.5 0 
+C -3.5 0.928211 -3.131218 1.81853 -2.474874 2.474874 
+C -1.81853 3.131218 -0.928211 3.5 0 3.5 
+z
+" style="stroke: #2a78d6"/>
+    </defs>
+    <g clip-path="url(#p38d743d454)">
+     <use xlink:href="#m1f8eb64334" x="46.166778" y="82.545745" style="fill: #2a78d6; stroke: #2a78d6"/>
+     <use xlink:href="#m1f8eb64334" x="144.840518" y="60.282973" style="fill: #2a78d6; stroke: #2a78d6"/>
+     <use xlink:href="#m1f8eb64334" x="243.514258" y="58.983256" style="fill: #2a78d6; stroke: #2a78d6"/>
+     <use xlink:href="#m1f8eb64334" x="342.187998" y="81.778577" style="fill: #2a78d6; stroke: #2a78d6"/>
+    </g>
+   </g>
+   <g id="line2d_10">
+    <defs>
+     <path id="mb9ea96b509" d="M 0 3.5 
+C 0.928211 3.5 1.81853 3.131218 2.474874 2.474874 
+C 3.131218 1.81853 3.5 0.928211 3.5 0 
+C 3.5 -0.928211 3.131218 -1.81853 2.474874 -2.474874 
+C 1.81853 -3.131218 0.928211 -3.5 0 -3.5 
+C -0.928211 -3.5 -1.81853 -3.131218 -2.474874 -2.474874 
+C -3.131218 -1.81853 -3.5 -0.928211 -3.5 0 
+C -3.5 0.928211 -3.131218 1.81853 -2.474874 2.474874 
+C -1.81853 3.131218 -0.928211 3.5 0 3.5 
+z
+" style="stroke: #8a8a86"/>
+    </defs>
+    <g clip-path="url(#p38d743d454)">
+     <use xlink:href="#mb9ea96b509" x="58.007627" y="73.782897" style="fill: #8a8a86; stroke: #8a8a86"/>
+     <use xlink:href="#mb9ea96b509" x="156.681367" y="66.90166" style="fill: #8a8a86; stroke: #8a8a86"/>
+     <use xlink:href="#mb9ea96b509" x="255.355107" y="38.602094" style="fill: #8a8a86; stroke: #8a8a86"/>
+     <use xlink:href="#mb9ea96b509" x="354.028847" y="70.641605" style="fill: #8a8a86; stroke: #8a8a86"/>
+    </g>
+   </g>
+   <g id="patch_3">
+    <path d="M 21.537812 163.944703 
+L 378.657813 163.944703 
+" style="fill: none; stroke: #898781; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="legend_1">
+    <g id="line2d_11">
+     <g>
+      <use xlink:href="#m1f8eb64334" x="33.237813" y="10.888594" style="fill: #2a78d6; stroke: #2a78d6"/>
+     </g>
+    </g>
+    <g id="text_10">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="48.537813" y="14.038594" transform="rotate(-0 48.537813 14.038594)">patchy</text>
+    </g>
+    <g id="line2d_12">
+     <g>
+      <use xlink:href="#mb9ea96b509" x="98.174219" y="10.888594" style="fill: #8a8a86; stroke: #8a8a86"/>
+     </g>
+    </g>
+    <g id="text_11">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="113.474219" y="14.038594" transform="rotate(-0 113.474219 14.038594)">flat</text>
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p38d743d454">
+   <rect x="21.537813" y="19.800703" width="357.12" height="144.144"/>
+  </clipPath>
+ </defs>
+</svg>
+
+</figure>
+<figure class="fig">
+  <figcaption><strong>The lowest winter floor, by seed</strong><span>The smallest population of any season. The dotted line is the floor the hypothesis asked for.</span></figcaption>
+  <?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="388.49875pt" height="196.545406pt" viewBox="0 0 388.49875 196.545406" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-09-12T18:41:44.097011</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.1, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 196.545406 
+L 388.49875 196.545406 
+L 388.49875 0 
+L 0 0 
+L 0 196.545406 
+z
+" style="fill: none"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 27.77875 163.944703 
+L 384.89875 163.944703 
+L 384.89875 19.800703 
+L 27.77875 19.800703 
+L 27.77875 163.944703 
+z
+" style="fill: none"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1">
+      <defs>
+       <path id="m88736ab554" d="M 0 0 
+L 0 3.5 
+" style="stroke: #898781; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#m88736ab554" x="58.32814" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_1">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="58.32814" y="177.782594" transform="rotate(-0 58.32814 177.782594)">9</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_2">
+      <g>
+       <use xlink:href="#m88736ab554" x="157.00188" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_2">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="157.00188" y="177.782594" transform="rotate(-0 157.00188 177.782594)">10</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_3">
+      <g>
+       <use xlink:href="#m88736ab554" x="255.67562" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_3">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="255.67562" y="177.782594" transform="rotate(-0 255.67562 177.782594)">11</text>
+     </g>
+    </g>
+    <g id="xtick_4">
+     <g id="line2d_4">
+      <g>
+       <use xlink:href="#m88736ab554" x="354.34936" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_4">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="354.34936" y="177.782594" transform="rotate(-0 354.34936 177.782594)">12</text>
+     </g>
+    </g>
+    <g id="text_5">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="384.89875" y="190.783297" transform="rotate(-0 384.89875 190.783297)">seed</text>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_5">
+      <path d="M 27.77875 163.944703 
+L 384.89875 163.944703 
+" clip-path="url(#p8177177d95)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_6">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="20.77875" y="167.363648" transform="rotate(-0 20.77875 167.363648)">0</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_6">
+      <path d="M 27.77875 79.482029 
+L 384.89875 79.482029 
+" clip-path="url(#p8177177d95)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_7">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="20.77875" y="82.900974" transform="rotate(-0 20.77875 82.900974)">500</text>
+     </g>
+    </g>
+   </g>
+   <g id="line2d_7">
+    <defs>
+     <path id="m4ab917bd2d" d="M 0 3.5 
+C 0.928211 3.5 1.81853 3.131218 2.474874 2.474874 
+C 3.131218 1.81853 3.5 0.928211 3.5 0 
+C 3.5 -0.928211 3.131218 -1.81853 2.474874 -2.474874 
+C 1.81853 -3.131218 0.928211 -3.5 0 -3.5 
+C -0.928211 -3.5 -1.81853 -3.131218 -2.474874 -2.474874 
+C -3.131218 -1.81853 -3.5 -0.928211 -3.5 0 
+C -3.5 0.928211 -3.131218 1.81853 -2.474874 2.474874 
+C -1.81853 3.131218 -0.928211 3.5 0 3.5 
+z
+" style="stroke: #2a78d6"/>
+    </defs>
+    <g clip-path="url(#p8177177d95)">
+     <use xlink:href="#m4ab917bd2d" x="52.407716" y="94.009609" style="fill: #2a78d6; stroke: #2a78d6"/>
+     <use xlink:href="#m4ab917bd2d" x="151.081456" y="64.278747" style="fill: #2a78d6; stroke: #2a78d6"/>
+     <use xlink:href="#m4ab917bd2d" x="249.755196" y="45.021258" style="fill: #2a78d6; stroke: #2a78d6"/>
+     <use xlink:href="#m4ab917bd2d" x="348.428936" y="102.286951" style="fill: #2a78d6; stroke: #2a78d6"/>
+    </g>
+   </g>
+   <g id="line2d_8">
+    <defs>
+     <path id="mb4381674ee" d="M 0 3.5 
+C 0.928211 3.5 1.81853 3.131218 2.474874 2.474874 
+C 3.131218 1.81853 3.5 0.928211 3.5 0 
+C 3.5 -0.928211 3.131218 -1.81853 2.474874 -2.474874 
+C 1.81853 -3.131218 0.928211 -3.5 0 -3.5 
+C -0.928211 -3.5 -1.81853 -3.131218 -2.474874 -2.474874 
+C -3.131218 -1.81853 -3.5 -0.928211 -3.5 0 
+C -3.5 0.928211 -3.131218 1.81853 -2.474874 2.474874 
+C -1.81853 3.131218 -0.928211 3.5 0 3.5 
+z
+" style="stroke: #8a8a86"/>
+    </defs>
+    <g clip-path="url(#p8177177d95)">
+     <use xlink:href="#mb4381674ee" x="64.248564" y="92.658206" style="fill: #8a8a86; stroke: #8a8a86"/>
+     <use xlink:href="#mb4381674ee" x="162.922304" y="69.684359" style="fill: #8a8a86; stroke: #8a8a86"/>
+     <use xlink:href="#mb4381674ee" x="261.596044" y="38.602094" style="fill: #8a8a86; stroke: #8a8a86"/>
+     <use xlink:href="#mb4381674ee" x="360.269784" y="105.327607" style="fill: #8a8a86; stroke: #8a8a86"/>
+    </g>
+   </g>
+   <g id="line2d_9">
+    <path d="M 27.77875 155.498436 
+L 384.89875 155.498436 
+" clip-path="url(#p8177177d95)" style="fill: none; stroke-dasharray: 1,1.65; stroke-dashoffset: 0; stroke: #898781"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 27.77875 163.944703 
+L 384.89875 163.944703 
+" style="fill: none; stroke: #898781; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="legend_1">
+    <g id="line2d_10">
+     <g>
+      <use xlink:href="#m4ab917bd2d" x="39.47875" y="10.888594" style="fill: #2a78d6; stroke: #2a78d6"/>
+     </g>
+    </g>
+    <g id="text_8">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="54.77875" y="14.038594" transform="rotate(-0 54.77875 14.038594)">patchy</text>
+    </g>
+    <g id="line2d_11">
+     <g>
+      <use xlink:href="#mb4381674ee" x="104.415156" y="10.888594" style="fill: #8a8a86; stroke: #8a8a86"/>
+     </g>
+    </g>
+    <g id="text_9">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="119.715156" y="14.038594" transform="rotate(-0 119.715156 14.038594)">flat</text>
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p8177177d95">
+   <rect x="27.77875" y="19.800703" width="357.12" height="144.144"/>
+  </clipPath>
+ </defs>
+</svg>
+
+</figure>
+<figure class="fig">
+  <figcaption><strong>The flesh of kills in what the bodies eat, by seed</strong><span>Second half.</span></figcaption>
+  <?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="391.323906pt" height="196.545406pt" viewBox="0 0 391.323906 196.545406" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-09-12T18:41:44.116455</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.1, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 196.545406 
+L 391.323906 196.545406 
+L 391.323906 0 
+L 0 0 
+L 0 196.545406 
+z
+" style="fill: none"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 30.603906 163.944703 
+L 387.723906 163.944703 
+L 387.723906 19.800703 
+L 30.603906 19.800703 
+L 30.603906 163.944703 
+z
+" style="fill: none"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1">
+      <defs>
+       <path id="meede2fd170" d="M 0 0 
+L 0 3.5 
+" style="stroke: #898781; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#meede2fd170" x="61.153296" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_1">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="61.153296" y="177.782594" transform="rotate(-0 61.153296 177.782594)">9</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_2">
+      <g>
+       <use xlink:href="#meede2fd170" x="159.827036" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_2">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="159.827036" y="177.782594" transform="rotate(-0 159.827036 177.782594)">10</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_3">
+      <g>
+       <use xlink:href="#meede2fd170" x="258.500776" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_3">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="258.500776" y="177.782594" transform="rotate(-0 258.500776 177.782594)">11</text>
+     </g>
+    </g>
+    <g id="xtick_4">
+     <g id="line2d_4">
+      <g>
+       <use xlink:href="#meede2fd170" x="357.174516" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_4">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="357.174516" y="177.782594" transform="rotate(-0 357.174516 177.782594)">12</text>
+     </g>
+    </g>
+    <g id="text_5">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="387.723906" y="190.783297" transform="rotate(-0 387.723906 190.783297)">seed</text>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_5">
+      <path d="M 30.603906 163.944703 
+L 387.723906 163.944703 
+" clip-path="url(#p7664870bea)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_6">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="23.603906" y="167.363648" transform="rotate(-0 23.603906 167.363648)">0%</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_6">
+      <path d="M 30.603906 126.478986 
+L 387.723906 126.478986 
+" clip-path="url(#p7664870bea)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_7">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="23.603906" y="129.897932" transform="rotate(-0 23.603906 129.897932)">10%</text>
+     </g>
+    </g>
+    <g id="ytick_3">
+     <g id="line2d_7">
+      <path d="M 30.603906 89.01327 
+L 387.723906 89.01327 
+" clip-path="url(#p7664870bea)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_8">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="23.603906" y="92.432215" transform="rotate(-0 23.603906 92.432215)">20%</text>
+     </g>
+    </g>
+    <g id="ytick_4">
+     <g id="line2d_8">
+      <path d="M 30.603906 51.547553 
+L 387.723906 51.547553 
+" clip-path="url(#p7664870bea)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_9">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="23.603906" y="54.966499" transform="rotate(-0 23.603906 54.966499)">30%</text>
+     </g>
+    </g>
+   </g>
+   <g id="line2d_9">
+    <defs>
+     <path id="mc5a152f474" d="M 0 3.5 
+C 0.928211 3.5 1.81853 3.131218 2.474874 2.474874 
+C 3.131218 1.81853 3.5 0.928211 3.5 0 
+C 3.5 -0.928211 3.131218 -1.81853 2.474874 -2.474874 
+C 1.81853 -3.131218 0.928211 -3.5 0 -3.5 
+C -0.928211 -3.5 -1.81853 -3.131218 -2.474874 -2.474874 
+C -3.131218 -1.81853 -3.5 -0.928211 -3.5 0 
+C -3.5 0.928211 -3.131218 1.81853 -2.474874 2.474874 
+C -1.81853 3.131218 -0.928211 3.5 0 3.5 
+z
+" style="stroke: #2a78d6"/>
+    </defs>
+    <g clip-path="url(#p7664870bea)">
+     <use xlink:href="#mc5a152f474" x="55.232872" y="122.09791" style="fill: #2a78d6; stroke: #2a78d6"/>
+     <use xlink:href="#mc5a152f474" x="153.906612" y="135.55303" style="fill: #2a78d6; stroke: #2a78d6"/>
+     <use xlink:href="#mc5a152f474" x="252.580352" y="87.331624" style="fill: #2a78d6; stroke: #2a78d6"/>
+     <use xlink:href="#mc5a152f474" x="351.254092" y="105.178991" style="fill: #2a78d6; stroke: #2a78d6"/>
+    </g>
+   </g>
+   <g id="line2d_10">
+    <defs>
+     <path id="mffd9cc8c2c" d="M 0 3.5 
+C 0.928211 3.5 1.81853 3.131218 2.474874 2.474874 
+C 3.131218 1.81853 3.5 0.928211 3.5 0 
+C 3.5 -0.928211 3.131218 -1.81853 2.474874 -2.474874 
+C 1.81853 -3.131218 0.928211 -3.5 0 -3.5 
+C -0.928211 -3.5 -1.81853 -3.131218 -2.474874 -2.474874 
+C -3.131218 -1.81853 -3.5 -0.928211 -3.5 0 
+C -3.5 0.928211 -3.131218 1.81853 -2.474874 2.474874 
+C -1.81853 3.131218 -0.928211 3.5 0 3.5 
+z
+" style="stroke: #8a8a86"/>
+    </defs>
+    <g clip-path="url(#p7664870bea)">
+     <use xlink:href="#mffd9cc8c2c" x="67.073721" y="45.755191" style="fill: #8a8a86; stroke: #8a8a86"/>
+     <use xlink:href="#mffd9cc8c2c" x="165.747461" y="150.662554" style="fill: #8a8a86; stroke: #8a8a86"/>
+     <use xlink:href="#mffd9cc8c2c" x="264.421201" y="126.548488" style="fill: #8a8a86; stroke: #8a8a86"/>
+     <use xlink:href="#mffd9cc8c2c" x="363.094941" y="38.602094" style="fill: #8a8a86; stroke: #8a8a86"/>
+    </g>
+   </g>
+   <g id="patch_3">
+    <path d="M 30.603906 163.944703 
+L 387.723906 163.944703 
+" style="fill: none; stroke: #898781; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="legend_1">
+    <g id="line2d_11">
+     <g>
+      <use xlink:href="#mc5a152f474" x="42.303906" y="10.888594" style="fill: #2a78d6; stroke: #2a78d6"/>
+     </g>
+    </g>
+    <g id="text_10">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="57.603906" y="14.038594" transform="rotate(-0 57.603906 14.038594)">patchy</text>
+    </g>
+    <g id="line2d_12">
+     <g>
+      <use xlink:href="#mffd9cc8c2c" x="107.240312" y="10.888594" style="fill: #8a8a86; stroke: #8a8a86"/>
+     </g>
+    </g>
+    <g id="text_11">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="122.540312" y="14.038594" transform="rotate(-0 122.540312 14.038594)">flat</text>
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p7664870bea">
+   <rect x="30.603906" y="19.800703" width="357.12" height="144.144"/>
+  </clipPath>
+ </defs>
+</svg>
+
+</figure>
+</div>
+<p>The patchy world holds 8% fewer bodies because it grows 15% less food: a cell can only grow what its own soil holds, and a patch draws 2.5 times the rate out of its cells, losing 7.6 a step to ground with nothing left. Hunting ends where it had been: no hunter world of four, against two flat.</p>
+<figure class="diagram"><div class="cards"><figure class="card"><svg viewBox="-1 -1 89 89" width="120" height="120" role="img" aria-label="the four by four"><rect x="-1" y="-1" width="89" height="89" fill="var(--cell)"/><rect x="0.00" y="0.00" width="19.80" height="19.80" fill="#eb6834"/><rect x="22.00" y="0.00" width="19.80" height="19.80" fill="#eb6834"/><rect x="44.00" y="0.00" width="19.80" height="19.80" fill="#eb6834"/><rect x="66.00" y="0.00" width="19.80" height="19.80" fill="#eb6834"/><rect x="0.00" y="22.00" width="19.80" height="19.80" fill="#eb6834"/><rect x="22.00" y="22.00" width="19.80" height="19.80" fill="#1baf7a"/><rect x="44.00" y="22.00" width="19.80" height="19.80" fill="#1baf7a"/><rect x="66.00" y="22.00" width="19.80" height="19.80" fill="#eb6834"/><rect x="0.00" y="44.00" width="19.80" height="19.80" fill="#1baf7a"/><rect x="22.00" y="44.00" width="19.80" height="19.80" fill="#1baf7a"/><rect x="44.00" y="44.00" width="19.80" height="19.80" fill="#1baf7a"/><rect x="66.00" y="44.00" width="19.80" height="19.80" fill="#1baf7a"/><rect x="0.00" y="66.00" width="19.80" height="19.80" fill="#1baf7a"/><rect x="22.00" y="66.00" width="19.80" height="19.80" fill="#1baf7a"/><rect x="44.00" y="66.00" width="19.80" height="19.80" fill="#1baf7a"/><rect x="66.00" y="66.00" width="19.80" height="19.80" fill="#1baf7a"/><line x1="-1" y1="-0.5" x2="88" y2="-0.5" stroke="var(--ink2)" stroke-width="1.5" stroke-dasharray="3 2"/></svg>
+<figcaption><strong>the four by four</strong><br>patchy, seed 9, lineage 995: 38,000 steps, 1,510 agents at its peak<br>grid 4x4; mass 32: hard 0, muscle 6, sensor 0.0, digestive 9; speed 0.19; flesh 21% of the intake; mean age 1219<br>Two rows of muscle over two of gut, no armor: the 4x4 form leads three of the four patchy worlds.</figcaption></figure><figure class="card"><svg viewBox="-1 -1 89 89" width="120" height="120" role="img" aria-label="the small gut"><rect x="-1" y="-1" width="89" height="89" fill="var(--cell)"/><rect x="0.00" y="0.00" width="19.80" height="19.80" fill="#1baf7a"/><rect x="22.00" y="0.00" width="19.80" height="19.80" fill="#eb6834"/><rect x="44.00" y="0.00" width="19.80" height="19.80" fill="#eb6834"/><rect x="66.00" y="0.00" width="19.80" height="19.80" fill="#eb6834"/><rect x="0.00" y="22.00" width="19.80" height="19.80" fill="#1baf7a"/><rect x="22.00" y="22.00" width="19.80" height="19.80" fill="#eb6834"/><rect x="44.00" y="22.00" width="19.80" height="19.80" fill="#eb6834"/><rect x="66.00" y="22.00" width="19.80" height="19.80" fill="#eb6834"/><rect x="0.00" y="44.00" width="19.80" height="19.80" fill="#1baf7a"/><rect x="22.00" y="44.00" width="19.80" height="19.80" fill="#1baf7a"/><rect x="44.00" y="44.00" width="19.80" height="19.80" fill="#1baf7a"/><rect x="66.00" y="44.00" width="19.80" height="19.80" fill="#1baf7a"/><rect x="0.00" y="66.00" width="19.80" height="19.80" fill="#1baf7a"/><rect x="22.00" y="66.00" width="19.80" height="19.80" fill="#1baf7a"/><rect x="44.00" y="66.00" width="19.80" height="19.80" fill="#1baf7a"/><rect x="66.00" y="66.00" width="19.80" height="19.80" fill="#1baf7a"/><line x1="-1" y1="-0.5" x2="88" y2="-0.5" stroke="var(--ink2)" stroke-width="1.5" stroke-dasharray="3 2"/></svg>
+<figcaption><strong>the small gut</strong><br>patchy, seed 10, lineage 537: 54,000 steps, 2,202 agents at its peak<br>grid 4x4; mass 28: hard 0, muscle 5, sensor 0.0, digestive 8; speed 0.19; flesh 19% of the intake; mean age 1133<br>Thirteen blocks and the slowest winner here (speed 0.19): on rich land a body pays for muscle it does not need.</figcaption></figure><figure class="card"><svg viewBox="-1 -1 89 89" width="120" height="120" role="img" aria-label="the wide gut"><rect x="-1" y="-1" width="89" height="89" fill="var(--cell)"/><rect x="0.00" y="0.00" width="15.84" height="15.84" fill="#eb6834"/><rect x="17.60" y="0.00" width="15.84" height="15.84" fill="#eb6834"/><rect x="35.20" y="0.00" width="15.84" height="15.84" fill="#eb6834"/><rect x="52.80" y="0.00" width="15.84" height="15.84" fill="#eb6834"/><rect x="70.40" y="0.00" width="15.84" height="15.84" fill="#eb6834"/><rect x="0.00" y="17.60" width="15.84" height="15.84" fill="#eb6834"/><rect x="17.60" y="17.60" width="15.84" height="15.84" fill="#eb6834"/><rect x="35.20" y="17.60" width="15.84" height="15.84" fill="#eb6834"/><rect x="52.80" y="17.60" width="15.84" height="15.84" fill="#eb6834"/><rect x="70.40" y="17.60" width="15.84" height="15.84" fill="#eb6834"/><rect x="0.00" y="35.20" width="15.84" height="15.84" fill="#1baf7a"/><rect x="17.60" y="35.20" width="15.84" height="15.84" fill="#1baf7a"/><rect x="35.20" y="35.20" width="15.84" height="15.84" fill="#1baf7a"/><rect x="52.80" y="35.20" width="15.84" height="15.84" fill="#1baf7a"/><rect x="70.40" y="35.20" width="15.84" height="15.84" fill="#1baf7a"/><rect x="0.00" y="52.80" width="15.84" height="15.84" fill="#1baf7a"/><rect x="17.60" y="52.80" width="15.84" height="15.84" fill="#1baf7a"/><rect x="35.20" y="52.80" width="15.84" height="15.84" fill="#1baf7a"/><rect x="52.80" y="52.80" width="15.84" height="15.84" fill="#1baf7a"/><rect x="70.40" y="52.80" width="15.84" height="15.84" fill="#1baf7a"/><rect x="0.00" y="70.40" width="15.84" height="15.84" fill="#1baf7a"/><rect x="17.60" y="70.40" width="15.84" height="15.84" fill="#1baf7a"/><rect x="35.20" y="70.40" width="15.84" height="15.84" fill="#1baf7a"/><rect x="52.80" y="70.40" width="15.84" height="15.84" fill="#1baf7a"/><rect x="70.40" y="70.40" width="15.84" height="15.84" fill="#1baf7a"/><line x1="-1" y1="-0.5" x2="88" y2="-0.5" stroke="var(--ink2)" stroke-width="1.5" stroke-dasharray="3 2"/></svg>
+<figcaption><strong>the wide gut</strong><br>patchy, seed 12, lineage 775: 56,000 steps, 1,599 agents at its peak<br>grid 5x5; mass 45: hard 0, muscle 8, sensor 0.0, digestive 14; speed 0.19; flesh 33% of the intake; mean age 709<br>Five by five, 14 gut to 8 muscle: the biggest winner of the patchy worlds, and still unarmored.</figcaption></figure><figure class="card"><svg viewBox="-1 -1 89 89" width="120" height="120" role="img" aria-label="the armored hunter"><rect x="-1" y="-1" width="89" height="89" fill="var(--cell)"/><rect x="0.00" y="0.00" width="13.20" height="13.20" fill="#2a78d6"/><rect x="14.67" y="0.00" width="13.20" height="13.20" fill="#2a78d6"/><rect x="29.33" y="0.00" width="13.20" height="13.20" fill="#2a78d6"/><rect x="44.00" y="0.00" width="13.20" height="13.20" fill="#2a78d6"/><rect x="58.67" y="0.00" width="13.20" height="13.20" fill="#2a78d6"/><rect x="73.33" y="0.00" width="13.20" height="13.20" fill="#2a78d6"/><rect x="0.00" y="14.67" width="13.20" height="13.20" fill="#2a78d6"/><rect x="14.67" y="14.67" width="13.20" height="13.20" fill="#1baf7a"/><rect x="29.33" y="14.67" width="13.20" height="13.20" fill="#1baf7a"/><rect x="44.00" y="14.67" width="13.20" height="13.20" fill="#1baf7a"/><rect x="58.67" y="14.67" width="13.20" height="13.20" fill="#1baf7a"/><rect x="73.33" y="14.67" width="13.20" height="13.20" fill="#2a78d6"/><rect x="0.00" y="29.33" width="13.20" height="13.20" fill="#eb6834"/><rect x="14.67" y="29.33" width="13.20" height="13.20" fill="#1baf7a"/><rect x="29.33" y="29.33" width="13.20" height="13.20" fill="#1baf7a"/><rect x="44.00" y="29.33" width="13.20" height="13.20" fill="#1baf7a"/><rect x="58.67" y="29.33" width="13.20" height="13.20" fill="#1baf7a"/><rect x="73.33" y="29.33" width="13.20" height="13.20" fill="#eb6834"/><rect x="0.00" y="44.00" width="13.20" height="13.20" fill="#eb6834"/><rect x="14.67" y="44.00" width="13.20" height="13.20" fill="#eb6834"/><rect x="29.33" y="44.00" width="13.20" height="13.20" fill="#1baf7a"/><rect x="44.00" y="44.00" width="13.20" height="13.20" fill="#1baf7a"/><rect x="58.67" y="44.00" width="13.20" height="13.20" fill="#1baf7a"/><rect x="73.33" y="44.00" width="13.20" height="13.20" fill="#eb6834"/><rect x="0.00" y="58.67" width="13.20" height="13.20" fill="#eb6834"/><rect x="14.67" y="58.67" width="13.20" height="13.20" fill="#eb6834"/><rect x="29.33" y="58.67" width="13.20" height="13.20" fill="#eb6834"/><rect x="44.00" y="58.67" width="13.20" height="13.20" fill="#eb6834"/><rect x="58.67" y="58.67" width="13.20" height="13.20" fill="#eb6834"/><rect x="73.33" y="58.67" width="13.20" height="13.20" fill="#eb6834"/><rect x="0.00" y="73.33" width="13.20" height="13.20" fill="#eb6834"/><rect x="14.67" y="73.33" width="13.20" height="13.20" fill="#eb6834"/><rect x="29.33" y="73.33" width="13.20" height="13.20" fill="#eb6834"/><rect x="44.00" y="73.33" width="13.20" height="13.20" fill="#eb6834"/><rect x="58.67" y="73.33" width="13.20" height="13.20" fill="#eb6834"/><rect x="73.33" y="73.33" width="13.20" height="13.20" fill="#eb6834"/><line x1="-1" y1="-0.5" x2="88" y2="-0.5" stroke="var(--ink2)" stroke-width="1.5" stroke-dasharray="3 2"/></svg>
+<figcaption><strong>the armored hunter</strong><br>flat, seed 9, lineage 325: 61,000 steps, 2,316 agents at its peak<br>grid 6x6; mass 39: hard 7, muscle 10, sensor 0.0, digestive 11; speed 0.25; flesh 48% of the intake; mean age 254<br>Seven blocks of armor in front of muscle and gut: half its intake is flesh, in a world the flat food made hunt.</figcaption></figure><figure class="card"><svg viewBox="-1 -1 89 89" width="120" height="120" role="img" aria-label="the long hold"><rect x="-1" y="-1" width="89" height="89" fill="var(--cell)"/><rect x="0.00" y="0.00" width="13.20" height="13.20" fill="#2a78d6"/><rect x="14.67" y="0.00" width="13.20" height="13.20" fill="#2a78d6"/><rect x="29.33" y="0.00" width="13.20" height="13.20" fill="#2a78d6"/><rect x="44.00" y="0.00" width="13.20" height="13.20" fill="#2a78d6"/><rect x="58.67" y="0.00" width="13.20" height="13.20" fill="#2a78d6"/><rect x="73.33" y="0.00" width="13.20" height="13.20" fill="#2a78d6"/><rect x="0.00" y="14.67" width="13.20" height="13.20" fill="#1baf7a"/><rect x="14.67" y="14.67" width="13.20" height="13.20" fill="#1baf7a"/><rect x="29.33" y="14.67" width="13.20" height="13.20" fill="#1baf7a"/><rect x="44.00" y="14.67" width="13.20" height="13.20" fill="#1baf7a"/><rect x="58.67" y="14.67" width="13.20" height="13.20" fill="#1baf7a"/><rect x="73.33" y="14.67" width="13.20" height="13.20" fill="#1baf7a"/><rect x="0.00" y="29.33" width="13.20" height="13.20" fill="#1baf7a"/><rect x="14.67" y="29.33" width="13.20" height="13.20" fill="#1baf7a"/><rect x="29.33" y="29.33" width="13.20" height="13.20" fill="#1baf7a"/><rect x="44.00" y="29.33" width="13.20" height="13.20" fill="#1baf7a"/><rect x="58.67" y="29.33" width="13.20" height="13.20" fill="#1baf7a"/><rect x="73.33" y="29.33" width="13.20" height="13.20" fill="#1baf7a"/><rect x="0.00" y="44.00" width="13.20" height="13.20" fill="#eb6834"/><rect x="14.67" y="44.00" width="13.20" height="13.20" fill="#eb6834"/><rect x="29.33" y="44.00" width="13.20" height="13.20" fill="#eb6834"/><rect x="44.00" y="44.00" width="13.20" height="13.20" fill="#eb6834"/><rect x="58.67" y="44.00" width="13.20" height="13.20" fill="#eb6834"/><rect x="73.33" y="44.00" width="13.20" height="13.20" fill="#eb6834"/><rect x="0.00" y="58.67" width="13.20" height="13.20" fill="#eb6834"/><rect x="14.67" y="58.67" width="13.20" height="13.20" fill="#eb6834"/><rect x="29.33" y="58.67" width="13.20" height="13.20" fill="#eb6834"/><rect x="44.00" y="58.67" width="13.20" height="13.20" fill="#eb6834"/><rect x="58.67" y="58.67" width="13.20" height="13.20" fill="#eb6834"/><rect x="73.33" y="58.67" width="13.20" height="13.20" fill="#eb6834"/><rect x="0.00" y="73.33" width="13.20" height="13.20" fill="#eb6834"/><rect x="14.67" y="73.33" width="13.20" height="13.20" fill="#eb6834"/><rect x="29.33" y="73.33" width="13.20" height="13.20" fill="#eb6834"/><rect x="44.00" y="73.33" width="13.20" height="13.20" fill="#eb6834"/><rect x="58.67" y="73.33" width="13.20" height="13.20" fill="#eb6834"/><rect x="73.33" y="73.33" width="13.20" height="13.20" fill="#eb6834"/><line x1="-1" y1="-0.5" x2="88" y2="-0.5" stroke="var(--ink2)" stroke-width="1.5" stroke-dasharray="3 2"/></svg>
+<figcaption><strong>the long hold</strong><br>flat, seed 12, lineage 67: 96,000 steps, 2,834 agents at its peak<br>grid 6x6; mass 36: hard 6, muscle 9, sensor 0.0, digestive 11; speed 0.25; flesh 44% of the intake; mean age 222<br>The same armored front, 91,000 steps and 77% of the last third: no patchy world grew anything like it.</figcaption></figure><figure class="card"><svg viewBox="-1 -1 89 89" width="120" height="120" role="img" aria-label="the flat grazer"><rect x="-1" y="-1" width="89" height="89" fill="var(--cell)"/><rect x="0.00" y="0.00" width="15.84" height="15.84" fill="#1baf7a"/><rect x="17.60" y="0.00" width="15.84" height="15.84" fill="#1baf7a"/><rect x="35.20" y="0.00" width="15.84" height="15.84" fill="#1baf7a"/><rect x="52.80" y="0.00" width="15.84" height="15.84" fill="#1baf7a"/><rect x="70.40" y="0.00" width="15.84" height="15.84" fill="#1baf7a"/><rect x="0.00" y="17.60" width="15.84" height="15.84" fill="#eda100"/><rect x="17.60" y="17.60" width="15.84" height="15.84" fill="#1baf7a"/><rect x="35.20" y="17.60" width="15.84" height="15.84" fill="#1baf7a"/><rect x="52.80" y="17.60" width="15.84" height="15.84" fill="#1baf7a"/><rect x="70.40" y="17.60" width="15.84" height="15.84" fill="#1baf7a"/><rect x="0.00" y="35.20" width="15.84" height="15.84" fill="#eda100"/><rect x="17.60" y="35.20" width="15.84" height="15.84" fill="#eb6834"/><rect x="35.20" y="35.20" width="15.84" height="15.84" fill="#1baf7a"/><rect x="52.80" y="35.20" width="15.84" height="15.84" fill="#1baf7a"/><rect x="70.40" y="35.20" width="15.84" height="15.84" fill="#1baf7a"/><rect x="0.00" y="52.80" width="15.84" height="15.84" fill="#eb6834"/><rect x="17.60" y="52.80" width="15.84" height="15.84" fill="#eb6834"/><rect x="35.20" y="52.80" width="15.84" height="15.84" fill="#eb6834"/><rect x="52.80" y="52.80" width="15.84" height="15.84" fill="#1baf7a"/><rect x="70.40" y="52.80" width="15.84" height="15.84" fill="#1baf7a"/><rect x="0.00" y="70.40" width="15.84" height="15.84" fill="#eb6834"/><rect x="17.60" y="70.40" width="15.84" height="15.84" fill="#eb6834"/><rect x="35.20" y="70.40" width="15.84" height="15.84" fill="#eb6834"/><rect x="52.80" y="70.40" width="15.84" height="15.84" fill="#eb6834"/><rect x="70.40" y="70.40" width="15.84" height="15.84" fill="#1baf7a"/><line x1="-1" y1="-0.5" x2="88" y2="-0.5" stroke="var(--ink2)" stroke-width="1.5" stroke-dasharray="3 2"/></svg>
+<figcaption><strong>the flat grazer</strong><br>flat, seed 10, lineage 677: 44,000 steps, 2,481 agents at its peak<br>grid 5x5; mass 44: hard 0, muscle 7, sensor 1.3, digestive 14; speed 0.17; flesh 24% of the intake; mean age 1448<br>Twenty-three blocks, mostly gut, no armor: what wins a flat world that does not hunt.</figcaption></figure></div>
+<figcaption>The usual grown body of six leading lineages, front up (orange muscle, aqua gut, yellow sensor, blue hard). Not one winner of the patchy worlds carries armor, and they are smaller: 14-22 blocks against 23-28 flat.</figcaption></figure>
+
+<h2>4. Discussion</h2>
+<p>The grain was chosen against a life's walk - 8 cells, 133 steps at full speed against a life of 200-300. That was the wrong measure. Patches of width 2 laid one per 64 cells overlap into connected ribbons tens of cells across, so a body born on the rich land grazes its way through a life without ever reaching an edge. What would make a body cross is a patch smaller than a life's grazing, not a spacing shorter than a life's walk.</p><p>The second finding was not asked for: concentrating the same sun costs the world food, because the soil of a cell is local. At 2.5 times the rate a patch runs its own cells dry, and a tenth of the sun falls on ground with nothing left to grow from. Any law that gathers the light has to move the soil with it, or it is only a weaker sun.</p><p>What this does not show: what a sharper grain does (patches a body eats out within a life), whether patches that move faster than a body lives would drag it along, and what a thirsty or slower-living body would do in this same mosaic.</p>
+
+<h2>5. Conclusion and next step</h2>
+<p>Not kept: the grain stays an argument at 4,096. The law does make the world uneven, and the crowd answers it by gathering - but by being born on the rich land, not by walking to it, and the world pays 15% of its food for the difference. Next: a grain small enough that a body eats out its patch within a life, and a soil that can supply it.</p>
+
+<h2>Appendix: data</h2>
+<p>Every log step (10,000 steps) of the eight runs. The full data are in <code>results/*.csv</code>. Build this report with <code>uv run python experiments/e054_grain/report.py</code>.</p>
+<details><summary>patchy, seed 9</summary><div class='tw'><table><thead><tr><th>step</th><th>pop</th><th>births</th><th>deaths_energy</th><th>cells_broken</th><th>plant_intake</th><th>meat_intake</th><th>mean_res</th><th>rich</th><th>plant_rich</th><th>plant_thin</th><th>pop_rich</th><th>hunger_rich</th><th>hunger_thin</th><th>muscle_mean</th><th>speed_mean</th><th>moved</th><th>stalled</th><th>blocked</th><th>age_p50</th><th>size_p50</th></tr></thead><tbody><tr><td>10000</td><td>2122</td><td>73419</td><td>64547</td><td>958162</td><td>1.03823e+06</td><td>559807</td><td>1.549</td><td>0.3752</td><td>2.141</td><td>1.007</td><td>0.5283</td><td>2.6719</td><td>3.7828</td><td>8.96</td><td>0.221</td><td>0.0635</td><td>0.2969</td><td>0.621</td><td>211</td><td>23</td></tr><tr><td>20000</td><td>2043</td><td>41532</td><td>35489</td><td>471779</td><td>420846</td><td>226117</td><td>1.6</td><td>0.3875</td><td>2.202</td><td>1.007</td><td>0.5399</td><td>1.6204</td><td>1.9285</td><td>7.52</td><td>0.262</td><td>0.0643</td><td>0.4096</td><td>0.462</td><td>183</td><td>16</td></tr><tr><td>30000</td><td>2145</td><td>117381</td><td>92837</td><td>1.27489e+06</td><td>970491</td><td>685152</td><td>1.204</td><td>0.3724</td><td>1.686</td><td>0.796</td><td>0.6042</td><td>4.2068</td><td>5.0769</td><td>6.03</td><td>0.209</td><td>0.122</td><td>0.3383</td><td>0.556</td><td>177</td><td>19</td></tr><tr><td>40000</td><td>1800</td><td>33882</td><td>31736</td><td>259921</td><td>436980</td><td>155379</td><td>1.284</td><td>0.3788</td><td>1.881</td><td>0.784</td><td>0.5911</td><td>1.6877</td><td>1.4859</td><td>8.8</td><td>0.24</td><td>0.0641</td><td>0.4182</td><td>0.459</td><td>199</td><td>23</td></tr><tr><td>50000</td><td>1938</td><td>93442</td><td>74188</td><td>1.38379e+06</td><td>936267</td><td>738421</td><td>2.286</td><td>0.3621</td><td>2.904</td><td>1.657</td><td>0.5165</td><td>3.2525</td><td>4.1663</td><td>8.44</td><td>0.195</td><td>0.1144</td><td>0.3361</td><td>0.568</td><td>205</td><td>19</td></tr><tr><td>60000</td><td>1879</td><td>29747</td><td>26684</td><td>287670</td><td>415365</td><td>166224</td><td>1.689</td><td>0.3636</td><td>2.319</td><td>1.152</td><td>0.5625</td><td>1.3124</td><td>1.356</td><td>8.91</td><td>0.185</td><td>0.0417</td><td>0.4137</td><td>0.494</td><td>219</td><td>24</td></tr><tr><td>70000</td><td>2132</td><td>57170</td><td>49227</td><td>527612</td><td>958608</td><td>384451</td><td>1.327</td><td>0.3664</td><td>1.749</td><td>0.935</td><td>0.5685</td><td>2.396</td><td>2.5267</td><td>8.24</td><td>0.191</td><td>0.0757</td><td>0.3012</td><td>0.625</td><td>231</td><td>23</td></tr><tr><td>80000</td><td>2007</td><td>18385</td><td>17122</td><td>75504</td><td>443726</td><td>100934</td><td>1.217</td><td>0.3637</td><td>1.6</td><td>0.885</td><td>0.5745</td><td>0.8856</td><td>0.8266</td><td>7.34</td><td>0.178</td><td>0.0434</td><td>0.4351</td><td>0.476</td><td>239</td><td>22</td></tr><tr><td>90000</td><td>2569</td><td>38737</td><td>34586</td><td>150776</td><td>1.00444e+06</td><td>297370</td><td>1.034</td><td>0.3759</td><td>1.369</td><td>0.663</td><td>0.573</td><td>1.722</td><td>1.7366</td><td>6.11</td><td>0.179</td><td>0.0676</td><td>0.3587</td><td>0.568</td><td>233</td><td>16</td></tr><tr><td>100000</td><td>2044</td><td>18853</td><td>17836</td><td>64044</td><td>452003</td><td>118276</td><td>1.032</td><td>0.3721</td><td>1.435</td><td>0.692</td><td>0.6248</td><td>0.968</td><td>0.8156</td><td>7.03</td><td>0.173</td><td>0.0473</td><td>0.4603</td><td>0.45</td><td>237</td><td>23</td></tr></tbody></table></div></details>
+<details><summary>patchy, seed 10</summary><div class='tw'><table><thead><tr><th>step</th><th>pop</th><th>births</th><th>deaths_energy</th><th>cells_broken</th><th>plant_intake</th><th>meat_intake</th><th>mean_res</th><th>rich</th><th>plant_rich</th><th>plant_thin</th><th>pop_rich</th><th>hunger_rich</th><th>hunger_thin</th><th>muscle_mean</th><th>speed_mean</th><th>moved</th><th>stalled</th><th>blocked</th><th>age_p50</th><th>size_p50</th></tr></thead><tbody><tr><td>10000</td><td>2321</td><td>79408</td><td>68727</td><td>923908</td><td>1.07163e+06</td><td>580474</td><td>1.495</td><td>0.3648</td><td>2.122</td><td>0.934</td><td>0.5623</td><td>3.0404</td><td>3.8323</td><td>7.76</td><td>0.237</td><td>0.0675</td><td>0.2983</td><td>0.607</td><td>196</td><td>19</td></tr><tr><td>20000</td><td>2202</td><td>39185</td><td>34801</td><td>399282</td><td>462761</td><td>225050</td><td>1.126</td><td>0.3686</td><td>1.633</td><td>0.671</td><td>0.5781</td><td>1.8082</td><td>1.6719</td><td>8.47</td><td>0.264</td><td>0.0649</td><td>0.3841</td><td>0.485</td><td>195</td><td>19</td></tr><tr><td>30000</td><td>2701</td><td>126549</td><td>102451</td><td>1.43146e+06</td><td>1.00207e+06</td><td>780436</td><td>1.077</td><td>0.3642</td><td>1.568</td><td>0.67</td><td>0.5768</td><td>4.8622</td><td>5.3829</td><td>5.93</td><td>0.244</td><td>0.1103</td><td>0.2984</td><td>0.604</td><td>178</td><td>15</td></tr><tr><td>40000</td><td>2458</td><td>47207</td><td>41993</td><td>358846</td><td>464528</td><td>210197</td><td>1.02</td><td>0.3676</td><td>1.542</td><td>0.616</td><td>0.6115</td><td>2.2516</td><td>1.9477</td><td>6.86</td><td>0.27</td><td>0.0656</td><td>0.365</td><td>0.515</td><td>175</td><td>16</td></tr><tr><td>50000</td><td>2849</td><td>78681</td><td>69001</td><td>538834</td><td>1.03338e+06</td><td>381065</td><td>1.128</td><td>0.3653</td><td>1.505</td><td>0.774</td><td>0.5756</td><td>3.4138</td><td>3.4863</td><td>5.59</td><td>0.205</td><td>0.0794</td><td>0.2711</td><td>0.652</td><td>200</td><td>16</td></tr><tr><td>60000</td><td>2475</td><td>32394</td><td>30213</td><td>132239</td><td>468962</td><td>133322</td><td>0.867</td><td>0.3616</td><td>1.318</td><td>0.535</td><td>0.6004</td><td>1.6042</td><td>1.4171</td><td>5.82</td><td>0.237</td><td>0.0516</td><td>0.3814</td><td>0.526</td><td>201</td><td>16</td></tr><tr><td>70000</td><td>2858</td><td>54836</td><td>49234</td><td>254222</td><td>1.03427e+06</td><td>308267</td><td>0.888</td><td>0.3708</td><td>1.182</td><td>0.567</td><td>0.5826</td><td>2.498</td><td>2.4254</td><td>5.16</td><td>0.186</td><td>0.0812</td><td>0.3239</td><td>0.601</td><td>209</td><td>16</td></tr><tr><td>80000</td><td>2474</td><td>23491</td><td>22027</td><td>91943</td><td>453461</td><td>124772</td><td>0.937</td><td>0.3686</td><td>1.323</td><td>0.634</td><td>0.574</td><td>1.1708</td><td>1.0319</td><td>5.26</td><td>0.182</td><td>0.0504</td><td>0.4082</td><td>0.504</td><td>230</td><td>16</td></tr><tr><td>90000</td><td>2989</td><td>50233</td><td>45579</td><td>204729</td><td>1.01023e+06</td><td>308678</td><td>0.779</td><td>0.3698</td><td>1.044</td><td>0.483</td><td>0.5785</td><td>2.2923</td><td>2.2656</td><td>4.8</td><td>0.177</td><td>0.078</td><td>0.3573</td><td>0.569</td><td>212</td><td>16</td></tr><tr><td>100000</td><td>2604</td><td>22744</td><td>21421</td><td>81748</td><td>448600</td><td>124700</td><td>0.874</td><td>0.3646</td><td>1.323</td><td>0.526</td><td>0.5753</td><td>1.1473</td><td>0.9948</td><td>4.88</td><td>0.174</td><td>0.0479</td><td>0.4418</td><td>0.469</td><td>227</td><td>16</td></tr></tbody></table></div></details>
+<details><summary>patchy, seed 11</summary><div class='tw'><table><thead><tr><th>step</th><th>pop</th><th>births</th><th>deaths_energy</th><th>cells_broken</th><th>plant_intake</th><th>meat_intake</th><th>mean_res</th><th>rich</th><th>plant_rich</th><th>plant_thin</th><th>pop_rich</th><th>hunger_rich</th><th>hunger_thin</th><th>muscle_mean</th><th>speed_mean</th><th>moved</th><th>stalled</th><th>blocked</th><th>age_p50</th><th>size_p50</th></tr></thead><tbody><tr><td>10000</td><td>3191</td><td>121568</td><td>84652</td><td>1.90865e+06</td><td>1.02573e+06</td><td>945522</td><td>2.541</td><td>0.3624</td><td>3.188</td><td>1.804</td><td>0.4779</td><td>3.3812</td><td>5.084</td><td>7.35</td><td>0.28</td><td>0.103</td><td>0.3227</td><td>0.547</td><td>162</td><td>12</td></tr><tr><td>20000</td><td>2712</td><td>61557</td><td>48777</td><td>549982</td><td>436782</td><td>303575</td><td>2.154</td><td>0.3665</td><td>2.831</td><td>1.537</td><td>0.5081</td><td>2.2948</td><td>2.5829</td><td>5.62</td><td>0.223</td><td>0.0722</td><td>0.4569</td><td>0.4</td><td>173</td><td>15</td></tr><tr><td>30000</td><td>2535</td><td>122238</td><td>99867</td><td>872954</td><td>914851</td><td>508998</td><td>2.183</td><td>0.3679</td><td>2.861</td><td>1.543</td><td>0.5602</td><td>4.7079</td><td>5.2788</td><td>5.62</td><td>0.199</td><td>0.0996</td><td>0.356</td><td>0.546</td><td>191</td><td>16</td></tr><tr><td>40000</td><td>2423</td><td>48524</td><td>43081</td><td>251499</td><td>453914</td><td>147218</td><td>2.048</td><td>0.3651</td><td>2.756</td><td>1.425</td><td>0.5654</td><td>2.2279</td><td>2.0802</td><td>5.13</td><td>0.18</td><td>0.0591</td><td>0.448</td><td>0.441</td><td>197</td><td>16</td></tr><tr><td>50000</td><td>2741</td><td>118099</td><td>101323</td><td>691723</td><td>1.01442e+06</td><td>411520</td><td>1.9</td><td>0.3661</td><td>2.564</td><td>1.316</td><td>0.56</td><td>5.0855</td><td>5.0468</td><td>5.13</td><td>0.184</td><td>0.0811</td><td>0.359</td><td>0.562</td><td>198</td><td>16</td></tr><tr><td>60000</td><td>2478</td><td>48299</td><td>42994</td><td>248331</td><td>460341</td><td>145007</td><td>1.924</td><td>0.3704</td><td>2.526</td><td>1.375</td><td>0.5545</td><td>2.2872</td><td>2.0122</td><td>5.38</td><td>0.191</td><td>0.0587</td><td>0.4508</td><td>0.44</td><td>196</td><td>16</td></tr><tr><td>70000</td><td>2774</td><td>119993</td><td>100726</td><td>769840</td><td>1.01921e+06</td><td>437658</td><td>1.836</td><td>0.3721</td><td>2.519</td><td>1.25</td><td>0.509</td><td>4.8926</td><td>5.18</td><td>5.98</td><td>0.21</td><td>0.0896</td><td>0.346</td><td>0.572</td><td>190</td><td>16</td></tr><tr><td>80000</td><td>2621</td><td>45244</td><td>39249</td><td>268625</td><td>450270</td><td>150648</td><td>1.838</td><td>0.3724</td><td>2.468</td><td>1.285</td><td>0.538</td><td>1.9482</td><td>1.9767</td><td>5.69</td><td>0.199</td><td>0.0622</td><td>0.4266</td><td>0.462</td><td>193</td><td>16</td></tr><tr><td>90000</td><td>2675</td><td>115045</td><td>94695</td><td>816008</td><td>1.02352e+06</td><td>459874</td><td>1.773</td><td>0.3749</td><td>2.533</td><td>1.137</td><td>0.5335</td><td>4.5844</td><td>4.8851</td><td>5.87</td><td>0.207</td><td>0.1035</td><td>0.3169</td><td>0.606</td><td>188</td><td>16</td></tr><tr><td>100000</td><td>2591</td><td>44387</td><td>38306</td><td>276658</td><td>447773</td><td>153221</td><td>1.779</td><td>0.3672</td><td>2.507</td><td>1.177</td><td>0.5481</td><td>1.864</td><td>1.9666</td><td>5.88</td><td>0.205</td><td>0.0643</td><td>0.4261</td><td>0.465</td><td>190</td><td>16</td></tr></tbody></table></div></details>
+<details><summary>patchy, seed 12</summary><div class='tw'><table><thead><tr><th>step</th><th>pop</th><th>births</th><th>deaths_energy</th><th>cells_broken</th><th>plant_intake</th><th>meat_intake</th><th>mean_res</th><th>rich</th><th>plant_rich</th><th>plant_thin</th><th>pop_rich</th><th>hunger_rich</th><th>hunger_thin</th><th>muscle_mean</th><th>speed_mean</th><th>moved</th><th>stalled</th><th>blocked</th><th>age_p50</th><th>size_p50</th></tr></thead><tbody><tr><td>10000</td><td>2450</td><td>135099</td><td>89176</td><td>2.14447e+06</td><td>1.06348e+06</td><td>1.049e+06</td><td>2.375</td><td>0.3731</td><td>3.074</td><td>1.591</td><td>0.5065</td><td>3.6304</td><td>5.2872</td><td>6.68</td><td>0.213</td><td>0.1386</td><td>0.3183</td><td>0.55</td><td>144</td><td>16</td></tr><tr><td>20000</td><td>2416</td><td>55668</td><td>44312</td><td>612077</td><td>412809</td><td>309995</td><td>2.014</td><td>0.3613</td><td>2.739</td><td>1.358</td><td>0.4983</td><td>1.9786</td><td>2.4526</td><td>6.82</td><td>0.223</td><td>0.0792</td><td>0.4154</td><td>0.456</td><td>162</td><td>16</td></tr><tr><td>30000</td><td>2204</td><td>90077</td><td>75339</td><td>959881</td><td>1.01427e+06</td><td>532617</td><td>1.62</td><td>0.3736</td><td>2.208</td><td>1.068</td><td>0.529</td><td>3.406</td><td>4.1279</td><td>8.3</td><td>0.204</td><td>0.0864</td><td>0.2807</td><td>0.656</td><td>193</td><td>22</td></tr><tr><td>40000</td><td>1901</td><td>30838</td><td>27825</td><td>297641</td><td>417584</td><td>157124</td><td>1.635</td><td>0.3687</td><td>2.322</td><td>1.044</td><td>0.5681</td><td>1.3065</td><td>1.476</td><td>8.23</td><td>0.182</td><td>0.0432</td><td>0.3565</td><td>0.564</td><td>201</td><td>25</td></tr><tr><td>50000</td><td>2236</td><td>77294</td><td>67064</td><td>820055</td><td>1.02385e+06</td><td>466736</td><td>1.495</td><td>0.3714</td><td>2.235</td><td>0.87</td><td>0.542</td><td>3.0978</td><td>3.6086</td><td>8.23</td><td>0.193</td><td>0.0687</td><td>0.2793</td><td>0.664</td><td>201</td><td>25</td></tr><tr><td>60000</td><td>1883</td><td>29133</td><td>26706</td><td>264921</td><td>415303</td><td>141484</td><td>1.551</td><td>0.3694</td><td>2.279</td><td>0.94</td><td>0.5236</td><td>1.2854</td><td>1.3852</td><td>8.47</td><td>0.186</td><td>0.0401</td><td>0.3605</td><td>0.563</td><td>199</td><td>25</td></tr><tr><td>70000</td><td>2291</td><td>76364</td><td>66874</td><td>707982</td><td>1.01566e+06</td><td>420132</td><td>1.449</td><td>0.3678</td><td>2.069</td><td>0.93</td><td>0.5605</td><td>3.1446</td><td>3.5428</td><td>7.54</td><td>0.192</td><td>0.0644</td><td>0.2782</td><td>0.667</td><td>202</td><td>18</td></tr><tr><td>80000</td><td>1879</td><td>29667</td><td>27072</td><td>231907</td><td>424928</td><td>133570</td><td>1.546</td><td>0.3684</td><td>2.255</td><td>0.946</td><td>0.5609</td><td>1.3848</td><td>1.3224</td><td>8.51</td><td>0.183</td><td>0.0399</td><td>0.3445</td><td>0.583</td><td>199</td><td>25</td></tr><tr><td>90000</td><td>2409</td><td>74586</td><td>65486</td><td>640447</td><td>1.0246e+06</td><td>394922</td><td>1.283</td><td>0.3616</td><td>1.844</td><td>0.826</td><td>0.5554</td><td>3.2346</td><td>3.314</td><td>7.21</td><td>0.184</td><td>0.0603</td><td>0.2757</td><td>0.672</td><td>198</td><td>20</td></tr><tr><td>100000</td><td>2169</td><td>30185</td><td>27730</td><td>203557</td><td>429219</td><td>129898</td><td>1.407</td><td>0.3727</td><td>1.964</td><td>0.94</td><td>0.5643</td><td>1.4861</td><td>1.2869</td><td>7.22</td><td>0.189</td><td>0.0351</td><td>0.3452</td><td>0.585</td><td>200</td><td>16</td></tr></tbody></table></div></details>
+<details><summary>flat, seed 9</summary><div class='tw'><table><thead><tr><th>step</th><th>pop</th><th>births</th><th>deaths_energy</th><th>cells_broken</th><th>plant_intake</th><th>meat_intake</th><th>mean_res</th><th>rich</th><th>plant_rich</th><th>plant_thin</th><th>pop_rich</th><th>hunger_rich</th><th>hunger_thin</th><th>muscle_mean</th><th>speed_mean</th><th>moved</th><th>stalled</th><th>blocked</th><th>age_p50</th><th>size_p50</th></tr></thead><tbody><tr><td>10000</td><td>2206</td><td>102107</td><td>80031</td><td>2.4612e+06</td><td>1.24973e+06</td><td>1.1155e+06</td><td>1.216</td><td>1</td><td>1.143</td><td>0</td><td>1</td><td>8.0031</td><td>0</td><td>8.85</td><td>0.242</td><td>0.1185</td><td>0.2804</td><td>0.608</td><td>194</td><td>31</td></tr><tr><td>20000</td><td>2542</td><td>37828</td><td>33743</td><td>593438</td><td>481587</td><td>261568</td><td>1.771</td><td>1</td><td>1.659</td><td>0</td><td>1</td><td>3.3743</td><td>0</td><td>9.42</td><td>0.28</td><td>0.0691</td><td>0.4104</td><td>0.43</td><td>180</td><td>21</td></tr><tr><td>30000</td><td>2400</td><td>122631</td><td>102317</td><td>2.14412e+06</td><td>1.18597e+06</td><td>1.03734e+06</td><td>1.273</td><td>1</td><td>1.203</td><td>0</td><td>1</td><td>10.2317</td><td>0</td><td>8.36</td><td>0.289</td><td>0.1358</td><td>0.2952</td><td>0.607</td><td>198</td><td>24</td></tr><tr><td>40000</td><td>2230</td><td>41474</td><td>37041</td><td>618535</td><td>480663</td><td>285235</td><td>1.797</td><td>1</td><td>1.685</td><td>0</td><td>1</td><td>3.7041</td><td>0</td><td>9.25</td><td>0.29</td><td>0.1002</td><td>0.3872</td><td>0.432</td><td>186</td><td>24</td></tr><tr><td>50000</td><td>2430</td><td>113095</td><td>99150</td><td>1.91086e+06</td><td>1.19052e+06</td><td>950007</td><td>1.461</td><td>1</td><td>1.365</td><td>0</td><td>1</td><td>9.915</td><td>0</td><td>9.1</td><td>0.259</td><td>0.1102</td><td>0.2996</td><td>0.614</td><td>207</td><td>25</td></tr><tr><td>60000</td><td>2448</td><td>38325</td><td>34425</td><td>611338</td><td>484844</td><td>281776</td><td>1.514</td><td>1</td><td>1.415</td><td>0</td><td>1</td><td>3.4425</td><td>0</td><td>9.48</td><td>0.266</td><td>0.0741</td><td>0.4146</td><td>0.432</td><td>193</td><td>24</td></tr><tr><td>70000</td><td>2251</td><td>102359</td><td>92690</td><td>1.80258e+06</td><td>1.17937e+06</td><td>832426</td><td>1.422</td><td>1</td><td>1.341</td><td>0</td><td>1</td><td>9.269</td><td>0</td><td>8.59</td><td>0.233</td><td>0.1112</td><td>0.3141</td><td>0.6</td><td>206</td><td>25</td></tr><tr><td>80000</td><td>2206</td><td>39224</td><td>35167</td><td>614579</td><td>484240</td><td>281306</td><td>1.552</td><td>1</td><td>1.472</td><td>0</td><td>1</td><td>3.5167</td><td>0</td><td>8.61</td><td>0.236</td><td>0.0827</td><td>0.4364</td><td>0.416</td><td>196</td><td>24</td></tr><tr><td>90000</td><td>2465</td><td>111066</td><td>98413</td><td>1.94382e+06</td><td>1.18253e+06</td><td>887540</td><td>1.493</td><td>1</td><td>1.414</td><td>0</td><td>1</td><td>9.8413</td><td>0</td><td>8.59</td><td>0.243</td><td>0.1042</td><td>0.3068</td><td>0.612</td><td>204</td><td>24</td></tr><tr><td>100000</td><td>2347</td><td>39347</td><td>35598</td><td>563305</td><td>491604</td><td>270854</td><td>1.337</td><td>1</td><td>1.255</td><td>0</td><td>1</td><td>3.5598</td><td>0</td><td>8.86</td><td>0.255</td><td>0.0734</td><td>0.4161</td><td>0.446</td><td>203</td><td>25</td></tr></tbody></table></div></details>
+<details><summary>flat, seed 10</summary><div class='tw'><table><thead><tr><th>step</th><th>pop</th><th>births</th><th>deaths_energy</th><th>cells_broken</th><th>plant_intake</th><th>meat_intake</th><th>mean_res</th><th>rich</th><th>plant_rich</th><th>plant_thin</th><th>pop_rich</th><th>hunger_rich</th><th>hunger_thin</th><th>muscle_mean</th><th>speed_mean</th><th>moved</th><th>stalled</th><th>blocked</th><th>age_p50</th><th>size_p50</th></tr></thead><tbody><tr><td>10000</td><td>3014</td><td>159681</td><td>117572</td><td>2.68495e+06</td><td>1.22541e+06</td><td>1.26179e+06</td><td>2.418</td><td>1</td><td>2.21</td><td>0</td><td>1</td><td>11.7572</td><td>0</td><td>7.81</td><td>0.253</td><td>0.1284</td><td>0.2997</td><td>0.588</td><td>160</td><td>15</td></tr><tr><td>20000</td><td>2588</td><td>47426</td><td>38374</td><td>666387</td><td>480162</td><td>324315</td><td>2.392</td><td>1</td><td>2.276</td><td>0</td><td>1</td><td>3.8374</td><td>0</td><td>6.24</td><td>0.224</td><td>0.0789</td><td>0.4622</td><td>0.384</td><td>155</td><td>16</td></tr><tr><td>30000</td><td>3275</td><td>96687</td><td>84995</td><td>631812</td><td>1.24225e+06</td><td>456715</td><td>1.207</td><td>1</td><td>1.111</td><td>0</td><td>1</td><td>8.4995</td><td>0</td><td>5.28</td><td>0.164</td><td>0.0938</td><td>0.356</td><td>0.562</td><td>196</td><td>16</td></tr><tr><td>40000</td><td>2408</td><td>23616</td><td>23280</td><td>72960</td><td>520926</td><td>110736</td><td>1.097</td><td>1</td><td>1.023</td><td>0</td><td>1</td><td>2.328</td><td>0</td><td>6.03</td><td>0.16</td><td>0.0459</td><td>0.5654</td><td>0.333</td><td>223</td><td>21</td></tr><tr><td>50000</td><td>3043</td><td>49704</td><td>45162</td><td>207425</td><td>1.20675e+06</td><td>410338</td><td>1.009</td><td>1</td><td>0.863</td><td>0</td><td>1</td><td>4.5162</td><td>0</td><td>5.72</td><td>0.166</td><td>0.0809</td><td>0.4389</td><td>0.481</td><td>202</td><td>16</td></tr><tr><td>60000</td><td>2281</td><td>18541</td><td>17700</td><td>53181</td><td>521715</td><td>134324</td><td>1.008</td><td>1</td><td>0.93</td><td>0</td><td>1</td><td>1.77</td><td>0</td><td>6.47</td><td>0.165</td><td>0.0502</td><td>0.5777</td><td>0.315</td><td>229</td><td>19</td></tr><tr><td>70000</td><td>2936</td><td>39624</td><td>35049</td><td>157637</td><td>1.18023e+06</td><td>421862</td><td>0.906</td><td>1</td><td>0.757</td><td>0</td><td>1</td><td>3.5049</td><td>0</td><td>6.08</td><td>0.163</td><td>0.0809</td><td>0.4592</td><td>0.455</td><td>208</td><td>16</td></tr><tr><td>80000</td><td>2118</td><td>15778</td><td>14998</td><td>47851</td><td>519572</td><td>144848</td><td>0.964</td><td>1</td><td>0.884</td><td>0</td><td>1</td><td>1.4998</td><td>0</td><td>7.12</td><td>0.168</td><td>0.0536</td><td>0.5868</td><td>0.302</td><td>237</td><td>24</td></tr><tr><td>90000</td><td>2773</td><td>33869</td><td>29200</td><td>151217</td><td>1.15205e+06</td><td>447137</td><td>0.858</td><td>1</td><td>0.708</td><td>0</td><td>1</td><td>2.92</td><td>0</td><td>6.54</td><td>0.165</td><td>0.086</td><td>0.4769</td><td>0.433</td><td>207</td><td>23</td></tr><tr><td>100000</td><td>2159</td><td>15171</td><td>14006</td><td>53051</td><td>521028</td><td>163354</td><td>0.927</td><td>1</td><td>0.835</td><td>0</td><td>1</td><td>1.4006</td><td>0</td><td>7.12</td><td>0.161</td><td>0.0536</td><td>0.5968</td><td>0.292</td><td>228</td><td>24</td></tr></tbody></table></div></details>
+<details><summary>flat, seed 11</summary><div class='tw'><table><thead><tr><th>step</th><th>pop</th><th>births</th><th>deaths_energy</th><th>cells_broken</th><th>plant_intake</th><th>meat_intake</th><th>mean_res</th><th>rich</th><th>plant_rich</th><th>plant_thin</th><th>pop_rich</th><th>hunger_rich</th><th>hunger_thin</th><th>muscle_mean</th><th>speed_mean</th><th>moved</th><th>stalled</th><th>blocked</th><th>age_p50</th><th>size_p50</th></tr></thead><tbody><tr><td>10000</td><td>3046</td><td>162585</td><td>107261</td><td>2.65327e+06</td><td>1.17051e+06</td><td>1.25894e+06</td><td>3.197</td><td>1</td><td>2.979</td><td>0</td><td>1</td><td>10.7261</td><td>0</td><td>6.58</td><td>0.29</td><td>0.1344</td><td>0.331</td><td>0.537</td><td>154</td><td>12</td></tr><tr><td>20000</td><td>2511</td><td>63693</td><td>48177</td><td>575710</td><td>473281</td><td>309010</td><td>2.693</td><td>1</td><td>2.56</td><td>0</td><td>1</td><td>4.8177</td><td>0</td><td>5.7</td><td>0.205</td><td>0.0873</td><td>0.4021</td><td>0.47</td><td>163</td><td>16</td></tr><tr><td>30000</td><td>3079</td><td>144892</td><td>122976</td><td>939942</td><td>1.19931e+06</td><td>517489</td><td>2.295</td><td>1</td><td>2.188</td><td>0</td><td>1</td><td>12.2976</td><td>0</td><td>5.32</td><td>0.185</td><td>0.0806</td><td>0.2799</td><td>0.666</td><td>188</td><td>16</td></tr><tr><td>40000</td><td>2833</td><td>46422</td><td>41751</td><td>230956</td><td>498367</td><td>134293</td><td>2.209</td><td>1</td><td>2.105</td><td>0</td><td>1</td><td>4.1751</td><td>0</td><td>5.24</td><td>0.183</td><td>0.0535</td><td>0.3863</td><td>0.529</td><td>194</td><td>16</td></tr><tr><td>50000</td><td>3091</td><td>143155</td><td>121657</td><td>890670</td><td>1.22191e+06</td><td>499874</td><td>2.199</td><td>1</td><td>2.093</td><td>0</td><td>1</td><td>12.1657</td><td>0</td><td>5.64</td><td>0.197</td><td>0.0883</td><td>0.2878</td><td>0.653</td><td>186</td><td>16</td></tr><tr><td>60000</td><td>3126</td><td>42708</td><td>39231</td><td>171238</td><td>506550</td><td>110313</td><td>1.863</td><td>1</td><td>1.775</td><td>0</td><td>1</td><td>3.9231</td><td>0</td><td>4.8</td><td>0.166</td><td>0.0449</td><td>0.4295</td><td>0.48</td><td>193</td><td>16</td></tr><tr><td>70000</td><td>3166</td><td>115150</td><td>104972</td><td>525444</td><td>1.25175e+06</td><td>360903</td><td>1.815</td><td>1</td><td>1.717</td><td>0</td><td>1</td><td>10.4972</td><td>0</td><td>5.04</td><td>0.177</td><td>0.0825</td><td>0.3325</td><td>0.606</td><td>190</td><td>16</td></tr><tr><td>80000</td><td>2974</td><td>38045</td><td>36427</td><td>115098</td><td>519202</td><td>97572.9</td><td>1.727</td><td>1</td><td>1.646</td><td>0</td><td>1</td><td>3.6427</td><td>0</td><td>4.37</td><td>0.154</td><td>0.0476</td><td>0.4699</td><td>0.443</td><td>194</td><td>16</td></tr><tr><td>90000</td><td>3318</td><td>111817</td><td>105364</td><td>406287</td><td>1.25938e+06</td><td>322098</td><td>1.578</td><td>1</td><td>1.496</td><td>0</td><td>1</td><td>10.5364</td><td>0</td><td>4.25</td><td>0.153</td><td>0.0735</td><td>0.3561</td><td>0.587</td><td>198</td><td>16</td></tr><tr><td>100000</td><td>2955</td><td>37192</td><td>36026</td><td>101171</td><td>524250</td><td>97698</td><td>1.647</td><td>1</td><td>1.569</td><td>0</td><td>1</td><td>3.6026</td><td>0</td><td>4.08</td><td>0.145</td><td>0.0452</td><td>0.4931</td><td>0.425</td><td>196</td><td>16</td></tr></tbody></table></div></details>
+<details><summary>flat, seed 12</summary><div class='tw'><table><thead><tr><th>step</th><th>pop</th><th>births</th><th>deaths_energy</th><th>cells_broken</th><th>plant_intake</th><th>meat_intake</th><th>mean_res</th><th>rich</th><th>plant_rich</th><th>plant_thin</th><th>pop_rich</th><th>hunger_rich</th><th>hunger_thin</th><th>muscle_mean</th><th>speed_mean</th><th>moved</th><th>stalled</th><th>blocked</th><th>age_p50</th><th>size_p50</th></tr></thead><tbody><tr><td>10000</td><td>2738</td><td>128810</td><td>103333</td><td>2.14832e+06</td><td>1.25117e+06</td><td>1.0246e+06</td><td>2.225</td><td>1</td><td>2.078</td><td>0</td><td>1</td><td>10.3333</td><td>0</td><td>7.1</td><td>0.237</td><td>0.0968</td><td>0.2866</td><td>0.616</td><td>184</td><td>16</td></tr><tr><td>20000</td><td>2271</td><td>41343</td><td>37587</td><td>707312</td><td>478260</td><td>300048</td><td>1.901</td><td>1</td><td>1.774</td><td>0</td><td>1</td><td>3.7587</td><td>0</td><td>10.21</td><td>0.269</td><td>0.0622</td><td>0.3564</td><td>0.524</td><td>189</td><td>27</td></tr><tr><td>30000</td><td>2484</td><td>122502</td><td>107756</td><td>2.62207e+06</td><td>1.20082e+06</td><td>1.08513e+06</td><td>1.733</td><td>1</td><td>1.624</td><td>0</td><td>1</td><td>10.7756</td><td>0</td><td>9.26</td><td>0.256</td><td>0.1074</td><td>0.25</td><td>0.671</td><td>196</td><td>25</td></tr><tr><td>40000</td><td>2370</td><td>40980</td><td>37702</td><td>713365</td><td>476238</td><td>298544</td><td>1.769</td><td>1</td><td>1.667</td><td>0</td><td>1</td><td>3.7702</td><td>0</td><td>8.91</td><td>0.242</td><td>0.0654</td><td>0.3586</td><td>0.521</td><td>192</td><td>25</td></tr><tr><td>50000</td><td>2387</td><td>119713</td><td>108841</td><td>2.26209e+06</td><td>1.21929e+06</td><td>960719</td><td>1.778</td><td>1</td><td>1.669</td><td>0</td><td>1</td><td>10.8841</td><td>0</td><td>8.76</td><td>0.236</td><td>0.1007</td><td>0.2614</td><td>0.668</td><td>199</td><td>25</td></tr><tr><td>60000</td><td>2223</td><td>42207</td><td>38691</td><td>772833</td><td>480919</td><td>316228</td><td>1.643</td><td>1</td><td>1.545</td><td>0</td><td>1</td><td>3.8691</td><td>0</td><td>9.06</td><td>0.236</td><td>0.0669</td><td>0.3624</td><td>0.524</td><td>189</td><td>27</td></tr><tr><td>70000</td><td>2525</td><td>127495</td><td>114399</td><td>2.34895e+06</td><td>1.21783e+06</td><td>1.00528e+06</td><td>1.808</td><td>1</td><td>1.696</td><td>0</td><td>1</td><td>11.4399</td><td>0</td><td>8.48</td><td>0.222</td><td>0.1002</td><td>0.2576</td><td>0.674</td><td>198</td><td>24</td></tr><tr><td>80000</td><td>2323</td><td>40982</td><td>37948</td><td>713458</td><td>481473</td><td>297281</td><td>1.712</td><td>1</td><td>1.611</td><td>0</td><td>1</td><td>3.7948</td><td>0</td><td>9.17</td><td>0.238</td><td>0.0611</td><td>0.3647</td><td>0.526</td><td>194</td><td>25</td></tr><tr><td>90000</td><td>2543</td><td>122680</td><td>111826</td><td>2.2536e+06</td><td>1.22522e+06</td><td>964252</td><td>1.674</td><td>1</td><td>1.567</td><td>0</td><td>1</td><td>11.1826</td><td>0</td><td>8.99</td><td>0.244</td><td>0.0946</td><td>0.2606</td><td>0.67</td><td>197</td><td>25</td></tr><tr><td>100000</td><td>2561</td><td>41056</td><td>38139</td><td>684905</td><td>479796</td><td>288621</td><td>1.554</td><td>1</td><td>1.461</td><td>0</td><td>1</td><td>3.8139</td><td>0</td><td>8.62</td><td>0.243</td><td>0.0541</td><td>0.3649</td><td>0.526</td><td>190</td><td>24</td></tr></tbody></table></div></details>
+</main>
+</body>
+</html>
