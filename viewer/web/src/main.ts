@@ -3,7 +3,7 @@
 import * as THREE from 'three';
 import { LiveSource, ReplaySource, type Source } from './net.js';
 import { World, type Fate, type Frame } from './world.js';
-import { Ground, Sky, Rig, UP } from './render.js';
+import { Ground, Sky, Rig, UP, shortest } from './render.js';
 import { Life } from './life.js';
 import { alongLine, onLine, Walk } from './line.js';
 import { RECORD, type AgentField, type Header, type Line, type State } from './wire.js';
@@ -39,6 +39,9 @@ let lines: Line[] = [];
 let line: Line | null = null;
 let walk: Walk | null = null;
 let lineNote = '';
+// The kinds of body about now (see `kinds`), and when they were last counted.
+let kindsNow: Kind[] = [];
+let kindsAt = 0, kindsKey = '';
 
 async function boot() {
   let state: State = { live: false };
@@ -214,6 +217,103 @@ function descend(): void {
   }
 }
 
+// ---- the kinds of body about now -------------------------------------------
+
+/** One lineage as it stands in the frame being shown: how many bodies wear it, the shape most of
+ * them wear, and what most of them eat. A lineage is a group the world finds again at every log,
+ * not a family, so this is the kinds of body about at this moment rather than a family tree - and
+ * that is what it is for: to see, at any time in a run, what the world is made of now. */
+interface Kind {
+  lin: number;
+  n: number;
+  shape: number; // the body id (a shape in `world.bodies`) most of them wear
+  diet: number;
+}
+
+const KINDS = 5; // how many of them the panel shows: the ones with the most bodies
+
+function kinds(a: Frame | null): void {
+  const now = performance.now();
+  if (now - kindsAt < 1200) return; // counting every body is cheap; rebuilding the panel is not
+  kindsAt = now;
+  if (!a || !a.n) return; // a seek has thrown the window away: keep the last count until one lands
+  const by = new Map<number, { n: number; shapes: Map<number, number>; diets: number[] }>();
+  for (let i = 0; i < a.n; i++) {
+    const l = a.a.lineage[i];
+    let e = by.get(l);
+    if (e === undefined) by.set(l, (e = { n: 0, shapes: new Map(), diets: [0, 0, 0, 0] }));
+    e.n++;
+    const sh = a.a.body[i];
+    e.shapes.set(sh, (e.shapes.get(sh) ?? 0) + 1);
+    e.diets[a.a.diet[i]]++;
+  }
+  const most = (m: Map<number, number>): number => {
+    let best = 0, at = 0;
+    for (const [k, n] of m) if (n > best) { best = n; at = k; }
+    return at;
+  };
+  kindsNow = [...by.entries()]
+    .sort((x, y) => y[1].n - x[1].n)
+    .slice(0, KINDS)
+    .map(([lin, e]) => ({ lin, n: e.n, shape: most(e.shapes), diet: e.diets.indexOf(Math.max(...e.diets)) }));
+  const key = kindsNow.map((k) => `${k.lin}:${k.n}:${k.shape}:${k.diet}:${picked}`).join();
+  if (key === kindsKey) return;
+  kindsKey = key;
+  $('kinds').hidden = false;
+  const names = world.h.blocks;
+  const alsoPicked = picked !== null ? a.index.get(picked) : undefined;
+  const on = alsoPicked !== undefined ? a.a.lineage[alsoPicked] : -1;
+  $('kindlist').innerHTML = kindsNow.map((k) => {
+    const shape = world.bodies.get(k.shape);
+    const cells = shape ? [...shape.cells] : [];
+    const pic = `<div class="pic" style="grid-template-columns:repeat(${shape ? shape.side : 1},1fr)">` +
+      cells.map((c) => `<i style="background:${c ? KIND_COLORS[names[c]] : '#ffffff10'}"></i>`).join('') + '</div>';
+    // What it is made of, as one bar: the shares of the kinds of block in that shape.
+    const count = new Map<number, number>();
+    for (const c of cells) if (c) count.set(c, (count.get(c) ?? 0) + 1);
+    const mix = [...count.entries()].sort((x, y) => y[1] - x[1])
+      .map(([c, n]) => `<b style="flex:${n};background:${KIND_COLORS[names[c]]}" title="${names[c]} ${n}"></b>`).join('');
+    return `<div class="kind">${pic}<div>` +
+      `<div class="top"><span><span class="n">${k.n.toLocaleString()} 体</span><span class="muted"> · ${DIET[k.diet]}</span></span>` +
+      `<button class="${k.lin === on ? 'on' : ''}" data-lin="${k.lin}">追う</button></div>` +
+      `<div class="muted">系統 ${k.lin || '—'}・${shape ? `${shape.side}×${shape.side}・${shape.n}個` : '—'}</div>` +
+      `<div class="mix">${mix}</div></div></div>`;
+  }).join('');
+  for (const b of Array.from($('kindlist').querySelectorAll('button'))) {
+    b.onclick = () => watchKind(+(b as HTMLElement).dataset.lin!);
+  }
+  // A shape is only known once its record has come over the wire; if one has not, this is drawn
+  // again next time rather than kept as a dash.
+  if (kindsNow.some((k) => !world.bodies.get(k.shape))) kindsKey = '';
+}
+
+/** Watch one of them: of the bodies of that lineage, one wearing the shape most of them wear,
+ * and of those the one nearest the eye, so the watcher is shown the kind and not sent across the
+ * world for it. */
+function watchKind(lin: number): void {
+  const [a] = world.around(step);
+  const k = kindsNow.find((x) => x.lin === lin);
+  if (!a || !k) return;
+  const cell = 1 / world.sub;
+  let best: number | null = null, bestFar = Infinity, bestFit = -1;
+  for (let i = 0; i < a.n; i++) {
+    if (a.a.lineage[i] !== lin) continue;
+    const fit = a.a.body[i] === k.shape ? 1 : 0;
+    if (fit < bestFit) continue;
+    const dx = shortest(a.a.x[i] * cell - rig.target.x, world.w), dz = shortest(a.a.y[i] * cell - rig.target.z, world.d);
+    const far = dx * dx + dz * dz;
+    if (fit > bestFit || far < bestFar) { bestFit = fit; bestFar = far; best = a.a.id[i]; }
+  }
+  if (best === null) return;
+  line = null; // a kind chosen by hand ends whatever line was being followed, as a click does
+  setWalk(false);
+  picked = best;
+  rig.follow = best;
+  rig.send();
+  rig.want = Math.min(rig.dist, 24);
+  kindsKey = '';
+}
+
 /** The lines a recording offers: a body alive in its last frame walked back to the first of its
  * line, the longest first and then the ones that share the least with those already there. */
 async function loadLines(): Promise<void> {
@@ -320,6 +420,7 @@ function hud(a: Frame | null, b: Frame | null, t: number, here: number, swing: n
   if (!source.live && !seeking) $i('seek').value = String(step);
   $('speedv').textContent = (source.live ? '' : (speed < 0 ? '逆 ' : '')) + Math.abs(speed).toFixed(speed >= 10 ? 0 : 1) + ' 歩/秒';
   selection(a, b, t);
+  kinds(a);
   minimap(a, b, t, before, after);
   const along = line ? `${(alongLine(line, step) + 1).toLocaleString()} / ${line.seen.toLocaleString()} 代目 · #${picked}` : walk ? `子へ乗り換えながら追っている · #${picked}` : lineNote;
   $('linenow').textContent = along;

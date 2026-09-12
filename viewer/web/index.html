@@ -18,7 +18,27 @@
   #hud b { font: 500 22px/1.15 "IBM Plex Mono", ui-monospace, monospace; display: block; font-variant-numeric: tabular-nums; }
   #hud .row { display: flex; justify-content: space-between; gap: 14px; color: var(--dim); }
   #hud .row span:last-child { color: var(--ink); font-family: ui-monospace, monospace; }
-  #panel { top: 12px; right: 12px; width: 208px; max-height: calc(100vh - 150px); overflow-y: auto; }
+  /* The right column: what can be seen, and under it the kinds of body about now. The minimap
+     sits below it, so the column stops short of the bottom and the panels give way in order. */
+  #right { position: fixed; top: 12px; right: 12px; bottom: 192px; width: 232px; display: flex;
+    flex-direction: column; gap: 10px; }
+  #right .ui { position: static; width: 100%; min-height: 0; overflow-y: auto; }
+  #panel { flex: 0 1 auto; min-height: 118px; }
+  #kinds { flex: 0 0 auto; max-height: 306px; }
+  #kinds .kind { display: grid; grid-template-columns: 40px 1fr; gap: 9px; align-items: center;
+    padding: 6px 0; border-top: 1px solid var(--line); }
+  #kinds .kind:first-child { border-top: 0; padding-top: 1px; }
+  #kinds .pic { display: grid; gap: 1px; }
+  #kinds .pic i { width: 100%; aspect-ratio: 1; border-radius: 1px; outline: 1px solid #00000030; }
+  #kinds .top { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+  #kinds .muted { font-size: 11px; }
+  #kinds .n { font: 500 14px ui-monospace, monospace; }
+  #kinds .mix { display: flex; height: 3px; gap: 1px; margin-top: 4px; }
+  #kinds .mix b { display: block; border-radius: 1px; }
+  #kinds button { background: #ffffff14; color: var(--ink); border: 1px solid var(--line); border-radius: 6px;
+    padding: 2px 8px; font-size: 11px; cursor: pointer; flex: none; }
+  #kinds button:hover { background: #ffffff28; }
+  #kinds button.on { background: #ffd24a2e; border-color: #ffd24a66; }
   #panel h4 { margin: 2px 0 6px; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); font-weight: 600; }
   #panel hr { border: 0; border-top: 1px solid var(--line); margin: 10px 0 9px; }
   label.chk { display: flex; align-items: center; gap: 7px; padding: 1px 0; cursor: pointer; }
@@ -114,6 +134,7 @@
 </div>
 </div>
 
+<div id="right">
 <div class="ui" id="panel">
   <h4>見えるもの</h4>
   <label class="chk"><input type="checkbox" id="v-grass" checked> 草</label>
@@ -130,6 +151,11 @@
   <hr>
   <h4>凡例</h4>
   <div id="legend"></div>
+</div>
+<div class="ui" id="kinds" hidden>
+  <h4 title="似た体のまとまり。世界が記録のたびに見つけ直すので、家系ではない">いまの系統</h4>
+  <div id="kindlist"></div>
+</div>
 </div>
 
 <div class="ui" id="bar">

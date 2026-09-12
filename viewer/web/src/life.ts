@@ -9,7 +9,7 @@ import type { Layers } from './wire.js';
 
 const M = new THREE.Matrix4(), TURN = new THREE.Matrix4();
 const V = new THREE.Vector3();
-const HI = new THREE.Color(), WARM = new THREE.Color(0xffd24a);
+const WARM = new THREE.Color(0xffd24a);
 // The palette of what grows. A season moves a colour between these, and a cell's own number
 // picks where in a range it sits, so two neighbours are never the same green.
 const LEAF0 = new THREE.Color(0x2f6d33), LEAF1 = new THREE.Color(0x1c4a24);
@@ -24,10 +24,26 @@ const LEAF = new THREE.Color(), DARK = new THREE.Color(), BARK = new THREE.Color
 // The bodies: a colour per kind of block, the socket an eye sits in, and the flat slab a body
 // too far off to make out is drawn as, by what it eats.
 const KIND: (THREE.Color | null)[] = [null, new THREE.Color(0x2a2622), new THREE.Color(0xa8553c), new THREE.Color(0x1b1b20), new THREE.Color(0xb09760)];
-const SOCKET = new THREE.Color(0x8f7f5e), SOCKETLIT = new THREE.Color(0xffe9a8);
+const SOCKET = new THREE.Color(0x8f7f5e);
 const FAR = [0x9ecf6a, 0xd9a441, 0xc4553f, 0x9aa0a6].map((h) => new THREE.Color(h).multiplyScalar(0.5));
-const FARLIT = new THREE.Color(0xffffff).multiplyScalar(0.5);
 const TINT = new THREE.Color(), SPOT = new THREE.Color();
+
+/** The light a followed body stands in, as a gradient drawn once here rather than a picture to
+ * fetch: bright in the middle and gone at the rim, so it reads as a haze and not as a bubble. */
+function haze(): THREE.Texture {
+  const c = document.createElement('canvas');
+  c.width = c.height = 128;
+  const g = c.getContext('2d')!;
+  const grd = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+  grd.addColorStop(0, 'rgba(255,226,156,0.5)');
+  grd.addColorStop(0.3, 'rgba(255,214,90,0.2)');
+  grd.addColorStop(1, 'rgba(255,210,74,0)');
+  g.fillStyle = grd;
+  g.fillRect(0, 0, 128, 128);
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
 
 /** A pool of one shape, drawn many times. */
 class Pool {
@@ -185,12 +201,13 @@ export class Life {
   carrion: Pool;
   standing: Pool[];
   blockPools: (Pool | null)[]; // one per kind of block, 0 (empty) is nothing
-  litPools: (Pool | null)[]; // the same, for the body being followed
   far: Pool;
   bodyPools: Pool[];
   pools: Pool[];
   owned: Pool[]; // where a click looks for a body
   mark: Pool;
+  glow: THREE.Sprite; // the soft light the followed body stands in
+  bodiesOn: boolean;
   treeMin: number;
   markScale: number; // how much bigger than a unit the pin is drawn, so it keeps a size on the screen
   bodyNear: number;
@@ -240,13 +257,8 @@ export class Life {
     this.standing = [this.grass, this.grass2, this.trunk, this.limb, this.crown, this.spire, this.fruit, this.carrion];
     // The bodies: one pool per kind of block, and one flat box for the ones far away.
     this.blockPools = [null, new Pool(scene, box, shell, 40000).own(), new Pool(scene, box, flesh, 60000).own(), new Pool(scene, ball, eye, 20000).own(), new Pool(scene, box, flesh, 60000).own()];
-    // The body being followed is drawn from pools of its own that no light or haze reaches, and
-    // brighter than a colour in the scene can be: only tinted, it was lost in the shade of a tree
-    // or among bodies of its own colour.
-    const glow = new THREE.MeshBasicMaterial({ toneMapped: false, fog: false });
-    this.litPools = [null, new Pool(scene, box, glow, 512).own(), new Pool(scene, box, glow, 512).own(), new Pool(scene, ball, glow, 512).own(), new Pool(scene, box, glow, 512).own()];
     this.far = new Pool(scene, box, flesh, 8000).own();
-    this.bodyPools = [...this.blockPools.filter(Boolean), ...this.litPools.filter(Boolean)] as Pool[];
+    this.bodyPools = this.blockPools.filter(Boolean) as Pool[];
     this.pools = [...this.standing, this.far, ...this.bodyPools];
     this.owned = [...this.bodyPools, this.far]; // where a click looks for a body
     // The body being followed wears a ring, so it can be found again in a crowd. It is a mark,
@@ -259,6 +271,16 @@ export class Life {
     const markMat = new THREE.MeshBasicMaterial({ color: 0xffd24a, depthTest: false, depthWrite: false, fog: false, toneMapped: false });
     this.mark = new Pool(scene, pin, markMat, 2);
     this.mark.mesh.renderOrder = 999;
+    // And it stands in a soft light. The body itself keeps its own colours: painting it gold
+    // said which one it was and hid what it was made of, which is what the watcher came for.
+    this.glow = new THREE.Sprite(new THREE.SpriteMaterial({
+      map: haze(), blending: THREE.AdditiveBlending, transparent: true, opacity: 0.5,
+      depthTest: false, depthWrite: false, fog: false, toneMapped: false,
+    }));
+    this.glow.visible = false;
+    this.glow.renderOrder = 998;
+    this.bodiesOn = true;
+    scene.add(this.glow);
     this.treeMin = 1.0;
     this.markScale = 1; // how much bigger than a unit the pin is drawn, so it keeps a size on the screen
     this.bodyNear = 55;
@@ -286,6 +308,7 @@ export class Life {
   setVisible(what: string, on: boolean): void {
     const map: Record<string, Pool[]> = { grass: [this.grass, this.grass2], trees: [this.trunk, this.limb, this.crown, this.spire], fruit: [this.fruit], carrion: [this.carrion], bodies: [...this.bodyPools, this.far] };
     (map[what] || []).forEach((p) => (p.mesh.visible = on));
+    if (what === 'bodies') this.bodiesOn = on;
   }
 
   /** Which way a body faces, as an angle about the upright axis: north, south, east, west, in
@@ -583,6 +606,7 @@ export class Life {
     this.far.reset();
     this.drawnN = 0;
     this.mark.reset();
+    this.glow.visible = false;
     if (!a) {
       pools.forEach((p) => p && p.done());
       this.far.done();
@@ -647,6 +671,10 @@ export class Life {
     if (lit) {
       const k = this.markScale, bob = 0.09 * k * Math.sin(performance.now() / 320);
       this.mark.put(mx, y + 0.55 + side * 0.22 + bob, mz, k, k, k, WARM);
+      const g = side * 3.4;
+      this.glow.visible = this.bodiesOn;
+      this.glow.position.set(mx, y + side * 0.55, mz);
+      this.glow.scale.set(g, g, 1);
     }
     if (fade > 0.5 && this.drawnN < this.drawnId.length) {
       // Where a click finds it: its middle, a little above the ground, and how big it is. Not its
@@ -662,7 +690,7 @@ export class Life {
       // Too far to make out its blocks: one low body, the colour of what it eats. It is seen
       // from above, so it goes out by its footprint and not by its height.
       const s = side * 0.45 * fade;
-      this.far.putY(mx, y, mz, s, 0.1, s, cos, sin, lit ? FARLIT : FAR[fr.a.diet[i]]);
+      this.far.putY(mx, y, mz, s, 0.1, s, cos, sin, FAR[fr.a.diet[i]]);
       return;
     }
     // The world is flat, so a body would be a pallet if every block were the same height.
@@ -671,7 +699,7 @@ export class Life {
     const half = (shape.side - 1) / 2, span = half + 0.6;
     const grow = 0.62 + 0.05 * shape.side;
     const wide = cell * 0.98 * fade;
-    const drawn = lit ? this.litPools : this.blockPools;
+    const drawn = this.blockPools;
     for (const bl of shape.blocks) {
       // Where the block sits in the body's own frame, turned the way the body faces.
       const ox = (bl.c + 0.5) * cell - side / 2, oz = (bl.r + 0.5) * cell - side / 2;
@@ -687,12 +715,11 @@ export class Life {
       const held = losing && losing[bl.r * shape.side + bl.c] === 0 ? Life.ease(1 - t) : 1;
       const hgt = base * dome * grow * fade * held;
       const w = wide * held;
-      let col = (KIND[k] || KIND[4])!;
-      if (lit) col = HI.copy(col).lerp(WARM, 0.6).multiplyScalar(1.4); // gold, and its kinds still apart
+      const col = (KIND[k] || KIND[4])!;
       if (k === 3) {
         // An eye sits on the body, round and dark.
         const eye = cell * 0.44 * fade * held;
-        drawn[4]!.putY(bx, y, bz, w, hgt * 0.8, w, cos, sin, lit ? SOCKETLIT : SOCKET);
+        drawn[4]!.putY(bx, y, bz, w, hgt * 0.8, w, cos, sin, SOCKET);
         pool.putY(bx, y + hgt * 0.8 + cell * 0.2 * fade, bz, eye, eye, eye, cos, sin, col);
       } else {
         pool.putY(bx, y, bz, w, hgt, w, cos, sin, col);

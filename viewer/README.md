@@ -104,8 +104,10 @@ sensor is an eye, digestive is a gut. Far bodies are drawn as one slab, coloured
 Drag to turn, right-drag or shift-drag to move, wheel to zoom, WASD to walk, click the minimap
 to go somewhere. Click a body to follow it: the eye comes in to 24 units and keeps the body in the
 middle, turning the view goes around it, and moving the view or Esc lets it go. The body followed
-is drawn unlit and brighter than anything else, under a pin that is never smaller than about 20
-pixels on the screen.
+keeps its own colours - what it is made of is what the watcher came to see - and is marked from
+outside instead: a pin over it, never smaller than about 20 pixels on the screen, and a soft warm
+haze around it that shows through whatever stands in front. It was painted gold before, which said
+which body it was and hid what it was made of.
 
 The body followed has a card on the left, under the clock: its shape, a line on what is happening
 to it, and a gauge for each thing it can run out of - its energy against the energy at which it
@@ -144,6 +146,19 @@ leaves turn amber and then fall, and a conifer stands green through it; the lawn
 the sun rides low and pale in winter and high and warm in summer, over the ground the eye is
 looking at rather than the one cell it sits on. The HUD has a dial of the year with the season
 named on it. A world with no season law says so and none of this happens.
+
+### The kinds of body about now
+
+On the right, under the switches: the five lineages with the most bodies in the frame being shown,
+each with the shape most of them wear, how many wear it, what they eat, and what they are made of
+as one bar. `追う` watches one of them - of the bodies of that lineage, one wearing that shape, and
+of those the one nearest the eye, so "what is that kind" is answered by a body in front of the
+watcher rather than by a trip across the world.
+
+A lineage is a group the world finds again at every log, not a family, so this is what the world
+is made of at this moment rather than a family tree - and that is the use of it: run the replay and
+the list turns over as the world's kinds do. At the start every body is in no lineage at all
+(`系統 —`) and wears the shape the world was seeded with.
 
 ### A line of descent
 
