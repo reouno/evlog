@@ -5,6 +5,10 @@
 // watcher should not see its edge.
 import * as THREE from 'three';
 export const UP = { terrain: 0.28, plant: 0.5 }; // soil units to world units, cells to world units
+/** The shortest way from one place to another on a torus of side n. */
+export function shortest(d, n) {
+    return d > n / 2 ? d - n : d < -n / 2 ? d + n : d;
+}
 /** Bilinear read of a per-cell field at a point in cell coordinates (wraps).
  * Called once per body every frame, so it wraps its indices by hand and allocates nothing. */
 export function sample(field, w, d, x, z) {
@@ -313,10 +317,17 @@ export class Sky {
 }
 /** The god's eye: it turns around a point on the ground, and the point moves where you want. */
 export class Rig {
+    static { this.SLIDE = 0.25; } // seconds to cover the gap left by a change of what is watched
+    static { this.LEAP = 8; } // cells: farther than this the eye cuts, because sliding would be a whip
     constructor(camera, dom, world) {
         this.cam = camera;
         this.world = world;
         this.target = new THREE.Vector3(world.w / 2, 0, world.d / 2);
+        this.aim = this.target.clone();
+        this.slid = 1; // 0 while a slide is on its way, 1 when the eye is on its aim again
+        this.offX = 0;
+        this.offZ = 0;
+        this.sending = false;
         this.dist = 60;
         this.yaw = Math.PI * 0.25;
         this.pitch = 0.55;
@@ -367,13 +378,34 @@ export class Rig {
     /** Move the point being watched: `right` is the screen's right, `forward` is into the view. */
     pan(right, forward) {
         const s = Math.sin(this.yaw), c = Math.cos(this.yaw);
-        this.target.x += forward * s - right * c;
-        this.target.z += forward * c + right * s;
+        this.aim.x += forward * s - right * c;
+        this.aim.z += forward * c + right * s;
         this.follow = null;
     }
+    /** Send the eye to a point. While a body is being followed this is every frame, and the point
+     * is that body's, so the eye goes where it goes. */
     goTo(x, z) {
-        this.target.x = x;
-        this.target.z = z;
+        if (this.sending) {
+            this.sending = false;
+            // What the eye would have had to cut across. It keeps that gap and gives it up over the
+            // next quarter second, so the change is a move rather than a cut. Too far to be a move at
+            // all (a body picked across the world) and it cuts, as before.
+            const dx = shortest(this.target.x - x, this.world.w), dz = shortest(this.target.z - z, this.world.d);
+            const near = Math.hypot(dx, dz) <= Rig.LEAP;
+            this.offX = near ? dx : 0;
+            this.offZ = near ? dz : 0;
+            this.slid = near ? 0 : 1;
+        }
+        this.aim.x = x;
+        this.aim.z = z;
+    }
+    /** The next point the eye is sent to is a different thing to watch, not the same thing moved.
+     *
+     * Following a line of descent, the eye changes body every few hundred steps, and a body's
+     * child is a cell or two away: the watcher sees the whole world jump sideways. Nothing else in
+     * the picture is as hard to look away from as that, so the eye slides instead. */
+    send() {
+        this.sending = true;
     }
     update(dt, ground) {
         const k = this.keys;
@@ -397,9 +429,19 @@ export class Rig {
             if (Math.abs(this.want - this.dist) < 0.05)
                 this.want = null;
         }
+        if (this.slid < 1) {
+            this.slid = Math.min(1, this.slid + dt / Rig.SLIDE);
+            if (this.slid === 1)
+                this.offX = this.offZ = 0;
+        }
         const { w, d } = this.world;
-        this.target.x = ((this.target.x % w) + w) % w;
-        this.target.z = ((this.target.z % d) + d) % d;
+        this.aim.x = ((this.aim.x % w) + w) % w;
+        this.aim.z = ((this.aim.z % d) + d) % d;
+        // Still at both ends of the slide: the eye takes up the gap and gives it back without a jerk
+        // on to it or off it, and what it is watching keeps moving underneath the whole way.
+        const hold = 1 - this.slid * this.slid * (3 - 2 * this.slid);
+        this.target.x = (((this.aim.x + this.offX * hold) % w) + w) % w;
+        this.target.z = (((this.aim.z + this.offZ * hold) % d) + d) % d;
         this.target.y = ground.heightAt(this.target.x, this.target.z);
         const cp = Math.cos(this.pitch);
         this.cam.position.set(this.target.x - Math.sin(this.yaw) * cp * this.dist, this.target.y + Math.sin(this.pitch) * this.dist, this.target.z - Math.cos(this.yaw) * cp * this.dist);

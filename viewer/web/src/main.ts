@@ -199,6 +199,7 @@ function descend(): void {
     if (id !== picked) {
       picked = id;
       rig.follow = id;
+      rig.send(); // the eye slides on to the child rather than cutting to it
     }
   } else if (walk) {
     const id = walk.follow(world, step);
@@ -208,6 +209,7 @@ function descend(): void {
     } else if (id !== picked) {
       picked = id;
       rig.follow = id;
+      rig.send();
     }
   }
 }
@@ -244,6 +246,7 @@ function watchLine(l: Line): void {
   }
   picked = onLine(l, step);
   rig.follow = picked;
+  rig.send();
   rig.want = Math.min(rig.dist, 24);
 }
 
@@ -634,6 +637,7 @@ function bindUI(header: Header): void {
     picked = life.under(ray);
     rig.follow = picked;
     if (picked !== null) {
+      rig.send();
       rig.want = Math.min(rig.dist, 24); // brought close enough to see what it is
       return;
     }
@@ -651,7 +655,10 @@ function bindUI(header: Header): void {
     }
     picked = best;
     rig.follow = picked;
-    if (picked !== null) rig.want = Math.min(rig.dist, 24);
+    if (picked !== null) {
+      rig.send();
+      rig.want = Math.min(rig.dist, 24);
+    }
   });
 }
 

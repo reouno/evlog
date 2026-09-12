@@ -191,6 +191,7 @@ function descend() {
         if (id !== picked) {
             picked = id;
             rig.follow = id;
+            rig.send(); // the eye slides on to the child rather than cutting to it
         }
     }
     else if (walk) {
@@ -202,6 +203,7 @@ function descend() {
         else if (id !== picked) {
             picked = id;
             rig.follow = id;
+            rig.send();
         }
     }
 }
@@ -238,6 +240,7 @@ function watchLine(l) {
     }
     picked = onLine(l, step);
     rig.follow = picked;
+    rig.send();
     rig.want = Math.min(rig.dist, 24);
 }
 /** Go on with a child of the body being watched, at random, for as long as the line lasts. */
@@ -684,6 +687,7 @@ function bindUI(header) {
         picked = life.under(ray);
         rig.follow = picked;
         if (picked !== null) {
+            rig.send();
             rig.want = Math.min(rig.dist, 24); // brought close enough to see what it is
             return;
         }
@@ -705,8 +709,10 @@ function bindUI(header) {
         }
         picked = best;
         rig.follow = picked;
-        if (picked !== null)
+        if (picked !== null) {
+            rig.send();
             rig.want = Math.min(rig.dist, 24);
+        }
     });
 }
 boot();

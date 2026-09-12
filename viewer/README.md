@@ -170,6 +170,24 @@ every 50, so a line walked back through the bodies the frames caught would break
 recording did not look. The bodies no frame caught are counted in the line's length and left out
 of the path - the camera has nowhere to go for them, so it goes to the next one that was seen.
 
+**The eye slides when it changes body.** A child is a couple of cells from its parent: over 45
+seconds of one line, the gap the eye had to cover at a change was 2.3 cells at the median and 6.8
+at the worst, and a body is about 0.9 cells across. Cutting across that moves the whole world
+sideways in one frame, in the middle of the screen, which is where the watcher is looking. So the
+eye keeps the gap and gives it up over a quarter of a second, still at both ends, while what it
+watches goes on moving underneath. On a rig driven by hand at 60 frames a second over a gap of 1.6
+cells, the cut is one frame of 97 cells a second and a change of speed of 5,760 cells/s^2; the
+slide is 10.7 and 194.5, a thirtieth of the jerk, and it arrives exactly on the body. Played for
+real (200 steps a second, 60 frames a second), the eye's 99th frame in a hundred goes from 239
+cells a second to 83 and the frames faster than 100 from 54 in 2,692 to 16. The gap is not removed
+but spread: the median frame moves 6.5 cells a second cutting and 8.4 sliding.
+
+A gap of more than 8 cells is a whip rather than a move and cuts, as before. That is a body picked
+across the world - a click goes the same way, so a body picked near the one being watched is slid
+to - and the first seconds after a seek, where the frames around the new step have not arrived and
+the body has gone on without the eye (9 of the 74 changes in that run, all in the first few
+seconds of it).
+
 ### Between two frames
 
 A recording knows the world every `stride` steps and the browser draws the steps in between, so

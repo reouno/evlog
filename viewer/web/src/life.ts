@@ -2,7 +2,7 @@
 // bodies. Everything is instanced, and only what is near the eye is drawn in full.
 
 import * as THREE from 'three';
-import { UP } from './render.js';
+import { shortest, UP } from './render.js';
 import type { Ground } from './render.js';
 import type { Frame, World } from './world.js';
 import type { Layers } from './wire.js';
@@ -308,9 +308,7 @@ export class Life {
   }
 
   /** The shortest way from a to b on a torus of side n. */
-  static wrap(d: number, n: number): number {
-    return d > n / 2 ? d - n : d < -n / 2 ? d + n : d;
-  }
+  static wrap = shortest;
 
   /** Ease a fade, so a body holds its size at the ends of the interval and goes in the middle. */
   static ease(f: number): number {

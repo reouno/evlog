@@ -1,7 +1,7 @@
 // What lives on the ground: the plants that stand on a cell, what has fallen on it, and the
 // bodies. Everything is instanced, and only what is near the eye is drawn in full.
 import * as THREE from 'three';
-import { UP } from './render.js';
+import { shortest, UP } from './render.js';
 const M = new THREE.Matrix4(), TURN = new THREE.Matrix4();
 const V = new THREE.Vector3();
 const HI = new THREE.Color(), WARM = new THREE.Color(0xffd24a);
@@ -286,9 +286,7 @@ export class Life {
         return a + d * Life.ease(t);
     }
     /** The shortest way from a to b on a torus of side n. */
-    static wrap(d, n) {
-        return d > n / 2 ? d - n : d < -n / 2 ? d + n : d;
-    }
+    static { this.wrap = shortest; }
     /** Ease a fade, so a body holds its size at the ends of the interval and goes in the middle. */
     static ease(f) {
         return f * f * (3 - 2 * f);
