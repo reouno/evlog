@@ -136,12 +136,19 @@ What this changes:
   crowd holds: at sun 4 half the light falls on cells with nothing to grow from, and 92% of the
   world's matter is standing in plants, bodies and fat. e038 said the ceiling on a body is its
   income; e056 says the income has a ceiling of its own, and it is not the sun's to lift.
-- **A law that needs a richer world cannot get it this way.** Anything we want to test in a world
-  of plenty (a longer life, a bigger body, a costlier brain) has to come from more matter or a
-  faster turnover of it - deeper soil, a faster rot, a cheaper body - not from turning up the sun.
+- **And plenty is not what the bodies are short of: room is.** The world is jammed before the sun
+  is touched. Of the forward moves a body tries, 60% do not happen because the way is taken; 29% of
+  the children are not born for want of a free cell; a body travels 0.04 of a cell a step. Supply
+  turns straight into more of that: at sun 2 the blocked share is 63% and the denied births 34%.
+  Extra matter would do the same thing this extra light did - it would become bodies, in a world
+  where a body cannot move. What binds one body is the crowd around it, not the ledger.
 - **Bigger bodies still need a reason, not a ration.** Two laws have now failed to make the world
   grow one by making it richer (e038, e056); the one thing that moved size was the clock, which
-  changed what a body pays, and the hunter state, which changes what it eats.
+  changed what a body pays, and the hunter state, which changes what it eats. And the richer the
+  world, the less it hunts: blocks broken per body per step are 0.019 / 0.022 / 0.006 at sun 1, 2
+  and 4, because a cheap plant makes a tooth not worth carrying. What is missing is something that
+  thins the crowd or tells one cell from another - a predator that pays, a worsening where bodies
+  sit - not more on the ground for all of them.
 
 **What these runs can and cannot say.** The answers hang on choices we made: e055's world at
 `clock` 0.5, the sun as a factor on every cell's regrowth and on the rain's cap with it (e038's

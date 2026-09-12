@@ -949,10 +949,10 @@ GALLERY_CAPTION = ("The usual grown body of the leading lineage of six runs, fro
 TEXTS = {
     "sub_answer": ("no. Four times the light grows 1.3 times the plant and 64% more bodies, and the winners get smaller, not bigger. "
                    "The sun stays 1."),
-    "tldr": ("e038 found that a body's size is capped by the income a gut can take from crowded ground, and that extra sun buys more "
-             "bodies rather than bigger ones. e055's clock then made a big body cheap per unit of mass, so the question was worth asking "
-             "again. It is still number: mass p90 falls from 46 to 38 as the sun goes from 1 to 4, the intake per gut block stays at "
-             "0.0019-0.0022, and half the extra light falls on ground with no soil left to grow from."),
+    "tldr": ("e038 found a body's size capped by the income a gut takes from crowded ground, and extra sun buying more bodies rather "
+             "than bigger ones. e055's clock made a big body cheap per unit of mass, so the question was worth asking again. It is still "
+             "number: mass p90 falls from 46 to 38 from sun 1 to sun 4, a gut block still takes 0.0019-0.0022 of matter a step, and half "
+             "the extra light falls on ground with no soil left to grow from."),
     "question": ("The world has one size axis, the clock (e055): a body of mass m takes (16/m)^0.5 turns a world step, so its upkeep comes "
                  "to about m^0.5 instead of m. That changes the cost side of e038's arithmetic, which measured the ceiling on size as the "
                  "income a gut block can take. With being big now cheap, does a richer world buy size instead of number?"),
@@ -968,10 +968,9 @@ TEXTS = {
                  "intake per gut block pinned at 0.0019-0.0022.</li>"
                  "<li><span class=\"verdict yes\">Yes</span> Winter floors 886-2,201 against the control's 524-838, and no run died.</li>"),
     "h_light": "Four times the light grows 1.3 times the plant",
-    "p_light": ("The sun is a rate, and what it acts on is the soil a cell still holds. Raising it pulls matter out of the ground faster "
-                "than the world returns it, so the free soil falls from half of everything to a fourteenth, and the light that lands on "
-                "empty ground grows nothing: 2% of it is wasted this way at sun 1, 50% at sun 4. The matter that leaves the soil is "
-                "standing in the crowd's fat, which more than doubles."),
+    "p_light": ("The sun is a rate, and it acts on the soil a cell still holds. Raising it pulls matter out of the ground faster than the "
+                "world returns it: the free soil falls from half of everything to a fourteenth, and light landing on empty ground grows "
+                "nothing - 2% of it at sun 1, 50% at sun 4. What leaves the soil is standing in the crowd's fat, which more than doubles."),
     "h_size": "The bodies do not grow",
     "p_size": ("Nothing rises with the sun. The two worlds where the sun made the biggest difference to the winner are the two where the "
                "state changed - a hunting world grows a bigger body than a grazing one at any sun - and in the three grazing worlds run at "
@@ -985,19 +984,19 @@ TEXTS = {
                 "winter. Hunting goes the other way. Three of six worlds hunt at sun 1, two of six at sun 2 and none of the three at "
                 "sun 4 - with prey this cheap to catch and plants this cheap to eat, the tooth stops paying. Three seeds cannot settle "
                 "that last one."),
-    "discussion": ("<p>The honest summary is that we raised the wrong dial. The sun sets the rate at which soil becomes plant; the world's "
-                   "income is the matter that cycles through it, and that is fixed. Past sun 2 the extra light falls on cells with nothing "
-                   "to grow, and the world stops noticing the difference: grown plant per step is 87.8 at sun 2 and 88.5 at sun 4.</p>"
-                   "<p>Even the part that did arrive went to number. The crowd grazes any cell back to where a gut block earns 0.002 a "
-                   "step, so a body's income is a property of the crowd, not of the sun - the same thing e038 measured before the clock "
-                   "existed. The clock made a big body cheaper to run; it did not make food easier to reach, and reach is what binds.</p>"
-                   "<p>What this does not show: that no richer world grows a bigger body. It shows that this way of enriching one does "
-                   "not. More matter, a faster rot, or a food a big body can reach and a small one cannot would each be a different "
-                   "experiment. The three sun 4 seeds are also too few to call the fading of the hunting state.</p>"),
-    "conclusion": ("Not kept: the season world stays at sun 1. Two experiments have now tried to grow a bigger body by making the world "
-                   "richer (e038, e056) and both bought numbers instead; the only laws that moved size were the clock, which changed what "
-                   "a body pays, and the hunting state, which changes what it eats. Next: fouling (#56), a worsening that falls on the "
-                   "body that stays put, and the brain where the food runs (#58)."),
+    "discussion": ("<p>We raised the wrong dial. The sun sets the rate at which soil becomes plant; the world's income is the matter "
+                   "cycling through it, and that is fixed. Past sun 2 the extra light falls on cells with nothing to grow: the plant grown "
+                   "per step is 87.8 at sun 2 and 88.5 at sun 4.</p>"
+                   "<p>What did arrive went to number. The crowd grazes every cell back to where a gut block earns 0.002 a step, so a "
+                   "body's income is a property of the crowd and not of the sun - e038's result, from before the clock existed. The clock "
+                   "made a big body cheaper to run; it did not make food easier to reach, and reach is what binds.</p>"
+                   "<p>And plenty is not what these bodies lack: room is. Before the sun is touched, 60% of the forward moves a body tries "
+                   "fail because the way is taken and 29% of its children find no free cell; at sun 2 that becomes 63% and 34%. More matter "
+                   "would buy what this light bought. What is missing is something that thins the crowd or tells one cell from another.</p>"),
+    "conclusion": ("Not kept: the season world stays at sun 1. Two experiments have now tried to grow a bigger body by enriching the world "
+                   "(e038, e056) and both bought numbers instead - and the richer the world, the less it hunts: blocks broken per body per "
+                   "step are 0.019 / 0.022 / 0.006 at sun 1, 2 and 4. Next: fouling (#56), a worsening that falls on the body that stays "
+                   "put - the crowd making its own patchiness in a world where every cell is alike - and then the brain (#58)."),
 }
 
 
