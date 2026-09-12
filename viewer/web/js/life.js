@@ -82,6 +82,35 @@ class Pool {
             this.owner[this.n] = this.tag;
         this.n++;
     }
+    /** The same as `put`, turned about its upright axis by an angle given as its cosine and sine
+     * (one pair per body rather than a matrix per block: this runs tens of thousands of times a
+     * frame). The columns are three's own `makeRotationY` scaled. */
+    putY(x, y, z, sx, sy, sz, cos, sin, col) {
+        if (this.n >= this.cap)
+            return;
+        const a = this.mesh.instanceMatrix.array, o = this.n * 16;
+        a[o] = sx * cos;
+        a[o + 1] = 0;
+        a[o + 2] = -sx * sin;
+        a[o + 3] = 0;
+        a[o + 4] = 0;
+        a[o + 5] = sy;
+        a[o + 6] = 0;
+        a[o + 7] = 0;
+        a[o + 8] = sz * sin;
+        a[o + 9] = 0;
+        a[o + 10] = sz * cos;
+        a[o + 11] = 0;
+        a[o + 12] = x;
+        a[o + 13] = y;
+        a[o + 14] = z;
+        a[o + 15] = 1;
+        if (col !== undefined)
+            this.tint(col);
+        if (this.owner)
+            this.owner[this.n] = this.tag;
+        this.n++;
+    }
     putM(m, col) {
         if (this.n >= this.cap)
             return;
@@ -238,6 +267,23 @@ export class Life {
     setVisible(what, on) {
         const map = { grass: [this.grass, this.grass2], trees: [this.trunk, this.limb, this.crown, this.spire], fruit: [this.fruit], carrion: [this.carrion], bodies: [...this.bodyPools, this.far] };
         (map[what] || []).forEach((p) => (p.mesh.visible = on));
+    }
+    /** Which way a body faces, as an angle about the upright axis: north, south, east, west, in
+     * the order `World.turn` lays a shape out. */
+    static { this.FACE = [0, Math.PI, -Math.PI / 2, Math.PI / 2]; }
+    /** The angle a body is drawn at between two frames.
+     *
+     * The world turns a body in one step and a recording looks every `stride` of them, so a fifth
+     * of the bodies face a new way at every frame of it (21% over 241 frames of e052's world).
+     * Drawn as they come, all of them swing a quarter turn at the same instant - and a body being
+     * followed does it in the middle of the screen. So the turn is carried across the interval,
+     * by the shortest way round and eased, which leaves the angle still at both frames and its
+     * speed continuous across them (`ease`). */
+    static turnOf(from, to, t) {
+        const a = Life.FACE[from] ?? 0;
+        let d = (Life.FACE[to] ?? 0) - a;
+        d = (((d + Math.PI) % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI) - Math.PI;
+        return a + d * Life.ease(t);
     }
     /** The shortest way from a to b on a torus of side n. */
     static wrap(d, n) {
@@ -538,14 +584,17 @@ export class Life {
             const j = b ? b.index.get(a.a.id[i]) : undefined;
             Life.track(p, a, i, b, j, t, before, after, cell, w, d);
             const fade = b && j === undefined ? Life.ease(1 - t) : 1; // undefined: it dies in this interval
-            this.body(world, a, i, p[0], p[1], fade, cell, at, ground, picked);
+            // Which way it will be facing, and what it will have lost, by the far frame.
+            const turn = Life.turnOf(a.a.facing[i], j === undefined ? a.a.facing[i] : b.a.facing[j], t);
+            const next = j !== undefined && b.a.body[j] !== a.a.body[i] ? world.bodies.get(b.a.body[j]) : undefined;
+            this.body(world, a, i, p[0], p[1], fade, cell, at, ground, picked, turn, next ? next.cells : null, t);
         }
         if (b && t > 0) {
             for (let j = 0; j < b.n; j++) {
                 if (a.index.has(b.a.id[j]))
                     continue; // it is born inside this interval
                 Life.trackIn(p, b, j, after, t, cell, w, d);
-                this.body(world, b, j, p[0], p[1], Life.ease(t), cell, at, ground, picked);
+                this.body(world, b, j, p[0], p[1], Life.ease(t), cell, at, ground, picked, Life.FACE[b.a.facing[j]] ?? 0, null, t);
             }
         }
         pools.forEach((p) => p && p.done());
@@ -568,16 +617,22 @@ export class Life {
         return this.owned.find((p) => p.mesh === first.object).owner[first.instanceId];
     }
     /** One body of frame `fr`, at `fade` of its size about its own middle: 1 while it is alive
-     * across the whole interval, going to 0 as it dies and coming up from 0 as it is born. */
-    body(world, fr, i, x, z, fade, cell, at, ground, picked) {
+     * across the whole interval, going to 0 as it dies and coming up from 0 as it is born.
+     *
+     * `turn` is the angle it is drawn at (`Life.turnOf`), so the shape is taken in the body's own
+     * frame and turned here rather than laid out square to the world. `next` is the cells it has
+     * at the far frame: a block it loses over the interval goes down over it, not at the frame. */
+    body(world, fr, i, x, z, fade, cell, at, ground, picked, turn, next, t) {
         const px = at.x + Life.wrap(x - at.x, this.w), pz = at.z + Life.wrap(z - at.z, this.d);
         const dx = px - at.x, dz = pz - at.z;
         const r2 = dx * dx + dz * dz;
         if (r2 > this.mid * this.mid)
             return;
-        const shape = world.blocks(fr.a.body[i], fr.a.facing[i]);
+        const shape = world.blocks(fr.a.body[i], 0); // its own frame; `turn` puts it the way it faces
         if (!shape)
             return;
+        const cos = Math.cos(turn), sin = Math.sin(turn);
+        const losing = next !== null && next.length === shape.side * shape.side ? next : null;
         for (const p of this.owned)
             p.tag = fr.a.id[i]; // whose blocks these are, for a click
         const y = ground.heightAt(x + 0.5, z + 0.5);
@@ -602,7 +657,7 @@ export class Life {
             // Too far to make out its blocks: one low body, the colour of what it eats. It is seen
             // from above, so it goes out by its footprint and not by its height.
             const s = side * 0.45 * fade;
-            this.far.put(mx, y, mz, s, 0.1, s, lit ? FARLIT : FAR[fr.a.diet[i]]);
+            this.far.putY(mx, y, mz, s, 0.1, s, cos, sin, lit ? FARLIT : FAR[fr.a.diet[i]]);
             return;
         }
         // The world is flat, so a body would be a pallet if every block were the same height.
@@ -613,25 +668,31 @@ export class Life {
         const wide = cell * 0.98 * fade;
         const drawn = lit ? this.litPools : this.blockPools;
         for (const bl of shape.blocks) {
-            const bx = mx + (px + (bl.c + 0.5) * cell - mx) * fade;
-            const bz = mz + (pz + (bl.r + 0.5) * cell - mz) * fade;
+            // Where the block sits in the body's own frame, turned the way the body faces.
+            const ox = (bl.c + 0.5) * cell - side / 2, oz = (bl.r + 0.5) * cell - side / 2;
+            const bx = mx + (ox * cos + oz * sin) * fade;
+            const bz = mz + (oz * cos - ox * sin) * fade;
             const k = bl.kind;
             const pool = pools_of(drawn, k);
             const dr = (bl.r - half) / span, dc = (bl.c - half) / span;
             const dome = 0.42 + 0.78 * Math.sqrt(Math.max(0, 1 - dr * dr - dc * dc));
             const base = k === 1 ? 0.42 : k === 2 ? 0.36 : k === 3 ? 0.3 : 0.3;
-            const hgt = base * dome * grow * fade;
+            // A block this body has lost by the far frame goes down over the interval, as a whole
+            // body does when it dies: a fifth of the bodies lose one at a frame of a time-lapse.
+            const held = losing && losing[bl.r * shape.side + bl.c] === 0 ? Life.ease(1 - t) : 1;
+            const hgt = base * dome * grow * fade * held;
+            const w = wide * held;
             let col = (KIND[k] || KIND[4]);
             if (lit)
                 col = HI.copy(col).lerp(WARM, 0.6).multiplyScalar(1.4); // gold, and its kinds still apart
             if (k === 3) {
                 // An eye sits on the body, round and dark.
-                const eye = cell * 0.44 * fade;
-                drawn[4].put(bx, y, bz, wide, hgt * 0.8, wide, lit ? SOCKETLIT : SOCKET);
-                pool.put(bx, y + hgt * 0.8 + cell * 0.2 * fade, bz, eye, eye, eye, col);
+                const eye = cell * 0.44 * fade * held;
+                drawn[4].putY(bx, y, bz, w, hgt * 0.8, w, cos, sin, lit ? SOCKETLIT : SOCKET);
+                pool.putY(bx, y + hgt * 0.8 + cell * 0.2 * fade, bz, eye, eye, eye, cos, sin, col);
             }
             else {
-                pool.put(bx, y, bz, wide, hgt, wide, col);
+                pool.putY(bx, y, bz, w, hgt, w, cos, sin, col);
             }
         }
     }

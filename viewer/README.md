@@ -201,9 +201,22 @@ few thousand bright dots on a small dark panel, and taking them from the near fr
 every one of them jump at once. Measured on screenshots either side of a boundary, it was 385
 times an ordinary step's change, against 1.5 for the world.
 
-What is still cut rather than carried: a body's facing and its shape. In those same 50 steps 10%
-of the bodies turn and 6% change shape, and they do it in one frame. It measures 1.5x an ordinary
-step, so it is what to look at next if a boundary is still visible.
+**A body turns as it goes, and loses a block over the interval.** Of the bodies that live across a
+frame of this recording, 21% face a new way at it and 19% have lost a block (241 frames, 1,385
+bodies a frame). Drawn as they come, all of them swing a quarter turn at the same instant - and
+for the body being followed it happens in the middle of the screen, which is what a watcher sees
+as the picture breaking every 50 steps. So the facing is carried as an angle, the shortest way
+round and eased, which leaves the angle still at both frames and its speed continuous across them;
+and a block that is gone by the far frame goes down over the interval, as a dying body does.
+Measured on pictures of the bodies alone, two steps either side of a boundary against two steps
+inside an interval, the boundary was 1.0-1.5 times an ordinary step and is now 0.5-0.7 of one: it
+is no longer a place. It costs a third of the bodies' pass (1.3 to 1.7 ms a frame at 2,100 bodies
+drawn, measured in a headless browser), because every block is now placed through the body's own
+frame and its matrix carries a rotation.
+
+Every shape change here is a body losing blocks: of 64,092 of them over those frames, none gained a
+block and none changed the size of its grid, so the fade covers all of them. A body's own frame
+never grows, which is why the two shapes can be compared cell by cell at all.
 
 ### Cost
 
