@@ -125,6 +125,7 @@ export interface Layers {
   soil?: Float32Array;
   water?: Float32Array;
   root?: Float32Array;
+  foul?: Float32Array;
   wood?: Float32Array;
   [name: string]: Float32Array | undefined;
 }

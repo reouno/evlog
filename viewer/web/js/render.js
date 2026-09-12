@@ -27,6 +27,7 @@ const SAND = rgb(0xa8926a), LOAM = rgb(0x4d3b26), DAMP = rgb(0x3a2f22);
 const LAWN = rgb(0x7fa03a), STAND = rgb(0x24521f);
 const LUSH = rgb(0x3f8a2c), STRAW = rgb(0xbda874); // high summer, deep winter
 const ROT = rgb(0x6d4436), FALL = rgb(0xa8803f);
+const FOUL = rgb(0x5a5242); // e057: ground the crowd has fouled - grey-brown, the colour of a trampled camp
 const FROST = rgb(0xb9bdb8), SNOW = rgb(0xe7edf3);
 const SHALLOW = rgb(0x4e9ab0), DEEP = rgb(0x123f5c), ICE = rgb(0xd4e6ee);
 export class Ground {
@@ -156,7 +157,7 @@ export class Ground {
         const col = this.geo.attributes.color.array;
         const wpos = this.wgeo.attributes.position.array;
         const wcol = this.wgeo.attributes.color.array;
-        const plant = v.plant, soil = v.soil, water = v.water, carrion = v.carrion, fruit = v.fruit;
+        const plant = v.plant, soil = v.soil, water = v.water, carrion = v.carrion, fruit = v.fruit, foul = v.foul;
         const wet = this.world.wet, depth = this.world.depth * UP.terrain;
         // The season, cell by cell: under `winter high` the ridge is in winter while the valley is
         // not, so the ground says so place by place rather than by one number for the whole world.
@@ -221,6 +222,16 @@ export class Ground {
                         r += (FALL[0] - r) * t;
                         g += (FALL[1] - g) * t;
                         b += (FALL[2] - b) * t;
+                    }
+                }
+                // e057: the waste the crowd leaves. A cell at 1 grows at half its rate, and reads here as
+                // a third of the way to the trampled colour.
+                if (foul) {
+                    t = Math.min(0.55, 0.25 * (foul[v0] + foul[v1] + foul[v2] + foul[v3]) * 0.33);
+                    if (t > 0) {
+                        r += (FOUL[0] - r) * t;
+                        g += (FOUL[1] - g) * t;
+                        b += (FOUL[2] - b) * t;
                     }
                 }
                 // The frost, then the snow: the ground pales as its sun goes, and goes white where the
