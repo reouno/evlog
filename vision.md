@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-09-12 (e051).
+Last updated: 2026-09-13 (after e059: the measure and the working hypothesis re-founded).
 
 ## What the viewer should see
 
@@ -9,18 +9,69 @@ Not dots and numbers. Creatures with different shapes, eating and being eaten, s
 lineages that appear, spread, and go extinct. Nothing in that sentence is scripted: shape, diet,
 predation, and species all come out of the genome and the world's rules.
 
-The measure of a law is diversity (principles 7): how many different bodies prosper at once, and in
-how many different places. Every experiment from e039 on reports one fixed number for it beside the
-lineage count: the number of coexisting winner lineages whose bodies differ in shape, by place. It
-is written in e039's `report.py` (#42) and copied from there: the lineages holding at least 5% of
-the body-steps of the last third, grouped by single linkage on size within a factor of 1.5 and
-block mixes within 0.4. It reads 1-3 in e039, where the lineage count reads 2-14. The
-series so far says where diversity came from: from places (e012), from time (e026, e032), and not
-from a wider body space or a cheaper body (e029, e037), and that a uniform gain is eaten by more of
-the same body (e038). An environment differs by place, by time, and by the size of the body looking
-at it; the third axis is the one the world lacks entirely (every body sees the same field at the
-same grain); #41 was its first law and e039 answered it: with no body axis that costs matter, a
-food out of reach buys a shape (a pole), not a mass.
+**The measure is ways of living, not shapes** (agreed 2026-09-13). A body's way of living is what it
+does: what it eats (plant, the flesh of kills, the dead), whether it can break another body, whether
+it stays or roams, where it lives. A world is judged by how many ways of living prosper at once and
+whether each one lasts (principle 7). Shape kinds (#66) stay as a second number, not the headline.
+The reason is a first count (one seed each, thresholds provisional): e059's islands doubled the shape
+kinds (q1 5.5 -> 10.4), yet held 3-4 ways of living, with 63-64% of their grown bodies plant eaters
+that stay. The crowded world at sun 1 holds 85 shape kinds and 9 ways of living, a tooth on 40% of
+its bodies. A viewer is bored not by too few shapes but by every body living the same way. Before
+this, #42 counted winner lineages (to e057) and #66 counted shape kinds (e058-e059).
+
+## The working hypothesis (2026-09-13)
+
+From ecology's competitive exclusion principle: **the number of ways of living that coexist is at
+most the number of independent limiting factors, each with a trade-off no single body escapes, laid
+out at scales the bodies feel.** Read through it, the series splits along one line. The laws that
+added such a factor did better than their controls: e012 (two kinds of place), e024-25 (flesh as a
+second food, with weight and density), e026/e032 (time). The laws that moved only the amount, timing
+or place of the one resource the world has were absorbed into the number of bodies: e038, e041,
+e046, e051, e054, e056, e057, e059. So were an axis that overlapped the old resource in place (e028:
+flesh lies with the plants; e040: the water lies with the food) and an axis with no trade-off (e039:
+the reach costs nothing, so one pole wins). None of e040-e059 added an independent factor. #71 tests
+the frame on the existing runs before anything else, and drops it if it does not hold.
+
+What follows for the work:
+
+1. Do not test a law that changes the amount, timing or place of the one resource for diversity.
+   It changes the number of bodies.
+2. A new axis needs a resource or condition that nothing else substitutes for and that does not
+   overlap the old one in place. It needs a trade-off in the materials, and a scale the bodies
+   feel: its place wider than a life's travel (#68 rule 1), and its change close to a life's length
+   when behaviour is meant to follow it (e049).
+3. Describe a world by a few ratios, not by its laws: foraging area over footprint (1.3 at sun 1,
+   4.6 at sun 0.2), place scale over lifetime travel, change time over lifespan (season 20,000,
+   life ~300), the number of independent axes, and gene flow between places (e059's segregation).
+   Laws that move the same ratio are the same move.
+4. Keep ecology apart from evolution. Whether a world can hold two ways of living is tested by
+   mutual invasion (#72), not by hoping evolution finds both on 4-6 seeds (the hunter/grazer seed
+   lottery of e024, e045 and e055 is the two questions mixed).
+
+## The target: a table of ways of living
+
+| way of living | lives on | why no other body is better at it | what the world needs |
+|---|---|---|---|
+| sitting grazer | plant regrowing where it stands | no muscle, cheap | slow even regrowth (today's world) |
+| walking forager | rich food, scattered and eaten out | muscle paid back by rich food | ground where a body gathers from far more cells than it stands on, apart from the sitter's |
+| hunter | other bodies | hard front and muscle, poor at plants | a place where prey crowd; flesh apart from plants (e028) |
+| migrant | places that swap worth over time | a store and movement | change close to a life's length; places wider than a life's travel |
+
+They coexist only as different places or times in one world. The crowd makes hunters and the thin
+land makes movers (#68 rule 2), so the world needs both as places. e012 had this. e013's occupancy
+law (one body to a sub-cell) removed the stacked crowd e011-e012's arms race lived on, and it was
+never rebuilt.
+
+## Plan (issues)
+
+1. #71: a census of ways of living on existing runs, with no new runs. It tests the frame and
+   corrects e059.
+2. #72: invasion tests (save and inject genomes), which separate what a world can hold from what
+   evolution finds.
+3. #73: each axis of the table tested by mutual invasion in a minimal world, then composed. It
+   carries #70's candidates, #14 and #52.
+
+This plan supersedes the "Next, in this order" lists below, which stay as history.
 
 ## Three mechanisms, none of them predefined
 
