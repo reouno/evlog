@@ -1,0 +1,150 @@
+# Foundation (draft)
+
+Status: agreed 2026-09-13, with option (a) for every decision in section 7. It replaces the method
+of testing one law at a time (#73, withdrawn) with a whole environment built first and searched in
+stages: #74 (A), #75 (B), #76 (C).
+
+## Why
+
+- **e060**: sixty experiments added or removed one law at a time, and every world still holds one
+  to three kinds of living. Counted per kind, none of the laws read as new axes (places, season,
+  cloud, weight, winter by height) added a way of living.
+- **A world with one or two limiting factors cannot show what a third one does.** A single new law
+  is averaged away by the crowd or absorbed by the hunter/grazer lottery. The real world stands on
+  many differences at once, and changing one of them alone mostly breaks the balance.
+- **So**: build the environment whole, split into what is a law, what is generated, and what must
+  emerge. Then search its parameters in stages, from the cheapest layer to the dearest, and judge by
+  kinds of living (e060's census per kind).
+
+What does not change (principles.md): laws are about materials and the world, never traits;
+diversity comes out of an environment that differs; compute is bounded; the real world is a source
+of premises, not a target.
+
+## 1. Laws, generation, emergence
+
+**Laws** are the same in every world:
+
+| law | status |
+|---|---|
+| conservation of matter and energy: soil, air, water (e018-e035) | kept |
+| contact and force, space at the body's resolution, work (e010, e014, e015) | kept |
+| bodies: genome and development, weight and density, store, strict upkeep, wear, connection, motor, clock (e004-e055) | kept |
+| the sun: a day (rotation) and a year (tilt), light by latitude | new; replaces season by height (e032) and patches of sun (e007, e011) |
+| heat: a cell's temperature from light, height and nearby water, spreading to neighbours | new |
+| water: evaporation by temperature, humidity carried by a prevailing wind, rain where air rises or cools, flow downhill (e035) | partly new; replaces rain by height (e020) and the cloud (e026) |
+| producers as materials: grass, wood and algae, each with its own growth | new; wood keeps the canopy (e021-e043) |
+| fire: dry standing plant matter burns when hot and spreads to dry neighbours; its matter goes to the air and the soil | new |
+| the material trade-offs of section 2 | new |
+
+**Generated** at random from the seed, with parameters:
+
+- a height map and a sea level: land, sea, islands and lakes are results;
+- the span of latitude the map covers;
+- the initial soil and water.
+
+**Emergent**, never written: rivers, lakes, deserts in rain shadows, forests, grassland, climate
+zones, the fire regime, succession after fire, migration, and every way of living.
+
+**Later, not in the first version**: terrain that erodes, plants as evolving organisms, 3D bodies
+(#5), several kinds of matter (#34).
+
+## 2. What makes each difference usable
+
+e060's lesson: a difference the bodies can ride out is not an axis (season, cloud, two kinds of
+place added no way of living). So every difference comes with a law about a material that makes one
+body good there and bad elsewhere.
+
+| difference | law about a material | gains | pays |
+|---|---|---|---|
+| water and land | a water cell has a surface layer and a bottom layer; a body lighter than water (density under 1, e025) lives in the surface layer, a denser one on the bottom, and touches and eats only its layer | light bodies reach the algae and the light; dense bodies reach what sinks | light armor is weak armor (hardness times density); dense bodies cannot reach the surface |
+| dry air | a soft block (gut, muscle, sensor) facing dry air loses water each step, paid from the body's water (e040); a hard block does not; nothing is lost in water | armored bodies, and bodies near water | soft, spread bodies far from water |
+| cold | a block facing a colder cell loses energy by the difference; hard blocks and fat insulate | compact, armored or fat bodies in cold places and winters (a big body loses less per unit of mass by geometry) | spread, soft bodies |
+| light: day, depth, shade | producers grow by light; a sensor sees as far as the light allows | eyes by day, producers near the surface | eyes at night and in deep water |
+| wood | a wood cell has a hardness, and a bite breaks it only with more force behind a hard tip than that (e010's rule, applied to a plant) | bodies with a hard front and muscle | guts without a tooth, which eat grass and fallen fruit |
+| fire | a burning cell breaks soft blocks facing it with a chance; hard blocks resist; water shelters | armor, speed, life in water | soft, slow bodies on dry grassland |
+
+Every row reuses a law that exists (density, thirst, the contact rule, the canopy, the store). No row
+names a trait.
+
+## 3. Stages, measures and pass lines
+
+Each stage is run and judged before the next is built on it. A failure names its layer.
+
+**Stage A: the environment alone** (terrain, sun, heat, water; no producers, no bodies).
+
+- A cell's habitat is its medium (land, shallow water, deep water) x temperature band (3) x moisture
+  band (3), read at each season.
+- Pass: at least 5 habitats each holding 2% of the cells; at least 3 of them in patches wider than
+  three lifetimes of travel (a body travels 3-14 cells in a life today, e058); 10-50% of the cells
+  change habitat over a year; year 20's habitat map agrees with year 10's on 90% of the cells (it
+  stands, it does not drift).
+
+**Stage B: producers** (grass, wood, algae and fire on a stage-A world; no bodies).
+
+- Pass: each producer holds 5% of the world's standing plant matter and is the larger part (50%) in
+  at least one habitat; none dies out in 10 years; fire burns 1-20% of the land a year (not never,
+  not all); matter is conserved.
+
+**Stage C: bodies** (e060's census per kind, with new columns: the tooth a body was born with, its
+kills apart from what it scavenged, the length of its path, its layer, its temperature band).
+
+- Pass: at least 4 kinds of living on at least 4 seeds of 6, each holding 5% of the grown bodies for
+  5 years or more; no season's floor reaches zero; two kinds taken from the run invade each other
+  while rare (#72's injection, the check that the world holds them and not the seed's luck).
+
+## 4. Compute
+
+Measured from e059's batch (128x128, one core per run, 12 runs at once on the Mac): the world alone
+costs 3.0 ms a step (337 steps/s), and each body adds 5.1 µs (165 steps/s at 600 bodies, 55 at
+3,000).
+
+| stage | one candidate | local (11 cores) + Ubuntu (6) | what it buys |
+|---|---|---|---|
+| A | target 5 years in about a minute: the climate fields update on a slower clock than the bodies (every 10 steps) | several hundred candidates an hour | a wide search |
+| B | 10 years = 200,000 steps, about 10 minutes at today's world-alone cost | about 100 an hour | a search around A's passes |
+| C | 300,000 steps with 2,000 bodies, about 70 minutes at 128x128, about 4x at 256x256 | about 15 runs an hour at 128x128 | a handful of worlds, 6 seeds each |
+
+Stage C cannot be searched widely. It takes the few worlds A and B pass. The size of the world is
+decided in stage A: rule 1 (#68) asks for habitats wider than three lifetimes of travel, and 256x256
+is the likely answer.
+
+## 5. Search
+
+- Search ratios, not raw constants. A: land share, relief, latitude span, day length over lifespan,
+  year length over lifespan, the temperature spread (equator to pole, day to night, season), rain
+  and wind strength. B: growth of grass : wood : algae, wood's hardness over a body's typical force,
+  the chance of ignition. C: the costs of drying and of cold relative to upkeep, bodies per habitat.
+- Sample first (Latin hypercube, about 300 candidates in A), keep the passes, refine around them. No
+  optimizer until plain sampling shows where the passing region is.
+- Every candidate writes one row of measures, so the table of all candidates is the result.
+
+## 6. Building it
+
+- A new crate for the foundation, not e059 grown further (5,900 lines, 49 positional arguments).
+  Named parameters in a file replace the positional arguments.
+- Stage A first: terrain generation, sun, heat, water with wind, the stage-A measures, and viewer
+  layers for temperature, humidity and habitat.
+- Port what has survived many experiments instead of rewriting it: the genome and development
+  (e002-e004), body physics (e010-e055), the soil and water carrier (e035), the census (e060).
+- Stage B adds producers and fire; stage C ports the bodies with the trade-offs of section 2, the new
+  census columns and #72's injection. Each stage is an experiment with a README and a report.
+- The build is weeks of work, and the search runs cost the machine as stated in section 4.
+
+## 7. Decisions (agreed 2026-09-13: option (a) in every case)
+
+1. **Weather.** (a) Humidity carried by one prevailing wind that turns with the season, rain where
+   air rises or cools: rain shadows and wet coasts emerge, and it is cheap. (b) Pressure and wind from
+   temperature differences: more emerges, at several times the cost.
+2. **Fire.** (a) In the first version. (b) After stage C works without it.
+3. **Size of the world.** (a) Decided in stage A by rule 1. (b) Fixed at 128x128.
+4. **Producers.** (a) Three plant materials as fields. (b) Plants as evolving organisms from the
+   start: a second genome and far more compute.
+5. **The day.** A search axis, starting near a fifth of a lifespan (a body lives several days).
+6. **What a body can sense.** (a) Add light, temperature and its own water as inputs to today's
+   reflex brain, so a body can tell night and cold. (b) Keep today's inputs.
+
+## What this does not promise
+
+No parameters may pass all three stages. If A passes and B fails, the producers' laws are wrong; if
+B passes and C fails, the materials of the bodies are. The staged search is chosen so that a failure
+says which.

@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-09-13 (after e060: ways of living counted per kind; the frame's reading of the series dropped).
+Last updated: 2026-09-13 (after e060: ways of living counted per kind; the world is now built whole and searched in stages, `foundation.md`).
 
 ## What the viewer should see
 
@@ -76,14 +76,18 @@ e011-e012's arms race lived on, and it was never rebuilt.
 
 ## Plan (issues)
 
+Agreed 2026-09-13 after e060: the world is built whole and searched in stages, not grown one law at
+a time. The design is `foundation.md`.
+
 1. (Done 2026-09-13: #71, e060 - the census; ways of living are counted per kind, the frame's
    reading of the series is dropped, e059 is corrected.)
-2. #72: invasion tests (save and inject genomes), which separate what a world can hold from what
-   evolution finds. The first question: can a world hold a hunter kind and a grazer kind when both
-   are put there. Add first the columns e060 lacked: the tooth a body was born with, its kills apart
-   from what it scavenged, and the length of the path it walked.
-3. #73: each axis of the table tested by mutual invasion in a minimal world, then composed. It
-   carries #70's candidates, #14 and #52.
+2. #74, stage A: the environment alone (generated terrain and sea, a day and a year, heat, water
+   carried by wind), its habitat measures and a search; it decides the size of the world.
+3. #75, stage B: producers (grass, wood, algae) and fire on a stage-A world.
+4. #76, stage C: bodies with a material trade-off for every difference, counted per kind; #72's
+   injection is its instrument.
+
+#73 (each axis alone) is withdrawn; #14 and #38 are folded into stages A and B; #58 is superseded.
 
 This plan supersedes the "Next, in this order" lists below, which stay as history.
 

@@ -11,8 +11,10 @@ App, web, and monetization (ads) are ideas only. Do not build them now.
 
 ## How we work
 
-- Start small. Expect to rebuild often and to have assumptions overturned.
-- Build small, run long. The goal is to see what happens over long runs.
+- Build the world whole, then search it (`foundation.md`): keep laws, generated terrain and emergent
+  outcomes apart, and search parameters in stages from the cheapest layer. Do not test one law at a
+  time in a world that lacks its conditions. Expect to rebuild often and to have assumptions overturned.
+- Run long. The goal is to see what happens over long runs.
 - Do not program the fun directly. Change rules and selection pressure, then observe what emerges.
 - When a change adds compute cost, state why.
 
