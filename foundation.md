@@ -62,9 +62,12 @@ body good there and bad elsewhere.
 | light: day, depth, shade | producers grow by light; a sensor sees as far as the light allows | eyes by day, producers near the surface | eyes at night and in deep water |
 | wood | a wood cell has a hardness, and a bite breaks it only with more force behind a hard tip than that (e010's rule, applied to a plant) | bodies with a hard front and muscle | guts without a tooth, which eat grass and fallen fruit |
 | fire | a burning cell breaks soft blocks facing it with a chance; hard blocks resist; water shelters | armor, speed, life in water | soft, slow bodies on dry grassland |
+| height | moving onto a higher cell costs the mass lifted times the rise, on top of e015's work; going down pays nothing back | light bodies and strong muscle on hills | heavy bodies that must cross relief to reach food or water |
 
-Every row reuses a law that exists (density, thirst, the contact rule, the canopy, the store). No row
-names a trait.
+Every row reuses a law that exists (density, thirst, the contact rule, the canopy, the store, work). No
+row names a trait. The height row was added after e061 (the user): the highest land is drawn about 18
+cells tall, a hill 10-20 bodies high, and without it a body feels height only as cold and walks over a
+ridge as if it were flat.
 
 ## 3. Stages, measures and pass lines
 
@@ -107,8 +110,8 @@ costs 3.0 ms a step (337 steps/s), and each body adds 5.1 µs (165 steps/s at 60
 | stage | one candidate | local (11 cores) + Ubuntu (6) | what it buys |
 |---|---|---|---|
 | A | measured (e061): 20 years of a 20,000-step year in 47 s at 256 and about 3 minutes at 512 on one core (1.2 and 4.5 ms a climate update, every 10 steps) | 300 candidates (half at 512) in 65 minutes on 10 cores | a wide search |
-| B | 10 years = 200,000 steps, about 10 minutes at today's world-alone cost | about 100 an hour | a search around A's passes |
-| C | 300,000 steps with 2,000 bodies, about 70 minutes at 128x128, about 4x at 256x256 | about 15 runs an hour at 128x128 | a handful of worlds, 6 seeds each |
+| B | 10 years = 200,000 steps at 512: per cell per step that is 48 ms a step and 2.7 hours, so the producers go on the climate's 10-step clock, target 10 minutes a candidate | about 100 an hour, if the target holds | a search around A's passes |
+| C | 300,000 steps at 512 with the world on its slow clock, 5.1 µs per body per step (e059): about 4 hours a run at a thin world's density (about 9,600 bodies) and 20 at a crowded one (about 47,000) | 13-60 runs a day on 11 cores | a handful of worlds, 6 seeds each; threads or a window of the world decided with a prototype |
 
 Stage C cannot be searched widely. It takes the few worlds A and B pass. The size of the world was
 decided in stage A (e061): 512x512, since at 256 the continents are too small for land habitats wider
