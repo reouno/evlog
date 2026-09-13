@@ -856,6 +856,11 @@ def main():
 <p>{TEXT["tldr"]}</p>
 </section>
 
+<section class="tldr" style="margin-top:12px">
+<h2>Correction (e060, #71)</h2>
+<p>The diversity counted here is shape kinds. Counted as ways of living (what a body eats, whether it has a tooth, whether it roams), the islands hold no more than the thin uniform world on six seeds: 2.0-5.0 against 2.0-3.5 per body, 1.0-2.0 against 1.0-2.0 per lineage. Plant eaters without a tooth are 66-95% of the grown bodies against 64-92%; what changed is that 38-71% of the grown bodies stay, against 10-32%. The doubling of q1 is shape bins within one way of life. See <code>experiments/e060_census</code>.</p>
+</section>
+
 <h2>1. Question</h2>
 <p>{TEXT["question"]}</p>
 <ol>

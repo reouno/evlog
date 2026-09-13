@@ -2,6 +2,18 @@
 
 Date: 2026-09-13
 
+## Correction (e060, 2026-09-13)
+
+Result 1 below, "diversity rises", counts shape kinds. Counted as ways of living (what a body eats,
+whether it has a tooth, whether it roams; `experiments/e060_census`, #71), the islands hold no more
+than the thin uniform world. Over all six seeds: 2.0-5.0 ways against 2.0-3.5 (more on two seeds,
+fewer on one, the same on three), and 1.0-2.0 against 1.0-2.0 when each lineage counts once, under
+its most common way. Plant eaters without a tooth are 66-95% of the grown bodies on the islands and
+64-92% in the uniform world. Within that one way of living, the islands changed movement: 38-71% of
+the grown bodies stay, against 10-32%. No island run is a hunter world (kills 25% of the intake or
+more); two uniform runs are (seeds 10 and 13). The doubling of q1 is shape bins within one way of
+life. The text below is left as it was written.
+
 ## Purpose
 
 e058's probes found the first regime in which a law about place can matter: lower the sun and a

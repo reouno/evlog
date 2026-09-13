@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-09-13 (after e059: the measure and the working hypothesis re-founded).
+Last updated: 2026-09-13 (after e060: ways of living counted per kind; the frame's reading of the series dropped).
 
 ## What the viewer should see
 
@@ -13,40 +13,52 @@ predation, and species all come out of the genome and the world's rules.
 does: what it eats (plant, the flesh of kills, the dead), whether it can break another body, whether
 it stays or roams, where it lives. A world is judged by how many ways of living prosper at once and
 whether each one lasts (principle 7). Shape kinds (#66) stay as a second number, not the headline.
-The reason is a first count (one seed each, thresholds provisional): e059's islands doubled the shape
-kinds (q1 5.5 -> 10.4), yet held 3-4 ways of living, with 63-64% of their grown bodies plant eaters
-that stay. The crowded world at sun 1 holds 85 shape kinds and 9 ways of living, a tooth on 40% of
-its bodies. A viewer is bored not by too few shapes but by every body living the same way. Before
-this, #42 counted winner lineages (to e057) and #66 counted shape kinds (e058-e059).
+A viewer is bored not by too few shapes but by every body living the same way. Before this, #42
+counted winner lineages (to e057) and #66 counted shape kinds (e058-e059).
+
+**Count them per kind** (e060, #71). Counted per body (diet x tooth x roams among bodies aged 300 or
+more, a way counted at 5% of them), 156 existing runs hold 1-10 ways, and the count follows the
+kills' share of what the world eats (rank correlation 0.61). Most of that is the spread of one kind:
+in the world with 10 ways (e055 seed 9) one lineage holds 68% of the grown bodies and leads every
+way; its diet is one hump cut three ways, its toothless members were born with the muscle a break
+took, and its roamers are older than its stayers. With every body counted under its lineage's
+commonest way, every run holds 1-3 (a lower bound: a lineage can join different builds). e059's
+islands: 3.0 ways against 2.7 per body, 1.6 against 1.3 per lineage; the shape kinds rose, the ways
+did not. Report both numbers; judge a law per kind. The census is `experiments/e060_census/census.py`.
 
 ## The working hypothesis (2026-09-13)
 
 From ecology's competitive exclusion principle: **the number of ways of living that coexist is at
 most the number of independent limiting factors, each with a trade-off no single body escapes, laid
-out at scales the bodies feel.** Read through it, the series splits along one line. The laws that
-added such a factor did better than their controls: e012 (two kinds of place), e024-25 (flesh as a
-second food, with weight and density), e026/e032 (time). The laws that moved only the amount, timing
-or place of the one resource the world has were absorbed into the number of bodies: e038, e041,
-e046, e051, e054, e056, e057, e059. So were an axis that overlapped the old resource in place (e028:
-flesh lies with the plants; e040: the water lies with the food) and an axis with no trade-off (e039:
-the reach costs nothing, so one pole wins). None of e040-e059 added an independent factor. #71 tests
-the frame on the existing runs before anything else, and drops it if it does not hold.
+out at scales the bodies feel.**
+
+The reading of the series it suggested was tested by e060 and **dropped**. It said the laws that
+added such a factor (e012 two kinds of place, e025 flesh with weight, e026 and e032 time) did better
+than their controls, and the laws that moved the amount, timing or place of the one resource (e038,
+e041, e046, e051, e054, e056, e057, e059), overlapped it in place (e028, e040) or had no trade-off
+(e039) did not. Counted per kind, the axis laws added a way of living in 0 of 6 pairs (per body in 2
+of 6, e025 and e032, both by bringing kills); the others added none (19 of 21 per kind, 21 of 21 per
+body), though 12 of those 21 moved seeds into or out of hunter worlds. The bound itself is neither
+refuted nor tested: no world has held more than three kinds, and none has had more than two foods
+(the plant, and the flesh of kills). The flesh of kills is the only second food that has made a
+second way of living, and a world's share of it is a degree that the seed and the laws move.
 
 What follows for the work:
 
 1. Do not test a law that changes the amount, timing or place of the one resource for diversity.
-   It changes the number of bodies.
+   It changes the number of bodies (e060: none of 21 such pairs added a way of living).
 2. A new axis needs a resource or condition that nothing else substitutes for and that does not
    overlap the old one in place. It needs a trade-off in the materials, and a scale the bodies
    feel: its place wider than a life's travel (#68 rule 1), and its change close to a life's length
-   when behaviour is meant to follow it (e049).
+   when behaviour is meant to follow it (e049). A place or a season the bodies ride out is not yet an
+   axis (e012 and e026 added no way of living).
 3. Describe a world by a few ratios, not by its laws: foraging area over footprint (1.3 at sun 1,
    4.6 at sun 0.2), place scale over lifetime travel, change time over lifespan (season 20,000,
-   life ~300), the number of independent axes, and gene flow between places (e059's segregation).
-   Laws that move the same ratio are the same move.
+   life ~300), the number of independent axes, the kills' share of the intake, and gene flow between
+   places (e059's segregation). Laws that move the same ratio are the same move.
 4. Keep ecology apart from evolution. Whether a world can hold two ways of living is tested by
    mutual invasion (#72), not by hoping evolution finds both on 4-6 seeds (the hunter/grazer seed
-   lottery of e024, e045 and e055 is the two questions mixed).
+   lottery of e024, e045 and e055 is the two questions mixed; e060 found it in 12 of 21 pairs).
 
 ## The target: a table of ways of living
 
@@ -58,16 +70,18 @@ What follows for the work:
 | migrant | places that swap worth over time | a store and movement | change close to a life's length; places wider than a life's travel |
 
 They coexist only as different places or times in one world. The crowd makes hunters and the thin
-land makes movers (#68 rule 2), so the world needs both as places. e012 had this. e013's occupancy
-law (one body to a sub-cell) removed the stacked crowd e011-e012's arms race lived on, and it was
-never rebuilt.
+land makes movers (#68 rule 2), so the world needs both as places. e012 had both places and held the
+ways of each, not more (e060). e013's occupancy law (one body to a sub-cell) removed the stacked crowd
+e011-e012's arms race lived on, and it was never rebuilt.
 
 ## Plan (issues)
 
-1. #71: a census of ways of living on existing runs, with no new runs. It tests the frame and
-   corrects e059.
+1. (Done 2026-09-13: #71, e060 - the census; ways of living are counted per kind, the frame's
+   reading of the series is dropped, e059 is corrected.)
 2. #72: invasion tests (save and inject genomes), which separate what a world can hold from what
-   evolution finds.
+   evolution finds. The first question: can a world hold a hunter kind and a grazer kind when both
+   are put there. Add first the columns e060 lacked: the tooth a body was born with, its kills apart
+   from what it scavenged, and the length of the path it walked.
 3. #73: each axis of the table tested by mutual invasion in a minimal world, then composed. It
    carries #70's candidates, #14 and #52.
 
