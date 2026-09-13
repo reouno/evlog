@@ -433,6 +433,7 @@ export class Rig {
         this.offZ = 0;
         this.sending = false;
         this.dist = 60;
+        this.far = Math.max(420, 1.3 * Math.max(world.w, world.d));
         this.yaw = Math.PI * 0.25;
         this.pitch = 0.55;
         this.follow = null;
@@ -470,7 +471,7 @@ export class Rig {
         dom.addEventListener('wheel', (e) => {
             e.preventDefault();
             this.want = null;
-            this.dist = Math.max(1.2, Math.min(420, this.dist * Math.exp(e.deltaY * 0.0012)));
+            this.dist = Math.max(1.2, Math.min(this.far, this.dist * Math.exp(e.deltaY * 0.0012)));
         }, { passive: false });
         addEventListener('keydown', (e) => {
             if (e.target.tagName === 'INPUT')
@@ -527,7 +528,7 @@ export class Rig {
         if (k.has('q'))
             this.dist = Math.max(1.2, this.dist * (1 - dt));
         if (k.has('e'))
-            this.dist = Math.min(420, this.dist * (1 + dt));
+            this.dist = Math.min(this.far, this.dist * (1 + dt));
         if (this.want !== null) {
             this.dist += (this.want - this.dist) * Math.min(1, dt * 3);
             if (Math.abs(this.want - this.dist) < 0.05)

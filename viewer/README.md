@@ -157,6 +157,11 @@ hold), `rain`, `light` (the day sweeping across the map) and `habitat` (its 15 b
 without a layer is not offered it. A layer is painted per cell and the four around a vertex are
 averaged as colours, because a habitat is a name, not a number.
 
+The haze is set by the eye's distance and the world's size (density 1 / (2 x distance + side)), so
+the ground being looked at keeps 78% of its colour however far the eye pulls back, and the eye pulls
+back to 1.3 world sides (at least 420). It was tuned on 128 and grew with the distance, which hid a
+256 world seen whole (0.4% of the ground left). The `霧` slider scales it, 0 for none.
+
 ### The kinds of body about now
 
 On the right, under the switches: the five lineages with the most bodies in the frame being shown,

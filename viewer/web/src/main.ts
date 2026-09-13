@@ -33,6 +33,7 @@ let shapeOf = -1, drawnKey = -1, drawnSwing = 99, last = performance.now(), fps 
 let plantAt: { x: number; z: number } | null = null;
 let miniBase: HTMLCanvasElement | null = null;
 let groundMode = 'soil'; // what the ground is coloured by (`GROUND_MODES`)
+let fogScale = 1; // the haze's strength, 0 for none (the `霧` slider)
 const MINI_PAINT = new Float32Array(3);
 let groundDue = true, plantsDue = true, layersStep = 0, layersDrawnAt = 0;
 // Following a line of descent (see line.ts): the path a recording offers, or a walk from a body
@@ -401,8 +402,14 @@ function light(here: number): void {
   const fog = scene.fog as THREE.FogExp2;
   fog.color.copy(sky.uniforms.uHorizon.value);
   // The world is a torus drawn nine times; the haze has to close before its edge, and what
-  // lies beyond the ground is the same haze, so there is no seam to see.
-  fog.density = 0.0028 + 0.005 * Math.min(1, rig.dist / 120) + cold * 0.001;
+  // lies beyond the ground is the same haze, so there is no seam to see. It is set by how far
+  // the eye is and how big the world is, so the ground being looked at stays clear: it grew with
+  // the eye's distance before and was tuned on 128, and a 256 world seen whole (the eye 300 away)
+  // kept 0.4% of the ground it looked at. Now the eye's own target keeps 78% or more at any
+  // distance; from the default distance on 256, half a world beyond it keeps 78% and the torus's
+  // edge 27%. `fogScale` is the slider.
+  const far = 2 * rig.dist + Math.max(world.w, world.d);
+  fog.density = fogScale * (1 / far + cold * 0.001);
   sky.uniforms.uGround.value.copy(sky.uniforms.uHorizon.value).multiplyScalar(0.92);
 }
 
@@ -660,6 +667,7 @@ function bindUI(header: Header): void {
   $i('s-terrain').oninput = (e) => { UP.terrain = +(e.target as HTMLInputElement).value; ground.buildHeight(); groundDue = plantsDue = true; };
   $i('s-plant').oninput = (e) => { UP.plant = +(e.target as HTMLInputElement).value; plantsDue = true; };
   $i('s-detail').oninput = (e) => { life.setDetail(+(e.target as HTMLInputElement).value); plantsDue = true; };
+  $i('s-fog').oninput = (e) => { fogScale = +(e.target as HTMLInputElement).value; };
   $('legend').innerHTML = header.blocks.slice(1).map((b) => `<span><i style="background:${KIND_COLORS[b]}"></i>${b}</span>`).join('');
   $('play').onclick = () => {
     playing = !playing;
