@@ -39,11 +39,14 @@ const FROST = rgb(0xb9bdb8), SNOW = rgb(0xe7edf3);
 const SHALLOW = rgb(0x4e9ab0), DEEP = rgb(0x123f5c), ICE = rgb(0xd4e6ee);
 
 /** What the ground can be coloured by: what grows on it (`soil`, every world), or one layer of a
- * world that has it (e061's climate). The browser offers the ones the header carries. */
+ * world that has it (e061's climate, e062's producers). The browser offers the ones the header carries. */
 export const GROUND_MODES: [string, string][] = [
   ['soil', '土と草'], ['temperature', '気温'], ['moisture', '土の湿り'], ['humidity', '空気の湿り'],
   ['rain', '雨'], ['light', '日射'], ['habitat', '生息域'],
+  ['grass', '草'], ['wood', '木'], ['algae', '藻'], ['litter', '落葉'], ['fire', '火'],
 ];
+// e062's producers: bare ground to a full stand, and a burning cell.
+const ALGAEC = rgb(0x2fae8c), FIREC = rgb(0xff6a1a), EMBERC = rgb(0x2a2622);
 // e061's habitats by number: land cold / mild / hot x dry / moist / wet, then shallow and deep
 // water cold / mild / hot (`habitats` in the params names them).
 const HABITAT = [0xc9b27c, 0x8fae6b, 0x3f7f4f, 0xe0c068, 0x9cc255, 0x2e9e4f, 0xe8a33c, 0xb7c93a, 0x138a3a,
@@ -73,6 +76,11 @@ export function paint(out: Float32Array, mode: string, v: Layers, c: number, tem
     case 'humidity': ramp(out, PALE, RAINC, x); return true;
     case 'rain': ramp(out, PALE, RAINC, Math.sqrt(x)); return true;
     case 'light': ramp(out, DARK, SUNC, x); return true;
+    case 'grass': ramp(out, SAND, LAWN, Math.sqrt(x / 3)); return true;
+    case 'wood': ramp(out, SAND, STAND, Math.sqrt(x / 10)); return true;
+    case 'algae': ramp(out, PALE, ALGAEC, Math.sqrt(x)); return true;
+    case 'litter': ramp(out, SAND, ROT, Math.sqrt(x / 6)); return true;
+    case 'fire': ramp(out, EMBERC, FIREC, x); return true;
     case 'habitat': {
       const h = HABITAT[Math.round(x)];
       if (h) { out[0] = h[0]; out[1] = h[1]; out[2] = h[2]; } else { out[0] = out[1] = out[2] = 0.5; }

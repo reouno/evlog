@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-09-13 (after e061: stage A of the foundation, the climate alone; the world is 512x512).
+Last updated: 2026-09-13 (after e062: stage B of the foundation, producers and fire; stage C starts on two worlds with one draw).
 
 ## What the viewer should see
 
@@ -85,8 +85,11 @@ a time. The design is `foundation.md`.
    heat, water carried by one wind. 294 worlds of 300 hold 5 or more habitats of 2% and 34 pass all
    four lines, 30 of them 512x512, the size from here. Width is bought by the size and the continents'
    grain, the tilt sets the change, and a world only needs about 20,000 climate updates to settle.)
-3. #75, stage B: producers (grass, wood, algae) and fire on the worlds that passed stage A, the
-   producers on a slow clock (per cell per step a 512 world costs about 48 ms a step).
+3. (Done 2026-09-13: #75, e062 - producers and fire on six of stage A's worlds, on the climate's
+   clock. 9 of 96 candidates pass every line, on 4 worlds; no draw of the growth rates passes on more
+   than 2. Algae always hold the water; grass and wood split the land only when wood needs about 3-12
+   times the ground grass needs. Fire burns too little, never too much, and its smoke drains the land
+   to the sea. A candidate costs 8 minutes at 512.)
 4. #76, stage C: bodies with a material trade-off for every difference, counted per kind; #72's
    injection is its instrument.
 

@@ -93,6 +93,15 @@ Each stage is run and judged before the next is built on it. A failure names its
 - Pass: each producer holds 5% of the world's standing plant matter and is the larger part (50%) in
   at least one habitat; none dies out in 10 years; fire burns 1-20% of the land a year (not never,
   not all); matter is conserved.
+- Result (e062): 9 of 96 candidates (16 draws of the growth rates and the strike chance on six of
+  stage A's worlds) pass every line, on 4 of the 6 worlds, and no draw passes on more than 2. Grass,
+  wood and algae share one growth law; wood needs forty times grass's stand to take half the light
+  (most of a tree is trunk) and shades the grass under it. Algae always hold the water; grass and wood
+  split the land only when wood needs about 3-12 times the ground grass needs. The hot dry world loses
+  its wood and the cold world never burns 1% of its land. Fire burns too little, never too much (at
+  most 11% a year), and its smoke drains the land to the sea (up to 1.2% a year) with nothing bringing
+  it back. A candidate costs 8 minutes at 512 on one core. Stage C takes one draw and the worlds it
+  passes: d11 on c1225 (warm, very wet) and c1236 (cool).
 
 **Stage C: bodies** (e060's census per kind, with new columns: the tooth a body was born with, its
 kills apart from what it scavenged, the length of its path, its layer, its temperature band).
