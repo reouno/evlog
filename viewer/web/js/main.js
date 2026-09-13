@@ -2,7 +2,7 @@
 import * as THREE from 'three';
 import { LiveSource, ReplaySource } from './net.js';
 import { World } from './world.js';
-import { Ground, Sky, Rig, UP, shortest } from './render.js';
+import { Ground, Sky, Rig, UP, shortest, paint, GROUND_MODES } from './render.js';
 import { Life } from './life.js';
 import { alongLine, onLine, Walk } from './line.js';
 import { RECORD } from './wire.js';
@@ -18,6 +18,8 @@ let picked = null;
 let shapeOf = -1, drawnKey = -1, drawnSwing = 99, last = performance.now(), fps = 60, seeking = false;
 let plantAt = null;
 let miniBase = null;
+let groundMode = 'soil'; // what the ground is coloured by (`GROUND_MODES`)
+const MINI_PAINT = new Float32Array(3);
 let groundDue = true, plantsDue = true, layersStep = 0, layersDrawnAt = 0;
 // Following a line of descent (see line.ts): the path a recording offers, or a walk from a body
 // picked off the screen.
@@ -148,7 +150,7 @@ function loop(now) {
     if (!plantAt || Math.hypot(plantAt.x - rig.target.x, plantAt.z - rig.target.z) > 2)
         plantsDue = true;
     if (v && groundDue) {
-        ground.update(v, { swing });
+        ground.update(v, { swing, mode: groundMode });
         miniBase = null;
         groundDue = false;
     }
@@ -624,6 +626,7 @@ function minimap(a, b, t, before, after) {
         const v = world.layersAt(layersStep) || {};
         const hgt = world.height, relief = world.relief || 1;
         const swing = world.swing(step), amp = world.season.at;
+        const tOff = Number(world.params.temperature_offset ?? 0);
         for (let i = 0; i < w * d; i++) {
             const pl = v.plant ? Math.min(1, v.plant[i] / 3) : 0;
             const wa = v.water ? Math.max(0, v.water[i] - world.wet) : 0;
@@ -644,6 +647,11 @@ function minimap(a, b, t, before, after) {
                 cr = cr * (1 - snow) + 244 * snow;
                 cg = cg * (1 - snow) + 247 * snow;
                 cb = cb * (1 - snow) + 250 * snow;
+            }
+            if (groundMode !== 'soil' && paint(MINI_PAINT, groundMode, v, i, tOff)) {
+                cr = MINI_PAINT[0] * 255;
+                cg = MINI_PAINT[1] * 255;
+                cb = MINI_PAINT[2] * 255;
             }
             img.data[i * 4] = cr;
             img.data[i * 4 + 1] = cg;
@@ -741,6 +749,16 @@ function bindUI(header) {
         addEventListener('pointerup', () => (seeking = false));
     }
     $i('v-shadow').onchange = (e) => setShadows(e.target.checked);
+    // The ground's colour: what grows on it, or a layer of the world that the header carries.
+    const has = new Set(header.layers.map((l) => l.name));
+    const sel = $('s-ground');
+    sel.innerHTML = GROUND_MODES.filter(([k]) => k === 'soil' || has.has(k)).map(([k, name]) => `<option value="${k}">${name}</option>`).join('');
+    sel.onchange = () => { groundMode = sel.value; groundDue = true; miniBase = null; };
+    const asked = new URLSearchParams(location.search).get('ground'); // ?ground=habitat opens on that colouring
+    if (asked && [...sel.options].some((o) => o.value === asked)) {
+        sel.value = asked;
+        groundMode = asked;
+    }
     $('unfollow').onclick = unfollow;
     $('walkon').onclick = () => setWalk(!walk);
     $('lineoff').onclick = () => {

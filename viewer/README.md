@@ -147,6 +147,16 @@ the sun rides low and pale in winter and high and warm in summer, over the groun
 looking at rather than the one cell it sits on. The HUD has a dial of the year with the season
 named on it. A world with no season law says so and none of this happens.
 
+### The ground's colour
+
+The menu `地面の色` colours the ground and the water by what grows on it (`土と草`, every world) or by
+one layer the header carries. e061's climate sends `temperature` (C + 50: the header's
+`temperature_offset`), `moisture` (the ground's fill), `humidity` (the air's water over what it can
+hold), `rain`, `light` (the day sweeping across the map) and `habitat` (its 15 by number, named in
+`params.habitats`). The minimap follows the menu, `?ground=habitat` opens the page on one, and a world
+without a layer is not offered it. A layer is painted per cell and the four around a vertex are
+averaged as colours, because a habitat is a name, not a number.
+
 ### The kinds of body about now
 
 On the right, under the switches: the five lineages with the most bodies in the frame being shown,

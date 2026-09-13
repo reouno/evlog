@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-09-13 (after e060: ways of living counted per kind; the world is now built whole and searched in stages, `foundation.md`).
+Last updated: 2026-09-13 (after e061: stage A of the foundation, the climate alone; the world is 512x512).
 
 ## What the viewer should see
 
@@ -81,9 +81,12 @@ a time. The design is `foundation.md`.
 
 1. (Done 2026-09-13: #71, e060 - the census; ways of living are counted per kind, the frame's
    reading of the series is dropped, e059 is corrected.)
-2. #74, stage A: the environment alone (generated terrain and sea, a day and a year, heat, water
-   carried by wind), its habitat measures and a search; it decides the size of the world.
-3. #75, stage B: producers (grass, wood, algae) and fire on a stage-A world.
+2. (Done 2026-09-13: #74, e061 - the climate alone, generated terrain and sea, a day and a year,
+   heat, water carried by one wind. 294 worlds of 300 hold 5 or more habitats of 2% and 34 pass all
+   four lines, 30 of them 512x512, the size from here. Width is bought by the size and the continents'
+   grain, the tilt sets the change, and a world only needs about 20,000 climate updates to settle.)
+3. #75, stage B: producers (grass, wood, algae) and fire on the worlds that passed stage A, the
+   producers on a slow clock (per cell per step a 512 world costs about 48 ms a step).
 4. #76, stage C: bodies with a material trade-off for every difference, counted per kind; #72's
    injection is its instrument.
 

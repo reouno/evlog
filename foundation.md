@@ -2,7 +2,7 @@
 
 Status: agreed 2026-09-13, with option (a) for every decision in section 7. It replaces the method
 of testing one law at a time (#73, withdrawn) with a whole environment built first and searched in
-stages: #74 (A), #75 (B), #76 (C).
+stages: #74 (A), #75 (B), #76 (C). Stage A is done (e061, 2026-09-13): the world is 512x512.
 
 ## Why
 
@@ -78,6 +78,12 @@ Each stage is run and judged before the next is built on it. A failure names its
   three lifetimes of travel (a body travels 3-14 cells in a life today, e058); 10-50% of the cells
   change habitat over a year; year 20's habitat map agrees with year 10's on 90% of the cells (it
   stands, it does not drift).
+- Result (e061): 34 of 300 candidates pass all four lines, 30 of them at 512x512. Width is bought by
+  the size and by the terrain's grain (continents of about 128 cells or more); the wide land habitats
+  are dry, and wet land comes as coasts and belts. The tilt sets the change (10-30 degrees). Nothing
+  drifts: a world fails to stand only while its sea and ground water settle (about 20,000 climate
+  updates), so a world is spun up that long before it is judged or lived on. The lines accept hot,
+  cold and desert worlds alike.
 
 **Stage B: producers** (grass, wood, algae and fire on a stage-A world; no bodies).
 
@@ -100,13 +106,14 @@ costs 3.0 ms a step (337 steps/s), and each body adds 5.1 µs (165 steps/s at 60
 
 | stage | one candidate | local (11 cores) + Ubuntu (6) | what it buys |
 |---|---|---|---|
-| A | target 5 years in about a minute: the climate fields update on a slower clock than the bodies (every 10 steps) | several hundred candidates an hour | a wide search |
+| A | measured (e061): 20 years of a 20,000-step year in 47 s at 256 and about 3 minutes at 512 on one core (1.2 and 4.5 ms a climate update, every 10 steps) | 300 candidates (half at 512) in 65 minutes on 10 cores | a wide search |
 | B | 10 years = 200,000 steps, about 10 minutes at today's world-alone cost | about 100 an hour | a search around A's passes |
 | C | 300,000 steps with 2,000 bodies, about 70 minutes at 128x128, about 4x at 256x256 | about 15 runs an hour at 128x128 | a handful of worlds, 6 seeds each |
 
-Stage C cannot be searched widely. It takes the few worlds A and B pass. The size of the world is
-decided in stage A: rule 1 (#68) asks for habitats wider than three lifetimes of travel, and 256x256
-is the likely answer.
+Stage C cannot be searched widely. It takes the few worlds A and B pass. The size of the world was
+decided in stage A (e061): 512x512, since at 256 the continents are too small for land habitats wider
+than three lifetimes of travel (#68 rule 1). At 512 a world updated per cell per step costs about 48 ms
+a step (e059's 3.0 ms at 128), so stage B puts the producers on a slow clock, as the climate is.
 
 ## 5. Search
 

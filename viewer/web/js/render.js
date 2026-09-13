@@ -30,6 +30,72 @@ const ROT = rgb(0x6d4436), FALL = rgb(0xa8803f);
 const FOUL = rgb(0x5a5242); // e057: ground the crowd has fouled - grey-brown, the colour of a trampled camp
 const FROST = rgb(0xb9bdb8), SNOW = rgb(0xe7edf3);
 const SHALLOW = rgb(0x4e9ab0), DEEP = rgb(0x123f5c), ICE = rgb(0xd4e6ee);
+/** What the ground can be coloured by: what grows on it (`soil`, every world), or one layer of a
+ * world that has it (e061's climate). The browser offers the ones the header carries. */
+export const GROUND_MODES = [
+    ['soil', '土と草'], ['temperature', '気温'], ['moisture', '土の湿り'], ['humidity', '空気の湿り'],
+    ['rain', '雨'], ['light', '日射'], ['habitat', '生息域'],
+];
+// e061's habitats by number: land cold / mild / hot x dry / moist / wet, then shallow and deep
+// water cold / mild / hot (`habitats` in the params names them).
+const HABITAT = [0xc9b27c, 0x8fae6b, 0x3f7f4f, 0xe0c068, 0x9cc255, 0x2e9e4f, 0xe8a33c, 0xb7c93a, 0x138a3a,
+    0x9fd3e8, 0x5fc0d8, 0x3fb0b8, 0x3f6fa8, 0x2f5a98, 0x1f4a88].map(rgb);
+const COLDC = rgb(0x2c5aa0), MILDC = rgb(0xf2efe6), HOTC = rgb(0xc0392b);
+const DRYC = rgb(0xc8b27a), MOISTC = rgb(0x6fa84e), WETC = rgb(0x1f5f6b);
+const PALE = rgb(0xf4f6f8), RAINC = rgb(0x15407a), DARK = rgb(0x151820), SUNC = rgb(0xf5d76e);
+function ramp(out, a, b, t) {
+    t = t < 0 ? 0 : t > 1 ? 1 : t;
+    out[0] = a[0] + (b[0] - a[0]) * t;
+    out[1] = a[1] + (b[1] - a[1]) * t;
+    out[2] = a[2] + (b[2] - a[2]) * t;
+}
+/** The colour of cell `c` under a layer `mode`, into `out` (0-1). False when the world has no
+ * such layer. Plain numbers only: it runs per cell. */
+export function paint(out, mode, v, c, tempOffset) {
+    const f = v[mode];
+    if (!f)
+        return false;
+    const x = f[c];
+    switch (mode) {
+        case 'temperature': { // blue at -30 C, pale at 7.5, red at 35
+            const t = x - tempOffset;
+            if (t < 7.5)
+                ramp(out, COLDC, MILDC, (t + 30) / 37.5);
+            else
+                ramp(out, MILDC, HOTC, (t - 7.5) / 27.5);
+            return true;
+        }
+        case 'moisture':
+            if (x < 0.5)
+                ramp(out, DRYC, MOISTC, x / 0.5);
+            else
+                ramp(out, MOISTC, WETC, (x - 0.5) / 0.5);
+            return true;
+        case 'humidity':
+            ramp(out, PALE, RAINC, x);
+            return true;
+        case 'rain':
+            ramp(out, PALE, RAINC, Math.sqrt(x));
+            return true;
+        case 'light':
+            ramp(out, DARK, SUNC, x);
+            return true;
+        case 'habitat': {
+            const h = HABITAT[Math.round(x)];
+            if (h) {
+                out[0] = h[0];
+                out[1] = h[1];
+                out[2] = h[2];
+            }
+            else {
+                out[0] = out[1] = out[2] = 0.5;
+            }
+            return true;
+        }
+    }
+    return false;
+}
+const PAINT = new Float32Array(3);
 export class Ground {
     constructor(scene, world) {
         this.world = world;
@@ -159,6 +225,9 @@ export class Ground {
         const wcol = this.wgeo.attributes.color.array;
         const plant = v.plant, soil = v.soil, water = v.water, carrion = v.carrion, fruit = v.fruit, foul = v.foul;
         const wet = this.world.wet, depth = this.world.depth * UP.terrain;
+        // A layer to colour the ground and the water by, when one is chosen and the world has it.
+        const layer = opts.mode && opts.mode !== 'soil' && v[opts.mode] ? opts.mode : null;
+        const tOff = Number(this.world.params.temperature_offset ?? 0);
         // The season, cell by cell: under `winter high` the ridge is in winter while the valley is
         // not, so the ground says so place by place rather than by one number for the whole world.
         const swing = opts.swing || 0, amp = this.world.season.at;
@@ -249,6 +318,25 @@ export class Ground {
                     g += (SNOW[1] - g) * t;
                     b += (SNOW[2] - b) * t;
                 }
+                if (layer) { // the four cells around the vertex, each in its own colour (a habitat is not a number to average)
+                    paint(PAINT, layer, v, v0, tOff);
+                    let pr = PAINT[0], pg = PAINT[1], pb = PAINT[2];
+                    paint(PAINT, layer, v, v1, tOff);
+                    pr += PAINT[0];
+                    pg += PAINT[1];
+                    pb += PAINT[2];
+                    paint(PAINT, layer, v, v2, tOff);
+                    pr += PAINT[0];
+                    pg += PAINT[1];
+                    pb += PAINT[2];
+                    paint(PAINT, layer, v, v3, tOff);
+                    pr += PAINT[0];
+                    pg += PAINT[1];
+                    pb += PAINT[2];
+                    r = pr / 4;
+                    g = pg / 4;
+                    b = pb / 4;
+                }
                 const vi = j * (w + 1) + i, c3 = vi * 3;
                 col[c3] = r;
                 col[c3 + 1] = g;
@@ -269,10 +357,15 @@ export class Ground {
                         g2 += (ICE[1] - g2) * u;
                         b2 += (ICE[2] - b2) * u;
                     }
+                    if (layer) {
+                        r2 = r;
+                        g2 = g;
+                        b2 = b;
+                    }
                     wcol[c4] = r2;
                     wcol[c4 + 1] = g2;
                     wcol[c4 + 2] = b2;
-                    wcol[c4 + 3] = Math.max(Math.min(0.9, dep / (0.35 + dep) + 0.25), snow * 0.75);
+                    wcol[c4 + 3] = layer ? 0.92 : Math.max(Math.min(0.9, dep / (0.35 + dep) + 0.25), snow * 0.75);
                 }
                 else {
                     wcol[c4 + 3] = 0;
