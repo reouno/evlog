@@ -109,6 +109,15 @@ kills apart from what it scavenged, the length of its path, its layer, its tempe
 - Pass: at least 4 kinds of living on at least 4 seeds of 6, each holding 5% of the grown bodies for
   5 years or more; no season's floor reaches zero; two kinds taken from the run invade each other
   while rare (#72's injection, the check that the world holds them and not the seed's luck).
+- First step (e063, 2026-09-14): e059's bodies with every kept law and no new one, on c1225 and c1236
+  with d11; bodies live on land, eat grass and the dead, and spend into the soil under them. A step
+  costs 1.34-1.35 ms at 512 on one core, three quarters of it the world's update and about 1 µs a
+  body, so stage C needs neither threads nor a window. But the world feeds about 300 bodies (one per
+  360-530 land cells), 30 times fewer than section 4 assumed, and they live one way: roaming grass
+  eaters without a tooth, kills 2-5% of the intake. Against the same worlds without bodies they hold
+  the grass at a fifth and halve the fire (0.5-0.6% of the land a year, under stage B's line, which was
+  judged with nothing eating the fuel). The ratio of what a body draws to what the plants grow is the
+  first number stage C has to set.
 
 ## 4. Compute
 
@@ -120,7 +129,7 @@ costs 3.0 ms a step (337 steps/s), and each body adds 5.1 µs (165 steps/s at 60
 |---|---|---|---|
 | A | measured (e061): 20 years of a 20,000-step year in 47 s at 256 and about 3 minutes at 512 on one core (1.2 and 4.5 ms a climate update, every 10 steps) | 300 candidates (half at 512) in 65 minutes on 10 cores | a wide search |
 | B | 10 years = 200,000 steps at 512: per cell per step that is 48 ms a step and 2.7 hours, so the producers go on the climate's 10-step clock, target 10 minutes a candidate | about 100 an hour, if the target holds | a search around A's passes |
-| C | 300,000 steps at 512 with the world on its slow clock, 5.1 µs per body per step (e059): about 4 hours a run at a thin world's density (about 9,600 bodies) and 20 at a crowded one (about 47,000) | 13-60 runs a day on 11 cores | a handful of worlds, 6 seeds each; threads or a window of the world decided with a prototype |
+| C | measured (e063): 1.34-1.35 ms a step at 512 on one core with the ~300 bodies the world feeds (the world's update about 1 ms, a body about 1 µs), 300,000 steps in 7 minutes. Planned before e063: 5.1 µs a body (e059, in a crowd), about 4 hours a run at 9,600 bodies and 20 at 47,000 | about 90 runs an hour on 11 cores at e063's density | a handful of worlds, 6 seeds each; no threads or window at this density (e063); a crowd brings the question back |
 
 Stage C cannot be searched widely. It takes the few worlds A and B pass. The size of the world was
 decided in stage A (e061): 512x512, since at 256 the continents are too small for land habitats wider

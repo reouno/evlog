@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-09-13 (after e062: stage B of the foundation, producers and fire; stage C starts on two worlds with one draw).
+Last updated: 2026-09-14 (after e063: the bodies on the stage-B world; a step costs the world's millisecond, and the world feeds about 300 bodies).
 
 ## What the viewer should see
 
@@ -91,7 +91,12 @@ a time. The design is `foundation.md`.
    times the ground grass needs. Fire burns too little, never too much, and its smoke drains the land
    to the sea. A candidate costs 8 minutes at 512.)
 4. #76, stage C: bodies with a material trade-off for every difference, counted per kind; #72's
-   injection is its instrument.
+   injection is its instrument. First step done 2026-09-14 (e063): e059's bodies, every kept law and
+   no new one, on c1225 and c1236 cost 1.34-1.35 ms a step at 512 on one core, three quarters of it
+   the world's update, so stage C needs neither threads nor a window. But the world feeds about 300
+   bodies, one per 360-530 land cells, and they live one way: roaming grass eaters without a tooth.
+   Next in #76: the ratio of what a body draws to what the plants grow, set where the world holds a
+   crowd, before the trade-offs are built.
 
 #73 (each axis alone) is withdrawn; #14 and #38 are folded into stages A and B; #58 is superseded.
 
