@@ -95,9 +95,12 @@ a time. The design is `foundation.md`.
    no new one, on c1225 and c1236 cost 1.34-1.35 ms a step at 512 on one core, three quarters of it
    the world's update, so stage C needs neither threads nor a window. But the world feeds about 300
    bodies, one per 360-530 land cells, and they live one way: roaming grass eaters without a tooth.
-   Next in #76 (#78, agreed 2026-09-14): one scale on every matter quantity of a body, which sets
-   the ratio of what a body draws to what the plants grow, chosen where the world holds a crowd,
-   before the trade-offs are built.
+   Second step done 2026-09-14 (e064, #78): one scale s on every matter quantity of a body. On
+   c1225, s = 1/4 holds 770 bodies and s = 1/16 holds 5,652 (18 times e063's), and at 1/16 the
+   crowd makes ways of living: 2-4 per lineage, kills 17% of the intake, at 11 ms a step (55 minutes
+   for 300,000 steps). The crowd jams (half the moves blocked, 41% of the children without room)
+   and pins every body's density at its ceiling of 2, so the kills come from density, not teeth.
+   Next (to agree in #78): the s stage C runs at, then the first trade-off of section 2.
 
 #73 (each axis alone) is withdrawn; #14 and #38 are folded into stages A and B; #58 is superseded.
 
