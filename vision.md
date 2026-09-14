@@ -136,8 +136,10 @@ a time. The design is `foundation.md`.
    every census (e065 1, e066 2) and adds kinds by medium, the largest lineage's algae eaters at the
    surface and litter eaters on the bottom; the land's closed forms are not kinds (3-4% each). Counted
    per body with the medium, every run reads 5-7 kinds, at its shuffle. e067's shapes by medium were
-   read from bodies after breaks: 64%, not 85%. Stage C's pass line is read with this count. Next: #83,
-   then #84.
+   read from bodies after breaks: 64%, not 85%. Stage C's pass line is read with this count.
+   Agreed 2026-09-15: the next step is #83, a body's breeding energy, child share and fat store read
+   from its genome (x0.5 to x2 around today's constants; mate distance and mutation rate stay fixed),
+   on e067's world, judged with e068's census; then #84.
 
 #73 (each axis alone) is withdrawn; #14 and #38 are folded into stages A and B; #58 is superseded.
 
