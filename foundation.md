@@ -174,8 +174,10 @@ scavenged, the length of its path, its layer, its temperature band).
   100,000 steps, they move little: medians 0.099, 0.48 and 6.0, the store rising while the start's
   bodies starve, and fat fills 5-12% of a store. Inside a lineage the water and the land differ by 2-3%
   (shuffled 0.7%); the dense land bodies hold more fat (7.8 against 6.0). Kinds by birth form held at
-  every census fall to 2 (e067 4), with one lineage at 52% of the grown bodies in every medium. Not kept
-  for now, by the rule set before the run; one seed cannot tell the values from the run's changed course.
+  every census fall to 2 (e067 4), with one lineage at 52% of the grown bodies in every medium. Seeds 10
+  and 11 repeat it: 2, 2 and 3 kinds held with the values from the genome against 4, 3 and 5 with the
+  constants, while the values still move little (medians x0.89-1.19) and part nothing. The values stay constants.
+  With the constants stage C holds 3-5 kinds over seeds, so a step judged on kinds takes three seeds.
 
 ## 4. Compute
 

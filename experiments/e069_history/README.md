@@ -176,3 +176,95 @@ Next, proposed on #83 (not yet agreed): (a) the same pair, `history` 0 and 1, on
 steps (4 runs, 4 local cores for about 30 minutes): whether reading the values loses kinds, and how far e067's
 4 held kinds spread over seeds (stage C's pass line asks for 4 seeds of 6); (b) #84, senses from sensor
 blocks, with the values kept constant; (c) a price on fat (weight or upkeep). Recommended: (a), then (b).
+(a) was agreed the same day and run: see "Seeds 10 and 11" below.
+
+## Seeds 10 and 11
+
+Agreed 2026-09-15 on #83 (option a). Written before the runs.
+
+**Purpose.** On seed 9 the values barely moved, yet the kinds held fell from 4 to 2 with a different winner.
+Reading the values from the genome changes every body at the start, and so the course of a run: one seed
+cannot tell an effect of the values from the seed's course. Every step of stage C so far ran seed 9 only, so
+these runs also give the first spread of the kinds held over seeds, which stage C's pass line needs (4 seeds
+of 6).
+
+**Hypothesis.** The values move as little on the new seeds (the grown bodies' medians within x0.9-1.25 of the
+constants) and do not part the media inside lineages (under 15%). Because they barely move, reading them costs
+no kinds beyond the seeds' spread: over seeds 9, 10 and 11 the mean of the kinds held at every census with the
+values from the genome is within 1 of the mean with the constants.
+
+Decision rule, set before the runs: the values are kept in the genome for stage C if that holds and the world
+stands on every run; otherwise they stay constants, and the loss of kinds is read as the values'. The
+constants' spread of kinds held over the three seeds is reported beside it, with no line.
+
+**Method.** The same crate and census. Seeds of life 10 and 11 (each its own gene table, genomes and draws),
+c1225, 100,000 steps, `history` 0 and 1; seed 9's pair is e067's run and e069's pilot. Four runs at once, one
+core each: `bash experiments/e069_history/run.sh c1225 100000 <seed> constants` and
+`bash experiments/e069_history/run.sh c1225 100000 <seed> history history=1`. Cost, before the runs: 4 local
+cores for about 30-40 minutes (the pilot took 28 minutes with two runs at once).
+
+### Result (seeds 10 and 11)
+
+Wall time: 32-40 minutes a run (1,909-2,394 s), four at once on the Mac. Every world stood: 6,774-10,065
+bodies at step 100,000. Second half of each run; "constants" is `history = 0` (seed 9's is e067's run),
+"genome" is `history = 1` (seed 9's is the pilot above).
+
+| | seed 9 constants | seed 9 genome | seed 10 constants | seed 10 genome | seed 11 constants | seed 11 genome |
+|---|---|---|---|---|---|---|
+| kinds by birth form held at every census | 4 | 2 | 3 | 2 | 5 | 3 |
+| kinds at a census: mean (lowest-highest) | 6.2 (5-8) | 4.2 (4-5) | 6.2 (5-7) | 4.5 (3-7) | 6.0 (5-7) | 6.5 (5-9) |
+| the same with the medium shuffled | 5.1 | 4.0 | 5.5 | 4.3 | 5.0 | 6.0 |
+| kinds per lineage (e060) | 2.5 | 2.0 | 2.5 | 2.2 | 3.2 | 2.5 |
+| lineages alive (top lineage's share) | 14.8 (43%) | 13.7 (56%) | 34.3 (53%) | 14.0 (41%) | 26.6 (59%) | 22.0 (60%) |
+| bodies: mean | 8,073 | 7,772 | 9,780 | 6,286 | 7,484 | 9,173 |
+| breed / share / store: grown medians | 0.1 / 0.5 / 5 | 0.099 / 0.48 / 5.97 | 0.1 / 0.5 / 5 | 0.093 / 0.57 / 5.27 | 0.1 / 0.5 / 5 | 0.109 / 0.45 / 5.55 |
+| water over land inside lineages, the largest of the three (its shuffled max) | - | 3.3% (0.7%) | - | 2.9% (0.5%) | - | 1.6% (0.6%) |
+| deaths by thirst; children with no room | 27%; 39% | 35%; 50% | 23%; 38% | 24%; 36% | 27%; 42% | 25%; 45% |
+| kills' share of intake | 12% | 9% | 16% | 10% | 13% | 12% |
+
+Over the three seeds, constants against genome: kinds held 4.00 against 2.33; at a census 6.11 against 5.06;
+with the medium shuffled 5.20 against 4.76 (a gain of 0.91 against 0.30); per lineage 2.72 against 2.22;
+lineages alive 25.2 against 16.6; the top lineage 52% in both; bodies 8,446 against 7,743.
+
+**The values cost kinds on every seed.** Each genome run holds 1 or 2 fewer kinds at every census than the
+constants run of its seed. The loss is in what the census adds by medium: over the count with the medium
+shuffled, the constants runs gain 1.1, 0.7 and 1.0 kinds, the genome runs 0.2, 0.2 and 0.5. The genome runs
+also keep fewer lineages, with the top lineage's share the same on average. Seed 11's genome run reads the
+most kinds at a census (6.5) and holds only 3 at every census: its kinds come and go.
+
+**The values still move little.** The genome runs' medians span x0.93-1.09 of the constant for the breeding
+energy, x0.89-1.15 for the share and x1.05-1.19 for the store. The breeding energy and the share move in
+opposite directions on seeds 10 and 11, as drift or a winning lineage would move them; only the store moves
+the same way on all three. Inside lineages the water and the land differ by at most 3.3%.
+
+1. **The values move as little (medians within x0.9-1.25): no, by a hair.** Seed 11's share is x0.895; every
+   other median lies within x0.93-1.19.
+2. **They do not part the media inside lineages (under 15%): yes**, 1.6-3.3%.
+3. **Reading them costs no kinds beyond the seeds' spread (mean held within 1 of the constants'): no.** 2.33
+   against 4.00, lower on every seed.
+
+### Conclusion (seeds 10 and 11)
+
+**The values stay constants for stage C**, by the rule set before these runs: read from the genome they hold
+1.67 fewer kinds at every census over three seeds, fewer on each. The loss is read as the values', not as seed
+9's course.
+
+**Values that barely move still cost kinds, through the sorting by medium.** Measured: the genome runs' forms
+add 0.3 kinds over the medium shuffle against 0.9, and the runs keep fewer lineages. Why is not shown. One
+reading to test: every gene that sets a form now also sets three values of a life, so a form suited to a
+medium can be carried off by poor values, and the media sort forms less.
+
+**Stage C's kinds spread over seeds.** With the constants the world holds 3, 4 and 5 kinds at every census over
+2.5 years of censuses; two of three seeds reach the pass line's 4. A step of stage C judged on kinds needs three
+seeds: one seed's difference of one kind is within the spread.
+
+These answers hold for this world and these choices: c1225, seeds 9-11, 100,000 steps, s = 1/16, dry air at
+0.004, breath at 0.01, the three values read together in ranges of x0.5-x2, fat with no weight and no upkeep,
+and e068's census. Not shown: why, c1236, longer runs, one value at a time, narrower ranges, a price on fat, and
+the mate distance and the mutation rate from the genome. Principle 2 still asks for values of a life from the
+genome; in this world and in this form, reading them costs kinds.
+
+Next, proposed (not yet agreed): (a) #84, senses from sensor blocks, with the values constant, judged on seeds
+9-11 against these constants runs (e067's run and `c1225_life{10,11}_constants`); (b) which value costs kinds,
+one value at a time on three seeds (9 runs, about 5 core-hours); (c) the values from the genome in a narrower
+range. Recommended: (a).

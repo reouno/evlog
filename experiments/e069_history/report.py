@@ -174,6 +174,24 @@ def grouped(title, subtitle, series, ylabel, line=None, pct=False, ncols=3, heig
     return figure(title, subtitle, to_svg(fig))
 
 
+SEEDS = {9: ("e067", "e069"), 10: ("c10", "g10"), 11: ("c11", "g11")}  # seed: (constants, from the genome)
+
+
+def seeds_chart(title, subtitle, key, ylabel, line=None, integer=False):
+    """One group per seed: the run with the constants and the run with the values from the genome."""
+    fig, ax = plt.subplots(figsize=(6.4, 2.6))
+    for j, (label, colour) in enumerate((("constants", SERIES[0]), ("from the genome", SERIES[1]))):
+        ax.bar([i - 0.2 + 0.4 * j for i in range(len(SEEDS))], [R[pair[j]][key] for pair in SEEDS.values()], width=0.37, color=colour, label=label)
+    if line is not None:
+        ax.axhline(line, color=INK, linewidth=1, linestyle=DASHED)
+    ax.set_xticks(range(len(SEEDS)), [f"seed {s}" for s in SEEDS])
+    ax.set_ylim(0, None)
+    ax.yaxis.set_major_locator(MaxNLocator(4, integer=integer))
+    ax.set_ylabel(ylabel)
+    legend_above(ax, 2)
+    return figure(title, subtitle, to_svg(fig))
+
+
 def short(k):
     diet, tooth, roams, medium = k["kind"].split(" / ")
     return f"{diet}, {roams}, {medium}" + (", tooth" if tooth == "tooth" else "")
@@ -314,21 +332,22 @@ DIAGRAM = f"""
 
 # The text of the page: kept here to count its words against the skill's budget.
 TEXT = {
-    "tldr": ("The energy to breed, the child's share and the fat store are now read from the genome on e067's "
-             "world. In 100,000 steps they barely move: medians 0.099, 0.48 and 6.0 against the constants 0.1, 0.5 and 5. Inside a "
-             "lineage the water and the land differ by 3%. Kinds held at every census fall from 4 to 2 as one lineage takes 52%. "
-             "Not kept for now; seeds would tell the values from the run's changed course."),
+    "tldr": ("The energy to breed, the child's share and the fat store are read from the genome on e067's world. Over 100,000 "
+             "steps they barely move and do not part the water from the land (under 4% inside lineages). Yet on three seeds the "
+             "kinds held at every census fall: 2, 2 and 3, against 4, 3 and 5 with the constants. The values stay constants; "
+             "next, #84."),
     "question": ("Principle 2 asks that traits come out of what a child inherits with variation. Three values of how a body lives were "
                  "constants we wrote: it breeds at 2 + 0.1 x its mass, gives a child half its energy, and holds 5 fat per unit of mass. "
                  "e067's lineages hold an open water form and a closed land form, which could not part in how they breed or store. "
                  "Set before the run:"),
     "hyp": ["The media part in life history: inside a lineage the water's median of a value differs from the land's by 15% or more, beyond a shuffle of the medium.",
             "The store runs up: fat costs nothing to hold, so the median store reaches 8.",
-            "The world keeps its kinds: 3 or more held by birth form at every census (e067: 4)."],
+            "The world keeps its kinds: 3 or more held by birth form at every census (e067: 4).",
+            "Set after seed 9 for seeds 10 and 11: the values cost no kinds beyond the seeds' spread (mean held over seeds 9-11 within 1 of the constants')."],
     "world": ("e067's world at breath 0.01, unchanged but for three columns of the gene table. Each value is its old constant times 2 "
               "to a power from -1 to 1. Random genomes start at x0.81-1.25. The mate distance and the mutation rate stay fixed."),
-    "runs": ("c1225, seed 9, 100,000 steps on one core (28 minutes). Control: e067's run, reused. With the values held at the constants "
-             "the crate reproduced e067's first 10,000 steps exactly. Over the second half we read:"),
+    "runs": ("c1225, seeds 9, 10 and 11, both arms, 100,000 steps on one core (28-40 minutes). Seed 9's constants run is e067's. "
+             "Held at the constants, the crate reproduced e067's first 10,000 steps exactly. Over the second half:"),
     "measures": [
         ("Values", "each body's three values, by the medium it stands in."),
         ("Water over land", "inside each lineage group with 20+ grown bodies in both, against five shuffles of the medium."),
@@ -338,10 +357,15 @@ TEXT = {
     "v1": "2.4%, 3.3% and 3.2% for breed, share and store, in 17 groups holding 74% of the grown bodies: above the shuffle's 0.7%, far under 15%.",
     "v2": "the median store is 5.97 (x1.19); it reached 5.55 by step 10,000 and stayed.",
     "v3": "2 kinds held (e067 4); 4.2 at a census against 4.0 with the medium shuffled.",
+    "v4": "mean held 2.33 against 4.00, lower on every seed.",
+    "h4": "3.4 On three seeds the values cost kinds",
+    "r4": ("Every run reading the values holds 1 or 2 fewer kinds than its seed's constants run. Its forms gain less over the medium "
+           "shuffle (0.3 kinds against 0.9) and it keeps fewer lineages (17 against 25). The constants alone spread from 3 to 5 kinds "
+           "held, so one seed's gap of one kind would be noise; three seeds lower together are not."),
     "h1": "3.1 The values barely move",
     "r1": ("The breeding energy and the share stay at their start. Only the store rises, and it rose in the first 10,000 steps, while "
-           "the start's bodies starved from 17,000 to 11,000. Fat is free to hold here, but it fills 5-12% of a store, so there is little "
-           "to select. Dense bodies on land hold the most (7.8 against 6.0), a difference between their few lineages."),
+           "the start's bodies starved from 17,000 to 11,000. Fat is free to hold but fills 5-12% of a store: little to select. "
+           "Dense bodies on land hold the most (7.8 against 6.0)."),
     "h2": "3.2 Inside a lineage the water and the land live alike",
     "r2": ("Every lineage group sits within a few percent of zero on every value. The water's grown bodies have placed more children "
            "(3.4 against 2.4 on land) and are older (median 739 steps against 540), with the same values: food and room set how often "
@@ -354,14 +378,13 @@ TEXT = {
     "d1": ("Selection on these values is weak over 100,000 steps. A child differs from its parents by about two bases, the start holds "
            "values within 25% of the constants, and in a world where half the children find no room, when a body breeds is set by "
            "the crowd more than by the energy it waits for."),
-    "d2": ("The fall in kinds comes with a different winner more than with different values: lineage 957 breeds at the constants' "
-           "energy and share within 5%, and its water forms did not sort by medium as lineage 908's did in e067. Reading the values changed every body at the "
-           "start, and so the course of the run. One seed cannot tell that from an effect of the values."),
-    "d3": ("Not shown: other seeds, c1236, longer runs, a price on fat (it has no weight and no upkeep), and the mate distance and "
-           "mutation rate from the genome."),
-    "conclusion": ("Not kept as stage C's default for now, by the rule set before the run: 2 kinds held, under the line of 3. The values "
-                   "barely moved and did not part the media. Proposed next on #83: the same pair on two more seeds (4 runs, 4 cores for "
-                   "30 minutes), which also gives stage C its first spread over seeds; then #84, senses from sensor blocks."),
+    "d2": ("The loss of kinds is the values', not one seed's course: it repeats on seeds 10 and 11, under other winners. Why values "
+           "that barely move cost kinds is not shown. One reading to test: every gene now also sets three values of a life, so a form "
+           "that suits a medium can be carried off by poor values, and forms sort less by medium."),
+    "d3": ("Not shown: why, c1236, longer runs, one value at a time, narrower ranges, and a price on fat (it has no weight and no upkeep)."),
+    "conclusion": ("The values stay constants for stage C, by the rule set before the seeds: reading them holds 2.33 kinds at every "
+                   "census against 4.00. With the constants stage C holds 3-5 kinds over seeds, so its steps are judged on three seeds "
+                   "from here. Proposed next: #84, senses from sensor blocks, with these constants runs as its controls."),
 }
 # (kind in e069, title, what the shape does)
 GALLERY_PICKS = [
@@ -374,7 +397,8 @@ GALLERY_PICKS = [
     ("mixed / no tooth / stays / land", "Muscle in front at density 2",
      "Ten muscles press on what it meets and break it: kills are 31% of its intake."),
 ]
-VERDICTS = [(False, "1, the media part in life history", "v1"), (False, "2, the store runs up", "v2"), (False, "3, the world keeps its kinds", "v3")]
+VERDICTS = [(False, "1, the media part in life history (seed 9)", "v1"), (False, "2, the store runs up (seed 9)", "v2"),
+            (False, "3, the world keeps its kinds (seed 9)", "v3"), (False, "4, no kinds lost beyond the seeds' spread", "v4")]
 
 
 def main():
@@ -408,13 +432,34 @@ def main():
         kinds_chart("e069's kinds", "Grown bodies by kind over six censuses, coloured by medium. Solid: held at every census. Dashed: 5%.", "e069"),
     ]
 
+    t = lambda k: html.escape(TEXT.get(k, "TODO"))
+    have_seeds = all(name in R for pair in SEEDS.values() for name in pair)
+    charts_seeds = [
+        seeds_chart("Kinds held at every census, by seed", "Kinds holding 5% of the grown bodies at all six censuses of the second half. Bars of one height in a pair: the values cost no kinds on that seed. Dashed: stage C's 4.", "form_held", "kinds held", line=4, integer=True),
+        seeds_chart("Kinds at a census, by seed", "Mean kinds by birth form over the six censuses. The spread between seeds is what a difference within a pair is judged against.", "form", "kinds", line=4),
+    ] if have_seeds else []
+    seed_rows = [
+        ("Kinds held at every census", lambda r: f"{r['form_held']:.0f}"),
+        ("Kinds at a census: mean (lowest-highest)", lambda r: f"{r['form']:.1f} ({r['form_low']:.0f}-{r['form_high']:.0f})"),
+        ("Medium shuffled: mean", lambda r: f"{r['null_medium']:.1f}"),
+        ("Top lineage's share; bodies", lambda r: f"{r['top_lineage']:.0%}; {r['pop']:,.0f}"),
+        ("Breed / share / store: medians", lambda r: f"{r['breed']:.3f} / {r['share']:.2f} / {r['store']:.2f}"),
+        ("Water over land inside lineages: largest of the three (shuffled max)", lambda r: "-" if r["arm"] == "constants" else f"{max(r[f'gap_{v}'] for v in VALUES):.1%} ({max(r[f'gap_{v}_null_max'] for v in VALUES):.1%})"),
+    ]
+    seed_head = "".join(f"<th>seed {s}, {arm}</th>" for s in SEEDS for arm in ("constants", "genome"))
+    seed_tbl = "".join(f"<tr><td>{name}</td>" + "".join(f"<td>{f(R[n])}</td>" for pair in SEEDS.values() for n in pair) + "</tr>" for name, f in seed_rows) if have_seeds else ""
+    seeds_section = f"""
+<h3>{t("h4")}</h3>
+<div class="tw"><table><thead><tr><th>Second half</th>{seed_head}</tr></thead><tbody>{seed_tbl}</tbody></table></div>
+<div class="grid2">{"".join(charts_seeds)}</div>
+<p>{t("r4")}</p>""" if have_seeds else ""
+
     count = lambda v: len((" ".join(v) if isinstance(v, list) and v and isinstance(v[0], str) else " ".join(" ".join(t) for t in v) if isinstance(v, list) else v).split())
     words = sum(count(v) for v in TEXT.values()) + sum(len(p[2].split()) for p in GALLERY_PICKS)
     print(f"TEXT: {words} words")
     for k, v in TEXT.items():
         print(f"  {k}: {count(v)}")
 
-    t = lambda k: html.escape(TEXT.get(k, "TODO"))
     gal = gallery(GALLERY_PICKS, TEXT.get("gallery", "")) if GALLERY_PICKS else ""
     hyp = "".join(f"<li>{html.escape(x)}</li>" for x in TEXT.get("hyp", []))
     measures = "".join(f"<li><strong>{html.escape(k)}</strong> - {html.escape(v)}</li>" for k, v in TEXT.get("measures", []))
@@ -437,7 +482,7 @@ def main():
 <body>
 <main>
 <h1>e069: life history from the genome</h1>
-<p class="sub">Experiment report - 2026-09-15 - e067's world with the energy to breed, the child's share and the fat store read from the genome; c1225, seed 9, 100,000 steps (foundation stage C, seventh step, #83)</p>
+<p class="sub">Experiment report - 2026-09-15 - e067's world with the energy to breed, the child's share and the fat store read from the genome; c1225, seeds 9-11, 100,000 steps (foundation stage C, seventh step, #83)</p>
 
 <section class="tldr">
 <h2>TL;DR</h2>
@@ -473,6 +518,7 @@ def main():
 <div class="grid2">{"".join(charts_count)}</div>
 <p>{t("r3")}</p>
 {gal}
+{seeds_section}
 
 <h2>4. Discussion</h2>
 <p>{t("d1")}</p>

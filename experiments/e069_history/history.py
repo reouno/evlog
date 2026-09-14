@@ -20,10 +20,11 @@ ROOT = os.path.dirname(os.path.dirname(HERE))
 sys.path.insert(0, os.path.join(ROOT, "experiments", "e068_kinds"))
 import kinds  # noqa: E402  (e068's census by birth form; it imports e060's census)
 
-RUNS = [
-    ("e067", os.path.join(ROOT, "experiments", "e067_breath", "results", "c1225_life9_breath0.01")),
-    ("e069", os.path.join(HERE, "results", "c1225_life9_history")),
-]
+RUNS = [  # (name, seed of life, where the values come from, prefix); seed 9's pair is e067's run and e069's pilot
+    ("e067", 9, "constants", os.path.join(ROOT, "experiments", "e067_breath", "results", "c1225_life9_breath0.01")),
+    ("e069", 9, "genome", os.path.join(HERE, "results", "c1225_life9_history")),
+] + [(f"{arm[0]}{s}", s, arm, os.path.join(HERE, "results", f"c1225_life{s}_{'history' if arm == 'genome' else arm}"))
+     for s in (10, 11) for arm in ("constants", "genome")]
 VALUES = ("breed", "share", "store")
 CENTRE = {"breed": 0.1, "share": 0.5, "store": 5.0}
 GROUP = 20  # grown bodies on land and in the water for a lineage group to be compared
@@ -135,7 +136,10 @@ def write(name, rows):
 
 def main():
     out = defaultdict(list)
-    for name, pre in RUNS:
+    for name, seed, arm, pre in RUNS:
+        if not os.path.exists(pre + "_row.csv"):
+            print(f"{name}: not run yet ({pre})")
+            continue
         run = kinds.Run(name, pre)
         per, held = kinds.form_census(run)
         nm, nm_held, _ = kinds.null(run, ("medium",))
@@ -143,7 +147,7 @@ def main():
         groups = parting(run, run.does())
         seen = gap(groups)
         shuffled = [gap(parting(run, run.does(("medium",), s))) for s in range(1, kinds.NULLS + 1)]
-        row = {"run": name, "censuses": len(run.steps), "grown": len(run.grown) / len(run.steps),
+        row = {"run": name, "seed": seed, "arm": arm, "censuses": len(run.steps), "grown": len(run.grown) / len(run.steps),
                "lineage_e060": kinds.lineage_e060(run), "forms": len(set(run.forms())),
                "form": kinds.mean_count(per), "form_low": min(len(p) for p in per.values()), "form_high": max(len(p) for p in per.values()),
                "form_held": len(held), "null_medium": nm, "null_medium_held": nm_held, "null_whole": nw, "null_whole_held": nw_held,
@@ -168,6 +172,18 @@ def main():
         for m in by_medium(run):
             print(f"  {m['medium']:7s} grown {m['grown']:.0f}: " + ", ".join(f"{v} {m[v]:.3g}" for v in VALUES) + f", fat fill {m['fat_fill']:.2f}, kids {m['kids']}")
         print("  " + ", ".join(f"{k} {row[k]:.3g}" for k in ("pop", "lineages", "top_lineage", "blocked", "no_room", "births_per_body", "age_death_p50", "kills") + tuple(f"deaths_{c}" for c in CAUSES)))
+    # Each arm over the seeds it has run.
+    for arm in ("constants", "genome"):
+        rs = [r for r in out["runs"] if r["arm"] == arm]
+        if not rs:
+            continue
+        mean = lambda k: st.mean(r[k] for r in rs)
+        a = {"arm": arm, "seeds": " ".join(str(r["seed"]) for r in rs), "form_held": mean("form_held"), "form": mean("form"),
+             "null_medium": mean("null_medium"), "lineage_e060": mean("lineage_e060"), "top_lineage": mean("top_lineage"), "pop": mean("pop")}
+        a |= {v: mean(v) for v in VALUES} | {f"gap_{v}": mean(f"gap_{v}") for v in VALUES}
+        out["arms"].append(a)
+        print(f"{arm:9s} seeds {a['seeds']}: kinds held {a['form_held']:.2f} ({', '.join(str(r['form_held']) for r in rs)}), "
+              f"at a census {a['form']:.2f}, medium shuffled {a['null_medium']:.2f}, per lineage {a['lineage_e060']:.2f}, top lineage {a['top_lineage']:.0%}")
     for name, rows in out.items():
         write(name, rows)
     print("wrote " + ", ".join(f"results/{n}.csv" for n in out))
