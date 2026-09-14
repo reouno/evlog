@@ -147,6 +147,9 @@ a time. The design is `foundation.md`.
    it: 2, 2 and 3 kinds held against 4, 3 and 5 with the constants, lower on every seed. The values stay
    constants for stage C. With the constants, stage C holds 3-5 kinds over seeds: a step judged on kinds
    takes three seeds from here.
+   Agreed 2026-09-15: the next step is #84, senses from sensor blocks, judged on seeds 9-11 against the
+   constants runs. Why the values from the genome cost kinds, a price on fat, and the mate distance and
+   mutation rate still constant are filed as #85.
 
 #73 (each axis alone) is withdrawn; #14 and #38 are folded into stages A and B; #58 is superseded.
 
