@@ -178,6 +178,17 @@ scavenged, the length of its path, its layer, its temperature band).
   and 11 repeat it: 2, 2 and 3 kinds held with the values from the genome against 4, 3 and 5 with the
   constants, while the values still move little (medians x0.89-1.19) and part nothing. The values stay constants.
   With the constants stage C holds 3-5 kinds over seeds, so a step judged on kinds takes three seeds.
+- Eighth step (e070, 2026-09-15): senses from sensor blocks (#84). No reading is added and no price set;
+  what changes is which body reads what. The food under the body is read under its sensor blocks; the
+  food, bodies and water of a side only through a sensor block with nothing of its body beyond it that
+  way, one cell and one more per such block (up to 8); the energy, thirst and breath only by a body with
+  a sensor block. On e067's world, c1225, seeds 9-11, 100,000 steps: the bodies do not buy sight (2-4% of
+  the grown bodies look out, the controls 6-13%), and those that do sit and place 1.7-2.5 children per
+  1,000 steps against 3.8-4.5 for the blind. The blind walk straight: turns halve and the grown bodies
+  end 22-28 cells from their birth (8-10). Every seed holds the same three kinds, all at the shore: 3
+  held at every census and 3.4 at a census, against 4 and 6.1 with the senses given, one lineage at
+  67-76%. Kept as the default by the rule set before the runs (mean held 3.0, the line), at its edge.
+  Section 7's decision 6 is read from here as senses through sensor blocks, not inputs given to every body.
 
 ## 4. Compute
 

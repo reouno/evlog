@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-09-15 (after e069: life history from the genome; the values move little, yet cost kinds on three seeds).
+Last updated: 2026-09-15 (after e070: senses from sensor blocks; the bodies do not buy sight, and the blind walk straight).
 
 ## What the viewer should see
 
@@ -150,6 +150,14 @@ a time. The design is `foundation.md`.
    Agreed 2026-09-15: the next step is #84, senses from sensor blocks, judged on seeds 9-11 against the
    constants runs. Why the values from the genome cost kinds, a price on fat, and the mate distance and
    mutation rate still constant are filed as #85.
+   Eighth step done 2026-09-15 (e070, #84): a body senses only through its sensor blocks (the food under
+   them; the food, bodies and water where one looks out of the body, one cell and one more per such block;
+   its energy, thirst and breath only with one). The bodies do not buy sight: 2-4% of the grown bodies have
+   a sensor block looking out, and those sit and place about half the children of the blind. The blind walk
+   straight, three times as far from their birth. Every seed ends with the same three kinds, all at the
+   shore: 3 held at every census and 3.4 at a census, against 4 and 6.1 with the senses given, one lineage
+   holding 67-76%. Kept as stage C's default by the rule set before the runs (mean held 3.0, the line), at
+   its edge.
 
 #73 (each axis alone) is withdrawn; #14 and #38 are folded into stages A and B; #58 is superseded.
 
