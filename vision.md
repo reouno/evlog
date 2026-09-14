@@ -107,8 +107,9 @@ a time. The design is `foundation.md`.
    moves in (40% at the surface, 19% on the bottom) and density comes off its ceiling (mean 1.18,
    e064 1.95), so the layers are kept. But the largest lineages sit at the density of water and live
    in all three media, the top lineage holds 55% of the bodies, and the world holds no more bodies
-   (5,561): every producer grows by its stand, and the crowd grazes all three to 1-4% of it. Next,
-   to agree in #79: a land-water trade-off that asks for different blocks, not a different density.
+   (5,561): every producer grows by its stand, and the crowd grazes all three to 1-4% of it.
+   Agreed 2026-09-14: the next step is dry air (#80), section 2's second row, a land-water
+   trade-off that asks for different blocks, not a different density.
 
 #73 (each axis alone) is withdrawn; #14 and #38 are folded into stages A and B; #58 is superseded.
 
