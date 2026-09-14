@@ -126,6 +126,15 @@ kills apart from what it scavenged, the length of its path, its layer, its tempe
   eats its dead. The crowd jams (52% of moves blocked, 41% of children without room) and every body's
   density sits at the ceiling of 2: a denser soft face breaks a lighter one, so density is the crowd's
   weapon and armor, and the water's two layers (section 2) are a price on it.
+- Third step (e065, 2026-09-14): the water's two layers, section 2's first row. Each layer has its own
+  occupancy; a surface gut eats algae, a bottom gut eats the carrion and the algae's dead, which now
+  lie on the bottom as litter; all water is open and pools stay land. On c1225, seed 9, s = 1/16:
+  5,561 bodies (41% on land, 40% at the surface, 19% on the bottom), mean density 1.18 (e064 1.95),
+  34% of moves blocked and 21% of children without room. The layers are kept. They make two groups
+  by density, not kinds by medium: lineages at 1.00, the hardest a surface body can be, stand in
+  all three media (8-23% of grown bodies are in lineages that keep 90% to one), and the dense ones
+  keep to land and the bottom. Every producer is grazed to 1-4% of its stand without bodies and grows
+  about a tenth as much, so stage B's lines, judged without grazers, say little about a world with them.
 
 ## 4. Compute
 

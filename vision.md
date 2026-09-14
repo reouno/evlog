@@ -102,6 +102,13 @@ a time. The design is `foundation.md`.
    and pins every body's density at its ceiling of 2, so the kills come from density, not teeth.
    Agreed 2026-09-14: stage C runs at s = 1/16, and the next step is the water's two layers (#79),
    the first trade-off of section 2, which puts a price on density.
+   Third step done 2026-09-14 (e065, #79): the water's two layers (a body lighter than water lives
+   at the surface and eats algae, a denser one on the bottom and eats what sinks). On c1225 the crowd
+   moves in (40% at the surface, 19% on the bottom) and density comes off its ceiling (mean 1.18,
+   e064 1.95), so the layers are kept. But the largest lineages sit at the density of water and live
+   in all three media, the top lineage holds 55% of the bodies, and the world holds no more bodies
+   (5,561): every producer grows by its stand, and the crowd grazes all three to 1-4% of it. Next,
+   to agree in #79: a land-water trade-off that asks for different blocks, not a different density.
 
 #73 (each axis alone) is withdrawn; #14 and #38 are folded into stages A and B; #58 is superseded.
 
