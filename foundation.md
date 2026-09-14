@@ -58,6 +58,7 @@ body good there and bad elsewhere.
 |---|---|---|---|
 | water and land | a water cell has a surface layer and a bottom layer; a body lighter than water (density under 1, e025) lives in the surface layer, a denser one on the bottom, and touches and eats only its layer | light bodies reach the algae and the light; dense bodies reach what sinks | light armor is weak armor (hardness times density); dense bodies cannot reach the surface |
 | dry air | a soft block (gut, muscle, sensor) facing dry air loses water each step, paid from the body's water (e040); a hard block does not; nothing is lost in water | armored bodies, and bodies near water | soft, spread bodies far from water |
+| breath in water | a block over water uses breath, and each face of a soft block open to the water gives it back; a block over land breathes freely; a hard block breathes through nothing (e067) | open, small bodies in the water | solid or armored bodies in the water |
 | cold | a block facing a colder cell loses energy by the difference; hard blocks and fat insulate | compact, armored or fat bodies in cold places and winters (a big body loses less per unit of mass by geometry) | spread, soft bodies |
 | light: day, depth, shade | producers grow by light; a sensor sees as far as the light allows | eyes by day, producers near the surface | eyes at night and in deep water |
 | wood | a wood cell has a hardness, and a bite breaks it only with more force behind a hard tip than that (e010's rule, applied to a plant) | bodies with a hard front and muscle | guts without a tooth, which eat grass and fallen fruit |
@@ -145,6 +146,16 @@ kills apart from what it scavenged, the length of its path, its layer, its tempe
   to 34-43), in every medium, while the hard share stays under 5%. Lineages that keep 90% to one medium
   fall to 1-11%. Not kept as the default: the trade-off is priced on land only, a solid body loses
   nothing in water, and the lineages that span the shore carry the land's answer into the water.
+- Fifth step (e067, 2026-09-14): breath in water, a row added to section 2, run with e066's dry air at
+  0.004. A block over water uses `breath` and each face of a soft block open to the water gives it
+  back; a block over land breathes freely; a body suffocates at 0. On c1225, seed 9, at breath 0.01 (a
+  solid 6x6 body wholly in water suffocates in about 300 turns): the water's bodies open up (open soft
+  faces per block 1.25 at the surface and 1.11 on the bottom against 0.78 on land; e066 0.73, 0.71,
+  0.63) and shrink to 23-25 blocks, and suffocation takes only 1.5% of the deaths (thirst 27%). Shapes
+  part by medium: 85% of the grown bodies in common birth shapes keep 90% to one medium (e066 32%).
+  Lineages do not (16%, back in e065's range): each large lineage holds an open water form and a more
+  closed land form, joined by mates at the shore. Kept, with the dry air, as stage C's default. A kind
+  counted by lineage cannot see forms inside one, which bears on section 3's census of kinds.
 
 ## 4. Compute
 

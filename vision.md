@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-09-14 (after e066: dry air; bodies close up with shape, not armor, in every medium).
+Last updated: 2026-09-14 (after e067: breath in water; shapes part by medium, lineages still span the shore).
 
 ## What the viewer should see
 
@@ -120,6 +120,13 @@ a time. The design is `foundation.md`.
    Agreed 2026-09-14: the next step is breath in water (#81), run together with e066's dry air: a soft
    face open to the water takes what the body burns, so a closed body suffocates in water while an
    open one dries on land.
+   Fifth step done 2026-09-14 (e067, #81): breath in water, with e066's dry air. The water's bodies
+   open up (1.25 and 1.11 open faces per block at the surface and on the bottom, 0.78 on land) and
+   suffocation kills almost none (1.5%). Shapes now keep to a medium (85% of the grown bodies in common
+   shapes), but the lineages still span the shore: each large one holds an open form in the water and
+   a more closed one on land, joined by mates at the shore. Kept, with the dry air, as stage C's
+   default. Counted by lineage, kinds kept to one medium are back to e065's range (16%), so what a
+   lineage holds inside it is now the question for the census of kinds.
 
 #73 (each axis alone) is withdrawn; #14 and #38 are folded into stages A and B; #58 is superseded.
 
