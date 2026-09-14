@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-09-14 (after e063: the bodies on the stage-B world; a step costs the world's millisecond, and the world feeds about 300 bodies).
+Last updated: 2026-09-14 (after e066: dry air; bodies close up with shape, not armor, in every medium).
 
 ## What the viewer should see
 
@@ -110,6 +110,13 @@ a time. The design is `foundation.md`.
    (5,561): every producer grows by its stand, and the crowd grazes all three to 1-4% of it.
    Agreed 2026-09-14: the next step is dry air (#80), section 2's second row, a land-water
    trade-off that asks for different blocks, not a different density.
+   Fourth step done 2026-09-14 (e066, #80): dry air (a soft block over dry ground loses water through
+   every face it opens to the air; hard blocks and blocks in water lose nothing). At the stronger rate
+   19% of deaths are by thirst and the land holds 31% of the bodies (e065 41%). The bodies answer with
+   shape, not armor: they fill their grids and grow, in every medium (open soft faces per block 0.86 to
+   0.63-0.73, 27 blocks to 34-43), and lineages kept to one medium fall to 1-11%. Not kept as the
+   default. A trade-off priced in one medium only is answered by a body good in both; the water has to
+   price the land's answer too.
 
 #73 (each axis alone) is withdrawn; #14 and #38 are folded into stages A and B; #58 is superseded.
 

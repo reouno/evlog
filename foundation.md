@@ -135,6 +135,16 @@ kills apart from what it scavenged, the length of its path, its layer, its tempe
   all three media (8-23% of grown bodies are in lineages that keep 90% to one), and the dense ones
   keep to land and the bottom. Every producer is grazed to 1-4% of its stand without bodies and grows
   about a tenth as much, so stage B's lines, judged without grazers, say little about a world with them.
+- Fourth step (e066, 2026-09-14): dry air, section 2's second row. A soft block over ground that is not
+  water loses `dry` x the dryness there per face open to the air, a hard block and a block in water lose
+  nothing, and a block in water drinks; a body dries to death at 0. The dryness is 1 minus the ground's
+  fill: over a year a cell's mean of the air's humidity spreads a third as wide over the land. On c1225,
+  seed 9, at dry 0.004 (a body of e065 dries out in about 270 turns on the driest land): 19% of deaths by
+  thirst, the land's share of the bodies 31% (e065 41%). The bodies close up with the blocks they have,
+  not with armor: they fill their grids and grow (open soft faces per block 0.86 to 0.63-0.73, 27 blocks
+  to 34-43), in every medium, while the hard share stays under 5%. Lineages that keep 90% to one medium
+  fall to 1-11%. Not kept as the default: the trade-off is priced on land only, a solid body loses
+  nothing in water, and the lineages that span the shore carry the land's answer into the water.
 
 ## 4. Compute
 
