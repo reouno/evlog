@@ -117,6 +117,9 @@ a time. The design is `foundation.md`.
    0.63-0.73, 27 blocks to 34-43), and lineages kept to one medium fall to 1-11%. Not kept as the
    default. A trade-off priced in one medium only is answered by a body good in both; the water has to
    price the land's answer too.
+   Agreed 2026-09-14: the next step is breath in water (#81), run together with e066's dry air: a soft
+   face open to the water takes what the body burns, so a closed body suffocates in water while an
+   open one dries on land.
 
 #73 (each axis alone) is withdrawn; #14 and #38 are folded into stages A and B; #58 is superseded.
 
