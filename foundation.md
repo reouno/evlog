@@ -168,6 +168,14 @@ scavenged, the length of its path, its layer, its temperature band).
   inside lineages. Breath adds kinds by medium: the largest lineage's open algae eaters at the surface
   and litter eaters on the bottom. The closed land forms are not kinds (3-4% each). Counted per body
   with the medium, every run reads 5-7 kinds, at its shuffle. Stage C is counted by birth form from here.
+- Seventh step (e069, 2026-09-15): life history from the genome (#83). The energy to breed per unit of
+  mass, the child's share and the fat per unit of mass are read from the gene table, x0.5 to x2 around
+  the constants (0.1, 0.5, 5); random genomes start within x0.81-1.25. On e067's world, c1225, seed 9,
+  100,000 steps, they move little: medians 0.099, 0.48 and 6.0, the store rising while the start's
+  bodies starve, and fat fills 5-12% of a store. Inside a lineage the water and the land differ by 2-3%
+  (shuffled 0.7%); the dense land bodies hold more fat (7.8 against 6.0). Kinds by birth form held at
+  every census fall to 2 (e067 4), with one lineage at 52% of the grown bodies in every medium. Not kept
+  for now, by the rule set before the run; one seed cannot tell the values from the run's changed course.
 
 ## 4. Compute
 

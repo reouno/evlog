@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-09-14 (after e067: breath in water; shapes part by medium, lineages still span the shore).
+Last updated: 2026-09-15 (after e069: life history from the genome; the values move little and kinds held fall to 2 on one seed).
 
 ## What the viewer should see
 
@@ -140,6 +140,11 @@ a time. The design is `foundation.md`.
    Agreed 2026-09-15: the next step is #83, a body's breeding energy, child share and fat store read
    from its genome (x0.5 to x2 around today's constants; mate distance and mutation rate stay fixed),
    on e067's world, judged with e068's census; then #84.
+   Seventh step done 2026-09-15 (e069, #83): read from the genome, the three values move little in
+   100,000 steps (medians 0.099, 0.48 and 6.0 against 0.1, 0.5 and 5) and do not part the water from the
+   land inside a lineage (2-3%). The world stands, but kinds held by birth form fall to 2 (e067 4) as one
+   lineage takes 52% of the grown bodies in every medium. Not kept for now, by the rule set before the
+   run; whether the values or the run's changed course lost the kinds takes more seeds.
 
 #73 (each axis alone) is withdrawn; #14 and #38 are folded into stages A and B; #58 is superseded.
 
