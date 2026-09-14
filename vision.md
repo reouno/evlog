@@ -131,6 +131,13 @@ a time. The design is `foundation.md`.
    After it come two issues from a check of principle 2 (traits come out of combinations a child
    inherits with variation, never written as traits): life-history values from the genome (#83) and
    senses from sensor blocks (#84).
+   Sixth step done 2026-09-14 (e068, #82, no runs): kinds of living are counted by birth form, the body
+   a genome develops, with its way of living read over all such bodies. Breath at 0.01 holds 4 kinds at
+   every census (e065 1, e066 2) and adds kinds by medium, the largest lineage's algae eaters at the
+   surface and litter eaters on the bottom; the land's closed forms are not kinds (3-4% each). Counted
+   per body with the medium, every run reads 5-7 kinds, at its shuffle. e067's shapes by medium were
+   read from bodies after breaks: 64%, not 85%. Stage C's pass line is read with this count. Next: #83,
+   then #84.
 
 #73 (each axis alone) is withdrawn; #14 and #38 are folded into stages A and B; #58 is superseded.
 

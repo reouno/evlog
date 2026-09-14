@@ -2,6 +2,14 @@
 
 Date: 2026-09-14
 
+**Correction (e068, 2026-09-14).** The "common shapes" below were read from `cells`, the body after
+breaks and wear, not the body at birth: half the grown bodies have lost blocks, and read that way e065
+scores 58%. Read from the birth signature (the grid's side, and the blocks of each kind, bite and density
+at birth), the grown bodies in common forms keeping 90% to one medium are 64% at breath 0.01, 44% at
+0.003 and 33% in e066 (e065 17%); with the medium shuffled inside lineages 28%, 13% and 4%. The shapes
+still part by medium, less than the table says. Counted by birth form, the water forms of lineage 908
+are kinds of living and the land's closed forms are not (e068).
+
 ## Purpose
 
 e066 priced openness on land: a soft block over dry ground loses water through every face it opens to

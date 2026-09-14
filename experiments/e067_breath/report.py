@@ -671,6 +671,11 @@ def main():
 <h1>e067: breath in water</h1>
 <p class="sub">Experiment report - 2026-09-14 - a block in the water uses breath and a soft face open to the water gives it back, with e066's dry air, on c1225 at s = 1/16, 100,000 steps at two rates (foundation stage C, fifth step, #81)</p>
 
+<section class="tldr" style="border-left-color:#eda100;margin-bottom:12px">
+<h2>Correction (e068)</h2>
+<p>"Common shapes" here were read from the bodies after breaks and wear. By the body at birth, 64% of the grown bodies in common forms keep 90% to one medium at breath 0.01 (e066 33%, e065 17%), not 85%. Counted by birth form, the water forms are kinds of living and the land forms are not. See e068.</p>
+</section>
+
 <section class="tldr">
 <h2>TL;DR</h2>
 <p>{html.escape(TEXT["tldr"])}</p>

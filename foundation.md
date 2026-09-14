@@ -104,12 +104,15 @@ Each stage is run and judged before the next is built on it. A failure names its
   it back. A candidate costs 8 minutes at 512 on one core. Stage C takes one draw and the worlds it
   passes: d11 on c1225 (warm, very wet) and c1236 (cool).
 
-**Stage C: bodies** (e060's census per kind, with new columns: the tooth a body was born with, its
-kills apart from what it scavenged, the length of its path, its layer, its temperature band).
+**Stage C: bodies** (kinds of living counted by birth form, e068: e060's census read over the bodies
+a genome develops, with new columns: the tooth a body was born with, its kills apart from what it
+scavenged, the length of its path, its layer, its temperature band).
 
-- Pass: at least 4 kinds of living on at least 4 seeds of 6, each holding 5% of the grown bodies for
-  5 years or more; no season's floor reaches zero; two kinds taken from the run invade each other
-  while rare (#72's injection, the check that the world holds them and not the seed's luck).
+- Pass: at least 4 kinds of living by birth form on at least 4 seeds of 6, each holding 5% of the
+  grown bodies at every census for 5 years or more (reported beside the count by lineage and the count
+  with what bodies do shuffled inside lineages); no season's floor reaches zero; two kinds taken from
+  the run invade each other while rare (#72's injection, the check that the world holds them and not
+  the seed's luck).
 - First step (e063, 2026-09-14): e059's bodies with every kept law and no new one, on c1225 and c1236
   with d11; bodies live on land, eat grass and the dead, and spend into the soil under them. A step
   costs 1.34-1.35 ms at 512 on one core, three quarters of it the world's update and about 1 µs a
@@ -152,10 +155,19 @@ kills apart from what it scavenged, the length of its path, its layer, its tempe
   solid 6x6 body wholly in water suffocates in about 300 turns): the water's bodies open up (open soft
   faces per block 1.25 at the surface and 1.11 on the bottom against 0.78 on land; e066 0.73, 0.71,
   0.63) and shrink to 23-25 blocks, and suffocation takes only 1.5% of the deaths (thirst 27%). Shapes
-  part by medium: 85% of the grown bodies in common birth shapes keep 90% to one medium (e066 32%).
-  Lineages do not (16%, back in e065's range): each large lineage holds an open water form and a more
-  closed land form, joined by mates at the shore. Kept, with the dry air, as stage C's default. A kind
-  counted by lineage cannot see forms inside one, which bears on section 3's census of kinds.
+  part by medium: 64% of the grown bodies in common birth forms keep 90% to one medium (e066 33%; e067
+  first read 85% from the bodies after breaks, corrected by e068). Lineages do not (16%, back in e065's
+  range): each large lineage holds an open water form and a more closed land form, joined by mates at
+  the shore. Kept, with the dry air, as stage C's default. A kind counted by lineage cannot see forms
+  inside one, which bears on section 3's census of kinds.
+- Sixth step (e068, 2026-09-14, no runs): kinds counted below the lineage. A body's birth form is the
+  body its genes develop (the grid's side, and its blocks of each kind, bite and density at birth), and
+  its way of living is read over all the grown bodies of its form: e060's diet, tooth and roaming, and
+  the medium where 90% of them stand, else the shore. On e065, e066 and e067 at breath 0.003 and 0.01:
+  2.5, 4.5, 6.2 and 6.2 kinds (1.5-2.7 by lineage), and 2.2, 4.6, 4.3 and 5.1 with the medium shuffled
+  inside lineages. Breath adds kinds by medium: the largest lineage's open algae eaters at the surface
+  and litter eaters on the bottom. The closed land forms are not kinds (3-4% each). Counted per body
+  with the medium, every run reads 5-7 kinds, at its shuffle. Stage C is counted by birth form from here.
 
 ## 4. Compute
 
