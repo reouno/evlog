@@ -95,8 +95,9 @@ a time. The design is `foundation.md`.
    no new one, on c1225 and c1236 cost 1.34-1.35 ms a step at 512 on one core, three quarters of it
    the world's update, so stage C needs neither threads nor a window. But the world feeds about 300
    bodies, one per 360-530 land cells, and they live one way: roaming grass eaters without a tooth.
-   Next in #76: the ratio of what a body draws to what the plants grow, set where the world holds a
-   crowd, before the trade-offs are built.
+   Next in #76 (#78, agreed 2026-09-14): one scale on every matter quantity of a body, which sets
+   the ratio of what a body draws to what the plants grow, chosen where the world holds a crowd,
+   before the trade-offs are built.
 
 #73 (each axis alone) is withdrawn; #14 and #38 are folded into stages A and B; #58 is superseded.
 
