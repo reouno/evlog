@@ -100,7 +100,8 @@ a time. The design is `foundation.md`.
    crowd makes ways of living: 2-4 per lineage, kills 17% of the intake, at 11 ms a step (55 minutes
    for 300,000 steps). The crowd jams (half the moves blocked, 41% of the children without room)
    and pins every body's density at its ceiling of 2, so the kills come from density, not teeth.
-   Next (to agree in #78): the s stage C runs at, then the first trade-off of section 2.
+   Agreed 2026-09-14: stage C runs at s = 1/16, and the next step is the water's two layers (#79),
+   the first trade-off of section 2, which puts a price on density.
 
 #73 (each axis alone) is withdrawn; #14 and #38 are folded into stages A and B; #58 is superseded.
 
