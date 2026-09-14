@@ -127,6 +127,10 @@ a time. The design is `foundation.md`.
    a more closed one on land, joined by mates at the shore. Kept, with the dry air, as stage C's
    default. Counted by lineage, kinds kept to one medium are back to e065's range (16%), so what a
    lineage holds inside it is now the question for the census of kinds.
+   Agreed 2026-09-14: the next step is counting kinds of living inside a lineage (#82), with no runs.
+   After it come two issues from a check of principle 2 (traits come out of combinations a child
+   inherits with variation, never written as traits): life-history values from the genome (#83) and
+   senses from sensor blocks (#84).
 
 #73 (each axis alone) is withdrawn; #14 and #38 are folded into stages A and B; #58 is superseded.
 
