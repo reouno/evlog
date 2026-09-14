@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-09-15 (after e070: senses from sensor blocks; the bodies do not buy sight, and the blind walk straight).
+Last updated: 2026-09-15 (after e071: cold; at a body's scale the day, not the place, makes the land cold, and the law is not kept).
 
 ## What the viewer should see
 
@@ -160,6 +160,12 @@ a time. The design is `foundation.md`.
    its edge.
    Agreed 2026-09-15: go on from this world with section 2's next row, cold (#86): a block facing a colder
    cell loses energy by the difference, hard blocks and fat insulate; judged on seeds 9-11 against e070.
+   Ninth step done 2026-09-15 (e071, #86): cold (a body is as warm as 20 C, and each open soft face over a
+   colder cell loses energy by the difference, less by the share of the store its fat fills). It takes 22-24%
+   of the land's upkeep and 5% of the deaths, but the same share in every temperature band: at a body's scale
+   the day, not the place, makes a cell cold. The land's bodies close up a little in every band and do not
+   fatten, no kind keeps to one medium, and kinds held at every census fall to 2, 2 and 3 (3.44 at a census,
+   as in e070). Not kept, by the rule set before the runs; e070 stays the control.
 
 #73 (each axis alone) is withdrawn; #14 and #38 are folded into stages A and B; #58 is superseded.
 

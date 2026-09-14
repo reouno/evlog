@@ -189,6 +189,19 @@ scavenged, the length of its path, its layer, its temperature band).
   held at every census and 3.4 at a census, against 4 and 6.1 with the senses given, one lineage at
   67-76%. Kept as the default by the rule set before the runs (mean held 3.0, the line), at its edge.
   Section 7's decision 6 is read from here as senses through sensor blocks, not inputs given to every body.
+- Ninth step (e071, 2026-09-15): cold (#86), section 2's cold row. A body is as warm as 20 C (where e061's hot band
+  starts); each face of a soft block open to a colder cell loses 0.000125 energy a degree a turn, times 1 minus the
+  share of the body's store its fat fills, and a hard face loses nothing. The body pays it from its energy and fat,
+  and dies of cold if it cannot. The scale was set with no runs on e070's censuses: the median land body at the
+  land's p10 (-6 C) pays its upkeep again. On e070's world, c1225, seeds 9-11, 100,000 steps: cold takes 22-24% of
+  the land's upkeep and 2-3% of the water's, and 5% of the deaths. It costs the same in every temperature band (15-23%
+  of the grown land bodies' upkeep), because at a body's scale the day, not the place, makes a cell cold: in e070 half
+  the land's bodies in every band stand under 20 C at a census, the coldest tenth at -4 to -8 C. The land's bodies
+  close up a little (open soft faces per block 0.83-0.91 to 0.75-0.79), in every band alike, and do not fatten (the
+  fat fills 6-7% of the store). No kind keeps to one medium, and kinds held at every census fall to 2, 2 and 3
+  (e070 3, 3 and 3), while at a census both average 3.44. Not kept, by the rule set before the runs. A cold that
+  comes every night is paid by every body on land alike; to part forms by place it has to differ by place over a
+  body's life, not by the hour.
 
 ## 4. Compute
 
