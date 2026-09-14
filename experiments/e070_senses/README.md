@@ -169,4 +169,4 @@ Next, proposed (not yet agreed): (a) follow the rule and go on with section 2 on
 judged on seeds 9-11 against these runs, with the sensor blocks counted there too; (b) set the rule aside, since it
 is met at its edge, and keep the given senses for stage C until a law makes walking blind cost; (c) first ask whether
 sight can pay here at all, by putting the controls' sighted forms into this world (#72's injection, still to build).
-Recommended: (a).
+Recommended: (a). Agreed 2026-09-15: (a), filed as #86.

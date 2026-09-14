@@ -158,6 +158,8 @@ a time. The design is `foundation.md`.
    shore: 3 held at every census and 3.4 at a census, against 4 and 6.1 with the senses given, one lineage
    holding 67-76%. Kept as stage C's default by the rule set before the runs (mean held 3.0, the line), at
    its edge.
+   Agreed 2026-09-15: go on from this world with section 2's next row, cold (#86): a block facing a colder
+   cell loses energy by the difference, hard blocks and fat insulate; judged on seeds 9-11 against e070.
 
 #73 (each axis alone) is withdrawn; #14 and #38 are folded into stages A and B; #58 is superseded.
 
