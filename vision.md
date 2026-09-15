@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-09-15 (after e071: cold; at a body's scale the day, not the place, makes the land cold, and the law is not kept).
+Last updated: 2026-09-16 (after e071 and the balance table: stage C goes on as one set of laws, searched together, not one row an experiment).
 
 ## What the viewer should see
 
@@ -166,6 +166,16 @@ a time. The design is `foundation.md`.
    the day, not the place, makes a cell cold. The land's bodies close up a little in every band and do not
    fatten, no kind keeps to one medium, and kinds held at every census fall to 2, 2 and 3 (3.44 at a census,
    as in e070). Not kept, by the rule set before the runs; e070 stays the control.
+   Agreed 2026-09-16 (#87, `balance.md`): stage C stops adding one row an experiment, since a law added alone meets
+   a world without its counterweights. The balance table reads today's world axis by axis: four of them are
+   one-sided (hard blocks have almost no use, fat has no weight or choice, the blind beat the sighted, and the
+   shore is free for everyone), the balanced ones are balanced by medium alone, and the matter cycle does not
+   close between places (with bodies the land gains 13-14% of its matter from the sea over 90,000 steps). The next
+   experiment builds the counterweights as one set: heat in place of cold, wood as food, fat's weight and its store
+   from the genome, fresh water that the sea does not give, light for sight, height, and soil carried back to the
+   sea by runoff. Each rate is scaled by a dry run, and the combination is searched as stages A and B were, judged
+   by kinds held, kinds that keep to a place, stability (a kind halved returns; #72) and the land and sea holding
+   their matter.
 
 #73 (each axis alone) is withdrawn; #14 and #38 are folded into stages A and B; #58 is superseded.
 

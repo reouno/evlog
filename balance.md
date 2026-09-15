@@ -1,7 +1,7 @@
-# Balance (draft for review, #87)
+# Balance (#87)
 
-Status: draft, 2026-09-15, no runs. Once agreed, it becomes stage C's plan and the check that `foundation.md`
-section 2 is applied as a set.
+Status: agreed 2026-09-16 (#87), the recommended option taken in every question of section 8. It is stage C's
+plan from here, and the check that `foundation.md` section 2 is applied as a set. No runs in it.
 
 ## Why
 
@@ -156,12 +156,12 @@ between patchy water and wood, the hunter where prey crowd at the water, the mig
   about 1.2 hours, and with seeds and a second round about 3-4 hours. A body's heat adds one pass over its blocks a
   turn, as dry air does.
 
-## 8. Open for review
+## 8. Decisions (agreed 2026-09-16)
 
-1. **The first set**: A-G as above (recommended), or fewer to start (A, B, D, G).
-2. **Heat's price when hot**: water (recommended: it opposes dry air on hot dry land) or energy.
-3. **D, the sea does not quench**: as written (recommended), or softer: drinking takes water from the ground and the
-   pools, so fresh water runs out where bodies crowd.
-4. **The matter channel**: measure it (a column of what bodies eat in the water and spend on land) before G's rate
-   is set (recommended, no runs beyond the first candidate).
-5. **Judging stability**: a kind halved at step 50,000 and watched for 20,000 steps, on the chosen candidates only.
+1. **The first set**: A-G together. Fire's damage to bodies and #34's kinds of matter come later.
+2. **Heat's price when hot**: water, so that heat opposes dry air on hot dry land.
+3. **D, the sea does not quench**: as written. If the land empties as e040's did, the softer form (drinking takes
+   water from the pools and the ground) is the fallback, tried inside the same search.
+4. **The matter channel**: measured first, with a column for what bodies eat in the water and spend on land, before
+   G's rate is set.
+5. **Stability**: a kind halved at step 50,000 and watched for 20,000 steps, on the chosen candidates only.

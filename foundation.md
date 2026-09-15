@@ -32,6 +32,7 @@ of premises, not a target.
 | the sun: a day (rotation) and a year (tilt), light by latitude | new; replaces season by height (e032) and patches of sun (e007, e011) |
 | heat: a cell's temperature from light, height and nearby water, spreading to neighbours | new |
 | water: evaporation by temperature, humidity carried by a prevailing wind, rain where air rises or cools, flow downhill (e035) | partly new; replaces rain by height (e020) and the cloud (e026) |
+| water carries soil: runoff takes a share of the soil it crosses into the sea (e035's carrier) | new (#87, `balance.md` set G) |
 | producers as materials: grass, wood and algae, each with its own growth | new; wood keeps the canopy (e021-e043) |
 | fire: dry standing plant matter burns when hot and spreads to dry neighbours; its matter goes to the air and the soil | new |
 | the material trade-offs of section 2 | new |
@@ -54,12 +55,19 @@ e060's lesson: a difference the bodies can ride out is not an axis (season, clou
 place added no way of living). So every difference comes with a law about a material that makes one
 body good there and bad elsewhere.
 
+Agreed 2026-09-16 (#87, `balance.md`): the rows are built and searched as a set, never one at a time. Every axis
+a body varies along must win somewhere and lose somewhere, and the cycles of matter, water and heat must close;
+a row added alone meets a world without its counterweights (e066's dry air closed every body until e067's
+breath, and e071's cold was a flat tax on the land).
+
 | difference | law about a material | gains | pays |
 |---|---|---|---|
 | water and land | a water cell has a surface layer and a bottom layer; a body lighter than water (density under 1, e025) lives in the surface layer, a denser one on the bottom, and touches and eats only its layer | light bodies reach the algae and the light; dense bodies reach what sinks | light armor is weak armor (hardness times density); dense bodies cannot reach the surface |
 | dry air | a soft block (gut, muscle, sensor) facing dry air loses water each step, paid from the body's water (e040); a hard block does not; nothing is lost in water | armored bodies, and bodies near water | soft, spread bodies far from water |
 | breath in water | a block over water uses breath, and each face of a soft block open to the water gives it back; a block over land breathes freely; a hard block breathes through nothing (e067) | open, small bodies in the water | solid or armored bodies in the water |
-| cold | a block facing a colder cell loses energy by the difference; hard blocks and fat insulate | compact, armored or fat bodies in cold places and winters (a big body loses less per unit of mass by geometry) | spread, soft bodies |
+| heat (replaces cold, e071) | a body holds heat: its blocks make heat as they burn their upkeep, each open soft face passes heat to or from its cell by the difference, a hard face and the fat slow it, and its temperature is its heat over its mass; under its working band it pays energy to warm, over it water to cool | closed, big, fat bodies in cold places; open, small bodies in hot wet places; water and shade as refuges | spread bodies in the cold, closed bodies in the heat, small bodies in a swinging day |
+| fresh water | a body drinks from pools and from wet ground, not from the sea (salt) | bodies that reach fresh water, and bodies that never leave the sea | bodies on land far from fresh water; the free shore is gone |
+| a body's fat | fat is matter with weight, and the most a body holds per unit of mass is read from its genome (e069's store alone) | fat where shortfalls come: winters, cold places, dry spells | fat on a body that moves |
 | light: day, depth, shade | producers grow by light; a sensor sees as far as the light allows | eyes by day, producers near the surface | eyes at night and in deep water |
 | wood | a wood cell has a hardness, and a bite breaks it only with more force behind a hard tip than that (e010's rule, applied to a plant) | bodies with a hard front and muscle | guts without a tooth, which eat grass and fallen fruit |
 | fire | a burning cell breaks soft blocks facing it with a chance; hard blocks resist; water shelters | armor, speed, life in water | soft, slow bodies on dry grassland |
@@ -202,6 +210,12 @@ scavenged, the length of its path, its layer, its temperature band).
   (e070 3, 3 and 3), while at a census both average 3.44. Not kept, by the rule set before the runs. A cold that
   comes every night is paid by every body on land alike; to part forms by place it has to differ by place over a
   body's life, not by the hour.
+- Next, agreed 2026-09-16 (#87, `balance.md`): stage C stops adding one row an experiment. The remaining rows are
+  built together as that draft's sets A-G (heat in place of cold, wood as food, fat's weight and store, fresh water,
+  light, height, and soil carried back to the sea), each scaled by a dry run on e070's censuses, and the combination
+  is searched as stages A and B were. It is judged by kinds held, by kinds that keep to a place rather than the
+  shore, by stability (a kind halved returns; #72's mutual invasion) and by the land and the sea holding their
+  matter. No row is kept or rejected alone.
 
 ## 4. Compute
 
