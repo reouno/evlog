@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-09-16 (after e071 and the balance table: stage C goes on as one set of laws, searched together, not one row an experiment).
+Last updated: 2026-09-16 (after e072: the balance sets built together part the land from the water, and the measure that says no is the one an even world cannot win).
 
 ## What the viewer should see
 
@@ -176,6 +176,21 @@ a time. The design is `foundation.md`.
    sea by runoff. Each rate is scaled by a dry run, and the combination is searched as stages A and B were, judged
    by kinds held, kinds that keep to a place, stability (a kind halved returns; #72) and the land and sea holding
    their matter.
+   Tenth step done 2026-09-16 (e072, #88): the seven sets built together, 22 combinations searched on seed 9
+   and the centre of the four best run on seeds 9-11. **Not kept by the rule set before the runs** (kinds held
+   at every census 4, 3 and 2 against the controls' 3, 3 and 3, both 3.00), and every other measure moved:
+   kinds at a census 5.78 against 3.44, the leanest census of six holding 5, 4 and 6 against 3; 2, 2 and 1
+   kinds keeping 90% of their bodies to one medium against none; the largest kind 19-32% against 55-65% and
+   the largest lineage 43% against 72%. The land's bodies close (0.64 open soft faces a block against 0.87),
+   arm (11.9% hard against 3.7%), grow (32.4 blocks against 26.3) and carry a tooth (15% against 3%) while
+   the water's stay open and soft, so the open/closed, hard/soft and fat axes have two sides at last; two
+   seeds of three grow a land kind that eats other bodies. The heat is what places a kind (rank correlation
+   +0.68 over the search), the sea that does not quench fills the land (thirst is 60% of the deaths), wood is
+   not eaten at 0.04 and the runoff halves the matter pump. A halved lineage is back over its uncut size in
+   4,000 steps. The measure that says no counts the *identity* of the kinds over six censuses, which an even
+   world loses because it is even.
+   Proposed, not yet agreed: keep the sets as stage C's default and judge from here by the kinds at a census
+   and the kinds kept to a place, then run wood at a rate a body can live on and a cold that differs by place.
 
 #73 (each axis alone) is withdrawn; #14 and #38 are folded into stages A and B; #58 is superseded.
 
