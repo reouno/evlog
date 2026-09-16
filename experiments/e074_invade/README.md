@@ -26,10 +26,12 @@ the crowns, beside the shore's grazer. This tests that pair.
   pool instead of making random ones, and places each where its donor stood. A pool of the community
   with one kind's forms taken out is *a world held by the others*.
 - **An injection** (`EVLOG_INJECT`, `inject_at`, `inject_n`, `inject_seed`): at `inject_at`,
-  `inject_n` bodies of the pool are put in at free spots of their donor's medium, each marked an
-  invader. Every descendant carries the mark, so the line is followed whatever the lineage detector
-  does with it, and the draw and the placement run on a stream of their own. The matter the bodies
-  bring is added to the ledger the audit reads.
+  `inject_n` bodies of each pool are put in at free spots of their donor's medium, marked with the
+  pool they came from. Every descendant carries the mark, so a line is followed whatever the lineage
+  detector does with it, and the draw and the placement run on a stream of their own. **Two pools go
+  in at once**, so the invader and the resident's own genomes meet the same crowd, the same weather
+  and the same luck: the neutral control is beside the test in one world, not in another run. The
+  matter the bodies bring is added to the ledger the audit reads.
 
 `pick.py` names the two kinds of a donor run and writes four pools: `A` (the grazer), `B` (the
 browser), and the community without each of them (`minusA`, `minusB`).
@@ -40,11 +42,11 @@ Written before the runs, with the conditions named together (#87): **the browse 
 the land, so the browser and the grazer coexist by it - each grows from rare (A) in a world the other
 holds (B), above what the resident's own genomes do in the same place.**
 
-1. **Mutual invasion.** In both directions, on at least 2 of the 3 seeds, the injected line is larger
-   over the last 5,000 steps than the neutral control's line (the resident's own genomes, injected the
+1. **Mutual invasion.** In both directions, on at least 2 of the 3 seeds, the invading line is larger
+   over the last 5,000 steps than the control line beside it (the resident's own genomes, injected the
    same way into the same world) and is still in the world at step 40,000.
 2. **The invader keeps its way.** At the last census the marked bodies of a browser injection take a
-   fifth or more of their food from wood, and those of a grazer injection less than a twentieth. A
+   fifth or more of their food from wood, and those of a grazer injection less than a tenth. A
    line that grew as something else is not the kind invading.
 3. **The world stands.** Matter is conserved (the injected matter in the ledger), bodies live in all
    three media, and the seeded world holds in the population band of e073's kept runs.
@@ -70,20 +72,21 @@ e073's ladder runs re-run, so the check above is what says they hold.
 
 - **B, the browser**: the land kind with the largest share of its food from the crowns' yield, which
   must be a fifth or more;
-- **A, the grazer**: the largest kind of the land or the shore with no tooth and under a twentieth of
-  its food from wood.
+- **A, the grazer**: the largest kind of the land or the shore with no tooth and under a tenth of its
+  food from wood.
 
-**The invasion runs** (12 runs, seeds 9-11, 40,000 steps): 2 worlds x 2 injections a seed. Each world
-is seeded with 8,000 genomes (e073's kept runs hold 7,806 on average) and settles for 10,000 steps;
-at step 10,000 a hundred bodies are injected (1.2% of the world, one to a thousand land cells) and
-followed for 30,000 steps, about a hundred lives.
+**The invasion runs** (12 runs, seeds 9-11, 40,000 steps): 2 worlds x 2 draws of the injection a seed.
+Each world is seeded with 8,000 genomes (e073's kept runs hold 7,806 on average) and settles for
+10,000 steps; at step 10,000 **both** lines go in, a hundred bodies each (1.2% of the world apiece,
+one to a thousand land cells), and are followed for 30,000 steps, about a hundred lives.
 
-| run | seeded with | injected | what it answers |
+| run | seeded with | mark 1 (the grazer's genomes) | mark 2 (the browser's) |
 |---|---|---|---|
-| `mB_injB` | the community without the browser | the browser | can the browser invade the grazer's world |
-| `mB_injA` | the same | the grazer | the neutral baseline there |
-| `mA_injA` | the community without the grazer | the grazer | can the grazer invade the browser's world |
-| `mA_injB` | the same | the browser | the neutral baseline there |
+| `mB_s1`, `mB_s2` | the community without the browser | the neutral control | **the invader** |
+| `mA_s1`, `mA_s2` | the community without the grazer | **the invader** | the neutral control |
+
+The two draws (`inject_seed` 1 and 2) are two independent founder groups in the same world, since a
+line of a hundred in eight thousand can be lost to luck alone.
 
 Read with `invade.py`: the marked line's count over the run, its way of living at the census, the
 kinds of the resident world at each census, and the world's own numbers.

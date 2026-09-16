@@ -15,11 +15,13 @@
 //!   the pool instead of making random ones, and places each where its donor stood (land or water).
 //!   A pool of the community with one kind's forms taken out is a world held by the others.
 //! - **An injection** (`EVLOG_INJECT`, `inject_at`, `inject_n`, `inject_seed`). At `inject_at`,
-//!   `inject_n` bodies of the injection pool are put in at random free spots of their donor's
-//!   medium, each marked an invader; every descendant carries the mark, so the line is followed
-//!   whatever the lineage detector does with it. The draw and the placement have a stream of their
-//!   own, so the resident world is the same run under every injection. The matter the bodies are
-//!   made of is added to the ledger the audit reads (`added`).
+//!   `inject_n` bodies of each injection pool are put in at random free spots of their donor's
+//!   medium, each marked with the pool it came from (1 or 2); every descendant carries the mark, so
+//!   the line is followed whatever the lineage detector does with it. Two pools separated by a
+//!   colon put both lines into the same world at once, which is how the test is read: the invader
+//!   and the resident's own genomes meet the same crowd, the same weather and the same luck. The
+//!   draw and the placement have a stream of their own, and the matter the bodies are made of is
+//!   added to the ledger the audit reads (`added`).
 //!
 //! What follows is e073's description.
 //!
@@ -349,7 +351,7 @@ fn parse(args: &[String]) -> Params {
 #[derive(Default)]
 struct Pools {
     seed: Vec<(u8, Vec<u8>)>,
-    inject: Vec<(u8, Vec<u8>)>,
+    inject: Vec<Vec<(u8, Vec<u8>)>>, // one per mark: EVLOG_INJECT is a colon-separated list of files
 }
 
 fn read_pool(path: &str) -> Vec<(u8, Vec<u8>)> {
@@ -802,31 +804,33 @@ impl Sim {
     /// `added`, which the ledger reads, since it comes from outside the world.
     fn inject(&mut self) {
         let g = self.g;
-        let pool = std::mem::take(&mut self.pools.inject);
+        let pools = std::mem::take(&mut self.pools.inject);
         let mut rng = Rng((self.p.inject_seed as u64).wrapping_mul(0x2545F4914F6CDD1D) | 1);
-        let mut put = 0;
-        for _ in 0..self.p.inject_n as usize {
-            let d = &pool[rng.below(pool.len())];
-            let (sea, genome) = (d.0 > 0, d.1.clone());
-            let genes = parse_genes(&genome);
-            let body = develop_genes(&genes, &self.laws);
-            self.next_id += 1;
-            let facing = rng.below(4) as u8;
-            let mut a = Agent::new(self.next_id - 1, genome, sorted_keys(&genes), genes.iter().map(Gene::key).collect(), body, facing, INIT_ENERGY as f64, 0);
-            a.temp = (0.5 * (self.p.warm_lo + self.p.warm_hi)) as f32;
-            a.invader = 1;
-            if !a.alive {
-                continue;
-            }
-            let Sim { occ, w, hab, agents, added, p, .. } = self;
-            if place(&mut a, g, occ, w, hab, agents.len() as u32, Some(sea), 256, &mut rng) {
-                *added += (a.energy + a.body.matter()) * p.scale;
-                agents.push(a);
-                put += 1;
+        let mut put = vec![0; pools.len()];
+        for (i, pool) in pools.iter().enumerate() {
+            for _ in 0..self.p.inject_n as usize {
+                let d = &pool[rng.below(pool.len())];
+                let (sea, genome) = (d.0 > 0, d.1.clone());
+                let genes = parse_genes(&genome);
+                let body = develop_genes(&genes, &self.laws);
+                self.next_id += 1;
+                let facing = rng.below(4) as u8;
+                let mut a = Agent::new(self.next_id - 1, genome, sorted_keys(&genes), genes.iter().map(Gene::key).collect(), body, facing, INIT_ENERGY as f64, 0);
+                a.temp = (0.5 * (self.p.warm_lo + self.p.warm_hi)) as f32;
+                a.invader = i as u8 + 1;
+                if !a.alive {
+                    continue;
+                }
+                let Sim { occ, w, hab, agents, added, p, .. } = self;
+                if place(&mut a, g, occ, w, hab, agents.len() as u32, Some(sea), 256, &mut rng) {
+                    *added += (a.energy + a.body.matter()) * p.scale;
+                    agents.push(a);
+                    put[i] += 1;
+                }
             }
         }
-        self.pools.inject = pool;
-        eprintln!("injected {put} bodies of {} at step {}", self.p.inject_n, self.step);
+        self.pools.inject = pools;
+        eprintln!("injected {put:?} bodies of {} each at step {}", self.p.inject_n, self.step);
     }
 
     /// The disturbance of #88's stability check: the largest lineage loses `cull` of its bodies, which
@@ -1518,7 +1522,7 @@ impl Sim {
         deaths_cold,warm_land,warm_surface,warm_bottom,cool_land,cool_surface,cool_bottom,btemp_land,btemp_surface,btemp_bottom,\
         wood_intake,climbed,ate_sea,spent_land,spent_sea,matter_land,matter_sea,carried,carried_to_sea,\
         browse,browse_intake,temp_day_land,\
-        invaders,invaders_land,invader_grown,invader_lineages";
+        inv1,inv1_land,inv1_grown,inv2,inv2_land,inv2_grown";
 
     /// The log's row for the interval of `steps` steps that ended now, and the tally reset.
     fn log_row(&mut self, steps: u64, matter0: f64, wall: f64) -> (String, Point) {
@@ -1771,12 +1775,13 @@ impl Sim {
         // e073: the browse the crowns are holding, what bodies took of it, and the land's day mean.
         let day_land = (0..w.n * w.n).filter(|&c| !w.sea[c]).map(|c| w.temp_day[c]).sum::<f64>() / self.land.max(1) as f64;
         s.push_str(&format!(",{:.1},{:.4},{day_land:.2}", sum(&pl.browse), k.browse * self.p.scale));
-        // e074 (#72): the injected line, followed by the mark its descendants carry.
-        let inv: Vec<&Agent> = agents.iter().filter(|a| a.invader > 0).collect();
-        let inv_land = inv.iter().filter(|a| self.occ.medium(g, a) == 0).count();
-        let inv_grown = inv.iter().filter(|a| a.age >= GROWN).count();
-        let inv_lin = inv.iter().map(|a| a.lineage).collect::<HashSet<_>>().len();
-        s.push_str(&format!(",{},{inv_land},{inv_grown},{inv_lin}", inv.len()));
+        // e074 (#72): the injected lines, followed by the mark their descendants carry.
+        for mark in 1..=2u8 {
+            let inv: Vec<&Agent> = agents.iter().filter(|a| a.invader == mark).collect();
+            let land = inv.iter().filter(|a| self.occ.medium(g, a) == 0).count();
+            let grown = inv.iter().filter(|a| a.age >= GROWN).count();
+            s.push_str(&format!(",{},{land},{grown}", inv.len()));
+        }
         let point = Point { step: self.step, pop, plant: k.plant, kills: k.cc.kill_gain, scavenged: k.scavenged, ms, err, pop_by };
         (s, point)
     }
@@ -1941,9 +1946,10 @@ fn main() {
     // e074 (#72): the pools come by their own names, not as numbers; with neither the run is e073's.
     let pools = Pools {
         seed: std::env::var("EVLOG_POOL").ok().map_or_else(Vec::new, |f| read_pool(&f)),
-        inject: std::env::var("EVLOG_INJECT").ok().map_or_else(Vec::new, |f| read_pool(&f)),
+        inject: std::env::var("EVLOG_INJECT").ok().map_or_else(Vec::new, |f| f.split(':').map(read_pool).collect()),
     };
-    eprintln!("pools: {} to seed with, {} to inject", pools.seed.len(), pools.inject.len());
+    assert!(pools.inject.len() <= 2, "at most two injection pools (the log follows two marks)");
+    eprintln!("pools: {} to seed with, {:?} to inject", pools.seed.len(), pools.inject.iter().map(Vec::len).collect::<Vec<_>>());
     let mut sim = Sim::with_pools(p.clone(), w, pl, update_i, threads, pools);
     eprintln!("{} bodies on {} land cells", sim.agents.len(), sim.land);
 
@@ -2282,7 +2288,7 @@ mod tests {
         p.inject_at = 10.0;
         p.inject_n = 40.0;
         let (w, pl, u) = settled_world(&p, None);
-        let pools = Pools { seed: pool.clone(), inject: pool.clone() };
+        let pools = Pools { seed: pool.clone(), inject: vec![pool.clone()] };
         let mut sim = Sim::with_pools(p.clone(), w, pl, u, 1, pools);
         assert!(sim.agents.len() > 30, "{} bodies", sim.agents.len());
         for a in &sim.agents {

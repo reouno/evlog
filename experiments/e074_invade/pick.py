@@ -10,7 +10,8 @@ the two kinds the invasion test uses at the last census
 
   - **the browser** (B): the land kind with the largest share of its food from the crowns' yield
     (e073's new way of living), which must be a fifth or more, and
-  - **the grazer** (A): the largest kind of the land and the shore with no tooth and no wood,
+  - **the grazer** (A): the largest kind of the land and the shore with no tooth and under a tenth
+    of its food from wood,
 
 and writes four pools of genomes out of the grown bodies of that census (`<life>_<tag>.csv`, one
 `medium,genome` a line, the medium the body stood in):
@@ -33,7 +34,7 @@ sys.path.insert(0, os.path.join(ROOT, "experiments", "e068_kinds"))
 import kinds  # noqa: E402  (e068's census by birth form; it imports e060's census)
 
 WOOD = 0.2   # the browse's share of a kind's food for it to live by wood (e073's line)
-LAWN = 0.05  # under this the kind does not live by wood
+LAWN = 0.1   # under this the kind does not live by wood
 
 
 def food(rs):
