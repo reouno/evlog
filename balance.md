@@ -196,3 +196,34 @@ cell's temperature at the moment and the day swings it by tens of degrees (e071'
 
 **Next (#89, agreed as (b))**: wood at a rate a body can live on, and a cold that differs by place - the
 heat reading the cell's temperature averaged over a day. Both on this default world, searched together.
+Done as e073; section 10 has what it settled.
+
+## 10. What e073 settled (2026-09-16)
+
+The two counterweights of section 9 were rebuilt and searched together (`experiments/e073_forest`, #89).
+
+**Wood: kept, as a flow, at `wood_yield` 3e-5 with `wood_food` 0.** A dry run with no bodies killed both shapes
+first. The whole standing forest is 1,800 steps of food for the world, and a stand holds only where its growth
+answers its death, so the share of its growth it can give up before it falls is exactly its own shade: 1,300 a
+1,000 steps over the land against the 37,000 the bodies eat. Neither the stock nor the growth can feed anybody,
+so the yield is a third thing - a stand drops browse per unit of what it stands, out of its cell's soil, and the
+trunk is never touched. Every seed then holds a land kind taking 24-34% of its food from wood, the kinds at a
+census rise to 6.61 against 5.78 and those kept to a place to 3.89 against 3.11, and the stand survives at 0.60
+a cell against the 0.036 e072's bite left. `wood_hard` stays 3: at 3e-5 e060's softer tooth changes nothing.
+
+**The rate is the law, and this is the balance table's own lesson turned around.** At 3e-4 the same yield is a
+subsidy: one browser holds 61% of the grown bodies, walks 1.25 cells in a life, and the kinds at a census fall
+to 3.11. A law that differs by place parts the crowd only while it is thin enough that one cell cannot keep a
+body. Section 7 said to build counterweights strong enough to bite; for a *food* the opposite holds.
+
+**And a thin patchy food is what buys movement.** The bodies walk 6.1 cells in a life against the control's 3.5,
+and two seeds of three grow a roaming browser where every land kind of the control stays. Five experiments had
+tried to buy movement with a law about moving.
+
+**The cold: not kept.** No kind in 31 runs keeps to a band that is not the world's own. `day_temp` 1 lowers the
+warming from 0.090 to 0.016 and the deaths by cold from 3.0% to 0.7%, and a plain `heat` of 0.045 read at the
+moment pays 0.019 and holds the same kinds - it is a discount, not a place. It also re-opens the land's bodies
+(0.81 open soft faces a block against 0.64), so the heat stays as e072 set it.
+
+**Stage C's default world from here** is e072's sets with `wood_food` 0 and `wood_yield` 3e-5; the controls are
+`experiments/e073_forest/results/ladder/c1225_life{9,10,11}_y3e-5h3`.

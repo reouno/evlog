@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-09-16 (after e072: the balance sets are stage C's default, and stage C is judged from here by the kinds at a census and the kinds that keep to a place).
+Last updated: 2026-09-16 (after e073: a stand of wood drops browse, and a patchy food thin enough to leave is what makes the crowd move).
 
 ## What the viewer should see
 
@@ -198,6 +198,28 @@ a time. The design is `foundation.md`.
    counterweights that did nothing in e072: wood at a rate a body can live on, and a cold that differs by
    place rather than by hour (e071's proposal (a): the heat reads the cell's temperature averaged over a
    day, so a band's difference outlives the night).
+   Eleventh step done 2026-09-16 (e073, #89): 31 runs. A dry run with no bodies ruled out both shapes the
+   issue proposed - the whole standing forest is 1,800 steps of food for the world, and the most of its
+   growth a stand can give up before it falls is exactly its own shade (1,300 a 1,000 steps against the
+   37,000 the bodies eat) - so the yield was built as a flow beside the stand: a stand drops `wood_yield`
+   of browse per unit of what it stands, out of its cell's soil, the trunk untouched, taken with the tooth
+   the stock share needed. **`wood_yield` 3e-5 with `wood_food` 0 is kept** by the rule set before the runs:
+   every seed holds a land kind taking 24-34% of its food from wood (the first kind in stage C that lives
+   by wood at all), and the kinds at a census rise to 6.61 against the controls' 5.78 with 3.89 kept to a
+   place against 3.11. The stand survives it, at 0.60 a cell against the 0.036 e072's bite left.
+   **The rate is the law.** At 3e-4 the same yield is a subsidy: one browser holds 61% of the grown bodies,
+   walks 1.25 cells in a life, and the kinds at a census fall to 3.11. At 3e-5 it is a reason to leave:
+   **the bodies walk 6.1 cells against the control's 3.5**, and on two seeds of three the kind that lives
+   by wood roams where every land kind of the control stays. e049 (a band of rain), e050 (a memory), e051
+   (a slow stock), e052 (a clock that scales with size) and e057 (fouling) all tried to buy movement with a
+   law about moving and left the crowd sitting; a food too thin to keep a body where it stands did it, and
+   nothing in the law mentions movement.
+   **`day_temp` is not kept.** No kind in 31 runs keeps 90% of its bodies to a band that is not the world's
+   own, and the cold band holds 2-3% of the bodies everywhere, as in e072. What the day's mean does is lower
+   the warming from 0.090 to 0.016; a plain `heat` of 0.045 read at the moment pays 0.019 and holds the same
+   kinds, and over 100,000 steps the mean re-opens the land's bodies (0.81 open soft faces a block against
+   0.64), undoing what e072 bought. The cold is still not a place, and the question it was built for - is a
+   standing forest a refuge in a season a lawn cannot hold - is now askable, because a forest stands.
 
 #73 (each axis alone) is withdrawn; #14 and #38 are folded into stages A and B; #58 is superseded.
 

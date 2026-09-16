@@ -269,7 +269,7 @@ trunk itself is never touched, so the stand keeps its shade and keeps yielding.<
 def main():
     s = sweep()
     ladder = [("0", [f"life{x}_sets" for x in SEEDS]),
-              ("3e-5", [f"life{x}_y3e-5" for x in SEEDS]),
+              ("3e-5", [f"life{x}_y3e-5h3" for x in SEEDS]),
               ("1e-4", [f"life{x}_y1e-4" for x in SEEDS]),
               ("3e-4", [f"life{x}_yield" for x in SEEDS])]
     groups = [g for g, _ in ladder]
@@ -302,7 +302,7 @@ def main():
                                ("heat 0.02, read at the moment", float(s["life9_heat0.02"]["warm_land"]), float(s["life9_heat0.02"]["kinds_at"]), 3)],
                               "warming paid a 1,000 steps", "kinds at a census"))
     # 3.4 the world stands
-    pop = [(f"seed {x}", col(log_of(os.path.join(HERE, f"results/ladder/c1225_life{x}_y3e-5")), "pop"), i) for i, x in enumerate(SEEDS)]
+    pop = [(f"seed {x}", col(log_of(os.path.join(HERE, f"results/ladder/c1225_life{x}_y3e-5h3")), "pop"), i) for i, x in enumerate(SEEDS)]
     cut_path = os.path.join(HERE, "results/ladder/c1225_life9_y3e-5cut")
     cut = log_of(cut_path) if os.path.exists(cut_path + "_log.csv") else None
     if cut and len(cut) == len(pop[0][1]):
@@ -312,14 +312,14 @@ def main():
 
     # the gallery: the kinds the kept rate holds, against the control's
     kinds_rows = rows_of(os.path.join(HERE, "results", "kinds.csv"))
-    want = [("life9_sets", 1), ("life10_sets", 1), ("life10_y3e-5", 2), ("life11_y3e-5", 2), ("life9_yield", 2)]
+    want = [("life9_sets", 1), ("life10_sets", 1), ("life10_y3e-5h3", 2), ("life11_y3e-5h3", 1), ("life9_yield", 2)]
     picks = []
     for run, n in want:
         rs = [r for r in kinds_rows if r["run"] == run and r["held"] == "True"]
         rs.sort(key=lambda r: -float(r["wood"]))
         picks += rs[:n]
     gal = gallery(picks[:8], "The commonest birth body of kinds held at every census. Blue: hard, orange: muscle, yellow: sensor, green: gut. "
-                             "The default world's kinds (life*_sets) carry no tooth and eat no wood; the kept rate's (life*_y3e-5) carry one and walk "
+                             "The default world's kinds (life*_sets) carry no tooth and eat no wood; the kept rate's (life*_y3e-5h3) carry one and walk "
                              "the farthest of any kind stage C has held; the richest rate's (life9_yield) fills the world and stops walking.")
 
     rows = [("kinds at a census", "kinds_at", "{:.2f}"), ("of them, kept to a place", "placed_at", "{:.2f}"),
@@ -331,7 +331,7 @@ def main():
             ("browse of all food", "browse_share", "{:.1%}"), ("bodies with a tooth", "tooth", "{:.0%}"),
             ("open soft faces a block, on land", "open_land", "{:.2f}")]
     arms = [("control (e072)", [f"life{x}_sets" for x in SEEDS]),
-            ("wood_yield 3e-5", [f"life{x}_y3e-5" for x in SEEDS]),
+            ("wood_yield 3e-5", [f"life{x}_y3e-5h3" for x in SEEDS]),
             ("wood_yield 3e-4", [f"life{x}_yield" for x in SEEDS]),
             ("day_temp 1", [f"life{x}_cold" for x in SEEDS])]
     head = "".join(f"<th>{html.escape(a)}</th>" for a, _ in arms)
@@ -360,8 +360,9 @@ def main():
 <h2>TL;DR</h2>
 <p>A stand of wood now drops browse and keeps its trunk, so wood becomes a living: a land kind takes a third of its
 food from it. The rate decides the world. Rich, and one browser holds 61% of the bodies and sits still; thin, and the
-world holds more kinds than the control (6.57 against 5.78) and its bodies walk twice as far. The thin rate is kept.
-Reading the temperature as a day's mean is not: it buys nothing a smaller heat does not.</p>
+world holds more kinds than the control (6.61 against 5.78), more of them kept to a place, and its bodies walk 6.1
+cells in a life against 3.5. The thin rate is kept. Reading the temperature as a day's mean is not: it buys nothing a
+smaller heat does not.</p>
 </section>
 
 <h2>1. Question</h2>
@@ -404,8 +405,8 @@ both rates 0 the first 10,000 steps equal e072's run in every shared column and 
 <thead><tr><th>Mean of seeds 9-11</th>{head}</tr></thead>
 <tbody>{body}</tbody></table></div>
 <ol class="verdicts">
-<li><span class="verdict">Yes</span> A kind lives by wood: at 3e-5 a land kind takes 27-34% of its food from wood on two
-seeds of three, and at 3e-4 every seed holds one at 48-69%.</li>
+<li><span class="verdict">Yes</span> A kind lives by wood: at 3e-5 every seed holds a land kind with a tooth taking
+24-34% of its food from it, and on two of the three that kind roams.</li>
 <li><span class="verdict no">No</span> No kind anywhere keeps to a band off the world's own; the cold band holds 2-3% of
 the bodies in all 31 runs.</li>
 <li><span class="verdict partly">Partly</span> The cold lifts the rich yield's kinds from 3.11 to 4.28 at a census, but
@@ -429,9 +430,9 @@ bodies take it about as fast as it falls, which is what a living means.</p>
 {charts[5]}
 </div>
 <p>Wood is patchy: averaged over the six cells a body crosses in a life it still spreads twice its own mean, where
-the grass spreads 0.7. A thin yield is therefore a reason to leave, and at 3e-5 the bodies walk 6.2 cells against the
-control's 3.5 while no kind holds a fifth of the world. Make the same food rich and the patches touch: one browser
-holds 61%, walks 1.2 cells, and the kinds halve.</p>
+the grass spreads 0.7. A thin yield is therefore a reason to leave, and at 3e-5 the bodies walk 6.1 cells against the
+control's 3.5 while no kind holds more of the world than the control's largest. Make the same food rich and the
+patches touch: one browser holds 61%, walks 1.2 cells, and the kinds halve.</p>
 
 <h3>3.3 The day's mean buys nothing a smaller heat does not</h3>
 <div class="grid2">
@@ -458,8 +459,9 @@ can also be a refuge in a season - the reason the cold was built - is untested, 
 place.</p>
 
 <h2>5. Conclusion and next step</h2>
-<p><strong>The crown's yield is kept at 3e-5</strong>, with the standing stock no longer edible: it is the first law
-of stage C that adds a way of living instead of closing one, and the first that makes the crowd move. <strong>The
+<p><strong>The crown's yield is kept at 3e-5</strong>, with the standing stock no longer edible and the tooth left as
+it was: it is the first law of stage C that adds a way of living instead of closing one, and the first that makes the
+crowd move. <strong>The
 day's mean is not kept</strong>: it is a discount on the heat wearing the clothes of a place. The next question the
 cold raised is still open, and now has a tool - a forest that stands through a season a lawn cannot.</p>
 

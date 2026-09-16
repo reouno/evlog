@@ -197,8 +197,8 @@ six censuses). `wood_food` 0 and `wood_hard` 2 throughout the yield column; the 
 bodies, walks 1.25 cells in a life, and the kinds at a census fall to 3.11. At 3e-5 it is a reason to leave: no kind
 holds a fifth of the world (18%, the most even world stage C has had), the kinds at a census rise over the control
 (6.56 against 5.78) and so do the kinds kept to a place (3.83 against 3.11), and **the bodies walk 6.23 cells in a
-life against 3.50**. On seeds 10 and 11 the kind that lives by wood is a *roamer* on the land (27% and 34% of its
-food from wood, 96% of its bodies on land); the control's land kinds all stay.
+life against 3.50**. At the kept rate (`wood_hard` 3, below) every seed holds a land kind with a tooth
+taking 24-34% of its food from wood, and on two of the three that kind *roams*; the control's land kinds all stay.
 
 **The cold is a discount, not a place.** No kind in any of the 31 runs keeps 90% of its bodies to a band that is not
 the world's own, and the cold band holds 2-3% of the bodies everywhere, as in e072. What `day_temp` 1 does is lower
@@ -208,10 +208,20 @@ its leanest on seed 9 at 50,000 steps - the same as `day_temp` 1's 5, 7.3 and 6.
 re-opens the land's bodies (0.81 open soft faces a block against the control's 0.64) and disarms them (6.2% hard
 against 9.4%), undoing what e072 bought.
 
-**The tooth and the stability check.** (filled in when the last four runs land)
+**The tooth decides nothing, so it does not move.** The ladder ran at `wood_hard` 2 (e060's tooth, the force that
+breaks a soft face), which would have given the tooth two uses. At 3e-5 with e072's `wood_hard` 3 the world is the
+same or better: 6.61 kinds at a census against 6.56, 3.89 kept to a place against 3.83, the largest kind 24% against
+18%, the bodies walking 6.08 cells against 6.23, and a kind living by wood on **three** seeds of three against two.
+So the kept law leaves `wood_hard` at 3 and asks for a tooth built for wood.
 
-1. **A kind lives by wood: yes.** At 3e-5 on two seeds of three (27% and 34% of its food), at 1e-4 and 3e-4 on all
-   three (48-69%), and the kind keeps 90% or more of its bodies to the land in every case.
+**The stability check** (#88). At step 50,000 the largest lineage (16% of the world) lost half its bodies. The world
+went from 7,870 to 7,180 and was at 11,437 by step 52,000, against the uncut run's 9,613; over the rest of the run it
+stays in the same band as the uncut run (4,964-12,322 against 5,242-12,959) and both end with 14 lineages alive. The
+cut is answered inside 2,000 steps.
+
+1. **A kind lives by wood: yes.** At the kept rate every seed holds a land kind with a tooth taking 24-34% of its
+   food from wood, and on two of the three it roams where the control's land kinds all stay; at 1e-4 and 3e-4 every
+   seed holds one at 48-69%. The kind keeps 90% or more of its bodies to the land in every case.
 2. **A kind keeps to a temperature band that is not the world's own: no.** None in 31 runs.
 3. **The two need each other: partly.** The cold lifts the rich yield from 3.11 kinds at a census to 4.28 and cuts
    the largest kind from 61% to 41%, but the thin yield needs no help (6.56 on its own) and the cold alone is
@@ -221,8 +231,9 @@ against 9.4%), undoing what e072 bought.
 
 ## Conclusion
 
-**The crown's yield is kept at `wood_yield` 3e-5, with `wood_food` 0**, by the rule set before the runs: a kind
-lives by wood on two seeds of three and the kinds at a census do not fall below the control (6.56 against 5.78).
+**The crown's yield is kept at `wood_yield` 3e-5, with `wood_food` 0 and `wood_hard` left at 3**, by the rule set
+before the runs: a kind lives by wood on all three seeds and the kinds at a census do not fall below the control
+(6.61 against 5.78).
 It is the first law of stage C that adds a way of living rather than closing one, and the first that makes the
 crowd move.
 
@@ -241,6 +252,6 @@ re-opening the land's bodies.
   movement.
 
 These answers hold for this world and these choices: c1225, seeds 9-11, 100,000 steps from random genomes, s = 1/16,
-e072's sets under them, `wood_hard` 2, three points on the yield's ladder, and e068's census with its 5% line. Not
-shown: c1236 (a cool world), longer runs, a yield between 3e-5 and 1e-4, and whether a standing forest is a refuge
-in a season - the question the cold was built for, which it never reached.
+e072's sets under them, three points on the yield's ladder, and e068's census with its 5% line. Not shown: c1236 (a
+cool world), longer runs, a yield between 3e-5 and 1e-4, and whether a standing forest is a refuge in a season - the
+question the cold was built for, which it never reached.
