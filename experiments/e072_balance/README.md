@@ -218,9 +218,10 @@ s = 1/16, e070's laws under them, the seven rates at the centre of the search's 
 for a body's heat, `wood_hard` 3, a settled world that never ran the runoff's soil, and e068's census with
 its 5% line. Not shown: c1236 (a cool world), longer runs, the rates apart, and the invasion test of #72.
 
-Next, proposed (not yet agreed): (a) keep the sets as stage C's default and judge stage C from here by the
-kinds at a census and the kinds kept to a place, since the world they make is the one the vision asks for;
-(b) keep them and add the two counterweights that did nothing here, wood at a rate a body can live on
-(`wood_food` 0.2 or more, where the search saw the tooth appear) and a cold that differs by place; (c) drop
-them by the rule and go back to e070. Recommended: **(a) with (b) as the next experiment**, since the only
-measure that says no is an identity count that an even world cannot win.
+**Decided by the user, 2026-09-16: (a) and (b).** The sets are stage C's default world at the rates above,
+these three runs are the controls from here, and stage C is judged by the kinds at a census and the kinds
+that keep 90% of their bodies to one place; the kinds held at every census stay in the tables as a number,
+not as the line, because they count the identity of the kinds over six censuses and an even world loses that
+for being even. The next experiment (#89) takes the two counterweights that did nothing here: wood at a rate
+a body can live on, and a cold that differs by place - the heat reading each cell's temperature averaged
+over a day, as e071 proposed. `vision.md` and `balance.md` section 9 hold the decision.

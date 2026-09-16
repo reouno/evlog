@@ -165,3 +165,34 @@ between patchy water and wood, the hunter where prey crowd at the water, the mig
 4. **The matter channel**: measured first, with a column for what bodies eat in the water and spend on land, before
    G's rate is set.
 5. **Stability**: a kind halved at step 50,000 and watched for 20,000 steps, on the chosen candidates only.
+
+## 9. What e072 settled (2026-09-16)
+
+The sets were built and searched as section 7 asked (`experiments/e072_balance`, #88). Every rate 0 is e070
+exactly; 22 combinations were searched on seed 9 and the centre of the four best run on seeds 9-11.
+
+**Kept, by the user's decision (a).** The sets are stage C's default world, and stage C is judged from here
+by the kinds at a census and the kinds that keep to a place. The rule written before the runs asked for more
+kinds *held at every census* and that number did not move (3.00 against 3.00), but it counts the identity of
+the kinds over six censuses, which an even world loses for being even: at a census the sets hold 5.78 kinds
+against 3.44, the leanest census of the six holds 5, 4 and 6 against 3, the largest kind holds 19-32%
+against 55-65%, and 2, 2 and 1 kinds keep 90% of their bodies to one medium where the controls have none.
+
+**The axes of section 2, re-read.** Open or closed, hard or soft and the fat now have two sides: the land's
+bodies close (0.64 open soft faces a block against 0.87), arm (11.9% hard against 3.7%), grow (32.4 blocks
+against 26.3) and read a larger store from the genome (6.82 against the constant 5.00), while the water's
+stay open and soft (1.24, 1.5%). Where it lives is no longer one-sided: every seed holds a kind that keeps
+to the land, and on two of three that kind carries a tooth and takes 13-17% of its food from kills.
+
+**What did the work.** The heat places a kind (rank correlation +0.68 over the search) and the sea that does
+not quench fills the land (thirst is 60% of the deaths, the land's crowd nearly doubles). The runoff halves
+the matter pump (+6.5 to +7.3% of the land's matter over 90,000 steps against +13-14%) without closing it.
+
+**What did nothing.** Wood at `wood_food` 0.04 is 0.1% of what bodies eat: a cell's standing wood is eaten
+out in a few thousand steps and grows back over 20,000, so the tooth that appears is for other bodies. The
+climb is too small to show against a body that travels 25 sub-cells in a life. The heat still does not part
+the temperature bands (5-7% of the land's bodies in the cold band, as in the controls), because it reads a
+cell's temperature at the moment and the day swings it by tens of degrees (e071's lesson).
+
+**Next (#89, agreed as (b))**: wood at a rate a body can live on, and a cold that differs by place - the
+heat reading the cell's temperature averaged over a day. Both on this default world, searched together.

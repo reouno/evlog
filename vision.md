@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-09-16 (after e072: the balance sets built together part the land from the water, and the measure that says no is the one an even world cannot win).
+Last updated: 2026-09-16 (after e072: the balance sets are stage C's default, and stage C is judged from here by the kinds at a census and the kinds that keep to a place).
 
 ## What the viewer should see
 
@@ -189,8 +189,15 @@ a time. The design is `foundation.md`.
    not eaten at 0.04 and the runoff halves the matter pump. A halved lineage is back over its uncut size in
    4,000 steps. The measure that says no counts the *identity* of the kinds over six censuses, which an even
    world loses because it is even.
-   Proposed, not yet agreed: keep the sets as stage C's default and judge from here by the kinds at a census
-   and the kinds kept to a place, then run wood at a rate a body can live on and a cold that differs by place.
+   **AGREED 2026-09-16, (a) and (b).** e072's sets are stage C's default world from here, at the rates the
+   search chose (`heat` 0.09, `wood_food` 0.04, `fat_weight` 0.06, `store_gene` 1, `fresh` 0.05, `light` 0.7,
+   `climb` 6e-5, `carry` 0.03), and its three runs on seeds 9-11 are the controls that replace e070's.
+   **Stage C is judged from here by the kinds at a census and the kinds that keep 90% of their bodies to one
+   place, not by the kinds held at every census**: that measure counts the identity of the kinds over six
+   censuses, and an even world loses it for being even. The next experiment (#89) takes the two
+   counterweights that did nothing in e072: wood at a rate a body can live on, and a cold that differs by
+   place rather than by hour (e071's proposal (a): the heat reads the cell's temperature averaged over a
+   day, so a band's difference outlives the night).
 
 #73 (each axis alone) is withdrawn; #14 and #38 are folded into stages A and B; #58 is superseded.
 
