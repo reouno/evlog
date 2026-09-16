@@ -266,6 +266,15 @@ export class World {
         this.decoded = { step: at + u, v };
         return v;
     }
+    /** One layer exactly as the world sent it, by the name the header gives it.
+     *
+     * `layersAt` puts a derived `wood` (see below) over any layer of that name, which is what the
+     * trees are drawn from; a world that holds its own `wood` says what is really on the cell here.
+     * Only good after `layersAt` for the step being looked at. */
+    rawLayer(name) {
+        const k = this.layerOf[name];
+        return k === undefined ? undefined : this.unpacked[k];
+    }
     /** The wood on a cell: not what stands there now, but what stood there while anything did.
      *
      * The world holds one number for a cell - the matter standing on it - and a body eats it: on

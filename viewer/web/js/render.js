@@ -188,6 +188,12 @@ export class Ground {
         }
         this.terrainY = new Float32Array(nv);
         this.centreY = new Float32Array(world.cells);
+        this.markAt = null;
+        this.markMesh = new THREE.LineLoop(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: 0xffd24a, depthTest: false, transparent: true, opacity: 0.95 }));
+        this.markMesh.frustumCulled = false;
+        this.markMesh.renderOrder = 3;
+        this.markMesh.visible = false;
+        scene.add(this.markMesh);
         this.buildHeight();
     }
     vertexHeight(i, j) {
@@ -223,6 +229,7 @@ export class Ground {
         // The height at each cell's own centre, which is where everything that grows on it stands.
         for (let c = 0; c < this.world.cells; c++)
             this.centreY[c] = this.world.height[c] * s;
+        this.buildMark();
         this.geo.attributes.position.needsUpdate = true;
         this.geo.attributes.normal.needsUpdate = true;
         this.geo.computeBoundingSphere();
@@ -230,6 +237,68 @@ export class Ground {
     /** The ground's height in world units at a point in cell coordinates. */
     heightAt(x, z) {
         return sample(this.world.height, this.w, this.d, x, z) * UP.terrain;
+    }
+    /** The cell a ray through the screen comes down on, or nothing when it never does.
+     *
+     * The ground is nine copies of one height field, so there is no mesh to ask: the ray is walked
+     * in short steps until it is under the ground and the crossing is then halved. A click is once,
+     * so the walk is a plain fixed step rather than anything cleverer. */
+    cellUnder(origin, dir) {
+        const over = (t) => origin.y + dir.y * t - this.heightAt(origin.x + dir.x * t, origin.z + dir.z * t);
+        if (dir.y >= 0 && over(0) > 0)
+            return null; // aimed at the sky
+        const STEP = 0.5, FAR = 2400;
+        let t0 = 0;
+        if (over(0) <= 0)
+            return null; // the eye is already under the ground
+        for (let t = STEP; t <= FAR; t += STEP) {
+            if (over(t) <= 0) {
+                let lo = t0, hi = t;
+                for (let k = 0; k < 24; k++) {
+                    const m = (lo + hi) / 2;
+                    if (over(m) > 0)
+                        lo = m;
+                    else
+                        hi = m;
+                }
+                const { w, d } = this;
+                const x = (((origin.x + dir.x * hi) % w) + w) % w, z = (((origin.z + dir.z * hi) % d) + d) % d;
+                return { x, z, c: Math.floor(z) * w + Math.floor(x) };
+            }
+            t0 = t;
+        }
+        return null;
+    }
+    /** Ring the cell being looked into, or take the ring away. It follows the ground, so it is
+     * rebuilt where it is put and again whenever the terrain's height changes under it. Called
+     * every frame - a ring on the cell a followed body stands on moves with the body - so a ring
+     * that is already where it is asked to be is left alone. */
+    setMark(c) {
+        if (c === this.markAt)
+            return;
+        this.markAt = c;
+        this.markMesh.visible = c !== null;
+        if (c !== null)
+            this.buildMark();
+    }
+    buildMark() {
+        if (this.markAt === null)
+            return;
+        const { w } = this;
+        const x0 = this.markAt % w, z0 = Math.floor(this.markAt / w);
+        const N = 6; // points a side: the ring follows a hillside rather than cutting through it
+        const pts = [];
+        const at = (u, v) => pts.push(x0 + u, this.heightAt(x0 + u, z0 + v) + 0.06, z0 + v);
+        for (let i = 0; i < N; i++)
+            at(i / N, 0);
+        for (let i = 0; i < N; i++)
+            at(1, i / N);
+        for (let i = N; i > 0; i--)
+            at(i / N, 1);
+        for (let i = N; i > 0; i--)
+            at(0, i / N);
+        this.markMesh.geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(pts), 3));
+        this.markMesh.geometry.computeBoundingSphere();
     }
     /** Colour the ground and lay the water, from one set of layer values.
      *
@@ -457,6 +526,7 @@ export class Rig {
         this.follow = null;
         this.want = null; // a distance the eye is on its way to: a picked body is brought close, not jumped to
         this.keys = new Set();
+        this.zoomAway = false;
         let drag = null;
         dom.addEventListener('pointerdown', (e) => {
             if (e.button === 1 || e.target.closest('.ui'))
@@ -489,7 +559,11 @@ export class Rig {
         dom.addEventListener('wheel', (e) => {
             e.preventDefault();
             this.want = null;
-            this.dist = Math.max(1.2, Math.min(this.far, this.dist * Math.exp(e.deltaY * 0.0012)));
+            // A wheel says how far in pixels, in lines or in pages, depending on the device: a mouse
+            // that reports lines moved the eye a fortieth of what a trackpad did until this was read.
+            const dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaMode === 2 ? e.deltaY * 400 : e.deltaY;
+            const k = this.zoomAway ? -dy : dy;
+            this.dist = Math.max(1.2, Math.min(this.far, this.dist * Math.exp(k * 0.0012)));
         }, { passive: false });
         addEventListener('keydown', (e) => {
             if (e.target.tagName === 'INPUT')

@@ -24,6 +24,14 @@ const $i = (id: string) => document.getElementById(id) as HTMLInputElement;
 const $c = (id: string) => document.getElementById(id) as HTMLCanvasElement;
 const KIND_COLORS: Record<string, string> = { hard: '#2a2622', muscle: '#a8553c', sensor: '#1b1b20', digestive: '#b09760', empty: '#00000000' };
 const DIET = ['植物', 'まぜ', '肉', 'まだ'];
+// What a layer is called on the cell panel. A world sends whatever layers it has and the panel
+// shows them in the header's own order; one it has no name for is shown under the world's.
+const CELL_LABEL: Record<string, string> = {
+  water: '水', plant: '立つもの', soil: '土', temperature: '気温', moisture: '土の湿り',
+  humidity: '空気の湿り', rain: '雨', light: '日射', habitat: '生息域', grass: '草', wood: '木',
+  algae: '藻', litter: '落葉', fire: '火', carrion: '死骸', dryness: '乾き', fruit: '落ちた実',
+  root: '根', foul: '汚れ',
+};
 
 let world!: World, ground!: Ground, sky!: Sky, life!: Life, rig!: Rig;
 let renderer!: THREE.WebGLRenderer, scene!: THREE.Scene, camera!: THREE.PerspectiveCamera, source!: Source;
@@ -32,6 +40,9 @@ let picked: number | null = null;
 let shapeOf = -1, drawnKey = -1, drawnSwing = 99, last = performance.now(), fps = 60, seeking = false;
 let plantAt: { x: number; z: number } | null = null;
 let miniBase: HTMLCanvasElement | null = null;
+let miniTiled: HTMLCanvasElement | null = null; // the same map nine times over, for a turned map
+let place: number | null = null; // a cell the watcher picked out of the ground (`placePanel`)
+let placeShut = false; // they put the panel away: it stays away until they choose something again
 let groundMode = 'soil'; // what the ground is coloured by (`GROUND_MODES`)
 let fogScale = 1; // the haze's strength, 0 for none (the `霧` slider)
 const MINI_PAINT = new Float32Array(3);
@@ -161,6 +172,7 @@ function loop(now: number): void {
   if (v && groundDue) {
     ground.update(v, { swing, mode: groundMode });
     miniBase = null;
+    miniTiled = null;
     groundDue = false;
   } else if (v && plantsDue) {
     life.plants(v, rig.target, ground, step);
@@ -184,6 +196,7 @@ function loop(now: number): void {
   light(here);
   renderer.render(scene, camera);
   hud(a, b, t, here, swing, before, after);
+  placePanel(a, swing);
   requestAnimationFrame(loop);
 }
 
@@ -312,6 +325,7 @@ function watchKind(lin: number): void {
   setWalk(false);
   picked = best;
   rig.follow = best;
+  lookAt(null);
   rig.send();
   rig.want = Math.min(rig.dist, 24);
   kindsKey = '';
@@ -349,6 +363,7 @@ function watchLine(l: Line): void {
   }
   picked = onLine(l, step);
   rig.follow = picked;
+  lookAt(null);
   rig.send();
   rig.want = Math.min(rig.dist, 24);
 }
@@ -598,7 +613,90 @@ function unfollow() {
   selection(null);
 }
 
+// ---- the cell being looked into --------------------------------------------
+
+/** Look into a cell of the ground, or into none (null). */
+function lookAt(c: number | null): void {
+  place = c;
+  placeShut = false;
+}
+
+/** Put the panel away. It stays away until the watcher picks a body or a cell again. */
+function shutPlace(): void {
+  place = null;
+  placeShut = true;
+}
+
+/** The cell a body stands on: the one its middle is over, and whether it is dead.
+ *
+ * A body that has died is still the one being watched, and the panel above this one says what of,
+ * so the last frame it was in is what is read and the ground it died on stays up. */
+function bodyCell(a: Frame | null, id: number | null): { c: number; gone: boolean } | null {
+  if (!a || id === null) return null;
+  const seen = world.fate(id, a.step);
+  if (seen.f === null) return null;
+  const f = seen.f, i = seen.i;
+  const cell = 1 / world.sub;
+  const shape = world.blocks(f.a.body[i], f.a.facing[i]);
+  const half = shape ? (shape.side * cell) / 2 : 0.5;
+  const x = Math.floor(f.a.x[i] * cell + half), z = Math.floor(f.a.y[i] * cell + half);
+  const c = (((z % world.d) + world.d) % world.d) * world.w + (((x % world.w) + world.w) % world.w);
+  return { c, gone: seen.died !== null };
+}
+
+/** What one cell of the world holds: its height, every layer the header names, the sun it gets
+ * and the bodies standing on it. The values are the ones being drawn (`layersAt` blends the two
+ * keyframes around the step), so the panel says what the picture says. */
+function placePanel(a: Frame | null, swing: number): void {
+  const box = $('place');
+  // A body being followed carries the panel with it: the ground under it is what it is living
+  // off, and it changes while it walks. A cell picked out of the ground stays where it was put.
+  const on = bodyCell(a, picked);
+  const c = placeShut ? null : on ? on.c : place;
+  ground.setMark(c);
+  if (c === null) { box.hidden = true; return; }
+  box.hidden = false;
+  const w = world.w, x = c % w, z = Math.floor(c / w);
+  const p = world.params as Record<string, unknown>;
+  const v = world.layersAt(layersStep);
+  const h = world.height[c];
+  const relief = Number(p.relief ?? 0), metres = Number(p.relief_m ?? 0);
+  const tOff = Number(p.temperature_offset ?? 0);
+  const habitats = Array.isArray(p.habitats) ? (p.habitats as string[]) : null;
+  const whose = on ? (on.gone ? ' · 追っている体が死んだ升' : ' · 追っている体の升') : '';
+  $('placewhere').textContent = `x ${x}, y ${z} · ${h >= 0 ? '陸' : '海'}${whose}`;
+  const rows: [string, string][] = [];
+  if (h >= 0) rows.push(['標高', relief && metres ? `${Math.round((h / relief) * metres).toLocaleString()} m` : h.toFixed(1)]);
+  if (v) {
+    for (const spec of world.h.layers) {
+      const f = world.rawLayer(spec.name);
+      if (!f) continue;
+      const n = f[c];
+      let text: string;
+      if (spec.name === 'temperature') text = `${(n - tOff).toFixed(1)} °C`;
+      else if (spec.name === 'habitat') text = habitats?.[Math.round(n)] ?? String(Math.round(n));
+      else if (spec.name === 'fire') text = n > 0.5 ? '燃えている' : '—';
+      else text = n < 10 ? n.toFixed(2) : Math.round(n).toLocaleString();
+      rows.push([CELL_LABEL[spec.name] ?? spec.name, text]);
+    }
+  }
+  if (world.season.on) rows.push(['この升の陽', world.cellSun(c, swing).toFixed(2)]);
+  let here = 0;
+  if (a) {
+    const cell = 1 / world.sub;
+    for (let i = 0; i < a.n; i++) if (Math.floor(a.a.x[i] * cell) === x && Math.floor(a.a.y[i] * cell) === z) here++;
+  }
+  rows.push(['体', String(here)]);
+  $('placerows').innerHTML = rows.map(([k, val]) => `<div class="row"><span>${k}</span><span>${val}</span></div>`).join('');
+}
+
 /** The map in the corner: the world from above, with a dot for every body.
+ *
+ * The map turns with the eye - what is ahead on the screen is up on the map - so that a step to
+ * the right is a step to the right in both. A map with north fixed says the same thing about the
+ * world, but nothing about the way the watcher is walking, and the two disagree by whatever the
+ * view has been turned to. The eye's own place is the middle: the world wraps, so a map centred
+ * anywhere is a whole map, and the nine copies fill the corners a turn leaves empty.
  *
  * The dots are where the bodies are drawn, interpolated between the two frames the same way. A
  * recording knows the world every `stride` steps, so taking the dots from the near frame alone
@@ -632,30 +730,73 @@ function minimap(a: Frame | null, b: Frame | null, t: number, before: Frame | nu
     }
     og.putImageData(img, 0, 0);
     miniBase = off;
+    miniTiled = null;
   }
-  g.imageSmoothingEnabled = false;
-  g.drawImage(miniBase, 0, 0, c.width, c.height);
-  const s = c.width / w;
+  const M = c.width, s = M / w;
+  if (!miniTiled) {
+    // The nine copies, laid out once at the size they are drawn: a turned map reads from all of
+    // them, and cutting one out of nine is a single draw where drawing nine of them is not.
+    const tile = document.createElement('canvas');
+    tile.width = M * 3; tile.height = M * 3;
+    const tg = tile.getContext('2d')!;
+    tg.imageSmoothingEnabled = false;
+    const base = miniBase!;
+    for (let j = 0; j < 3; j++) for (let i = 0; i < 3; i++) tg.drawImage(base, i * M, j * M, M, M);
+    miniTiled = tile;
+  }
+  // The eye looks along (sin yaw, cos yaw) and its right hand is (-cos yaw, sin yaw), which is
+  // what `Rig.pan` moves along: the map is laid out on those two so the arrow keys agree with it.
+  const cos = Math.cos(rig.yaw), sin = Math.sin(rig.yaw);
+  const tx = rig.target.x, tz = rig.target.z;
+  const p = [0, 0];
+  const at = (x: number, z: number) => {
+    const dx = shortest(x - tx, w), dz = shortest(z - tz, d);
+    p[0] = (-cos * dx + sin * dz) * s + M / 2;
+    p[1] = (-sin * dx - cos * dz) * s + M / 2;
+  };
+  g.setTransform(1, 0, 0, 1, 0, 0);
+  g.clearRect(0, 0, M, M);
+  g.save();
+  g.setTransform(-cos * s, -sin * s, sin * s, -cos * s, M / 2, M / 2);
+  g.translate(-tx, -tz);
+  g.imageSmoothingEnabled = true;
+  g.drawImage(miniTiled, -w, -d, 3 * w, 3 * d);
+  g.restore();
   if (a) {
     g.fillStyle = '#ffd9a0';
     const cell = 1 / world.sub;
-    const dot = (x: number, z: number, f: number) => g.fillRect(x * s - 0.8 * f, z * s - 0.8 * f, 1.6 * f, 1.6 * f);
-    const p = [0, 0];
+    const q = [0, 0];
+    const dot = (x: number, z: number, f: number) => { at(x, z); g.fillRect(p[0] - 0.8 * f, p[1] - 0.8 * f, 1.6 * f, 1.6 * f); };
     for (let i = 0; i < a.n; i += 1) {
       const j = b ? b.index.get(a.a.id[i]) : undefined;
-      Life.track(p, a, i, b, j, t, before, after, cell, w, d); // the same curve the world uses
-      dot(p[0], p[1], b && j === undefined ? Life.ease(1 - t) : 1);
+      Life.track(q, a, i, b, j, t, before, after, cell, w, d); // the same curve the world uses
+      dot(q[0], q[1], b && j === undefined ? Life.ease(1 - t) : 1);
     }
     if (b && t > 0) {
       for (let j = 0; j < b.n; j += 1) {
         if (a.index.has(b.a.id[j])) continue; // it is born inside this interval
-        Life.trackIn(p, b, j, after, t, cell, w, d);
-        dot(p[0], p[1], Life.ease(t));
+        Life.trackIn(q, b, j, after, t, cell, w, d);
+        dot(q[0], q[1], Life.ease(t));
       }
     }
   }
-  g.strokeStyle = '#fff'; g.lineWidth = 1.5;
-  g.strokeRect(rig.target.x * s - 5, rig.target.z * s - 5, 10, 10);
+  if (place !== null) { // the cell being looked into, so the panel has a place on the map
+    at(place % w + 0.5, Math.floor(place / w) + 0.5);
+    g.strokeStyle = '#ffd24a'; g.lineWidth = 1.5;
+    g.strokeRect(p[0] - 3.5, p[1] - 3.5, 7, 7);
+  }
+  // Which way the world's own grid lies, now that the map turns: a tick towards its first row.
+  g.strokeStyle = '#ffffff66'; g.lineWidth = 1;
+  g.beginPath();
+  g.moveTo(M / 2 - sin * 62, M / 2 + cos * 62);
+  g.lineTo(M / 2 - sin * 74, M / 2 + cos * 74);
+  g.stroke();
+  // The eye is always the middle now, looking up the map.
+  g.fillStyle = '#fff';
+  g.beginPath();
+  g.moveTo(M / 2, M / 2 - 6); g.lineTo(M / 2 + 4.5, M / 2 + 5); g.lineTo(M / 2 - 4.5, M / 2 + 5);
+  g.closePath();
+  g.fill();
 }
 
 // ---- the bar ---------------------------------------------------------------
@@ -668,6 +809,14 @@ function bindUI(header: Header): void {
   $i('s-plant').oninput = (e) => { UP.plant = +(e.target as HTMLInputElement).value; plantsDue = true; };
   $i('s-detail').oninput = (e) => { life.setDetail(+(e.target as HTMLInputElement).value); plantsDue = true; };
   $i('s-fog').oninput = (e) => { fogScale = +(e.target as HTMLInputElement).value; };
+  // Which way the wheel zooms is a hand's own habit, so it is remembered for the next visit.
+  const zoomBox = $i('v-zoomaway');
+  try { zoomBox.checked = localStorage.getItem('evlog.zoomaway') === '1'; } catch (err) {}
+  rig.zoomAway = zoomBox.checked;
+  zoomBox.onchange = () => {
+    rig.zoomAway = zoomBox.checked;
+    try { localStorage.setItem('evlog.zoomaway', zoomBox.checked ? '1' : '0'); } catch (err) {}
+  };
   $('legend').innerHTML = header.blocks.slice(1).map((b) => `<span><i style="background:${KIND_COLORS[b]}"></i>${b}</span>`).join('');
   $('play').onclick = () => {
     playing = !playing;
@@ -709,7 +858,7 @@ function bindUI(header: Header): void {
   const has = new Set(header.layers.map((l) => l.name));
   const sel = $('s-ground') as HTMLSelectElement;
   sel.innerHTML = GROUND_MODES.filter(([k]) => k === 'soil' || has.has(k)).map(([k, name]) => `<option value="${k}">${name}</option>`).join('');
-  sel.onchange = () => { groundMode = sel.value; groundDue = true; miniBase = null; };
+  sel.onchange = () => { groundMode = sel.value; groundDue = true; miniBase = null; miniTiled = null; };
   const asked = new URLSearchParams(location.search).get('ground'); // ?ground=habitat opens on that colouring
   if (asked && [...sel.options].some((o) => o.value === asked)) { sel.value = asked; groundMode = asked; }
   $('unfollow').onclick = unfollow;
@@ -729,12 +878,17 @@ function bindUI(header: Header): void {
   // cannot, and there a body is followed into a child at random or not at all.
   if (!source.live && header.births) loadLines();
   addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') unfollow();
+    if (e.key === 'Escape') { unfollow(); shutPlace(); }
   });
+  $('placeoff').onclick = shutPlace;
   setShadows($i('v-shadow').checked);
   $('mini').onclick = (e) => {
+    // The map is turned and centred on the eye (`minimap`), so a click on it is turned back.
     const r = (e.target as HTMLElement).getBoundingClientRect();
-    rig.goTo(((e.clientX - r.left) / r.width) * world.w, ((e.clientY - r.top) / r.height) * world.d);
+    const s = r.width / world.w;
+    const u = ((e.clientX - r.left) - r.width / 2) / s, v = ((e.clientY - r.top) - r.height / 2) / s;
+    const cos = Math.cos(rig.yaw), sin = Math.sin(rig.yaw);
+    rig.goTo(rig.target.x + (-cos * u - sin * v), rig.target.z + (sin * u - cos * v));
     rig.follow = null;
   };
   // Clicking the world picks the body under the pointer: the one whose blocks a ray through the
@@ -757,6 +911,7 @@ function bindUI(header: Header): void {
     picked = life.under(ray);
     rig.follow = picked;
     if (picked !== null) {
+      lookAt(null); // a body of the watcher's own choosing: the panel follows it, and comes back
       rig.send();
       rig.want = Math.min(rig.dist, 24); // brought close enough to see what it is
       return;
@@ -776,9 +931,14 @@ function bindUI(header: Header): void {
     picked = best;
     rig.follow = picked;
     if (picked !== null) {
+      lookAt(null);
       rig.send();
       rig.want = Math.min(rig.dist, 24);
+      return;
     }
+    // Nothing alive under the pointer: the click is about the ground, so it says what that cell
+    // of the world holds. A click on the sky puts the panel away.
+    lookAt(ground.cellUnder(ray.ray.origin, ray.ray.direction)?.c ?? null);
   });
 }
 

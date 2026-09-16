@@ -71,6 +71,16 @@
   #lines button:hover { background: #ffffff28; }
   #linelist button { display: block; width: 100%; text-align: left; }
   #linenow { margin-top: 8px; color: var(--ink); font-size: 12px; }
+  /* The cell being looked into: one row a layer, the world's own names and units. */
+  /* The left column is capped at the window, so its two tall panels give way rather than run
+     off the bottom with their buttons on it. */
+  #place { width: 226px; overflow-y: auto; min-height: 0; }
+  #place h4 { margin: 2px 0 6px; font-size: 11px; letter-spacing: .12em; color: var(--dim); font-weight: 600; }
+  #place .row { display: flex; justify-content: space-between; gap: 12px; color: var(--dim); line-height: 1.6; }
+  #place .row span:last-child { color: var(--ink); font-family: ui-monospace, monospace; }
+  #placewhere { color: var(--ink); font-size: 12px; margin-bottom: 5px; }
+  #place button { background: #ffffff14; color: var(--ink); border: 1px solid var(--line); border-radius: 7px; padding: 4px 9px; margin-top: 7px; cursor: pointer; }
+  #place button:hover { background: #ffffff28; }
   #sel .k { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
   #shape { display: grid; gap: 1px; margin: 6px 0; padding: 3px; background: #ffffff14; border-radius: 4px; }
   #shape i { width: 100%; aspect-ratio: 1; border-radius: 1px; outline: 1px solid #00000030; }
@@ -79,7 +89,7 @@
   #left { position: fixed; top: 12px; left: 12px; display: flex; flex-direction: column; gap: 10px; align-items: flex-start;
     max-height: calc(100vh - 90px); }
   #left .ui { position: static; }
-  #who { width: 226px; overflow-y: auto; }
+  #who { width: 226px; overflow-y: auto; min-height: 0; }
   #who h4 { margin: 2px 0 6px; font-size: 11px; letter-spacing: .12em; color: var(--dim); font-weight: 600; }
   #fate { color: var(--ink); font-size: 12px; min-height: 18px; }
   .gauge { display: grid; grid-template-columns: 28px 1fr 80px; align-items: center; gap: 6px; font-size: 12px; line-height: 1.75; }
@@ -125,6 +135,12 @@
     </div>
   </div>
 </div>
+<div class="ui" id="place" hidden>
+  <h4>この土地</h4>
+  <div id="placewhere"></div>
+  <div id="placerows"></div>
+  <button id="placeoff">閉じる</button>
+</div>
 <div class="ui" id="lines" hidden>
   <h4>系統をたどる</h4>
   <div id="linelist"></div>
@@ -149,6 +165,7 @@
   <label class="rng">草木の精細 <input type="range" id="s-detail" min="0" max="2" step="1" value="1"></label>
   <label class="rng">霧 <input type="range" id="s-fog" min="0" max="2" step="0.05" value="1"></label>
   <label class="chk"><input type="checkbox" id="v-shadow" checked> 影</label>
+  <label class="chk"><input type="checkbox" id="v-zoomaway"> ホイールのズームを反転</label>
   <label class="rng">地面の色 <select id="s-ground"></select></label>
   <hr>
   <h4>凡例</h4>
