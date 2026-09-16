@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-09-16 (after e073: a stand of wood drops browse, and a patchy food thin enough to leave is what makes the crowd move).
+Last updated: 2026-09-16 (after e074: the invasion test; a world will not stay at one way of living, and e073's pair is a coexistence the world rebuilds on its own).
 
 ## What the viewer should see
 
@@ -227,6 +227,35 @@ a time. The design is `foundation.md`.
    resident's own genome as the neutral control. It adds no law and needs no search, and it is what
    separates what this world can hold from what evolution happened to find. The seasonal refuge (is a
    standing forest a refuge a lawn cannot hold) waits behind it.
+   Twelfth step done 2026-09-16 (e074, #72): the invasion test, built and run. Three instruments and no
+   law: the genomes of a census written out, a world seeded from a pool of them, and an injection of a
+   hundred bodies whose descendants carry a mark. Both lines - the invader and the resident's own
+   genomes - go into the same world at once, so the control meets the same crowd and the same luck. 24
+   runs of 40,000 steps on seeds 9-11: four worlds (the grazer alone, the browser alone, and the
+   community with each way taken out form by form) times two founder draws.
+   **A world will not stay at one way of living.** Whatever is left out is back at e073's rate by step
+   2,000-4,000, before a body is injected: the browse pays 2.4-4.2% of the food at step 10,000 against
+   e073's 3.4%, a quarter of the grown bodies live by wood in every world, and the land of the
+   browser's world is half grass eaters. A world of grazers alone goes from a tooth in 5% of its bodies
+   to one in five in 10,000 steps. Nothing is invented: the grazer kind already carries a tooth in
+   3.9-5.3% of its bodies (the browser in 78-98%), so the way of living is a few percent of bodies
+   away, not a mutation away. **For this pair there is no gap between what the world holds and what
+   evolution finds** - e010's teeth (worth ten to one, found once in twelve million births) have no
+   counterpart here.
+   The paired injection still shows the coexistence at the strength this world's noise allows: the
+   invading line ends larger than the control beside it in all four worlds (1,282 against 410, 555
+   against 192, 1,105 against 0, 717 against 567), and each kind does better rare in the other's world
+   than in its own (the browser 1,105 against 567, the grazer 717 against 0). Read run by run it is 12
+   of 24 larger, 5 smaller and 7 with both lines gone: **a line of a hundred in eight thousand is a
+   lottery ticket**, so a single injection says nothing and the control has to be in the same world.
+   By the rule set before the runs (2 seeds of 3 in both directions) the test is **partly** passed: the
+   browser invades the grazer's world on 3 seeds of 3, the grazer the browser's on 1 of 3.
+   What it changes: do not read a seed's outcome as a reachability answer for a close pair; judge an
+   invasion by paired means over several founder draws, not by "grows from rare in most replicates";
+   and #72's strict form cannot be run in a world that re-invents the missing way in a third of the
+   test's length. Proposed next (not yet agreed): the pair the test was built for, a hunter and a
+   grazer, where the way of living needs more than a tooth that is already there; then the seasonal
+   refuge (is a standing forest a refuge a lawn cannot hold).
 
 #73 (each axis alone) is withdrawn; #14 and #38 are folded into stages A and B; #58 is superseded.
 
