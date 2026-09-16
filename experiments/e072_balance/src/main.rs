@@ -241,14 +241,17 @@ params! {
     light = 0.0, "set E: how far a sensor block's reach follows the light where the body stands (0: it always sees its full reach)";
     climb = 0.0, "set F: energy a body pays per unit of mass per metre it rises when it moves (0: height is free)";
     carry = 0.0, "set G: share of a cell's soil the water running off it takes along, per millimetre of the ground's capacity (0: the soil stays)";
+    // The disturbance of #88's stability check, on the chosen candidates only
+    cull_at = 0.0, "the step at which the largest lineage is cut (0: never)";
+    cull = 0.5, "the share of its bodies the cut takes";
 }
 
 /// The parameters of the bodies; every other one makes the settled world.
-const BODY_KEYS: [&str; 27] = [
+const BODY_KEYS: [&str; 29] = [
     "life", "steps", "start", "scale", "water", "dry", "drink", "breath", "inhale", "history", "senses",
     // e072's sets, the runoff's soil among them: they all run with the bodies, from the settled world
     "heat", "warm_lo", "warm_hi", "heat_make", "heat_hard", "heat_fat", "heat_spend", "heat_sweat",
-    "wood_food", "wood_hard", "fat_weight", "store_gene", "fresh", "light", "climb", "carry",
+    "wood_food", "wood_hard", "fat_weight", "store_gene", "fresh", "light", "climb", "carry", "cull_at", "cull",
 ];
 
 /// What the viewer is told a cell holds (e062's units).
@@ -659,6 +662,9 @@ impl Sim {
 
     fn step(&mut self) {
         self.step += 1;
+        if self.p.cull_at > 0.0 && self.step == self.p.cull_at as u64 {
+            self.cut();
+        }
         if (self.step - 1) % self.p.tick as u64 == 0 {
             let t = Instant::now();
             self.world();
@@ -667,6 +673,33 @@ impl Sim {
         let t = Instant::now();
         self.bodies();
         self.k.t_bodies += t.elapsed().as_secs_f64();
+    }
+
+    /// The disturbance of #88's stability check: the largest lineage loses `cull` of its bodies, which
+    /// lie down where they stand (their matter stays in the world). The world is watched from here.
+    fn cut(&mut self) {
+        let Sim { agents, occ, pl, g, rng, k, p, dead, .. } = self;
+        let g = *g;
+        let mut count: HashMap<u32, usize> = HashMap::new();
+        for a in agents.iter() {
+            *count.entry(a.lineage).or_default() += 1;
+        }
+        let Some((top, held)) = count.into_iter().max_by_key(|&(_, v)| v) else { return };
+        let mut cut = 0u64;
+        for a in agents.iter_mut() {
+            if a.lineage == top && rng.f64() < p.cull {
+                dead.push((a.id as u32, 1));
+                occ.release(g, a);
+                a.alive = false;
+                lay_body(a, g, &mut pl.carrion, p.scale, &mut k.cc);
+                cut += 1;
+            }
+        }
+        agents.retain(|a| a.alive);
+        for (i, a) in agents.iter().enumerate() {
+            occ.relabel(g, a, i as u32);
+        }
+        eprintln!("cut at step {}: lineage {top} lost {cut} of its {held} bodies", self.step);
     }
 
     /// One update of the climate and the producers (e061, e062), and the habitats each quarter.
@@ -827,8 +860,16 @@ impl Sim {
             // body pays energy to warm or water to cool itself back to the band's edge. What it pays in
             // energy goes to the soil under it, as its moves do; a body that cannot pay dies of cold.
             if heat_on {
+                // It goes `heat` x what it passes over its mass of the way to the temperature it would
+                // hold on these cells: their mean plus the offset its own upkeep makes. The share is at
+                // most all of the way, so a light body follows its cells and never overshoots them.
                 let mass = a.mass().max(1e-6) as f64;
-                a.temp += (p.heat * (heat_flux(a, g, &w.temp, p.heat_hard, p.heat_fat) + p.heat_make * full) / mass) as f32;
+                let (pass, seen) = heat_flux(a, g, &w.temp, p.heat_hard, p.heat_fat);
+                if pass > 0.0 {
+                    let target = seen + p.heat_make * full / pass;
+                    let r = (p.heat * pass / mass).min(1.0);
+                    a.temp += (r * (target - a.temp as f64)) as f32;
+                }
                 if (a.temp as f64) < p.warm_lo {
                     let want = p.heat_spend * (p.warm_lo - a.temp as f64) * mass;
                     let paid = want.min(a.energy.max(0.0));

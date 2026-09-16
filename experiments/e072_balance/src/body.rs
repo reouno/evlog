@@ -72,7 +72,8 @@
 //! e072 (#88, `balance.md`) adds the sets of the balance table, each as a rate whose 0 is e070:
 //! - **A, heat** (`heat_flux`): a body holds heat. Each face of a block open to its cell passes heat by
 //!   the difference, a hard face passes a share of what a soft one does and the fat stops a share of it;
-//!   the body's temperature is its heat over its mass, so a heavy body changes slowly. Its blocks make
+//!   what it passes over its mass is how far it goes toward its cells in a turn, so a heavy body follows
+//!   the day slowly and no body overshoots. Its blocks make
 //!   heat as they burn their upkeep, and out of its band it pays energy to warm or water to cool
 //!   (`main.rs`).
 //! - **B, wood as food**: a gut takes wood only in a body with a hard tip of force `wood_hard` behind it
@@ -1430,22 +1431,26 @@ pub fn dry_turn(a: &mut Agent, g: Grid, wet: &[bool], dryness: &[f32], drink_at:
     drunk > 0.0
 }
 
-/// A body's heat crossing its faces in a turn (e072, set A): each face of a block open to the cell
-/// under that block passes the difference between the cell and the body, a hard face at `hard` of what
-/// a soft face passes, and the fat stops `fat_stop` of it when it fills the body's store. The sum is in
-/// degrees x mass a turn before the rate: positive warms the body.
-pub fn heat_flux(a: &Agent, g: Grid, temp: &[f64], hard: f64, fat_stop: f64) -> f64 {
-    let mut flux = 0.0f64;
+/// How a body's heat crosses its faces in a turn (e072, set A): each face of a block open to the cell
+/// under that block passes heat by the difference, a hard face at `hard` of what a soft face passes, and
+/// the fat stops `fat_stop` of it when it fills the body's store. Returns what the body passes in all
+/// (degrees x mass a turn per degree of difference) and the mean temperature its faces see.
+pub fn heat_flux(a: &Agent, g: Grid, temp: &[f64], hard: f64, fat_stop: f64) -> (f64, f64) {
+    let (mut k, mut sum) = (0.0f64, 0.0f64);
     for p in a.cells_held() {
         let faces = a.open[p] as f64 + hard * a.open_hard[p] as f64;
         if faces == 0.0 {
             continue;
         }
         let (sx, sy) = a.sub_at(g, p, NORTH, 0);
-        flux += faces * (temp[g.wcell(sx, sy)] - a.temp as f64);
+        k += faces;
+        sum += faces * temp[g.wcell(sx, sy)];
+    }
+    if k <= 0.0 {
+        return (0.0, a.temp as f64);
     }
     let fill = (a.fat / (a.body.store * a.body.mass).max(1e-6) as f64).min(1.0);
-    flux * (1.0 - fat_stop * fill)
+    (k * (1.0 - fat_stop * fill), sum / k)
 }
 
 /// A body's breath (e067): each block over water uses `breath` and each open face of a soft block
@@ -1686,18 +1691,18 @@ mod tests {
         pair[1] = MUSCLE as u8;
         let mut a = agent_with(pair, 0, 0, EAST);
         a.temp = 20.0;
-        // Six open soft faces over a cell 30 degrees colder.
-        assert!((heat_flux(&a, g, &temp, 0.25, 1.0) + 6.0 * 30.0).abs() < 1e-9);
-        // Over the warm side the same faces take heat in, at 10 degrees.
+        // Six open soft faces over a cell at -10 C: the body passes 6 a degree and sees -10.
+        assert_eq!(heat_flux(&a, g, &temp, 0.25, 1.0), (6.0, -10.0));
+        // Over the warm side the same faces see 30.
         a.x = 16;
-        assert!((heat_flux(&a, g, &temp, 0.25, 1.0) - 6.0 * 10.0).abs() < 1e-9);
+        assert_eq!(heat_flux(&a, g, &temp, 0.25, 1.0), (6.0, 30.0));
         // The fat stops it by the share of the store it fills: half full passes half, full nothing.
         a.x = 0;
         a.fat = 0.5 * (a.body.store * a.body.mass) as f64;
-        assert!((heat_flux(&a, g, &temp, 0.25, 1.0) + 3.0 * 30.0).abs() < 1e-9);
+        assert_eq!(heat_flux(&a, g, &temp, 0.25, 1.0).0, 3.0);
         a.fat = (a.body.store * a.body.mass) as f64;
-        assert_eq!(heat_flux(&a, g, &temp, 0.25, 1.0), 0.0);
-        // A gut walled in by hard blocks passes only what the hard faces do: 8 of them at 0.25.
+        assert_eq!(heat_flux(&a, g, &temp, 0.25, 1.0).0, 0.0);
+        // A gut walled in by hard blocks passes only what its hard faces do: 12 of them at 0.25.
         let mut shell = [0u8; CELLS];
         shell[SIDE + 1] = DIGESTIVE as u8;
         for q in [1, SIDE, SIDE + 2, 2 * SIDE + 1] {
@@ -1706,8 +1711,8 @@ mod tests {
         let mut b = agent_with(shell, 0, 0, SOUTH);
         b.temp = 20.0;
         assert_eq!(b.body.open_soft, 0);
-        assert!((heat_flux(&b, g, &temp, 0.25, 1.0) + 0.25 * 12.0 * 30.0).abs() < 1e-9, "{}", heat_flux(&b, g, &temp, 0.25, 1.0));
-        assert_eq!(heat_flux(&b, g, &temp, 0.0, 1.0), 0.0);
+        assert_eq!(heat_flux(&b, g, &temp, 0.25, 1.0).0, 0.25 * 12.0);
+        assert_eq!(heat_flux(&b, g, &temp, 0.0, 1.0), (0.0, 20.0));
     }
 
     /// e072 (set C): the fat adds to what a body weighs, and the clock reads that.
