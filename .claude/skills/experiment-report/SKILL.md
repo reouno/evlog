@@ -13,7 +13,7 @@ The reader does not know the code or the algorithms. Keep it short: if it is lon
 1. Copy `template.py` from this skill folder to `experiments/eNNN_<name>/report.py`.
 2. Fill in the `TODO` parts: data loading, the charts, the diagram, and the text.
 3. Build from the repo root: `uv run python experiments/eNNN_<name>/report.py`.
-4. Look at the result before calling it done: serve the folder (`python3 -m http.server 8765 --bind 127.0.0.1`), open it in the browser, and check both a light and a dark rendering for legend overlap, clipped labels, and diagram text colliding with lines. `file://` URLs do not work in the browser tool.
+4. Look at the result before calling it done: serve the folder (`python3 -m http.server 8765 --bind 127.0.0.1`), open it in the browser, and check it for legend overlap, clipped labels, and diagram text colliding with lines. `file://` URLs do not work in the browser tool. **A report is dark only** (the user, 2026-09-16: supporting both themes is wasted work), so there is one rendering to check.
 5. Commit `report.py` and `report.html` together with `results/`.
 
 ## Structure (paper-like, tone can stay casual)
@@ -32,7 +32,7 @@ Write in plain English. One idea per paragraph. Numbers where possible. Do not r
 ## Charts
 
 - matplotlib, exported as SVG and inlined. Never hand-draw a chart.
-- Chart chrome in mid-gray `#898781`, transparent background, so one image reads in light and dark mode. The rcParams in the template do this.
+- Chart chrome in mid-gray `#898781`, transparent background. The rcParams in the template do this.
 - Series colors in fixed slot order: `#2a78d6` blue, `#eb6834` orange, `#1baf7a` aqua, `#eda100` yellow, `#e87ba4` magenta. Same entity, same color across every chart.
 - Legend above the plot area (`legend_above` in the template), at most 4 y ticks, x axis labeled with its unit (`step` for time series), `k` formatting for thousands. Helpers: `line_chart`, `stacked_area`, `hist_chart`.
 - Every chart has a title and a one-line subtitle saying how to read it (what a flat line or a zero would mean).
