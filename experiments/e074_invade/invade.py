@@ -25,6 +25,8 @@ import census  # noqa: E402
 import kinds  # noqa: E402
 
 WOOD = 0.2     # the browse's share of a body's food for it to live by wood (e073's line)
+LAWN = 0.1     # under this a body does not live by wood (pick.py's line)
+DONOR_BROWSE = 0.034  # the browse's share of all the food in e073's kept runs, which the donors repeat
 WINDOW = 5000  # steps at the end over which a line is counted
 INJECT = 10000
 MARKS = {1: "grazer", 2: "browser"}
@@ -37,8 +39,11 @@ def wood_share(rs):
 
 def read_run(pre):
     name = os.path.basename(pre)
-    parts = name.split("_")  # c1225_life9_mA_s1
-    seed, removed, draw = int(parts[1].replace("life", "")), parts[2][1], int(parts[3][1:])
+    parts = name.split("_")  # c1225_life9_mA_s1 (m: the way taken out; o: the only kind seeded)
+    seed, kind, draw = int(parts[1].replace("life", "")), parts[2][1], int(parts[3][1:])
+    # In a `minus` world the kind named is the one taken out, so it is the invader; in an `only`
+    # world the kind named is the resident, so the other one is.
+    invader = kind if parts[2][0] == "m" else ("B" if kind == "A" else "A")
     with open(pre + "_log.csv") as f:
         log = list(csv.DictReader(f))
     at = {int(r["step"]): r for r in log}
@@ -48,8 +53,8 @@ def read_run(pre):
     agents = census.read(pre + "_agents.csv")
     grown = {s: census.grown(rs) for s, rs in agents.items()}
 
-    out = {"run": name, "seed": seed, "world": f"minus{removed}", "draw": draw,
-           "invader": "browser" if removed == "B" else "grazer",
+    out = {"run": name, "seed": seed, "world": parts[2], "draw": draw,
+           "invader": "browser" if invader == "B" else "grazer",
            "pop_end": st.mean(float(r["pop"]) for r in tail),
            "pop_mean": st.mean(float(r["pop"]) for r in half),
            "pop_land": st.mean(float(r["pop_land"]) for r in half),
@@ -78,10 +83,21 @@ def read_run(pre):
     # unmarked grown bodies that live by wood, and that carry a tooth, at the injection and at the end.
     for s in sorted(grown):
         res = [r for r in grown[s] if r.get("invader") == "0"]
+        land = [r for r in res if r["medium"] == "0"]
         tag = {INJECT: "at_inject", last: "end"}.get(s, f"{s // 1000}k")
         out[f"woody_{tag}"] = sum(wood_share([r]) >= WOOD for r in res) / max(len(res), 1)
+        out[f"grassy_{tag}"] = sum(wood_share([r]) < LAWN for r in land) / max(len(land), 1)
         out[f"tooth_{tag}"] = sum(int(float(r["bite_any"])) >= census.TOOTH for r in res) / max(len(res), 1)
         out[f"residents_{tag}"] = len(res)
+
+    # How long the world took to browse again: the first step at which the browse pays for half of
+    # what it pays in the donor world (DONOR_BROWSE), read before the injection.
+    share = [(int(r["step"]), float(r["browse_intake"]) /
+              max(float(r["plant_intake"]) + float(r["meat_intake"]), 1e-9)) for r in log if int(r["step"]) <= INJECT]
+    out["browse_10k"] = share[-1][1]
+    out["browse_half_at"] = next((st_ for st_, v in share if v >= DONOR_BROWSE / 2), 0)
+    out["tooth_1k"] = float(log[0]["tooth"])
+    out["tooth_10k"] = float(at[INJECT]["tooth"])
 
     # The world's kinds over the second half, as stage C reads them.
     run = kinds.Run(name, pre)
@@ -98,21 +114,22 @@ def read_run(pre):
 def main():
     d = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, "results", "invade")
     pres = sorted(os.path.join(d, f[: -len("_agents.csv")]) for f in os.listdir(d) if f.endswith("_agents.csv"))
+    pres = [p for p in pres if os.path.exists(p + "_row.csv")]  # a run still going has no summary row
     rows = [read_run(p) for p in pres]
     rows.sort(key=lambda r: (r["seed"], r["world"], r["draw"]))
     with open(os.path.join(HERE, "results", "invade.csv"), "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(rows[0]), lineterminator="\n")
         w.writeheader()
         w.writerows(rows)
-    print(f"{'run':24s} {'invader':8s} | {'grazer n0':>9s} {'end':>7s} {'growth':>6s} {'wood':>5s} | "
+    print(f"{'run':26s} {'invader':8s} | {'grazer n0':>9s} {'end':>7s} {'growth':>6s} {'wood':>5s} | "
           f"{'browser n0':>10s} {'end':>7s} {'growth':>6s} {'wood':>5s} | {'pop':>6s}")
     for r in rows:
-        print(f"{r['run']:24s} {r['invader']:8s} | {r['grazer_n0']:9.0f} {r['grazer_end']:7.1f} {r['grazer_growth']:6.2f} "
+        print(f"{r['run']:26s} {r['invader']:8s} | {r['grazer_n0']:9.0f} {r['grazer_end']:7.1f} {r['grazer_growth']:6.2f} "
               f"{r['grazer_wood']:5.0%} | {r['browser_n0']:10.0f} {r['browser_end']:7.1f} {r['browser_growth']:6.2f} "
               f"{r['browser_wood']:5.0%} | {r['pop_mean']:6.0f}")
-    print(f"\n{'run':24s} {'kinds':>5s} {'held':>4s} {'woody@10k':>9s} {'woody@end':>9s} {'tooth@10k':>9s} {'browse':>7s}")
+    print(f"\n{'run':26s} {'kinds':>5s} {'held':>4s} {'woody@10k':>9s} {'woody@end':>9s} {'tooth@10k':>9s} {'browse':>7s}")
     for r in rows:
-        print(f"{r['run']:24s} {r['kinds_at']:5.2f} {r['kinds_held']:4d} {r['woody_at_inject']:9.1%} "
+        print(f"{r['run']:26s} {r['kinds_at']:5.2f} {r['kinds_held']:4d} {r['woody_at_inject']:9.1%} "
               f"{r['woody_end']:9.1%} {r['tooth_at_inject']:9.1%} {r['browse_share']:7.1%}")
 
 
