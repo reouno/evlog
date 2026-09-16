@@ -76,8 +76,9 @@ def read_run(pre):
 
     # Did the kind taken out come back on its own, out of the resident genomes? The share of the
     # unmarked grown bodies that live by wood, and that carry a tooth, at the injection and at the end.
-    for s, tag in ((INJECT, "at_inject"), (last, "end")):
+    for s in sorted(grown):
         res = [r for r in grown[s] if r.get("invader") == "0"]
+        tag = {INJECT: "at_inject", last: "end"}.get(s, f"{s // 1000}k")
         out[f"woody_{tag}"] = sum(wood_share([r]) >= WOOD for r in res) / max(len(res), 1)
         out[f"tooth_{tag}"] = sum(int(float(r["bite_any"])) >= census.TOOTH for r in res) / max(len(res), 1)
         out[f"residents_{tag}"] = len(res)
@@ -100,7 +101,7 @@ def main():
     rows = [read_run(p) for p in pres]
     rows.sort(key=lambda r: (r["seed"], r["world"], r["draw"]))
     with open(os.path.join(HERE, "results", "invade.csv"), "w", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=list(rows[0]))
+        w = csv.DictWriter(f, fieldnames=list(rows[0]), lineterminator="\n")
         w.writeheader()
         w.writerows(rows)
     print(f"{'run':24s} {'invader':8s} | {'grazer n0':>9s} {'end':>7s} {'growth':>6s} {'wood':>5s} | "

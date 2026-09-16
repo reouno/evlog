@@ -17,8 +17,14 @@ and writes four pools of genomes out of the grown bodies of that census (`<life>
 `medium,genome` a line, the medium the body stood in):
 
   - `A` and `B`: the genomes of each kind, which are what is injected;
-  - `minusA` and `minusB`: the community with that kind's forms taken out, which is what a world
-    held by the other is seeded with.
+  - `minusB`: the community with **every** form that lives by wood taken out (a tenth or more of its
+    food), so that nothing in the world browses - a land of grass eaters;
+  - `minusA`: the community with every form of the land and the shore that does *not* live by wood
+    taken out, so that nothing on the land eats grass - a land of browsers. The water's forms stay in
+    both, since neither kind lives there.
+
+Taking one form out is not enough: in every seed several forms browse, and a world that keeps one of
+them is not a world without the way of living.
 
 It prints the kinds it found and what each pool holds.
 """
@@ -63,6 +69,14 @@ def pick(pre, out_dir):
         print(f"  {'/'.join(w):40s} n={len(rs):5d} wood={wood_share(rs):4.0%} held={w in held:d} "
               f"media={dict(med)} lineages={len(set(r['lineage'] for r in rs))}")
 
+    # Every form of that census: what it eats and where it stands, so that a whole way of living can
+    # be taken out of the world and not just the one kind that leads it.
+    form_rows = defaultdict(list)
+    for i in run.at[last]:
+        form_rows[unit[i]].append(run.grown[i])
+    woody = {u: wood_share(rs) >= LAWN for u, rs in form_rows.items()}
+    land_side = {u: ways[u][3] in ("land", "shore") for u in form_rows}
+
     land = [w for w in per[last] if w[3] == "land"]
     b = max((w for w in land if wood_share(rows[w]) >= WOOD), key=lambda w: wood_share(rows[w]), default=None)
     a = max((w for w in per[last] if w[1] == "no tooth" and w[3] in ("land", "shore") and wood_share(rows[w]) < LAWN),
@@ -85,17 +99,16 @@ def pick(pre, out_dir):
         g = genome.get(r["id"])
         if g is None:
             continue
-        w = ways[unit[i]]
+        u, w = unit[i], ways[unit[i]]
         line = (r["medium"], g)
         if w == a:
             pools["A"].append(line)
-            pools["minusB"].append(line)
-        elif w == b:
+        if w == b:
             pools["B"].append(line)
-            pools["minusA"].append(line)
-        else:
-            pools["minusA"].append(line)
-            pools["minusB"].append(line)
+        if not woody[u]:
+            pools["minusB"].append(line)      # a world where nothing browses
+        if woody[u] or not land_side[u]:
+            pools["minusA"].append(line)      # a world where nothing on the land eats grass
 
     os.makedirs(out_dir, exist_ok=True)
     life = name.split("_")[1]
@@ -107,6 +120,8 @@ def pick(pre, out_dir):
                 f.write(f"{m},{g}\n")
         med = Counter(m for m, _ in lines)
         print(f"  pool {tag:7s} {len(lines):5d} genomes, media {dict(sorted(med.items()))} -> {path}")
+    print(f"  forms: {len(form_rows)}, of them {sum(woody.values())} live by wood and "
+          f"{sum(land_side[u] and not woody[u] for u in form_rows)} eat grass on the land or the shore")
     return {"run": name, "A": "/".join(a), "B": "/".join(b), "A_bodies": len(rows[a]), "B_bodies": len(rows[b]),
             "A_wood": wood_share(rows[a]), "B_wood": wood_share(rows[b]),
             "grown_at_last": len(run.at[last]), "kinds_at_last": len(per[last]), "kinds_held": len(held),
@@ -118,7 +133,7 @@ def main():
     out_dir = os.path.join(HERE, "results", "pools")
     rows = [pick(a if os.path.isabs(a) else os.path.join(HERE, a), out_dir) for a in args]
     with open(os.path.join(HERE, "results", "kinds.csv"), "w", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=list(rows[0]))
+        w = csv.DictWriter(f, fieldnames=list(rows[0]), lineterminator="\n")
         w.writeheader()
         w.writerows(rows)
 

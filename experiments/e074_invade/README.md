@@ -34,7 +34,9 @@ the crowns, beside the shore's grazer. This tests that pair.
   matter the bodies bring is added to the ledger the audit reads.
 
 `pick.py` names the two kinds of a donor run and writes four pools: `A` (the grazer), `B` (the
-browser), and the community without each of them (`minusA`, `minusB`).
+browser), and the community without each **way of living** (`minusA`, `minusB`). A way, not a kind:
+in every seed several forms browse (11 of 64 forms on seed 9, 40 of 118 on seed 10), so a world that
+keeps one of them is not a world without browsing.
 
 ## Hypothesis
 
@@ -71,9 +73,16 @@ e073's ladder runs re-run, so the check above is what says they hold.
 5% of the grown bodies:
 
 - **B, the browser**: the land kind with the largest share of its food from the crowns' yield, which
-  must be a fifth or more;
+  must be a fifth or more (35%, 36% and 26% on seeds 9-11; a tooth, and it roams);
 - **A, the grazer**: the largest kind of the land or the shore with no tooth and under a tenth of its
-  food from wood.
+  food from wood (3%, 1% and 0%).
+
+The seeded worlds take out a whole way of living, form by form:
+
+- **`minusB`**, a land of grass eaters: every form that takes a tenth or more of its food from wood
+  is left out (1,626, 1,422 and 1,806 genomes remain of 2,527, 2,499 and 2,819);
+- **`minusA`**, a land of browsers: every form of the land or the shore that does not is left out
+  (1,180, 1,596 and 1,914 remain). The water's forms stay in both: neither kind lives there.
 
 **The invasion runs** (12 runs, seeds 9-11, 40,000 steps): 2 worlds x 2 draws of the injection a seed.
 Each world is seeded with 8,000 genomes (e073's kept runs hold 7,806 on average) and settles for
