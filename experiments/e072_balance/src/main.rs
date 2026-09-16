@@ -1714,7 +1714,9 @@ fn layer_specs() -> Vec<viewer::LayerSpec> {
         LayerSpec::new("water", (1.0 + VIEW_SEA) as f32, Scale::Sqrt),
         LayerSpec::new("plant", 16.0, Scale::Sqrt),
         LayerSpec::new("soil", 20.0, Scale::Sqrt),
-        LayerSpec::new("temperature", 100.0, Scale::Linear),
+        // Wide enough for a land cell at noon: at a cap of 100 (-50 to +50 C) 15% of the cells sat
+        // at the cap at step 42,000 of the balance world, and the map read 50 C over all of them.
+        LayerSpec::new("temperature", 140.0, Scale::Linear),
         LayerSpec::new("moisture", 1.0, Scale::Linear),
         LayerSpec::new("rain", 2.0, Scale::Sqrt),
         LayerSpec::new("light", 1.0, Scale::Linear),
