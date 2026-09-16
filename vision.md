@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-09-16 (after e074: the invasion test; a world will not stay at one way of living, and e073's pair is a coexistence the world rebuilds on its own).
+Last updated: 2026-09-17 (after e075: a bite too small to be a meal; the tear and the frail line make the land's browser hunt).
 
 ## What the viewer should see
 
@@ -256,6 +256,30 @@ a time. The design is `foundation.md`.
    test's length. Proposed next (not yet agreed): the pair the test was built for, a hunter and a
    grazer, where the way of living needs more than a tooth that is already there; then the seasonal
    refuge (is a standing forest a refuge a lawn cannot hold).
+   Thirteenth step done 2026-09-17 (e075, #90): what the flesh of kills needs to pay. The issue was
+   written from a broken measure - e073's `sweep.py` divided the log's `kill_gain` column, which is the
+   gain **per cell broken**, by the intake, and read 0.0%. The runs' `row.csv`, the log's totals and the
+   censuses all say the world has been eating the living at 8-13% since e072. **A measure nobody
+   re-derives becomes a law about the world**: that one column set the question for a whole issue.
+   What was true is that no kind *lives* by killing, and the dry run said why with no runs: a body is
+   worth 9.1 and one break takes 0.29 of it (2.9%, about one turn of grazing), while pressing costs
+   almost nothing (0.002 a turn against an upkeep of 0.10). **A food is defined by its mouthful, not
+   by its price** - five experiments had looked for what made hunting too expensive.
+   Two laws, searched together as #87 asks (11 candidates on seed 9, then three worlds on seeds 9-11):
+   **the tear** (a gut that breaks a block off a body takes with it that share of what the body still
+   holds) and **the frail line** (a body dies when its blocks fall under that share of its birth body,
+   and lies where it fell). Alone each moves one of stage C's numbers and spoils the other: the tear
+   puts kills at 28% and drops the kinds kept to a place to 3.56; the frail line holds the place (4.00)
+   and *lowers* kills to 19%, because a prey dies before it is eaten and its store feeds whoever stands
+   there. Together (tear 0.4, frail 0.5): kills 27.4%, kinds at a census 7.67, kinds kept to a place
+   4.78, against the control's 9.6%, 6.61 and 3.89. **Kept as a set; stage C's default world from
+   here**, controls `experiments/e075_hunt/results/ladder/c1225_life{9,10,11}_both`.
+   What the world does with it: the land's browser becomes a hunter (the same shape takes 46-52% of
+   its food from kills and 15-24% from wood, keeps its tooth, walks 14-20 cells), bodies settle 20%
+   smaller with more hard blocks and shorter lives, and the crowd grows. Pure flesh kinds appear at the
+   shore and on the bottom but hold 2-4%: the hunter of this world is a browser that hunts.
+   Proposed next (not yet agreed): #72's paired invasion on the pair it was built for, the hunting
+   browser against the shore's grazer; then #91, the seasonal refuge.
 
 #73 (each axis alone) is withdrawn; #14 and #38 are folded into stages A and B; #58 is superseded.
 

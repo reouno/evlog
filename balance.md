@@ -227,3 +227,29 @@ moment pays 0.019 and holds the same kinds - it is a discount, not a place. It a
 
 **Stage C's default world from here** is e072's sets with `wood_food` 0 and `wood_yield` 3e-5; the controls are
 `experiments/e073_forest/results/ladder/c1225_life{9,10,11}_y3e-5h3`.
+
+## 11. What e075 settled (2026-09-17)
+
+The flesh of kills, asked as #90 and searched as a set (`experiments/e075_hunt`).
+
+**The measure first.** "Kills are 0.0% of what the bodies eat" was e073's `sweep.py` dividing the log's
+`kill_gain` column - the gain per cell broken - by the intake. The world has eaten the living at 8-13%
+since e072 (section 9's own reading of a land kind at 13-17% was right). Section 2's row "plant or
+flesh" was not as one-sided as it looked; what it lacked was a kind that lives by killing.
+
+**Kept as a set: the tear (`flesh_bite` 0.4) with the frail line (`frail` 0.5).** A gut that breaks a
+block off a body takes with it that share of what the body still holds; a body dies when its blocks
+fall under that share of its birth body and lies where it fell. Against the control (e073's kept
+world, three seeds, 100,000 steps): the flesh of the living is 27.4% of the intake against 9.6%, the
+kinds at a census 7.67 against 6.61 and the kinds kept to a place 4.78 against 3.89. Neither rate is
+worth keeping alone - the tear drops the kinds kept to a place to 3.56, the frail line leaves the
+kills at 19% - which is what section 7 asked the search to find.
+
+**The axes, re-read.** "Plant or flesh" now has two sides on the land: the biggest land kind takes
+46-52% of its food from kills and 15-24% from wood. "Hard or soft" gains again (9.9% of the blocks
+hard against 7.3%) and "big or small" turns over: a big body is a meal, so bodies settle at 28.1
+blocks against 34.9 and die at 76 steps against 91. Pure flesh kinds hold 2-4%.
+
+**What a bite is worth is the law, not what it costs.** A break gave 0.29 - one turn of a full gut's
+feeding, 2.9% of a prey - while pressing cost 0.002 a turn against an upkeep of 0.10. Five experiments
+had looked at the price of hunting. The rate that matters is the mouthful.
