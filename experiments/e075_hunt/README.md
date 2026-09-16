@@ -100,8 +100,83 @@ cores, about 40 minutes. About 6 core-hours in all, nothing on the Ubuntu box.
 
 ## Result
 
-(to come)
+**The checks.** A run with both rates 0 equals e073's kept run for seed 9 over 10,000 steps in all 163
+shared log columns, in every body of the census (7,624), in every lineage row and in every event.
+Matter drifts by at most 6.0e-14 over the 12 runs of 100,000 steps, and every run holds bodies on the
+land, at the surface and on the bottom.
+
+**The search** (11 runs, seed 9, 50,000 steps). The tear buys the flesh and the frail line does not:
+the kills' share goes from the control's 11.7% to 13.7% / 21.1% / 26.4% at a tear of 0.05 / 0.15 /
+0.4, while the frail line alone *lowers* it to 8.5% at 0.5 and 5.1% at 0.75 - a prey dies before it
+is eaten and its store lies in the cell for whoever stands there. But the frail line is what keeps
+kinds to a medium (3.7 in the control against 5.3-5.7 with it). The thicker crowd (the crown's yield
+off) was worse on both counts: its flesh kinds are gone and the kinds kept to a place fall to 3.7.
+
+Two centres came out of it and neither passed both lines set before the runs, so the search's own
+compromise was run as well. Three worlds, three seeds each, 100,000 steps, against e073's kept runs:
+
+| world | gain a break | kills | of it, the tear | kinds at a census | kept to a place | hunter kinds (of 3 seeds) | bodies | blocks | hard |
+|---|---|---|---|---|---|---|---|---|---|
+| control (e073) | 0.30 | 9.6% | - | 6.61 | 3.89 | 0 | 8,433 | 34.9 | 7.3% |
+| the tear 0.4 | 0.88 | 28.1% | 88% | 7.28 | 3.56 | 3 | 8,652 | 27.6 | 9.5% |
+| the set 0.15 / frail 0.75 | 0.82 | 19.0% | 80% | 7.17 | 4.00 | 1 | 7,801 | 33.7 | 9.5% |
+| **both: tear 0.4 / frail 0.5** | **1.01** | **27.4%** | **88%** | **7.67** | **4.78** | **2** | **9,099** | **28.1** | **9.9%** |
+
+### 1. The tear is what makes flesh a food, and the frail line is what places the kinds
+
+Alone, each law moves one measure and not the other: the tear puts the kills' share over e060's line
+for a hunter world (25%) and leaves the kinds kept to a place at 3.56, below the control's 3.89; the
+frail line holds the place (4.00) and leaves the kills at 19%. Together both rise - 27.4% of the
+intake and 4.78 kinds kept to a place, above the control on every seed (5.2, 4.7, 4.5 against 3.5,
+4.0, 4.2). That is #87's rule in one table: neither law is worth keeping alone.
+
+### 2. The land's browser becomes a hunter
+
+Under the control the biggest land kind is `plant/tooth/roams/land`: a tooth, 24-34% of its food from
+the crowns, 9-19% from kills. Under the set the same shape is `mixed/tooth/roams/land`, 8.6-13.7% of
+the grown bodies, **46-52% of its food from kills** and 15-24% from wood, with a hard face on a
+quarter of its blocks, walking 14-20 cells in a life. Pure flesh kinds (over two thirds from kills)
+appear too, at the shore and on the bottom, but they stay small: 2-4% of the grown bodies.
+
+So the hunter of this world is a browser that hunts, not a carnivore. A kind holding 5% of a census
+and taking more than half its food from kills is there on 2 seeds of 3 (the third reaches 46%).
+
+### 3. What the set costs the world
+
+Bodies are smaller (28.1 blocks against 34.9) and shorter-lived (a median death at 78 steps against
+91), the bottom's crowd grows by a third, and 12.7% of the deaths are wounds. The crowd is larger,
+not smaller (9,099 against 8,433). A step costs 26.0 ms against 19.0: the laws add no pass over the
+bodies - the tear is a line inside the contact physics and the frail line a comparison in the death
+loop - the extra time is the larger crowd and the blocks it breaks.
+
+### The hypotheses
+
+1. **A kind that lives by killing: yes at 0.4 / 0.5** (2 seeds of 3, and 46% on the third), and yes
+   for the tear alone on 3 of 3. No, for the tear at 0.15 with the frail line at 0.75 (1 of 3).
+2. **Stage C's measure does not fall: yes for the set** (7.67 and 4.78 against 6.61 and 3.89), no for
+   the tear alone (3.56 kinds kept to a place).
+3. **The world stands: yes.** Matter to 6.0e-14, bodies in all three media in all 12 runs, 8,860-9,442
+   bodies against the control's 8,203-8,652.
 
 ## Conclusion
 
-(to come)
+**Kept, as a set: `flesh_bite` 0.4 with `frail` 0.5 is stage C's default world from here**, and the
+controls are `experiments/e075_hunt/results/ladder/c1225_life{9,10,11}_both`.
+
+The answer to #90 is not the one the issue asked for. The world already ate the living (8-13% of the
+intake); what it had no way to do was **take a meal**. A break gave a hunter 2.9% of its prey, about
+one turn of grazing, so flesh was a by-product of walking into things. The tear makes one strike
+worth a meal (a break gives 1.01 against 0.30) and the frail line means the prey dies of it. Then a
+quarter of everything the world eats is the flesh of the living, and the biggest land kind lives half
+by hunting and half by browsing.
+
+Two lessons for the series beyond the law. **A measure that nobody re-derives is a law about the
+world**: "kills are 0.0%" was one column read wrong, and it set the question for a whole issue.
+And **a food is defined by its mouthful, not by its price**: five experiments looked for what made
+hunting too expensive, and the cost was never the barrier.
+
+These answers hold for this world and these choices: c1225, seeds 9-11, e073's kept world at
+`wood_yield` 3e-5, 100,000 steps, e068's census with its 5% line, and the two rates searched at 0.05
+to 0.4 and 0.5 to 0.75. Not shown: the rates between 0.15 and 0.4, a longer run, whether the hunter
+and the grazer invade each other (#72's instrument is in this crate for exactly that), and whether a
+pure flesh kind can hold more than 4% of a world this crowded.
