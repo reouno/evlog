@@ -220,6 +220,13 @@ a time. The design is `foundation.md`.
    kinds, and over 100,000 steps the mean re-opens the land's bodies (0.81 open soft faces a block against
    0.64), undoing what e072 bought. The cold is still not a place, and the question it was built for - is a
    standing forest a refuge in a season a lawn cannot hold - is now askable, because a forest stands.
+   **AGREED 2026-09-16: the next session starts #72, the invasion test.** It is the only one of #76's
+   three pass lines never attempted, and until e073 there was nothing to attempt it with: a world of
+   one way of living cannot be invaded. Now the land holds a browser with a tooth and the shore a
+   grazer, so a kind's genomes can be saved and a few put into a world the other kind holds, with the
+   resident's own genome as the neutral control. It adds no law and needs no search, and it is what
+   separates what this world can hold from what evolution happened to find. The seasonal refuge (is a
+   standing forest a refuge a lawn cannot hold) waits behind it.
 
 #73 (each axis alone) is withdrawn; #14 and #38 are folded into stages A and B; #58 is superseded.
 
