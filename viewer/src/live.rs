@@ -4,6 +4,7 @@
 use crate::http;
 use std::collections::VecDeque;
 use std::net::{TcpListener, TcpStream};
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Condvar, Mutex};
 use std::time::Duration;
 
@@ -16,8 +17,7 @@ pub struct Control {
 
 #[derive(Default)]
 struct Backlog {
-    bodies: Vec<Arc<Vec<u8>>>,   // every shape seen, for a browser that joins late
-    key: Option<Arc<Vec<u8>>>,   // the last frame carrying the cell layers
+    key: Option<Arc<Vec<u8>>>, // the last frame carrying the cell layers
 }
 
 struct Client {
@@ -31,6 +31,11 @@ pub struct Live {
     backlog: Mutex<Backlog>,
     header_rec: Arc<Vec<u8>>,
     header_json: String,
+    /// A browser has joined and knows no shapes: the next frame sends the shape of every body in
+    /// it (`View::frame`). The shapes seen once and gone are not kept for it - by step 42,000 of
+    /// e072 there were 2.6 million of them, 140 MB to send and 2 GB in the browser, before
+    /// anything was drawn - and a browser only needs the shapes of the bodies that are alive.
+    rejoin: AtomicBool,
 }
 
 const QUEUE_MAX: usize = 240; // a browser that falls behind loses the oldest frames, not the world
@@ -43,6 +48,7 @@ impl Live {
             backlog: Mutex::new(Backlog::default()),
             header_rec: Arc::new(header_rec),
             header_json,
+            rejoin: AtomicBool::new(false),
         });
         let listener = TcpListener::bind(("127.0.0.1", port)).unwrap_or_else(|e| panic!("viewer: port {port}: {e}"));
         http::warn_if_stale(&http::web_dir());
@@ -64,8 +70,12 @@ impl Live {
     }
 
     pub fn push_body(&self, rec: Arc<Vec<u8>>) {
-        self.backlog.lock().unwrap().bodies.push(rec.clone());
         self.push(rec);
+    }
+
+    /// Whether the frame being written now has to carry the shape of every body in it.
+    pub fn take_rejoin(&self) -> bool {
+        self.rejoin.swap(false, Ordering::Relaxed)
     }
 
     pub fn push_frame(&self, rec: Arc<Vec<u8>>, key: bool) {
@@ -130,18 +140,20 @@ impl Live {
 
     fn stream(self: &Arc<Self>, mut s: TcpStream) {
         let client = Arc::new(Client { q: Mutex::new(VecDeque::new()), cv: Condvar::new() });
-        // The world so far: the header, every shape, the last frame with the cell layers. It is
-        // taken while the queue is already registered, so nothing is missed and nothing is
-        // doubled that would matter (a repeated frame is idempotent).
+        // The world so far: the header and the last frame with the cell layers. It is taken while
+        // the queue is already registered, so nothing is missed and nothing is doubled that would
+        // matter (a repeated frame is idempotent). The shapes come with the next frame, which is
+        // told to carry them all by `rejoin`; until it arrives the bodies of the keyframe are not
+        // drawn, which is one frame of the world.
         let start: Vec<Arc<Vec<u8>>> = {
             let mut clients = self.clients.lock().unwrap();
             let b = self.backlog.lock().unwrap();
             clients.push(client.clone());
             let mut v = vec![self.header_rec.clone()];
-            v.extend(b.bodies.iter().cloned());
             v.extend(b.key.iter().cloned());
             v
         };
+        self.rejoin.store(true, Ordering::Relaxed);
         let ok = http::chunked(&mut s, "application/octet-stream").is_ok() && start.iter().all(|r| http::chunk(&mut s, r).is_ok());
         if ok {
             loop {

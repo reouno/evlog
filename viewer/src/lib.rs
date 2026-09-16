@@ -130,6 +130,13 @@ impl View {
         let key = self.is_key(step);
         self.keyed |= key;
         let View { layers: specs, bodies, buf, causes, dead, parents, born, out, .. } = self;
+        // A browser that has just joined knows no shapes, so this frame carries the shape of
+        // every body in it rather than only the ones the world has never sent.
+        let resend = match out {
+            Out::Live(l, _) => l.take_rejoin(),
+            _ => false,
+        };
+        let mut sent: std::collections::HashSet<u32> = std::collections::HashSet::new();
         let mut new_bodies: Vec<Vec<u8>> = Vec::new();
         let rec = {
             let fw = wire::FrameWriter::start(buf, step, globals);
@@ -138,7 +145,9 @@ impl View {
             fill(&mut |a: AgentIn| {
                 let (id, rec) = bodies.id(a.side, a.cells);
                 if let Some(r) = rec {
-                    new_bodies.push(r.to_vec());
+                    new_bodies.push(r);
+                } else if resend && sent.insert(id) {
+                    new_bodies.push(wire::body_record(id, a.side, a.cells));
                 }
                 fw.agent(&a, id);
             });

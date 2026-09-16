@@ -15,6 +15,10 @@ Watching the world in 3D. The experiment is the world; this crate is the window.
 `from` (and the browser's step box) runs the world at full speed to a step and then holds it to
 the speed asked for. Pause, one step, and faster or slower all reach the world itself.
 
+The page can be reloaded whenever the front end changes, and the world does not notice: the
+browser is only a watcher. It is given the header, the last frame with the cell layers, and then
+the next frame, which carries the shape of every body alive in it.
+
 **Replay.** The run writes a recording and the browser plays it at any speed, forwards or back,
 from any step:
 

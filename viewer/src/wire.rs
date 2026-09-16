@@ -166,12 +166,16 @@ pub fn header_json(init: &Init, stride: u64, layer_stride: u64, live: bool) -> S
 #[derive(Default)]
 pub struct Bodies {
     ids: HashMap<u64, u32>,
-    pub records: Vec<Vec<u8>>,
 }
 
 impl Bodies {
-    /// The id of this shape, and its record when it is new.
-    pub fn id(&mut self, side: u8, cells: &[u8]) -> (u32, Option<&[u8]>) {
+    /// The id of this shape, and its record when the shape is one that has not been sent.
+    ///
+    /// The records themselves are not kept. A world of bodies that grow and wear meets a great
+    /// many shapes - 2.6 million by step 42,000 of e072 - and holding each one cost the world's
+    /// own memory and, worse, was what a browser joining a live world had to be sent before it
+    /// saw a single frame. A shape is written again from the body that has it (`body_record`).
+    pub fn id(&mut self, side: u8, cells: &[u8]) -> (u32, Option<Vec<u8>>) {
         let mut hash: u64 = 0xcbf29ce484222325;
         for &b in std::iter::once(&side).chain(cells) {
             hash = (hash ^ b as u64).wrapping_mul(0x100000001b3);
@@ -179,15 +183,19 @@ impl Bodies {
         if let Some(&id) = self.ids.get(&hash) {
             return (id, None);
         }
-        let id = self.records.len() as u32;
+        let id = self.ids.len() as u32;
         self.ids.insert(hash, id);
-        let mut p = Vec::with_capacity(cells.len() + 5);
-        p.extend_from_slice(&id.to_le_bytes());
-        p.push(side);
-        p.extend_from_slice(cells);
-        self.records.push(record(KIND_BODY, &p));
-        (id, Some(self.records.last().unwrap()))
+        (id, Some(body_record(id, side, cells)))
     }
+}
+
+/// One shape as it goes on the wire.
+pub fn body_record(id: u32, side: u8, cells: &[u8]) -> Vec<u8> {
+    let mut p = Vec::with_capacity(cells.len() + 5);
+    p.extend_from_slice(&id.to_le_bytes());
+    p.push(side);
+    p.extend_from_slice(cells);
+    record(KIND_BODY, &p)
 }
 
 /// Write one frame's payload into `buf`.
