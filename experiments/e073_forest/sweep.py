@@ -33,7 +33,7 @@ def log_stats(pre):
     with open(pre + "_log.csv") as f:
         rows = list(csv.DictReader(f))
     half = [r for r in rows if int(r["step"]) >= int(rows[-1]["step"]) / 2]
-    col = lambda k: [float(r[k]) for r in half]  # noqa: E731
+    col = lambda k: [float(r[k]) for r in half] if k in half[0] else [0.0]  # noqa: E731  (e072's runs have no browse)
     deaths = {c: sum(float(r[f"deaths_{c}"]) for r in half) for c in CAUSES}
     total = max(sum(deaths.values()), 1)
     intake = max(st.mean(col("plant_intake")) + st.mean(col("meat_intake")), 1e-9)
@@ -57,7 +57,30 @@ def log_stats(pre):
 def rates_of(pre):
     with open(pre + "_row.csv") as f:
         row = next(csv.DictReader(f))
-    return {k: float(row[k]) for k in RATES}
+    return {k: float(row.get(k, 0.0)) for k in RATES}  # e072's runs have neither of e073's rates
+
+
+def kind_rows(name, run, ways, unit, held):
+    """One row per kind of a run, for the report's gallery: its commonest birth body and what it does."""
+    members = defaultdict(list)
+    for i, r in enumerate(run.grown):
+        members[ways[unit[i]]].append(r)
+    out = []
+    for w, rs in members.items():
+        body = Counter((r["side"], r["cells"]) for r in rs).most_common(1)[0][0]
+        food = sum(float(r["plant"]) + float(r["meat"]) for r in rs)
+        by_m = Counter(r["medium"] for r in rs)
+        out.append({"run": name, "kind": " / ".join(w), "share": len(rs) / len(run.grown), "held": w in held,
+                    "side": body[0], "cells": body[1], "bodies": len(rs),
+                    "born_size": st.median(int(r["born_size"]) for r in rs),
+                    "hard": st.mean(int(r["born_hard"]) for r in rs) / max(st.mean(int(r["born_size"]) for r in rs), 1),
+                    "open_born": st.median(int(r["open_soft"]) for r in rs) / max(st.median(int(r["size"]) for r in rs), 1),
+                    "travel": st.median(float(r["travel"]) for r in rs),
+                    "wood": sum(float(r["wood"]) for r in rs) / max(food, 1e-9),
+                    "kills": sum(float(r["killed"]) for r in rs) / max(food, 1e-9),
+                    "land": by_m["0"] / len(rs), "surface": by_m["1"] / len(rs), "bottom": by_m["2"] / len(rs),
+                    "cold": sum(band_of(r["place"]) == "cold" for r in rs) / len(rs)})
+    return sorted(out, key=lambda r: -r["share"])
 
 
 def read_run(name, pre):
@@ -69,40 +92,53 @@ def read_run(name, pre):
     rows = defaultdict(list)
     for i, r in enumerate(run.grown):
         rows[ways[unit[i]]].append(r)
-    placed, banded, by_wood, lines = 0, 0, 0, []
+    # The world's own band, so that keeping to it counts for nothing: in e072's runs 82% of the
+    # bodies stand in the hot band, and a kind 96% hot is the world, not a place.
+    world = Counter(band_of(r["place"]) for r in run.grown).most_common(1)[0][0]
+    placed, banded, off_band, by_wood, lines = 0, 0, 0, 0, []
     for w in sorted(held):
         rs = rows[w]
         bands = Counter(band_of(r["place"]) for r in rs)
         band, n = bands.most_common(1)[0]
+        keeps = n >= kinds.KEEP * len(rs)
         food = sum(float(r["plant"]) + float(r["meat"]) for r in rs)
         woody = sum(float(r["wood"]) for r in rs) / max(food, 1e-9)
         placed += w[3] != "shore"
-        banded += n >= kinds.KEEP * len(rs)
+        banded += keeps
+        off_band += keeps and band != world
         by_wood += woody >= 0.2
-        lines.append(f"{'/'.join(w)} [{band} {n / len(rs):.0%}, wood {woody:.0%}, {len(rs)} bodies]")
+        lines.append(f"{'/'.join(w)} [{band} {n / len(rs):.0%}, cold {bands['cold'] / len(rs):.0%}, wood {woody:.0%}, {len(rs)} bodies]")
+    # `placed` counts only kinds held at every census, so an even world loses it for being even
+    # (#88). `placed_at` is the like-for-like: of the kinds at a census, how many keep to a medium.
+    placed_at = st.mean(sum(w[3] != "shore" for w in ws) for ws in per.values())
+    top = Counter(ways[unit[i]] for i in range(len(run.grown))).most_common(1)[0][1] / len(run.grown)
     out = {"name": name, "kinds_held": len(held), "kinds_at": kinds.mean_count(per),
-           "lean": min(len(k) for k in per.values()), "placed": placed, "banded": banded, "by_wood": by_wood,
-           "forms": len(set(unit)), "ways": "; ".join(lines)}
+           "lean": min(len(k) for k in per.values()), "placed": placed, "placed_at": placed_at, "top_kind": top,
+           "travel": st.median(float(r["travel"]) for r in run.grown), "banded": banded, "off_band": off_band,
+           "by_wood": by_wood, "world_band": world, "forms": len(set(unit)), "ways": "; ".join(lines)}
     out.update(log_stats(pre))
     out.update(rates_of(pre))
-    return out
+    return out, kind_rows(name, run, ways, unit, held)
 
 
 def main():
-    dirs = sys.argv[1:] or [os.path.join(HERE, "results", "search")]
-    pres = sorted({os.path.join(d, f[: -len("_agents.csv")]) for d in dirs for f in os.listdir(d) if f.endswith("_agents.csv")})
-    rows = []
+    args = sys.argv[1:] or [os.path.join(HERE, "results", "search")]
+    pres = sorted({a[: -len("_agents.csv")] if a.endswith("_agents.csv") else os.path.join(a, f[: -len("_agents.csv")])
+                   for a in args for f in ([""] if a.endswith("_agents.csv") else os.listdir(a)) if a.endswith("_agents.csv") or f.endswith("_agents.csv")})
+    rows, per_kind = [], []
     for pre in pres:
-        name = os.path.basename(pre).split("_")[-1]
+        name = "_".join(os.path.basename(pre).split("_")[1:])
         try:
-            rows.append(read_run(name, pre))
+            row, ks = read_run(name, pre)
+            rows.append(row)
+            per_kind += ks
         except Exception as e:  # a run that died out has no grown bodies
             print(f"{name}: {type(e).__name__}: {e}")
     print(f"{'run':>7} {'day':>4} {'yield':>7} {'food':>5} {'hd':>3} {'held':>4} {'at':>5} {'lean':>4} {'plcd':>4} {'band':>4} {'wood':>4} "
           f"{'pop':>7} {'min':>7} {'browse%':>7} {'wood%':>6} {'stand':>6} {'brwse':>6} {'grass':>6} {'tooth':>6} {'warm':>5} {'cold':>5} {'ms':>5}")
     for r in sorted(rows, key=lambda r: r["name"]):
         print(f"{r['name']:>7} {r['day_temp']:>4.1f} {r['wood_yield']:>7.0e} {r['wood_food']:>5.2f} {r['wood_hard']:>3.0f} "
-              f"{r['kinds_held']:>4} {r['kinds_at']:>5.1f} {r['lean']:>4} {r['placed']:>4} {r['banded']:>4} {r['by_wood']:>4} "
+              f"{r['kinds_held']:>4} {r['kinds_at']:>5.1f} {r['lean']:>4} {r['placed']:>4} {float(r['placed_at']):>5.1f} {float(r['top_kind']):>5.0%} {float(r['travel']):>5.1f} {r['banded']:>4} {r['off_band']:>4} {r['by_wood']:>4} "
               f"{r['pop']:>7.0f} {r['pop_min']:>7.0f} {r['browse_share']:>7.1%} {r['wood_share']:>6.1%} {r['wood_stand']:>6.3f} "
               f"{r['browse_stand']:>6.3f} {r['grass_stand']:>6.3f} {r['tooth']:>6.1%} {r['warm_land']:>5.2f} {r['death_cold']:>5.1%} {r['ms_step']:>5.1f}")
     if rows:
@@ -111,7 +147,12 @@ def main():
             w = csv.DictWriter(f, fieldnames=list(rows[0]))
             w.writeheader()
             w.writerows(rows)
-        print(f"\n{len(rows)} runs -> {out}")
+        kout = os.path.join(HERE, "results", "kinds.csv")
+        with open(kout, "w", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=list(per_kind[0]))
+            w.writeheader()
+            w.writerows(per_kind)
+        print(f"\n{len(rows)} runs -> {out}, {len(per_kind)} kinds -> {kout}")
         for r in sorted(rows, key=lambda r: r["name"]):
             print(f"  {r['name']}: {r['ways']}")
 
