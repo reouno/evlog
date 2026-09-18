@@ -274,36 +274,81 @@ partly what a world without a predator looks like.
 ecological one. Before rejecting a law because a way did not appear, seed the world with the kinds it should
 favour and inject the missing one beside a control (e074's instruments, in e075's crate).
 
-## 13. What e077 measured (2026-09-19)
+## 13. The refuge, as a cycle (#91, draft 2026-09-19)
 
-#91 step 0 (`experiments/e077_refuge`): where and when the season takes the lawn in the default world. No law.
+#91 asks for a place that matters at one time of year and not at another: a stand of wood that holds a line
+through the bad season while the open lawn cannot. e077 and e078 tried it as two conditions (the season takes
+the lawn, the stand keeps what it loses) and e078 built the second one alone, as shade. This section designs it
+as a cycle first. Numbers are e078's control (seed 9, steps 36,000-60,000; `experiments/e078_shade/budget.py`),
+a body's water in units of its fill a turn, food per 1,000 steps.
 
-**The year has two bad seasons on the mid-latitude land, and neither is hunger's alone.** From 20 degrees of
-latitude out, the lawn grows almost nothing in winter (a quarter's growth 0.02-0.07 of its best at 30-40 N,
--6 to 4 C) and grows best in summer, when its bodies are gone (27 and 53 at 30 and 40 N against 298 and 219
-in the autumn) at 35-38 C. The land's crowd falls from about 5,000 at the equinoxes to 2,900 at both
-solstices, with the standing grass highest when the land holds fewest bodies. The heat law's comfort band
-(15-30 C) is what prices the summer.
+### What the land runs on today
 
-**The stands are a home, not a refuge.** Wood of 1 or more a cell stands only between 30 S and 20 N. Its bodies
-hold within 9% through the year; the share of the land's bodies in a stand doubles at the solstices (0.27 to
-0.55) only because the lawn empties. A stand is within 1-5 C of the lawn beside it in the hot quarter, so
-section 2's "where it lives" axis has a place that differs by season (the mid-latitude lawn) and none that
-differs against it.
+1. **Heat is paid in water.** A land body holds 22-29 C in every zone and season, by sweating. Where it is warm,
+   cooling takes 0.002-0.0045 of its fill a turn, as much as wet ground gives to drink (0.0014-0.0045); the dry
+   air takes 0.0003-0.0023 more. Pools give twenty times the ground's drink but are 0.3% of the land. Thirst is
+   42-48% of all deaths. (e078 read the cell: the "13-19 degrees over 30 C" is what the body pays in water.)
+2. **So water, not food, sets where land bodies live.** Tropical lawns grow 0.29-0.35 grass a cell and hold
+   0.006-0.045 bodies a cell: 6-55 of food a body, standing grass 0.25-0.50 a cell uneaten. Stands grow on the
+   wettest warm ground (wood grows with warmth x the ground's fill), close the water budget (fill 0.55-0.80) and
+   are crowded to 2.5-5 of food a body. **A stand is a home because of the ground it grows on**, not its crown.
+3. **The season moves the water budget, and the stand with the lawn.** At 20-50 degrees in spring and autumn
+   the lawn's budget nearly closes and the lawn holds most of the land's bodies. In summer the ground dries and
+   the cooling doubles: the lawn (fill 0.26) and the stand (fill 0.20) both run dry and their bodies die at a
+   median of 90-95 steps. In winter water is plenty; warming costs 0.011-0.017 of energy a turn (about a tenth
+   of the upkeep), the grass grows a third of its spring rate, and the crowns' browse falls as in any season.
+4. **Stands next to the seasonal lawns are few.** Wood grows only with warmth but dies at a constant rate in
+   winter, so stands (wood 1 or more) hold only from 30 S to 20 N, with about 1,400 stand cells at 20-40 N.
+5. **The time scale.** A grown body lives about 1/20 of a year; a refuge keeps a line, not a walking body.
 
-**The time scale.** Half the dead die by about 75 steps (children in the crowd); a grown body lives to a median
-of 500-570 steps, about 1/20 of a year, and the oldest to about 4,400, a third of one: the season is a slow environment in
-section 4's sense, and anything that follows it does so by lines, not by bodies walking.
+### What a refuge needs, and where it stands today
 
-## 14. What e078 measured (2026-09-19)
+| | the payoff | today |
+|---|---|---|
+| R1 | the lawn pays more than the stand in the good season, so lines spread out | at 20-50 degrees in spring and autumn, yes (4.0 of food a body against 2.7) |
+| R2 | the stand pays more than the lawn in the bad season | summer: no, both run dry. Winter: partly (browse falls, fill 0.89), but few stands |
+| R3 | the stand has room in the bad season | no: the stands are the crowded places all year |
+| R4 | stands within a life's travel of the seasonal lawns | only at 20-30 degrees |
+| R5 | a line can live on both, grass in the good season and the stand's food in the bad | the top line in both is a hunter (e077); browse needs a tooth |
 
-#91 step 1 (`experiments/e078_shade`): the crown's shade on the body's side, as two rates (the heat a body
-reads pulled toward the day's mean, the dry air cut), 11 runs on seed 9.
+### The set, designed together
 
-**The heat law's band sits below the climate the bodies live in.** Over every climate update, the tropical
-lawn reads 13-19 degrees over 30 C on average in every quarter, and a 20-30 N stand in the north's summer
-has a day's mean of about 37 C. Thirst is 42-48% of all deaths in every run. A crown that removes the day's
-swing halves a stand's degrees over (17.4 to 8.5 at k 5) and leaves the stands' bodies flat by season: a
-steadier place, not a cooler one. For the balance table this puts the heat set (A) itself in question: a
-place that differs by the heat has to differ in its mean, and the band has to fall inside the range the
-climate offers, or every warm place is one tax.
+Each part: what it takes, what refills it, what limits it.
+
+- **S1. The crown keeps its ground wet.** A crown cuts the evaporation from the ground under it by its shade
+  (a forest floor holds its water). It takes vapour from the air above the stands, so less rain may fall
+  downwind; it refills the stand's own ground, and wood grows with the ground's fill, so a stand keeps the
+  ground it needs (the forest's feedback on its water). The ground's capacity (150 mm) and fire limit it:
+  wetter ground burns less, so check that the stands do not close over the lawn.
+- **S2. Wood rests in the cold.** Wood's death follows warmth as its growth does (a trunk does not die faster in
+  a winter it cannot grow in). It takes nothing new and places stands at 20-50 degrees, next to the seasonal
+  lawns (R4). The grass under a crown loses light, so the lawn shrinks where stands spread: the mosaic's share
+  is set by the wet ground and fire, and is to be read, not tuned.
+- **S3. The crown takes its share of the sun's heat.** What a body feels under a crown is lowered by the shade's
+  share of the sun's heating, a cooler mean and not only a flatter day (e078's `shade_heat` is the flat day).
+  It takes cooling water off a body in a stand. With S1 it is what can close a stand's summer budget (R2).
+- **Kept as they are, as counterweights:** the grass under a crown gets less light and the browse is thin
+  (3e-5; e073: a rich crown food makes one winner). With water no longer binding the stand, its food does:
+  2.5-5 a body against the good season's lawn at 4-55, so the stand is the poorer place in the good season
+  (R1) and the richer one only when the lawn fails. The hunters already lead the stands; when lawn lines crowd
+  in during the bad season, the flesh there rises and the hunters thin it (R3). Nothing is added for R5: a
+  line that carries both a gut and a tooth is what the season should select, and its absence is a finding.
+
+**The cycle expected at 20-50 degrees.** Spring and autumn: the lawn's grass flushes and its water budget
+closes; lawn lines grow; the stands hold at their thin browse. Summer: the lawn's budget fails as today; the
+stands', with a wet floor and a cooler mean, holds; the lawn lines at a stand's edge have their children in it
+and the stand's bodies rise; the hunters follow. Winter: the lawn stops growing; the browse still falls and the
+stand's ground is wet; the stand holds again. Twice a year the stands fill and empty.
+
+**What would show the design wrong:** in spring and autumn the stands hold more bodies a cell than the lawn
+beside them (still a home, R1/R3); a stand's summer fill stays under 0.4 (S1 and S3 too weak); the stands close
+over the mid-latitude lawn, or the lawn's rain falls by more than a fifth (S1 drains the lawn); the stands'
+bodies at the solstices over the equinoxes stay within e078's 0.96-1.04.
+
+### Order and cost
+
+S1 and S2 change the producers, so they make a new settled world: stage B's instrument first, the producers
+alone on c1225 with S1 and S2 at a few rates, read for where stands stand, the ground's fill by season and the
+rain (no bodies; 5-10 minutes a candidate, e062). Then the bodies, with S3, on the new world against the same world with
+S3 at 0: a few candidates on seed 9 at 60,000 steps, then three seeds. The new world then needs its own
+controls, and stage C's default world moves if it is kept.

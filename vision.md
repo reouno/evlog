@@ -311,10 +311,11 @@ a time. The design is `foundation.md`.
    steps. **A damper does not make a refuge.** At k 5 a stand's degrees over 30 C in the hot quarter halve
    (17.4 to 8.5; the lawn 18.9), and cold deaths fall from 1.8% to 1.1%, but the stands' bodies stay flat by
    season in every run (solstices over equinoxes 0.96-1.04) and no line follows the season: the day's mean
-   in a 20-30 N stand in summer is itself about 37 C, which damping cannot go below. The tropics read 13-19
-   degrees over the band in every quarter and thirst is 42-48% of all deaths. What it changes: (B) turns
-   on the mean, not the swing: a crown that takes its share of the sun's heat, or a heat band that fits
-   the climate the bodies live in. The two rates stay as arguments, 0 by default.
+   in a 20-30 N stand in summer is itself about 37 C, which damping cannot go below. A body pays the heat in
+   water (cooling takes as much as wet ground gives to drink), so water sets where land bodies live and
+   thirst is 42-48% of all deaths. What it changes: the refuge is
+   designed as a cycle before any run (`balance.md` section 13: wet ground under crowns, wood resting in
+   the cold, the crown's share of the sun's heat). The two rates stay as arguments, 0 by default.
 
 #73 (each axis alone) is withdrawn; #14 and #38 are folded into stages A and B; #58 is superseded.
 

@@ -119,3 +119,9 @@ For #91 this moves (B) from the swing to the mean: either the crown takes its sh
 climate the bodies live in (the tropics read 13-19 degrees over it in every quarter, and thirst is
 nearly half of all deaths). Which to test first is the next decision; the two rates stay as arguments
 (both 0 by default).
+
+**Correction (same day, `budget.py`).** "Degrees over 30 C" is the cell's reading. A body holds 22-29 C in
+every zone and season by sweating: what the heat costs it is water, 0.002-0.0045 of its fill a turn where it
+is warm, as much as wet ground gives to drink. That, not the band's place, is why thirst is nearly half of all
+deaths and why stands (the wettest ground) are crowded homes. #91's next step is designed as a cycle in
+`balance.md` section 13.
