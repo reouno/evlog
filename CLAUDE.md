@@ -47,6 +47,10 @@ Every experiment must state, before starting:
 A law that needs a behavior is tested in a world where that behavior already pays: name the two
 conditions together ("Y pays when A and B") and run the minimal combination, not a factorial.
 
+Naming two conditions is not enough: the world is a web of cycles. Before proposing a change, write what
+it takes from whom, what refills it, which feedback limits it, and the balance it should settle into
+(who wins where and when). Add and remove parts together so that design holds.
+
 And must end with:
 
 - **Result**: what happened, with numbers where possible
