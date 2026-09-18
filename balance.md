@@ -294,3 +294,16 @@ differs against it.
 **The time scale.** Half the dead die by about 75 steps (children in the crowd); a grown body lives to a median
 of 500-570 steps, about 1/20 of a year, and the oldest to about 4,400, a third of one: the season is a slow environment in
 section 4's sense, and anything that follows it does so by lines, not by bodies walking.
+
+## 14. What e078 measured (2026-09-19)
+
+#91 step 1 (`experiments/e078_shade`): the crown's shade on the body's side, as two rates (the heat a body
+reads pulled toward the day's mean, the dry air cut), 11 runs on seed 9.
+
+**The heat law's band sits below the climate the bodies live in.** Over every climate update, the tropical
+lawn reads 13-19 degrees over 30 C on average in every quarter, and a 20-30 N stand in the north's summer
+has a day's mean of about 37 C. Thirst is 42-48% of all deaths in every run. A crown that removes the day's
+swing halves a stand's degrees over (17.4 to 8.5 at k 5) and leaves the stands' bodies flat by season: a
+steadier place, not a cooler one. For the balance table this puts the heat set (A) itself in question: a
+place that differs by the heat has to differ in its mean, and the band has to fall inside the range the
+climate offers, or every warm place is one tax.

@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-09-19 (after e077: the season takes the mid-latitude lawn twice a year, to cold and to heat; the tropical stands beside it keep their bodies but are no cooler).
+Last updated: 2026-09-19 (after e078: a crown that damps the day a body feels does not make a refuge, because the stand's day's mean is itself over the heat law's band).
 
 ## What the viewer should see
 
@@ -306,6 +306,15 @@ a time. The design is `foundation.md`.
    A grown body lives about 1/20 of a year (the oldest a third): a refuge here would keep a line, not shelter a walking body. What it
    changes: #91's condition (B) is to be built with the heat first (a crown that damps the temperature a
    body feels), then the water under shade.
+   #91 step 1 done 2026-09-19 (e078): the crown's shade as two rates (k: what a body's heat reads is pulled
+   toward the day's mean by k x shade; k2: the dry air cut by k2 x shade), 11 runs on seed 9 at 60,000
+   steps. **A damper does not make a refuge.** At k 5 a stand's degrees over 30 C in the hot quarter halve
+   (17.4 to 8.5; the lawn 18.9), and cold deaths fall from 1.8% to 1.1%, but the stands' bodies stay flat by
+   season in every run (solstices over equinoxes 0.96-1.04) and no line follows the season: the day's mean
+   in a 20-30 N stand in summer is itself about 37 C, which damping cannot go below. The tropics read 13-19
+   degrees over the band in every quarter and thirst is 42-48% of all deaths. What it changes: (B) turns
+   on the mean, not the swing: a crown that takes its share of the sun's heat, or a heat band that fits
+   the climate the bodies live in. The two rates stay as arguments, 0 by default.
 
 #73 (each axis alone) is withdrawn; #14 and #38 are folded into stages A and B; #58 is superseded.
 
