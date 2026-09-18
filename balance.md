@@ -253,3 +253,23 @@ blocks against 34.9 and die at 76 steps against 91. Pure flesh kinds hold 2-4%.
 **What a bite is worth is the law, not what it costs.** A break gave 0.29 - one turn of a full gut's
 feeding, 2.9% of a prey - while pressing cost 0.002 a turn against an upkeep of 0.10. Five experiments
 had looked at the price of hunting. The rate that matters is the mouthful.
+
+## 12. What e076 settled (2026-09-18)
+
+#72's paired invasion on the pair e075 made, the land's hunter and the shore's grazer (`experiments/e076_pair`,
+#92). No law; worlds seeded with one kind alone, then a hundred of each kind injected side by side.
+
+**The world holds more than evolution finds, when a part is missing.** A world seeded with grazers that carry
+no tooth and no muscle (seeds 9 and 11) eats flesh again at once (16% of the food by step 10,000: soft faces
+break under any push) but makes no hunter: at most 0.1% of its residents live that way at any census up to
+step 40,000. The same world, given a hundred hunters, lets them grow to half of it. Where the grazer carries a
+tooth in 13% of its bodies (seed 10), the hunter is back at the donor's level in 20,000 steps, as e074's
+browser was. The other way is quick on every seed: a world of hunters grows grazers within 10,000 steps.
+
+**The hunter holds the crowd.** Without it the grazer's world doubles (17,800-20,000 bodies against the kept
+world's 9,099); with the injected hunter it is back at about 10,000 within 2,000 steps. Section 2's jam is
+partly what a world without a predator looks like.
+
+**For judging a law:** a way that needs a part the population has lost is a reachability question, not an
+ecological one. Before rejecting a law because a way did not appear, seed the world with the kinds it should
+favour and inject the missing one beside a control (e074's instruments, in e075's crate).

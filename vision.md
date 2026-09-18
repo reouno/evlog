@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-09-17 (after e075: a bite too small to be a meal; the tear and the frail line make the land's browser hunt).
+Last updated: 2026-09-18 (after e076: a world of toothless grazers holds a hunter it cannot make; reachability is set by the parts a population carries).
 
 ## What the viewer should see
 
@@ -280,6 +280,22 @@ a time. The design is `foundation.md`.
    shore and on the bottom but hold 2-4%: the hunter of this world is a browser that hunts.
    Proposed next (not yet agreed): #72's paired invasion on the pair it was built for, the hunting
    browser against the shore's grazer; then #91, the seasonal refuge.
+   Fourteenth step done 2026-09-18 (e076, #92): the paired invasion on that pair, in worlds seeded with
+   one kind alone (e074's `minus` worlds no longer make sense: 56-70% of the grown bodies take a quarter
+   of their food from kills). **The gap between what the world holds and what evolution finds opens, in
+   one direction.** A world of grazers with no tooth and no muscle (seeds 9 and 11) eats flesh again at
+   once - a soft face breaks under any push - but makes no hunter: at most 0.1% of its residents live
+   that way at any census up to step 40,000. Given a hundred hunters beside a hundred of its own
+   genomes, the same world lets the hunters grow to half of it (5,305 and 5,640 against 487 and 0), and
+   its crowd, doubled without a predator (17,800-20,000), falls back to about 10,000. Where the grazer
+   carries a tooth in 13% of its bodies (seed 10) the hunter is back at the donor's level in 20,000
+   steps and the injected one dies out; a world of hunters grows grazers within 10,000 steps on every
+   seed. **What evolution reaches here is set by the parts a population carries, not by what a way is
+   worth**, so e074's rule ("never read a seed as reachability") holds only for close pairs. What it
+   changes: before rejecting a law because a way did not appear, seed and inject (the instruments are
+   in e075's crate); and the crowd that jams stage C is partly a world without a predator.
+   Proposed next (not yet agreed): #91, the seasonal refuge (is a standing forest a refuge a lawn
+   cannot hold), in the default world, which now has a hunter to hide from.
 
 #73 (each axis alone) is withdrawn; #14 and #38 are folded into stages A and B; #58 is superseded.
 
