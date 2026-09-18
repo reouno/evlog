@@ -303,7 +303,7 @@ a time. The design is `foundation.md`.
    pays water to cool. The land's crowd falls from 5,000 to 2,900 at each solstice. The stands (wood of
    1 or more a cell) lie in the tropics beside those lawns, within a life's travel, and keep their bodies
    within 9% all year; but they are as hot as the lawn next to them, so they hold nothing the lawn lost.
-   A body lives 1/80 of a year: a refuge here would keep a line, not shelter a walking body. What it
+   A grown body lives about 1/20 of a year (the oldest a third): a refuge here would keep a line, not shelter a walking body. What it
    changes: #91's condition (B) is to be built with the heat first (a crown that damps the temperature a
    body feels), then the water under shade.
 

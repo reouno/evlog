@@ -291,5 +291,6 @@ hold within 9% through the year; the share of the land's bodies in a stand doubl
 section 2's "where it lives" axis has a place that differs by season (the mid-latitude lawn) and none that
 differs against it.
 
-**The time scale.** A body lives about 140 steps, 1/80 of a year: the season is a slow environment in
+**The time scale.** Half the dead die by about 75 steps (children in the crowd); a grown body lives to a median
+of 500-570 steps, about 1/20 of a year, and the oldest to about 4,400, a third of one: the season is a slow environment in
 section 4's sense, and anything that follows it does so by lines, not by bodies walking.

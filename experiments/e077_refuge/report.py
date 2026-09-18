@@ -482,12 +482,12 @@ its spring and autumn only.</p>
 {CHARTS4}
 </div>
 <p>Stand bodies are the same in every quarter. The lawn's crowd rises and falls by births and deaths in
-place: a body lives about 140 steps, 1/80 of a year, so no body could walk with the season. On seeds 9
+place: a grown body lives about 1/20 of a year (the oldest a third), so almost no body could walk with the season. On seeds 9
 and 11 one hunting line leads both the stands and the lawn (Figure 2): a line already spans both.</p>
 
 <h2>4. Discussion</h2>
 <p>(A) is there, in this world's conditions: a heat law with a comfort band of 15-30 C, a 75-step day, and
-lives 1/80 of a year long. The season takes the mid-latitude lawn twice, and the stands are within a
+grown lives about 1/20 of a year long. The season takes the mid-latitude lawn twice, and the stands are within a
 life's travel of it.</p>
 <p>What the stand lacks is (B). It is as hot as the lawn beside it, so in the summer it offers nothing
 the lawn lost, and in winter nothing grows under it that the lawn's bodies could live on. The refuge,

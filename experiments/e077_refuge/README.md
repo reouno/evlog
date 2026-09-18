@@ -81,8 +81,10 @@ a quarter centred on phase 0, 0.25, 0.5, 0.75; the north's summer is phase 0.25)
   with no pattern by season. At step 60,000 the largest line in the stands is also the largest on the
   mid-latitude lawn on seeds 9 and 11 (a hunter, kills 32-55% of its food); on seed 10 the lawn's is a
   grazer (47 gut blocks of 49).
-- A life is about 140 steps and a year 11,880: a body lives 1/80 of a year, so nothing can migrate with
-  the season as a body. A refuge would work across generations: a line held in the stand through the
+- Lives against the year (11,880 steps; e075's kept runs, steps 20,000-100,000): half the dead die by
+  about 75 steps, most as children in the crowd; a grown body (300 steps or more) lives to a median of
+  500-570, about 1/20 of a year, and the oldest to about 4,400, a third of one. No body dies of wear.
+  So almost nothing can migrate with the season as a body. A refuge would work across generations: a line held in the stand through the
   bad quarter and spread back onto the lawn.
 
 ## Conclusion
@@ -94,7 +96,7 @@ a quarter centred on phase 0, 0.25, 0.5, 0.75; the north's summer is phase 0.25)
    a year, not because bodies go into the stands (their number holds within 9%).
 
 **(A) is there**, in the conditions of this world (c1225, a 75-step day, a heat law with a comfort band of
-15-30 C, a body living 1/80 of a year): the season takes the mid-latitude lawn twice a year, in winter by
+15-30 C, a grown body living about 1/20 of a year): the season takes the mid-latitude lawn twice a year, in winter by
 food and in summer by heat, and the stands are within a life's travel of it. What is missing is (B): a
 stand today is as hot as the lawn next to it (within 1-5 C in the hot quarter), so it gives nothing the
 lawn lost. For #91 step 1 this puts **the heat buffered under crowns** first: the summer's loss is
