@@ -273,3 +273,23 @@ partly what a world without a predator looks like.
 **For judging a law:** a way that needs a part the population has lost is a reachability question, not an
 ecological one. Before rejecting a law because a way did not appear, seed the world with the kinds it should
 favour and inject the missing one beside a control (e074's instruments, in e075's crate).
+
+## 13. What e077 measured (2026-09-19)
+
+#91 step 0 (`experiments/e077_refuge`): where and when the season takes the lawn in the default world. No law.
+
+**The year has two bad seasons on the mid-latitude land, and neither is hunger's alone.** From 20 degrees of
+latitude out, the lawn grows almost nothing in winter (a quarter's growth 0.02-0.07 of its best at 30-40 N,
+-6 to 4 C) and grows best in summer, when its bodies are gone (27 and 53 at 30 and 40 N against 298 and 219
+in the autumn) at 35-38 C. The land's crowd falls from about 5,000 at the equinoxes to 2,900 at both
+solstices, with the standing grass highest when the land holds fewest bodies. The heat law's comfort band
+(15-30 C) is what prices the summer.
+
+**The stands are a home, not a refuge.** Wood of 1 or more a cell stands only between 30 S and 20 N. Its bodies
+hold within 9% through the year; the share of the land's bodies in a stand doubles at the solstices (0.27 to
+0.55) only because the lawn empties. A stand is within 1-5 C of the lawn beside it in the hot quarter, so
+section 2's "where it lives" axis has a place that differs by season (the mid-latitude lawn) and none that
+differs against it.
+
+**The time scale.** A body lives about 140 steps, 1/80 of a year: the season is a slow environment in
+section 4's sense, and anything that follows it does so by lines, not by bodies walking.

@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-09-18 (after e076: a world of toothless grazers holds a hunter it cannot make; reachability is set by the parts a population carries).
+Last updated: 2026-09-19 (after e077: the season takes the mid-latitude lawn twice a year, to cold and to heat; the tropical stands beside it keep their bodies but are no cooler).
 
 ## What the viewer should see
 
@@ -296,6 +296,16 @@ a time. The design is `foundation.md`.
    in e075's crate); and the crowd that jams stage C is partly a world without a predator.
    Proposed next (not yet agreed): #91, the seasonal refuge (is a standing forest a refuge a lawn
    cannot hold), in the default world, which now has a hunter to hide from.
+   #91 step 0 done 2026-09-19 (e077): no law, e075's kept runs read by season plus three measuring runs.
+   **The season takes the lawn away, but in two ways and in one place.** World-wide the lawn's growth
+   moves only 22% over the year. From 20 degrees of latitude out it is lost twice a year: in winter it
+   stops growing, in summer it grows best but stands uneaten at 35-38 C, above the 30 C where a body
+   pays water to cool. The land's crowd falls from 5,000 to 2,900 at each solstice. The stands (wood of
+   1 or more a cell) lie in the tropics beside those lawns, within a life's travel, and keep their bodies
+   within 9% all year; but they are as hot as the lawn next to them, so they hold nothing the lawn lost.
+   A body lives 1/80 of a year: a refuge here would keep a line, not shelter a walking body. What it
+   changes: #91's condition (B) is to be built with the heat first (a crown that damps the temperature a
+   body feels), then the water under shade.
 
 #73 (each axis alone) is withdrawn; #14 and #38 are folded into stages A and B; #58 is superseded.
 
