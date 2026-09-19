@@ -130,7 +130,7 @@ Each holds under the conditions it was found in.
 ## 5. Next
 
 The next piece fills the largest gap of section 2; it is designed as cycles before it is built (`CLAUDE.md`).
-Candidates, none designed yet, to be chosen with the user:
+**Chosen 2026-09-19: P1, as #93.** Its design goes into the issue.
 
 | piece | fills | contains |
 |---|---|---|
