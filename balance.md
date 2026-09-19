@@ -585,10 +585,44 @@ and the islands.
 - For #91: the refuge this land holds is a region behind a barrier of thirst, not a stand of wood.
 - Kinds on this land follow, in part, the regions the generated land holds apart, and c1225 has one clear barrier.
 
-**Next (proposed 2026-09-19, not agreed): the generated land's barriers.** No law changes. First, with no bodies,
+**Next (agreed 2026-09-19, #97, done as e084, section 20): the generated land's barriers.** No law changes. First, with no bodies,
 a count of the regions each world we have holds apart (c1225, c1236 and the stage A/B worlds with maps in
 `e061_climate/results/pass` and `e062_producers/results/pass`): land split by the sea or by belts where wet ground
 gives a body under about a third of what its flanks give, wider than 8 lives of travel, with a dense land on each
 side. Then, if a world holds clearly more such regions than c1225, today's default world on it against c1225 (seeds
 9-11, 100,000 steps: 3 runs, 3 cores, about an hour), judged by kinds and by the regions held. Wrong if the
 regions it holds do not keep lines of their own, or kinds do not rise with them.
+
+## 20. What e084 settled (2026-09-19)
+
+Section 19's count (`experiments/e084_regions`, #97): e062's producers-only maps of the six worlds with stage A/B
+params, read for the regions a line could hold against another. No bodies were run.
+
+**A map says where bodies will be thin.** On c1225 the control's land bodies a land cell (blocks of 8 x 8 cells)
+follow the ground's yearly dryness (correlation -0.93), and within a dryness the coolest quarter's temperature:
+both a cold winter and a year that never cools below 33 C (every quarter costs water to cool) thin the bodies.
+The two predict the blocks at 0.97. The strip that holds e083's boundary is such a place: a corridor of middling
+dryness (0.61) hot in every quarter (34.9-37.9 C), one or two blocks wide, at 0.027 bodies a cell against 0.051
+on either side. So depth holds a boundary, not width; section 19's "wider than 8 lives of travel" was wrong, and
+the rule was changed on c1225 before the other worlds were read: a region is a 4-connected piece of blocks
+predicted at 0.03 bodies a cell or more. On c1225 its 8 regions are the ones held apart in the control (the
+leader 97% and 58% in its two, other lines in the upper north and the upper east's pieces, 2-10%).
+
+**c1225 holds the most regions of the six.** Effective regions (exp(entropy) of their predicted bodies): c1225
+5.03, c1208 2.21, c1221 1.44, c1236 1.24, c1182 1.04, c1173 0 (a desert), the same order at dense lines of 0.025
+and 0.035. A wet world is one dense land, a dry one has none; c1225 is between, with some land hot all year, and
+c1182, as dry on the mean, keeps its dense land in one piece. The bodies step (a world with more regions than
+c1225) did not apply.
+
+**What it changes.** The generated layer has a measure it lacked, readable from the climate: the regions a land
+holds apart. c1225's kinds are not those of a poor land among our six. Whether kinds rise with regions across
+worlds is untested.
+
+**Next (proposed 2026-09-19, not agreed): regions over stage A's climates.** e061's binary with `maps=1` on its 34
+passing climates (the params are in each candidate's row; about 2 minutes each, 10 cores for about 8 minutes), and
+the same count (the ground's fill and the temperature by quarter come from the climate alone). If a climate holds
+clearly more regions than c1225 (effective 8 or more), its producers with draw d11 (5 minutes; stage B's lines
+read, not required), then today's default world on it against c1225 (seeds 9-11, 100,000 steps: 3 cores, about an
+hour or more for a larger land), judged by kinds and by the regions held. Wrong if its regions are not held apart
+or kinds do not rise with them. The alternative is the other direction on a world we have: c1236 (1.24 regions)
+with bodies, which tests the same claim but differs from c1225 in climate as well.

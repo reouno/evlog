@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-09-19 (after e083: the region other lines hold is held by a barrier of thirst, a dry belt on the upper continent; kinds follow the land's barriers).
+Last updated: 2026-09-19 (after e084: a world's regions can be counted from its map without bodies, and c1225 holds the most of our six worlds).
 
 ## What the viewer should see
 
@@ -352,6 +352,12 @@ a time. The design is `foundation.md`.
    `fresh` 0.2 fills it and the leader crosses. What it changes: set D's small `fresh` makes dry land a barrier;
    the refuge #91 asked for is a region behind a barrier, not a stand; kinds on this land follow the regions the
    generated land holds apart. Proposed next: count those regions on the worlds we have (`balance.md` section 19).
+   #97 done 2026-09-19 (e084): the six worlds' producers-only maps read for their regions, no bodies.
+   **A world's regions can be counted from its map.** Bodies thin where the ground is dry and where the year
+   never cools below 33 C (c1225's control, predicted from the map at 0.97), and a thin strip one or two blocks
+   wide is enough to hold a boundary. c1225 holds the most regions of the six (5.0 effective; the next 2.2).
+   What it changes: stage A gains a measure of the regions a land holds apart; no better world among ours.
+   Proposed next: the same count over stage A's 34 passing climates (`balance.md` section 20).
 
 #73 (each axis alone) is withdrawn; #14 and #38 are folded into stages A and B; #58 is superseded.
 
