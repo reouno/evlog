@@ -618,7 +618,7 @@ c1225) did not apply.
 holds apart. c1225's kinds are not those of a poor land among our six. Whether kinds rise with regions across
 worlds is untested.
 
-**Next (proposed 2026-09-19, not agreed): regions over stage A's climates.** e061's binary with `maps=1` on its 34
+**Next (agreed 2026-09-19, #98, to run next session): regions over stage A's climates.** e061's binary with `maps=1` on its 34
 passing climates (the params are in each candidate's row; about 2 minutes each, 10 cores for about 8 minutes), and
 the same count (the ground's fill and the temperature by quarter come from the climate alone). If a climate holds
 clearly more regions than c1225 (effective 8 or more), its producers with draw d11 (5 minutes; stage B's lines
