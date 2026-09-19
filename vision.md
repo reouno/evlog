@@ -62,7 +62,7 @@ rest it holds back.
 |---|---|---|---|
 | parts | parts whose worth depends on where they sit and how they move | 4 block kinds on a 2D grid of side 4-16; every block pays best packed, so bodies fill their grids (#52, e047) | **large** |
 | size | a thousandfold range, each size with its place | 21-35 blocks; winners differ 1.3-2.2x (e055, e075) | large |
-| life history | lives that span seasons; fat and dormancy chosen by selection | breeding values fixed (from the genome they cost kinds, e069); fat from the genome (e072) | medium |
+| life history | lives that span seasons; fat and dormancy chosen by selection | breeding values fixed (from the genome they cost kinds, e069); fat from the genome (e072); a cold body can go torpid (Q, not in the default world, e087) | medium |
 
 ### D. Behaviour
 
@@ -76,8 +76,8 @@ rest it holds back.
 
 | element | ideal | today | gap |
 |---|---|---|---|
-| life against the year | many animals live through several seasons; short-lived ones sleep through the bad one | a grown body lives 500-570 steps, **1/20 of a year**; half the dead die by 75 steps, as children (#93); at a year of 1,200 a seasonal place's winter lasts 400 steps, less than a grown life (e086) | **large** |
-| travel against the places | a migrant crosses places within a year; a resident's home fits in one place | a grown body travels a few cells of 512; the season is felt by a line over 20 lives, never by a body; a place fed in a lean month is 9-15 cells away over land, beyond the eye (e086) | **large** |
+| life against the year | many animals live through several seasons; short-lived ones sleep through the bad one | a grown body lives 500-570 steps, **1/20 of a year**; half the dead die by 75 steps, as children (#93). At a year of 1,200 with Q, 81-84% of grown bodies on seasonal land live through a winter, torpid, but a grown life is still 3/4 of a year at the p90, ended by hunger, thirst and wounds in the crowd (e087) | **large**: bound by the crowd, not the season |
+| travel against the places | a migrant crosses places within a year; a resident's home fits in one place | a grown body travels a few cells of 512; a place fed in a lean month is 9-15 cells away over land, beyond the eye (e086); under Q the winter is waited out where it falls (1-2 cells), nothing asks a body to leave (e087) | **large** |
 | the day against a life | a body lives many days and can tell night from day | a grown life is about 7 days; the day's swing is wider than the bands (e071) | medium |
 
 ### F. The ecosystem (outcomes, never written)
@@ -128,11 +128,15 @@ Each holds under the conditions it was found in.
 - A law added alone meets a world without its counterweights (e066-e071); a set searched together can hold (e072).
 - A seasonal place's winter is a third of its year at any year length: the year sets whether a body meets it, the
   terrain how far the refuge is (e086).
+- A body that can wait lives through a winter it meets, and then does not move (e087). What ends a grown life is
+  the crowd's income, wherever it lives, not the season (e037, e038, e087).
 
 ## 5. Next
 
 The next piece fills the largest gap of section 2; it is designed as cycles before it is built (`CLAUDE.md`).
-**Chosen 2026-09-19: P1, as #93.** Its design is in the issue; its year is 1,200 steps (e086).
+**Chosen 2026-09-19: P1, as #93.** Its design is in the issue; its year is 1,200 steps (e086). e087 (Y+Q) met the
+winter (1, 3) but not the year or the kinds (2, 4); one of its three stage C experiments is spent, and what is left
+binding a grown life is the crowd.
 
 | piece | fills | contains |
 |---|---|---|
