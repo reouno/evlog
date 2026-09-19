@@ -4,7 +4,7 @@ The ideal world, today's world against it, and the next piece of work. Read it b
 update it after every experiment (`CLAUDE.md`, Documents). History is not kept here: it is in each experiment's
 README and in git.
 
-Last updated: 2026-09-20 (after e087: P1 closed, P2 chosen).
+Last updated: 2026-09-20 (after e088: P2's seed on the producers' side).
 
 ## 1. The ideal
 
@@ -52,7 +52,7 @@ rest it holds back.
 
 | element | ideal | today | gap |
 |---|---|---|---|
-| kinds of plant food | several, each needing its own mouth and gut; some seasonal | grass (any gut), algae (a surface gut), wood's browse at 3e-5 (a hard tip, e073); carrion and litter | **large**: few ways to eat |
+| kinds of plant food | several, each needing its own mouth and gut; some seasonal | grass (any gut), algae (a surface gut), wood's browse at 3e-5 (a hard tip, e073); carrion and litter. Seed (#99 S, not in the default world): at `seed_share` 0.2 a steady bank of 0.43 of the grass on the land, more than the leaf in the winter at 50 degrees; no body eats it yet (e088) | **large**: few ways to eat |
 | response to eating | grazed plants regrow, defended plants resist, fruit is offered | every producer grows by its stand and is grazed to a few percent of it (e065) | medium |
 | plants as places | a forest is a home, a cover and a food | a stand is a home only through its wet ground (e078) | medium |
 
@@ -126,6 +126,8 @@ Each holds under the conditions it was found in.
 - Heat is paid in water, and water sets where land bodies live (e078). Lines are kept apart by places a leader does
   not cross (e083), and a world's regions can be read from its climate alone (e084, e085).
 - A law added alone meets a world without its counterweights (e066-e071); a set searched together can hold (e072).
+- A store the producers fill and empty by the growth's own factors (warmth x water) sits at the same level all
+  year: it outlasts the leaf in the cold but does not pile up or flush with the season (e088).
 - A seasonal place's winter is a third of its year at any year length: the year sets whether a body meets it, the
   terrain how far the refuge is (e086).
 - A body that can wait lives through a winter it meets, and then does not move (e087). What ends a grown life is
@@ -140,7 +142,8 @@ a body. But a grown life stays at 3/4 of a year: it ends in the crowd, of hunger
 body lives, and kinds kept to a place fall. The gap left is the crowd's income, which P2 addresses more directly
 than a redesign of P1 would. Y and Q stay out of the default world; Q is a law ready for a piece that needs it.
 
-**Chosen 2026-09-20: P2, as #99.** Its cycle design is written there before it is built.
+**Chosen 2026-09-20: P2, as #99.** Its cycle design is written there before it is built. Stage B done (e088): seed at
+`seed_share` 0.2 passes stage B and costs the grass nothing; stage C (e089: S with a tooth of 2, and Fb) is next.
 
 | piece | fills | contains |
 |---|---|---|
