@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-09-19 (after e080: a crown that cools, wets and places the stands makes them a better home, not a refuge; water keeps the open land thin in every season).
+Last updated: 2026-09-19 (after e081: a body's water is part of the land's; a crowd pays for its water, but water then binds every body and kinds fall).
 
 ## What the viewer should see
 
@@ -330,6 +330,12 @@ a time. The design is `foundation.md`.
    kinds fall (7.00 to 3.72). Water keeps the open lawn thin in every season, so the good season never comes to
    it. What it changes: S1-S3 are not kept; the refuge's missing half is the land's water by season, to be
    designed as a cycle before any run (`balance.md` section 15).
+   #94 done 2026-09-19 (e081): drinking takes from the ground and what a body loses goes back (W1, W2), seeds 9-11.
+   **A crowd pays for its water, and the water then binds every body.** A stand's bodies hold 0.32-0.39 of their
+   water in spring (0.8), the stand's lead over the lawn falls (2.79 to 2.42) and the lawn gains in spring, not
+   autumn; but every land body holds half its water, bodies end nearer their birth place, and kinds fall in
+   every seed (7.66 to 6.83). What it changes: not kept as the default world; the proposed next step is a
+   larger `fresh` under W1, since a paid drink no longer needs set D's small one (`balance.md` section 17).
 
 #73 (each axis alone) is withdrawn; #14 and #38 are folded into stages A and B; #58 is superseded.
 

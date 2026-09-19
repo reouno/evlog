@@ -402,7 +402,7 @@ already prefer. The missing half is a season in which the open land is livable, 
 set by where a body drinks (wet ground gives a twentieth of a pool; pools are 0.3% of the land). The next
 design is the land's water by season, before any run.
 
-## 16. The land's water, as a cycle (#91, draft 2026-09-19, awaiting agreement)
+## 16. The land's water, as a cycle (#91, #94, agreed 2026-09-19, run as e081)
 
 e080 closed the crown's path: the stand is the land's home in every season and the crown can only make it a
 better one. This section designs the half the refuge lacks, the land's water, as a cycle before any run. It is
@@ -488,3 +488,37 @@ world (e078's control, steps 36,000-60,000) unless marked e080 (its control, the
 
 Cost: W1 is one write to the ground per drinking block in the loop that already reads it (`dry_turn`); W2 one
 write to the air per losing block. The water bodies are untouched.
+
+## 17. What e081 settled (2026-09-19)
+
+Section 16 built and run (`experiments/e081_drink`, #94): W1 and W2 behind one rate, `unit` (mm of its cell a
+block of a body's water is; 0 is e080 exactly). The default world, seed 9 at 60,000 steps with unit 0 / 4.7 /
+9.4 / 28, then 9.4 against the control on seeds 9-11 at 100,000 steps. The air's, the land's and the bodies'
+water now closes to 1.8e-11.
+
+**The cycle runs as drawn, and binds everywhere.** A crowd draws down the ground it stands on: a mid stand's
+winter ground falls from 0.88 to 0.77, its bodies hold 0.32-0.39 of their water in spring (0.8), and the
+stand's lead over the lawn at the equinoxes falls in every seed (2.79 to 2.42). The land keeps 88-95% of its
+bodies. But every land body is drier (0.28 of its water against 0.58), not the stand's alone: wherever a crowd
+sits it lowers what its ground gives. Bodies walk as much and end nearer their birth place (travel 5.3 to 3.1):
+a tether, not the commute section 16 expected.
+
+**The lawn's season is spring, not autumn.** Its bodies a cell over the stand's rise from 0.28 to 0.43 in
+spring in every seed, and hold in autumn (0.43 to 0.41). Bodies drink about 1,700 mm a step over the world and
+sweat 1,450 of it back into the air, which the wind carries off the stands: the lawn's ground ends wetter than
+with the producers alone (winter 0.37 to 0.45), the stand's drier, and the pools lose 15-23% of their cells.
+
+**What it changes.** The measure falls in all three seeds (kinds 7.66 to 6.83, kinds kept to a place 4.62 to
+4.14), so W1/W2 are not stage C's default world; `unit` stays an argument at 0, and the code is the base of
+the next water step. The expected payoff "a place drunk dry pushes its bodies on" did not come because a body
+drinks little anywhere but a pool: wet ground gives `fresh` 0.05 of a pool's drink. That share was set by #88
+(set D) when water was free, to keep the shore from being free. Under W1 the drink is paid by the ground, so
+set D's reason for a small `fresh` is gone.
+
+**Proposed next (not agreed): `fresh` under W1.** Wet ground gives more of a pool's drink, and pays it out of
+the ground. *Takes* the ground's water where a crowd sits (the lawn's spring ground at 0.38 becomes drinkable);
+*refilled* by the rain; *limited* by W1 (a crowd that drinks more draws its ground down faster). Expected: the
+lawn's wet season carries bodies without pools, the tether loosens (bodies follow wet ground), and the stand's
+lead falls further in spring. Wrong if the lawn's share does not rise over e081's, if travel does not rise, or
+if kinds fall again. Runs: unit 9.4 with `fresh` 0.05 (e081's), 0.2 and 0.5 on seed 9 at 60,000 steps
+(2 new runs, 2 cores of the Mac, 30 minutes; the 0.05 run is e081's search), then the best against e081's control on seeds 9-11.
