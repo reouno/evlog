@@ -21,4 +21,4 @@ What happened. Numbers, plots, logs.
 
 ## Conclusion
 
-Answer to the hypothesis. What this changes for the project. Open questions.
+Answer to the hypothesis. What this changes for the project: the rows of `vision.md` it changes. Open questions.

@@ -14,11 +14,26 @@ App, web, and monetization (ads) are ideas only. Do not build them now.
 - Build the world whole, then search it (`foundation.md`): keep laws, generated terrain and emergent
   outcomes apart, and search parameters in stages from the cheapest layer. Do not test one law at a
   time in a world that lacks its conditions. Expect to rebuild often and to have assumptions overturned.
-- Choose the next step from `gaps.md` (the ideal against today, by layer), not as a fix of the last result, and fill
-  the largest gap as one piece of several laws designed as cycles. Every result updates `gaps.md`.
+- Choose the next step from `vision.md` (the ideal against today, by layer), not as a fix of the last result, and
+  fill the largest gap as one piece of several laws designed as cycles. Every result updates `vision.md`.
 - Run long. The goal is to see what happens over long runs.
 - Do not program the fun directly. Change rules and selection pressure, then observe what emerges.
 - When a change adds compute cost, state why.
+
+## Documents
+
+One fact lives in one place; the others point to it. History lives in the experiments' READMEs and in git, never
+in the documents below. A new document needs a role none of these has.
+
+| document | holds | read it | change it when | never change it for |
+|---|---|---|---|---|
+| `principles.md` | purpose, principles, decision rules | when unsure what is allowed or what matters | the user agrees to a change of direction | an experiment's result |
+| `vision.md` | the ideal, today against it by layer, lessons that hold across experiments, the next piece | before choosing or designing a step | after every experiment: the rows its result changes (today, gap, ranking; the ideal or the next piece when the result says so) | a record of what happened |
+| `foundation.md` | how the world is built: laws, generated and emergent parts, material trade-offs, stages and measures, today's default world | before designing or building a law | a law or measure is kept or removed, or the method changes | a result that kept nothing |
+| `CLAUDE.md` | how we work | every session | the way of working changes | project facts |
+| GitHub issues | tasks, and a piece's design while it runs | when starting or resuming work | the work is planned, changes or ends | - |
+| `experiments/eNNN_*/README.md` | one experiment, from purpose to conclusion | when its result is needed | while it runs; afterwards only to correct it | - |
+| `README.md` | what the repo is and how to run it | - | the layout changes | results |
 
 ## Cost of running experiments
 
@@ -56,7 +71,7 @@ it takes from whom, what refills it, which feedback limits it, and the balance i
 And must end with:
 
 - **Result**: what happened, with numbers where possible
-- **Conclusion**: clear answer to the hypothesis, and what it changes for the project
+- **Conclusion**: clear answer to the hypothesis, and what it changes for the project (the rows of `vision.md` it changes)
 
 Record seed, parameters, and results. Use `experiments/TEMPLATE.md`.
 

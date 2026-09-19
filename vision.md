@@ -1,1027 +1,142 @@
 # Vision
 
-Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-09-19 (after e085: no climate of stage A holds clearly more regions than c1225; a small, cold land is what divides one).
+The ideal world, today's world against it, and the next piece of work. Read it before choosing or designing a step;
+update it after every experiment (`CLAUDE.md`, Documents). History is not kept here: it is in each experiment's
+README and in git.
 
-## What the viewer should see
+Last updated: 2026-09-19 (rewritten after e085: the gaps by layer replace the plan and the history).
 
-Not dots and numbers. Creatures with different shapes, eating and being eaten, splitting into
-lineages that appear, spread, and go extinct. Nothing in that sentence is scripted: shape, diet,
-predation, and species all come out of the genome and the world's rules.
+## 1. The ideal
 
-**The measure is ways of living, not shapes** (agreed 2026-09-13). A body's way of living is what it
-does: what it eats (plant, the flesh of kills, the dead), whether it can break another body, whether
-it stays or roams, where it lives. A world is judged by how many ways of living prosper at once and
-whether each one lasts (principle 7). Shape kinds (#66) stay as a second number, not the headline.
-A viewer is bored not by too few shapes but by every body living the same way. Before this, #42
-counted winner lineages (to e057) and #66 counted shape kinds (e058-e059).
+Not dots and numbers: creatures with different shapes, eating and being eaten, in lines that appear, spread, split
+and die out. Nothing in that is scripted (`principles.md`). As a picture, a savanna with its rivers, woodlands and
+coast, as a film crew would show it:
 
-**Count them per kind** (e060, #71). Counted per body (diet x tooth x roams among bodies aged 300 or
-more, a way counted at 5% of them), 156 existing runs hold 1-10 ways, and the count follows the
-kills' share of what the world eats (rank correlation 0.61). Most of that is the spread of one kind:
-in the world with 10 ways (e055 seed 9) one lineage holds 68% of the grown bodies and leads every
-way; its diet is one hump cut three ways, its toothless members were born with the muscle a break
-took, and its roamers are older than its stayers. With every body counted under its lineage's
-commonest way, every run holds 1-3 (a lower bound: a lineage can join different builds). e059's
-islands: 3.0 ways against 2.7 per body, 1.6 against 1.3 per lineage; the shape kinds rose, the ways
-did not. Report both numbers; judge a law per kind. The census is `experiments/e060_census/census.py`.
+- **Many ways of living at once.** Grass eaters, leaf and bark eaters, fruit and seed eaters, hunters of several sizes
+  and styles, scavengers, filter and bottom feeders in the water. No one of them is most of the animals.
+- **A food web.** Plants of several kinds, each needing its own mouth and gut; animals eating animals; the dead eaten
+  and returned to the soil.
+- **Places that hold different animals.** Woodland, open grass, marsh, desert, shore, cold highland, each with its own
+  residents; some animals keep to one place, some cross them.
+- **Time that moves animals.** Herds follow the rains, animals breed in a season, some sleep through the bad one,
+  predator and prey numbers swing against each other.
+- **Bodies that differ and whose shape does something.** Sizes from mouse to elephant; legs, jaws, horns, shells,
+  fins, and a reason for each.
+- **Animals that behave.** They look, chase, flee, go to water, return home.
+- **History.** No line holds the world for good.
 
-## The working hypothesis (2026-09-13)
+**The measure is ways of living, not shapes.** A way of living is what a body does: what it eats, whether it can
+break another body, whether it stays or roams, where it lives. Stage C counts kinds by birth form (e068): the body a
+genome develops, read over all the grown bodies of that form, at a census and as kinds kept to a place. A step is
+judged on three seeds (kinds spread 3-5 between seeds, e069). Shape kinds and the leading line's share are second
+numbers.
 
-From ecology's competitive exclusion principle: **the number of ways of living that coexist is at
-most the number of independent limiting factors, each with a trade-off no single body escapes, laid
-out at scales the bodies feel.**
+**The working hypothesis** (competitive exclusion): the ways of living that coexist are at most the independent
+things they live on, each with a trade-off no single body escapes, laid out at scales the bodies feel. It is
+neither refuted nor tested: no world has yet had more than a few foods.
 
-The reading of the series it suggested was tested by e060 and **dropped**. It said the laws that
-added such a factor (e012 two kinds of place, e025 flesh with weight, e026 and e032 time) did better
-than their controls, and the laws that moved the amount, timing or place of the one resource (e038,
-e041, e046, e051, e054, e056, e057, e059), overlapped it in place (e028, e040) or had no trade-off
-(e039) did not. Counted per kind, the axis laws added a way of living in 0 of 6 pairs (per body in 2
-of 6, e025 and e032, both by bringing kills); the others added none (19 of 21 per kind, 21 of 21 per
-body), though 12 of those 21 moved seeds into or out of hunter worlds. The bound itself is neither
-refuted nor tested: no world has held more than three kinds, and none has had more than two foods
-(the plant, and the flesh of kills). The flesh of kills is the only second food that has made a
-second way of living, and a world's share of it is a degree that the seed and the laws move.
+## 2. Today against the ideal
 
-What follows for the work:
+Today is stage C's default world on c1225 (`foundation.md`). Gap: how far today is from the ideal and how much of the
+rest it holds back.
 
-1. Do not test a law that changes the amount, timing or place of the one resource for diversity.
-   It changes the number of bodies (e060: none of 21 such pairs added a way of living).
-2. A new axis needs a resource or condition that nothing else substitutes for and that does not
-   overlap the old one in place. It needs a trade-off in the materials, and a scale the bodies
-   feel: its place wider than a life's travel (#68 rule 1), and its change close to a life's length
-   when behaviour is meant to follow it (e049). A place or a season the bodies ride out is not yet an
-   axis (e012 and e026 added no way of living).
-3. Describe a world by a few ratios, not by its laws: foraging area over footprint (1.3 at sun 1,
-   4.6 at sun 0.2), place scale over lifetime travel, change time over lifespan (season 20,000,
-   life ~300), the number of independent axes, the kills' share of the intake, and gene flow between
-   places (e059's segregation). Laws that move the same ratio are the same move.
-4. Keep ecology apart from evolution. Whether a world can hold two ways of living is tested by
-   mutual invasion (#72), not by hoping evolution finds both on 4-6 seeds (the hunter/grazer seed
-   lottery of e024, e045 and e055 is the two questions mixed; e060 found it in 12 of 21 pairs).
+### A. The physical world
 
-## The target: a table of ways of living
-
-| way of living | lives on | why no other body is better at it | what the world needs |
+| element | ideal | today | gap |
 |---|---|---|---|
-| sitting grazer | plant regrowing where it stands | no muscle, cheap | slow even regrowth (today's world) |
-| walking forager | rich food, scattered and eaten out | muscle paid back by rich food | ground where a body gathers from far more cells than it stands on, apart from the sitter's |
-| hunter | other bodies | hard front and muscle, poor at plants | a place where prey crowd; flesh apart from plants (e028) |
-| migrant | places that swap worth over time | a store and movement | change close to a life's length; places wider than a life's travel |
+| places | many wide places, each with its own residents | 512x512 torus; c1225 holds 12 habitats of 2% and 5.0 effective regions, third of stage A's 34 climates (e084, e085) | small |
+| time | a day, a year, weather | a day of 75 steps, a year of 11,880, one wind (e061) | small in itself; see E |
+| water and heat | rivers, lakes, rain shadows, cold and hot places | emerge from the climate (e061); the ground's water is what land bodies live on (e078) | small |
 
-They coexist only as different places or times in one world. The crowd makes hunters and the thin
-land makes movers (#68 rule 2), so the world needs both as places. e012 had both places and held the
-ways of each, not more (e060). e013's occupancy law (one body to a sub-cell) removed the stacked crowd
-e011-e012's arms race lived on, and it was never rebuilt.
+### B. Producers
 
-## Plan (issues)
+| element | ideal | today | gap |
+|---|---|---|---|
+| kinds of plant food | several, each needing its own mouth and gut; some seasonal | grass (any gut), algae (a surface gut), wood's browse at 3e-5 (a hard tip, e073); carrion and litter | **large**: few ways to eat |
+| response to eating | grazed plants regrow, defended plants resist, fruit is offered | every producer grows by its stand and is grazed to a few percent of it (e065) | medium |
+| plants as places | a forest is a home, a cover and a food | a stand is a home only through its wet ground (e078) | medium |
 
-Agreed 2026-09-13 after e060: the world is built whole and searched in stages, not grown one law at
-a time. The design is `foundation.md`.
+### C. Bodies and genome
 
-1. (Done 2026-09-13: #71, e060 - the census; ways of living are counted per kind, the frame's
-   reading of the series is dropped, e059 is corrected.)
-2. (Done 2026-09-13: #74, e061 - the climate alone, generated terrain and sea, a day and a year,
-   heat, water carried by one wind. 294 worlds of 300 hold 5 or more habitats of 2% and 34 pass all
-   four lines, 30 of them 512x512, the size from here. Width is bought by the size and the continents'
-   grain, the tilt sets the change, and a world only needs about 20,000 climate updates to settle.)
-3. (Done 2026-09-13: #75, e062 - producers and fire on six of stage A's worlds, on the climate's
-   clock. 9 of 96 candidates pass every line, on 4 worlds; no draw of the growth rates passes on more
-   than 2. Algae always hold the water; grass and wood split the land only when wood needs about 3-12
-   times the ground grass needs. Fire burns too little, never too much, and its smoke drains the land
-   to the sea. A candidate costs 8 minutes at 512.)
-4. #76, stage C: bodies with a material trade-off for every difference, counted per kind; #72's
-   injection is its instrument. First step done 2026-09-14 (e063): e059's bodies, every kept law and
-   no new one, on c1225 and c1236 cost 1.34-1.35 ms a step at 512 on one core, three quarters of it
-   the world's update, so stage C needs neither threads nor a window. But the world feeds about 300
-   bodies, one per 360-530 land cells, and they live one way: roaming grass eaters without a tooth.
-   Second step done 2026-09-14 (e064, #78): one scale s on every matter quantity of a body. On
-   c1225, s = 1/4 holds 770 bodies and s = 1/16 holds 5,652 (18 times e063's), and at 1/16 the
-   crowd makes ways of living: 2-4 per lineage, kills 17% of the intake, at 11 ms a step (55 minutes
-   for 300,000 steps). The crowd jams (half the moves blocked, 41% of the children without room)
-   and pins every body's density at its ceiling of 2, so the kills come from density, not teeth.
-   Agreed 2026-09-14: stage C runs at s = 1/16, and the next step is the water's two layers (#79),
-   the first trade-off of section 2, which puts a price on density.
-   Third step done 2026-09-14 (e065, #79): the water's two layers (a body lighter than water lives
-   at the surface and eats algae, a denser one on the bottom and eats what sinks). On c1225 the crowd
-   moves in (40% at the surface, 19% on the bottom) and density comes off its ceiling (mean 1.18,
-   e064 1.95), so the layers are kept. But the largest lineages sit at the density of water and live
-   in all three media, the top lineage holds 55% of the bodies, and the world holds no more bodies
-   (5,561): every producer grows by its stand, and the crowd grazes all three to 1-4% of it.
-   Agreed 2026-09-14: the next step is dry air (#80), section 2's second row, a land-water
-   trade-off that asks for different blocks, not a different density.
-   Fourth step done 2026-09-14 (e066, #80): dry air (a soft block over dry ground loses water through
-   every face it opens to the air; hard blocks and blocks in water lose nothing). At the stronger rate
-   19% of deaths are by thirst and the land holds 31% of the bodies (e065 41%). The bodies answer with
-   shape, not armor: they fill their grids and grow, in every medium (open soft faces per block 0.86 to
-   0.63-0.73, 27 blocks to 34-43), and lineages kept to one medium fall to 1-11%. Not kept as the
-   default. A trade-off priced in one medium only is answered by a body good in both; the water has to
-   price the land's answer too.
-   Agreed 2026-09-14: the next step is breath in water (#81), run together with e066's dry air: a soft
-   face open to the water takes what the body burns, so a closed body suffocates in water while an
-   open one dries on land.
-   Fifth step done 2026-09-14 (e067, #81): breath in water, with e066's dry air. The water's bodies
-   open up (1.25 and 1.11 open faces per block at the surface and on the bottom, 0.78 on land) and
-   suffocation kills almost none (1.5%). Shapes now keep to a medium (85% of the grown bodies in common
-   shapes), but the lineages still span the shore: each large one holds an open form in the water and
-   a more closed one on land, joined by mates at the shore. Kept, with the dry air, as stage C's
-   default. Counted by lineage, kinds kept to one medium are back to e065's range (16%), so what a
-   lineage holds inside it is now the question for the census of kinds.
-   Agreed 2026-09-14: the next step is counting kinds of living inside a lineage (#82), with no runs.
-   After it come two issues from a check of principle 2 (traits come out of combinations a child
-   inherits with variation, never written as traits): life-history values from the genome (#83) and
-   senses from sensor blocks (#84).
-   Sixth step done 2026-09-14 (e068, #82, no runs): kinds of living are counted by birth form, the body
-   a genome develops, with its way of living read over all such bodies. Breath at 0.01 holds 4 kinds at
-   every census (e065 1, e066 2) and adds kinds by medium, the largest lineage's algae eaters at the
-   surface and litter eaters on the bottom; the land's closed forms are not kinds (3-4% each). Counted
-   per body with the medium, every run reads 5-7 kinds, at its shuffle. e067's shapes by medium were
-   read from bodies after breaks: 64%, not 85%. Stage C's pass line is read with this count.
-   Agreed 2026-09-15: the next step is #83, a body's breeding energy, child share and fat store read
-   from its genome (x0.5 to x2 around today's constants; mate distance and mutation rate stay fixed),
-   on e067's world, judged with e068's census; then #84.
-   Seventh step done 2026-09-15 (e069, #83): read from the genome, the three values move little in
-   100,000 steps (medians 0.099, 0.48 and 6.0 against 0.1, 0.5 and 5) and do not part the water from the
-   land inside a lineage (2-3%). The world stands, but kinds held by birth form fall to 2 (e067 4) as one
-   lineage takes 52% of the grown bodies in every medium. Seeds 10 and 11 (agreed the same day) repeat
-   it: 2, 2 and 3 kinds held against 4, 3 and 5 with the constants, lower on every seed. The values stay
-   constants for stage C. With the constants, stage C holds 3-5 kinds over seeds: a step judged on kinds
-   takes three seeds from here.
-   Agreed 2026-09-15: the next step is #84, senses from sensor blocks, judged on seeds 9-11 against the
-   constants runs. Why the values from the genome cost kinds, a price on fat, and the mate distance and
-   mutation rate still constant are filed as #85.
-   Eighth step done 2026-09-15 (e070, #84): a body senses only through its sensor blocks (the food under
-   them; the food, bodies and water where one looks out of the body, one cell and one more per such block;
-   its energy, thirst and breath only with one). The bodies do not buy sight: 2-4% of the grown bodies have
-   a sensor block looking out, and those sit and place about half the children of the blind. The blind walk
-   straight, three times as far from their birth. Every seed ends with the same three kinds, all at the
-   shore: 3 held at every census and 3.4 at a census, against 4 and 6.1 with the senses given, one lineage
-   holding 67-76%. Kept as stage C's default by the rule set before the runs (mean held 3.0, the line), at
-   its edge.
-   Agreed 2026-09-15: go on from this world with section 2's next row, cold (#86): a block facing a colder
-   cell loses energy by the difference, hard blocks and fat insulate; judged on seeds 9-11 against e070.
-   Ninth step done 2026-09-15 (e071, #86): cold (a body is as warm as 20 C, and each open soft face over a
-   colder cell loses energy by the difference, less by the share of the store its fat fills). It takes 22-24%
-   of the land's upkeep and 5% of the deaths, but the same share in every temperature band: at a body's scale
-   the day, not the place, makes a cell cold. The land's bodies close up a little in every band and do not
-   fatten, no kind keeps to one medium, and kinds held at every census fall to 2, 2 and 3 (3.44 at a census,
-   as in e070). Not kept, by the rule set before the runs; e070 stays the control.
-   Agreed 2026-09-16 (#87, `balance.md`): stage C stops adding one row an experiment, since a law added alone meets
-   a world without its counterweights. The balance table reads today's world axis by axis: four of them are
-   one-sided (hard blocks have almost no use, fat has no weight or choice, the blind beat the sighted, and the
-   shore is free for everyone), the balanced ones are balanced by medium alone, and the matter cycle does not
-   close between places (with bodies the land gains 13-14% of its matter from the sea over 90,000 steps). The next
-   experiment builds the counterweights as one set: heat in place of cold, wood as food, fat's weight and its store
-   from the genome, fresh water that the sea does not give, light for sight, height, and soil carried back to the
-   sea by runoff. Each rate is scaled by a dry run, and the combination is searched as stages A and B were, judged
-   by kinds held, kinds that keep to a place, stability (a kind halved returns; #72) and the land and sea holding
-   their matter.
-   Tenth step done 2026-09-16 (e072, #88): the seven sets built together, 22 combinations searched on seed 9
-   and the centre of the four best run on seeds 9-11. **Not kept by the rule set before the runs** (kinds held
-   at every census 4, 3 and 2 against the controls' 3, 3 and 3, both 3.00), and every other measure moved:
-   kinds at a census 5.78 against 3.44, the leanest census of six holding 5, 4 and 6 against 3; 2, 2 and 1
-   kinds keeping 90% of their bodies to one medium against none; the largest kind 19-32% against 55-65% and
-   the largest lineage 43% against 72%. The land's bodies close (0.64 open soft faces a block against 0.87),
-   arm (11.9% hard against 3.7%), grow (32.4 blocks against 26.3) and carry a tooth (15% against 3%) while
-   the water's stay open and soft, so the open/closed, hard/soft and fat axes have two sides at last; two
-   seeds of three grow a land kind that eats other bodies. The heat is what places a kind (rank correlation
-   +0.68 over the search), the sea that does not quench fills the land (thirst is 60% of the deaths), wood is
-   not eaten at 0.04 and the runoff halves the matter pump. A halved lineage is back over its uncut size in
-   4,000 steps. The measure that says no counts the *identity* of the kinds over six censuses, which an even
-   world loses because it is even.
-   **AGREED 2026-09-16, (a) and (b).** e072's sets are stage C's default world from here, at the rates the
-   search chose (`heat` 0.09, `wood_food` 0.04, `fat_weight` 0.06, `store_gene` 1, `fresh` 0.05, `light` 0.7,
-   `climb` 6e-5, `carry` 0.03), and its three runs on seeds 9-11 are the controls that replace e070's.
-   **Stage C is judged from here by the kinds at a census and the kinds that keep 90% of their bodies to one
-   place, not by the kinds held at every census**: that measure counts the identity of the kinds over six
-   censuses, and an even world loses it for being even. The next experiment (#89) takes the two
-   counterweights that did nothing in e072: wood at a rate a body can live on, and a cold that differs by
-   place rather than by hour (e071's proposal (a): the heat reads the cell's temperature averaged over a
-   day, so a band's difference outlives the night).
-   Eleventh step done 2026-09-16 (e073, #89): 31 runs. A dry run with no bodies ruled out both shapes the
-   issue proposed - the whole standing forest is 1,800 steps of food for the world, and the most of its
-   growth a stand can give up before it falls is exactly its own shade (1,300 a 1,000 steps against the
-   37,000 the bodies eat) - so the yield was built as a flow beside the stand: a stand drops `wood_yield`
-   of browse per unit of what it stands, out of its cell's soil, the trunk untouched, taken with the tooth
-   the stock share needed. **`wood_yield` 3e-5 with `wood_food` 0 is kept** by the rule set before the runs:
-   every seed holds a land kind taking 24-34% of its food from wood (the first kind in stage C that lives
-   by wood at all), and the kinds at a census rise to 6.61 against the controls' 5.78 with 3.89 kept to a
-   place against 3.11. The stand survives it, at 0.60 a cell against the 0.036 e072's bite left.
-   **The rate is the law.** At 3e-4 the same yield is a subsidy: one browser holds 61% of the grown bodies,
-   walks 1.25 cells in a life, and the kinds at a census fall to 3.11. At 3e-5 it is a reason to leave:
-   **the bodies walk 6.1 cells against the control's 3.5**, and on two seeds of three the kind that lives
-   by wood roams where every land kind of the control stays. e049 (a band of rain), e050 (a memory), e051
-   (a slow stock), e052 (a clock that scales with size) and e057 (fouling) all tried to buy movement with a
-   law about moving and left the crowd sitting; a food too thin to keep a body where it stands did it, and
-   nothing in the law mentions movement.
-   **`day_temp` is not kept.** No kind in 31 runs keeps 90% of its bodies to a band that is not the world's
-   own, and the cold band holds 2-3% of the bodies everywhere, as in e072. What the day's mean does is lower
-   the warming from 0.090 to 0.016; a plain `heat` of 0.045 read at the moment pays 0.019 and holds the same
-   kinds, and over 100,000 steps the mean re-opens the land's bodies (0.81 open soft faces a block against
-   0.64), undoing what e072 bought. The cold is still not a place, and the question it was built for - is a
-   standing forest a refuge in a season a lawn cannot hold - is now askable, because a forest stands.
-   **AGREED 2026-09-16: the next session starts #72, the invasion test.** It is the only one of #76's
-   three pass lines never attempted, and until e073 there was nothing to attempt it with: a world of
-   one way of living cannot be invaded. Now the land holds a browser with a tooth and the shore a
-   grazer, so a kind's genomes can be saved and a few put into a world the other kind holds, with the
-   resident's own genome as the neutral control. It adds no law and needs no search, and it is what
-   separates what this world can hold from what evolution happened to find. The seasonal refuge (is a
-   standing forest a refuge a lawn cannot hold) waits behind it.
-   Twelfth step done 2026-09-16 (e074, #72): the invasion test, built and run. Three instruments and no
-   law: the genomes of a census written out, a world seeded from a pool of them, and an injection of a
-   hundred bodies whose descendants carry a mark. Both lines - the invader and the resident's own
-   genomes - go into the same world at once, so the control meets the same crowd and the same luck. 24
-   runs of 40,000 steps on seeds 9-11: four worlds (the grazer alone, the browser alone, and the
-   community with each way taken out form by form) times two founder draws.
-   **A world will not stay at one way of living.** Whatever is left out is back at e073's rate by step
-   2,000-4,000, before a body is injected: the browse pays 2.4-4.2% of the food at step 10,000 against
-   e073's 3.4%, a quarter of the grown bodies live by wood in every world, and the land of the
-   browser's world is half grass eaters. A world of grazers alone goes from a tooth in 5% of its bodies
-   to one in five in 10,000 steps. Nothing is invented: the grazer kind already carries a tooth in
-   3.9-5.3% of its bodies (the browser in 78-98%), so the way of living is a few percent of bodies
-   away, not a mutation away. **For this pair there is no gap between what the world holds and what
-   evolution finds** - e010's teeth (worth ten to one, found once in twelve million births) have no
-   counterpart here.
-   The paired injection still shows the coexistence at the strength this world's noise allows: the
-   invading line ends larger than the control beside it in all four worlds (1,282 against 410, 555
-   against 192, 1,105 against 0, 717 against 567), and each kind does better rare in the other's world
-   than in its own (the browser 1,105 against 567, the grazer 717 against 0). Read run by run it is 12
-   of 24 larger, 5 smaller and 7 with both lines gone: **a line of a hundred in eight thousand is a
-   lottery ticket**, so a single injection says nothing and the control has to be in the same world.
-   By the rule set before the runs (2 seeds of 3 in both directions) the test is **partly** passed: the
-   browser invades the grazer's world on 3 seeds of 3, the grazer the browser's on 1 of 3.
-   What it changes: do not read a seed's outcome as a reachability answer for a close pair; judge an
-   invasion by paired means over several founder draws, not by "grows from rare in most replicates";
-   and #72's strict form cannot be run in a world that re-invents the missing way in a third of the
-   test's length. Proposed next (not yet agreed): the pair the test was built for, a hunter and a
-   grazer, where the way of living needs more than a tooth that is already there; then the seasonal
-   refuge (is a standing forest a refuge a lawn cannot hold).
-   Thirteenth step done 2026-09-17 (e075, #90): what the flesh of kills needs to pay. The issue was
-   written from a broken measure - e073's `sweep.py` divided the log's `kill_gain` column, which is the
-   gain **per cell broken**, by the intake, and read 0.0%. The runs' `row.csv`, the log's totals and the
-   censuses all say the world has been eating the living at 8-13% since e072. **A measure nobody
-   re-derives becomes a law about the world**: that one column set the question for a whole issue.
-   What was true is that no kind *lives* by killing, and the dry run said why with no runs: a body is
-   worth 9.1 and one break takes 0.29 of it (2.9%, about one turn of grazing), while pressing costs
-   almost nothing (0.002 a turn against an upkeep of 0.10). **A food is defined by its mouthful, not
-   by its price** - five experiments had looked for what made hunting too expensive.
-   Two laws, searched together as #87 asks (11 candidates on seed 9, then three worlds on seeds 9-11):
-   **the tear** (a gut that breaks a block off a body takes with it that share of what the body still
-   holds) and **the frail line** (a body dies when its blocks fall under that share of its birth body,
-   and lies where it fell). Alone each moves one of stage C's numbers and spoils the other: the tear
-   puts kills at 28% and drops the kinds kept to a place to 3.56; the frail line holds the place (4.00)
-   and *lowers* kills to 19%, because a prey dies before it is eaten and its store feeds whoever stands
-   there. Together (tear 0.4, frail 0.5): kills 27.4%, kinds at a census 7.67, kinds kept to a place
-   4.78, against the control's 9.6%, 6.61 and 3.89. **Kept as a set; stage C's default world from
-   here**, controls `experiments/e075_hunt/results/ladder/c1225_life{9,10,11}_both`.
-   What the world does with it: the land's browser becomes a hunter (the same shape takes 46-52% of
-   its food from kills and 15-24% from wood, keeps its tooth, walks 14-20 cells), bodies settle 20%
-   smaller with more hard blocks and shorter lives, and the crowd grows. Pure flesh kinds appear at the
-   shore and on the bottom but hold 2-4%: the hunter of this world is a browser that hunts.
-   Proposed next (not yet agreed): #72's paired invasion on the pair it was built for, the hunting
-   browser against the shore's grazer; then #91, the seasonal refuge.
-   Fourteenth step done 2026-09-18 (e076, #92): the paired invasion on that pair, in worlds seeded with
-   one kind alone (e074's `minus` worlds no longer make sense: 56-70% of the grown bodies take a quarter
-   of their food from kills). **The gap between what the world holds and what evolution finds opens, in
-   one direction.** A world of grazers with no tooth and no muscle (seeds 9 and 11) eats flesh again at
-   once - a soft face breaks under any push - but makes no hunter: at most 0.1% of its residents live
-   that way at any census up to step 40,000. Given a hundred hunters beside a hundred of its own
-   genomes, the same world lets the hunters grow to half of it (5,305 and 5,640 against 487 and 0), and
-   its crowd, doubled without a predator (17,800-20,000), falls back to about 10,000. Where the grazer
-   carries a tooth in 13% of its bodies (seed 10) the hunter is back at the donor's level in 20,000
-   steps and the injected one dies out; a world of hunters grows grazers within 10,000 steps on every
-   seed. **What evolution reaches here is set by the parts a population carries, not by what a way is
-   worth**, so e074's rule ("never read a seed as reachability") holds only for close pairs. What it
-   changes: before rejecting a law because a way did not appear, seed and inject (the instruments are
-   in e075's crate); and the crowd that jams stage C is partly a world without a predator.
-   Proposed next (not yet agreed): #91, the seasonal refuge (is a standing forest a refuge a lawn
-   cannot hold), in the default world, which now has a hunter to hide from.
-   #91 step 0 done 2026-09-19 (e077): no law, e075's kept runs read by season plus three measuring runs.
-   **The season takes the lawn away, but in two ways and in one place.** World-wide the lawn's growth
-   moves only 22% over the year. From 20 degrees of latitude out it is lost twice a year: in winter it
-   stops growing, in summer it grows best but stands uneaten at 35-38 C, above the 30 C where a body
-   pays water to cool. The land's crowd falls from 5,000 to 2,900 at each solstice. The stands (wood of
-   1 or more a cell) lie in the tropics beside those lawns, within a life's travel, and keep their bodies
-   within 9% all year; but they are as hot as the lawn next to them, so they hold nothing the lawn lost.
-   A grown body lives about 1/20 of a year (the oldest a third): a refuge here would keep a line, not shelter a walking body. What it
-   changes: #91's condition (B) is to be built with the heat first (a crown that damps the temperature a
-   body feels), then the water under shade.
-   #91 step 1 done 2026-09-19 (e078): the crown's shade as two rates (k: what a body's heat reads is pulled
-   toward the day's mean by k x shade; k2: the dry air cut by k2 x shade), 11 runs on seed 9 at 60,000
-   steps. **A damper does not make a refuge.** At k 5 a stand's degrees over 30 C in the hot quarter halve
-   (17.4 to 8.5; the lawn 18.9), and cold deaths fall from 1.8% to 1.1%, but the stands' bodies stay flat by
-   season in every run (solstices over equinoxes 0.96-1.04) and no line follows the season: the day's mean
-   in a 20-30 N stand in summer is itself about 37 C, which damping cannot go below. A body pays the heat in
-   water (cooling takes as much as wet ground gives to drink), so water sets where land bodies live and
-   thirst is 42-48% of all deaths. What it changes: the refuge is
-   designed as a cycle before any run (`balance.md` section 13: wet ground under crowns, wood resting in
-   the cold, the crown's share of the sun's heat). The two rates stay as arguments, 0 by default.
-   #91 step 2 done 2026-09-19 (e079): the plants' two laws of that design, read with no bodies on seven
-   worlds. **Wood that rests in the cold puts stands beside the seasonal lawns** (7-11 times the stand cells
-   at 20-50 degrees). **A crown that keeps its ground wet stops at a summer floor of 0.58** (0.43 today):
-   the land's rain is its own evaporation here (a slow wind), so what a crown keeps is taken from the rain,
-   and past rate 1 the land's water drains to the sea. What it changes: the refuge's summer turns on the
-   crown's share of the sun's heat (S3, bodies), on the world with `crown_wet` 1 and `wood_rest` 0.5
-   (`balance.md` section 14).
-   #91 step 3 done 2026-09-19 (e080): the crown's share of the sun's heat (S3) with bodies on that world, seed 9.
-   **The crown makes the stand a better home, not a refuge.** The mid-latitude crowd moves into the stands for
-   the whole year; S3 closes a stand body's summer water (0.77 against 0.40) and the stands stop emptying in
-   summer, but never fill: at the equinoxes a stand holds three times a lawn cell's bodies in every run, and
-   kinds fall (7.00 to 3.72). Water keeps the open lawn thin in every season, so the good season never comes to
-   it. What it changes: S1-S3 are not kept; the refuge's missing half is the land's water by season, to be
-   designed as a cycle before any run (`balance.md` section 15).
-   #94 done 2026-09-19 (e081): drinking takes from the ground and what a body loses goes back (W1, W2), seeds 9-11.
-   **A crowd pays for its water, and the water then binds every body.** A stand's bodies hold 0.32-0.39 of their
-   water in spring (0.8), the stand's lead over the lawn falls (2.79 to 2.42) and the lawn gains in spring, not
-   autumn; but every land body holds half its water, bodies end nearer their birth place, and kinds fall in
-   every seed (7.66 to 6.83). What it changes: not kept as the default world; the proposed next step is a
-   larger `fresh` under W1, since a paid drink no longer needs set D's small one (`balance.md` section 17).
-   #95 done 2026-09-19 (e082): `fresh` 0.2 and 0.5 under W1, then 0.2 on seeds 9-11.
-   **Water that frees the bodies lets one line spread over every band.** Bodies end 14.8 cells from their birth
-   place (3.1), and the lawn carries the crowd in spring and autumn (0.43 to 0.67, 0.41 to 0.65); but the line
-   that leads the tropics now also holds the north's mid-latitudes (45-74% of the bodies at 40-50 degrees
-   against 4-20%), the largest line holds 79% of the land, and kinds fall in every seed (6.83 to 6.29). What it
-   changes: `fresh` stays 0.05, `unit` 0, and #91's water track ends. In the control the north's lines are held
-   through the run, so kinds on this land come from places a leader does not cross; what holds them is the
-   proposed next question (a census, no runs; `balance.md` section 18).
-   #96 done 2026-09-19 (e083): that census, e081's and e082's ladders read by place.
-   **A barrier of thirst holds a region.** The held region is the upper continent's north (the map holds each
-   latitude twice), behind a dry belt near its equator where bodies live at a third of either side's density;
-   the boundary sits in the belt for the whole run, and where the lines meet they breed at the same rate. The
-   locals are soft grazers, the leader an armored half-hunter. Water sets the belt's depth: W1 empties it,
-   `fresh` 0.2 fills it and the leader crosses. What it changes: set D's small `fresh` makes dry land a barrier;
-   the refuge #91 asked for is a region behind a barrier, not a stand; kinds on this land follow the regions the
-   generated land holds apart. Proposed next: count those regions on the worlds we have (`balance.md` section 19).
-   #97 done 2026-09-19 (e084): the six worlds' producers-only maps read for their regions, no bodies.
-   **A world's regions can be counted from its map.** Bodies thin where the ground is dry and where the year
-   never cools below 33 C (c1225's control, predicted from the map at 0.97), and a thin strip one or two blocks
-   wide is enough to hold a boundary. c1225 holds the most regions of the six (5.0 effective; the next 2.2).
-   What it changes: stage A gains a measure of the regions a land holds apart; no better world among ours.
-   Proposed next: the same count over stage A's 34 passing climates (`balance.md` section 20).
-   #98 done 2026-09-19 (e085): stage A's 34 passing climates counted from the climate alone, no bodies.
-   **No climate holds clearly more regions than c1225.** The climate's map gives the producers map's regions, so
-   the count costs one stage A run. None reaches 8 effective; the most, c1288, holds 7.5 and c1225 (5.0) is
-   third. More regions come with a small, cold land (land share -0.57, coolest quarter -0.45), not with dryness.
-   What it changes: c1225 is near the top of what stage A made; a world divided much more would need a search
-   aimed at it. From here the next step is chosen from `gaps.md` (2026-09-19): the ideal against today, by layer,
-   filled one large piece at a time, and updated by every result.
+| element | ideal | today | gap |
+|---|---|---|---|
+| parts | parts whose worth depends on where they sit and how they move | 4 block kinds on a 2D grid of side 4-16; every block pays best packed, so bodies fill their grids (#52, e047) | **large** |
+| size | a thousandfold range, each size with its place | 21-35 blocks; winners differ 1.3-2.2x (e055, e075) | large |
+| life history | lives that span seasons; fat and dormancy chosen by selection | breeding values fixed (from the genome they cost kinds, e069); fat from the genome (e072) | medium |
 
-#73 (each axis alone) is withdrawn; #14 and #38 are folded into stages A and B; #58 is superseded.
+### D. Behaviour
 
-This plan supersedes the "Next, in this order" lists below, which stay as history.
+| element | ideal | today | gap |
+|---|---|---|---|
+| senses | eyes that pay | sight through sensor blocks is not bought (2-4% look out, e070) | large; the cause is probably E |
+| decisions | chase, flee, go to water, go home | a linear reflex, about 16 readings to 4 actions; no memory; learning not selected (e050) | large; same |
+| movement | some stay, some travel far | a grown body ends 3-28 cells from its birth, by the laws (e070-e082); 33-45% of moves blocked (e070) | large; same |
 
-## Three mechanisms, none of them predefined
+### E. A life against the world's scales
 
-1. **Shape comes from development.** The gene network of e002 is run on a small grid with the
-   position of each cell as input. Settled expression decides whether a cell holds a block and what kind
-   (hard, muscle, sensor, digestive). Limbs, fangs, and armor are not defined; they are arrangements
-   of blocks that happen to work. Performance is derived from shape: mass from block count,
-   speed from muscle over mass, attack from hard blocks at the front, defense from hard blocks overall,
-   diet from the digestive blocks. Every block costs upkeep, so every trait has a two-sided trade-off
-   for free (the lesson of e003).
-2. **Predation comes from one rule.** "You can eat what your attack beats and your digestion accepts."
-   Herbivores, carnivores, and escape artists are outcomes, not roles. The predator-prey arms race
-   is also the best-known way to keep a world from settling (the problem seen in e001).
-3. **Species are born, then detected.** Lineages are groups of living agents linked by gene-list
-   distance (the same rule that would let genes flow between them); births, splits, merges, and
-   extinctions of lineages are logged as events. e006 found that the boundaries come from mutation and
-   drift, not from mating: sexual reproduction under the compatibility limit is in the code but does
-   not shape the lineages.
+| element | ideal | today | gap |
+|---|---|---|---|
+| life against the year | many animals live through several seasons; short-lived ones sleep through the bad one | a grown body lives 500-570 steps, **1/20 of a year**; half the dead die by 75 steps, as children (#93) | **large** |
+| travel against the places | a migrant crosses places within a year; a resident's home fits in one place | a grown body travels a few cells of 512; the season is felt by a line over 20 lives, never by a body | **large** |
+| the day against a life | a body lives many days and can tell night from day | a grown life is about 7 days; the day's swing is wider than the bands (e071) | medium |
 
-## Order of work
+### F. The ecosystem (outcomes, never written)
 
-Done: e004 (shape from the genome), e005 (shape to function, predation), e006 (lineages, event log),
-#9 (viewer: a white dot on agents that can bite, block legend, teeth and armor per lineage label),
-e007 (256x256 world with drifting food patches: islands, half the predation, three times the
-lineages, and the first sensor lineage that lasted), e008 (prey worth eating: a prize for old bodies does not make meat pay; hunter lineages exist anyway, as
-booms; the lineage log now records diet), e009 (perception: inputs that say who can eat whom are non-zero once in a
-hundred decisions; eyes do not pay because there is nothing to see; the knockout shows e007's eyes were a passenger
-with a slight tailwind), e010 (contact physics: every trait rule removed; the world stands, shape goes to the
-smallest corner of gut, teeth are profitable and were found once in twelve million births), e011 (rich cells: the same
-regrowth on fewer cells gives size a reason and starts the arms race; tortoises, hunters and corner bodies coexist; the 8x8
-grid is the wall now), e012 (two kinds of place: patches of two widths in one world; each place keeps its regime in every
-seed, grazers on the grass and the arms race on the trees; bodies cross and lineages straddle, hunters stay; one lineage
-with a different body on each place), e013 (facing and space at the cell level: bodies are readable and reach pays, but
-one body to a cell ends the crowd, and with it contact, teeth and the arms race, at every width; the world is a jam of
-small grazers), e014 (space at the resolution of the body: bodies hold their own cells, births and the narrow places
-fill up again, and still nobody touches anybody; contact is a failed move now, selection keeps reach alone, and the
-winning body is four cells at the four corners of its grid), e015 (work is force times distance: a move costs by the mass
-moved times the distance and a push that moves nothing costs nothing; pushing is free and nobody pushes, forward 9-27% of
-decisions, contacts 0.10-0.37 per body per step, no tooth; the winning body is the same constellation; the world is a lawn
-because food regrows under the body that eats it, so the best body stands still and reaches), e016 (a plant under a
-body does not grow: a cell held by a body does not regrow, and the lawn is a pasture; moves that happen 11-20% of
-decisions against 1-3%, 74-88% of forward actions find room, the winner is a block of 7-9 gut cells over 1.6-2.7 world
-cells in place of the constellation over 4.5; the world lives on a third of its regrowth and holds half the bodies;
-contact falls to 0.02-0.05 per body per step because a body moving through an empty world meets nobody; the milder
-reading, regrowth by the free sub-cells, is a tax that reach pays for and keeps the lawn), e017 (a dead body is food
-where it lies: every cell of a dead body lays its matter and its share of the body's energy on the world cell under it,
-a child never placed lies under its parent, a broken cell nobody eats lies where it was; the world eats its dead and a
-body is worth what it cost, 2.5-3.2% of the food at a cell of 0.02 and 7-11% at 0.1; neighbors and contacts stay e016's
-in every run, the same wedge wins, 2-4 lineages; on the trees dead matter is 7-12% of the intake and one small tree
-lineage lived 50,000 steps on it at 0.1: the dead matter is where the crowd is, and the ground forgets it in a few
-dozen steps), e018 (a closed cycle through the soil: a plant grows out of its own cell's soil at most the sun's rate, what
-a body spends falls to the soil under it, the dead rot into it; matter is conserved and the map remembers, the richest
-tenth of the cells holding 43-87% of the soil, the trails of the patches and of the bodies visible in the maps; but the
-world eats what its bodies spend, 23-26 per step of 164 of sun, a third of the sun falls on empty cells, the trees lose
-their bodies, the population swings 2-5x, lineages fall to 1-3 against e017's 4, three scarce worlds of four die, and
-under a uniform sun the soil weaves into the walks and the food supply falls through the run; 70% of the matter lies
-beyond the patches where no sun is), e019 (matter that flows: a height per cell and soil that runs to lower neighbors,
-its own height counting, so that it pools level; the closed world stands for the first time, food eaten steady to 1%
-and the population to 1-3% in all twelve uniform-sun runs; the soil pools into a level lake over the low ground that
-holds 100% of the soil and 99-100% of the bodies, bare ridges above it, the soil map the terrain upside down; but a
-lake is one place, the same bar of 6-10 gut cells wins it as wins the flat lawn, lineages stay at 1-2, and the terrain
-costs the world the ridges' share of the sun; over the drawn sun the terrain is fatal, two worlds of four die as the
-patches drift off the lake: a rich place in a closed world is where the sun and the soil meet), e020 (the breath rises and the rain falls on
-the mountains: what a body burns goes to the air, one pool for the world, and the air rains on every cell at most
-the sun's rate times height over relief; the high ground lives, 658-670 bodies on ridges that held 0-14, the world
-eats 73-94 per step, steady, with its store in the air and rivers of soil running from under the crowds to the
-valley floor; the bodies sort by height, mass at birth rising valley to ridge in all four seeds, the small variants
-and twice a second lineage holding the thin valleys: the first place effect on bodies under a uniform sun, a
-grading, not a split; half the breath to the air is the richest world of the series, both stores, 103-109 eaten,
-nothing wasted but shading, and no place differs from another: a closed world trades productivity against
-difference; rain everywhere alike rebuilds the flat lawn, because the store sits wherever the draw is capped and
-the population's own shading is cap enough), e021 (the tall plant takes the light: the matter standing on a cell is
-a column, and a taller column takes, from every cell within its height in cells, a share of that cell's sun equal
-to the height difference less the distance, times its own room over the cap - a full crown intercepts nothing, and
-a column under a body neither grows nor claims; the world grows standing trees of 50-400 bites where no cell could
-hold half of one, and has two states, an orchard of 6-24 trees in nine runs of twelve and a forest of 165-1,405 in
-three, entered and left as booms; the forest doubles contact (0.093 per body per step) and harvests 6.5% of the
-intake from the trees; the canopy raises the closed world's income to its record (112.9 eaten on the flat lawn,
-e020: 100-103) by taking the light the bodies' own shadow was wasting; lineages alive reach 3-5 in four runs and
-two lineages coexist 921,000 steps, the deepest coexistence since e012, with the heaviest winner of the series
-(mass 10.3) standing in the thickest forest - but no tooth: a tree is silenced by the body that eats it, feeding
-one gut at a time), e022 (the spill: a full crown keeps taking the light it stands in, a column under a body keeps
-taking it, and what a column cannot hold - growth past the cap, or under a body - falls as fruit on the ring of
-eight cells around it; the crowd comes back for the first time since e012, contacts 0.2-0.8 per body per step in
-ten runs of eleven, fruit 44-77% of the intake, the dead 10-26% of it, and the crowd state eats 115-134 per step,
-the record; the crowd picks a new winner, a hollow frame of 19-24 cells around the rim of the grid, seven world cells wide,
-that stands around a tree without holding it and eats the ring, with armor at its corners, three times e021's bar - and it is one winner still, lineages 1-3, the tooth found and lost
-(biters up to 0.026); the price is the start: with every neighbor's light taken the lawn under the trees is dark,
-every world crashes to a few hundred bodies by step 1,000 and one in five dies there, bodies that see two cells
-starving beside piles they cannot see; mutation as a chance per base rides along and changes nothing else),
-e023 (eyes that see far: a sensor block sees one more cell, seen at 1/distance, range paid for with the cell; the
-eye pays where the crowd is and nowhere else - in two seeds of four the winner carries a sensor per body for
-261,000 and 695,000 steps (e022's longest: 23,000), and it is the crowd state's frame with no armor, four muscle
-and three to seven eyes where e022's frame had armor at its corners, walking from ring to ring; in the other two
-seeds, the mixed state and a lawn, the blind bar wins and the eye is dropped; the start's deaths fall from 5 to 2
-in 24 and its bottlenecks do not move; no tooth),
-e024 (what flesh is worth: a share `flesh` of the upkeep a body pays is fixed in its flesh instead of breathed, and
-goes to whoever breaks a cell of it or to the ground when it dies, matter conserved; a cell is worth 1-2.5 against
-0.15, and the world answers by eating its dead: at every share up to 0.7 and in three seeds of four at 1 nothing
-bites, the winner is the net - four pads of three gut cells at the corners of the box, eating corpses from four
-places at once - and the fat hoards 25-70% of the world's matter, the rain stopping at 1; the tooth comes in one
-seed of four at 1 and in every pilot at 0.85 and above: a state entered at the start and kept, 4,500 bodies of nine
-cells, half with a bite, four kills a step, a hunter lineage of 488,000 steps beside a gut of 286,000 - two
-winners; a cell is worth less in the hunter's world (0.64) than in the net's (2.4), so the worth does not decide
-the state, the start does; matter drifts 0.2-1.8% on the f32 ground under fat corpses, #31).
+| element | ideal | today | gap |
+|---|---|---|---|
+| ways of living | many; the user asked for about 20 (2026-09-11) | 7.66 kinds at a census, 4.62 kept to a place (e081's control) | **large** |
+| dominance | no line above a fifth of the animals | the largest line holds 42-63% of the land's bodies (e082) | large |
+| food web | three or more levels; hunters of several kinds | kills are 27% of what bodies eat; the largest land kind takes half its food from kills; pure flesh kinds 2-4% (e075) | medium |
+| crowding | numbers limited by food, hunters and seasons | numbers limited by room: 24-33% of children have no room (e070); without the hunter the grazers double (e076) | medium |
+| cycles over time | predator and prey swing; seasons move numbers | the land's bodies swing twofold over a year; forms do not follow (e070) | medium |
 
-Next, in this order (GitHub issue numbers). The plan was reset on 2026-09-01 after e021 with the user's reading of
-the series: one body wins because the environment is still uniform in time and the body has too few axes; the fixes
-are fluctuation, the crowd, and materials with more properties - as laws about the world and materials, as ever.
-The order was reset again on 2026-09-02 after e022: the crowd is here, and what it exposed comes first - the
-bodies' sight (the start's deaths are bodies that cannot see a pile two cells away) and the worth of a body (the
-crowd touches, and a tooth still loses to a gut that eats what falls).
-Done 2026-09-02: #26 eyes (e023) - kept; the eye pays in the crowd state only, and the crowd's body sees now.
-Done 2026-09-03: #27 flesh (e024) - kept at `flesh` 1; a body is worth eating, the world eats its dead, and the
-tooth pays in a state the start decides (one seed of four), where it gives two winners and four kills a step.
-Done 2026-09-03: #31 (e025) - the drift was not the f32 ground but two leaks of the ledger (a body's deficit filled
-by a kill in the same step; f32 rounding of the fat's fixed increment); the ground and the bodies' ledger are f64
-now and the matter holds to 1e-6. #25 what a block weighs (e025) - kept, both halves: a block weighs by its kind
-(hard 2, sensor 1/2) times a density the genome expresses (1/2 to 2), and hardness is the material's times the
-density. It ended the start's lottery: the hunter state in four seeds of four (the control at the same code: the net
-state in four of four), hunters denser than their prey, a second winner half a density apart in three seeds, nobody
-light (a light body's face breaks under one muscle). Two routes to resistance: density (seeds 1, 2, 4) or hard
-blocks on a big body (seed 3).
-Done 2026-09-04: #24 weather (e026) - kept, both forms, as laws of the world: the cloud (the air rains where a
-field with a memory of 3,000 steps says, drifting east; the ridge's soil follows it, the bodies hardly do: the
-winners are e025's) and the season (the sun a sine of 20,000 steps at amplitude 0.5; the bodies halve each winter,
-the top place changes hands 6 and 14 times in two seeds of four, and the eye pays for the first time: lineages with
-a sensor per body for 72,000-125,000 steps in four runs of eight, 10,000 at most without weather). The season's
-ceiling is a fact about the bodies: a body has no store of its own (its fat is its eater's), so amplitude 1 kills
-the world in its first winter and 0.75 makes a lottery every winter.
-Done 2026-09-04: #33 room (e027, two pilots) - not a lever. Four times the space at the same matter is four times
-the sun, so the matter turns over four times faster and the bodies fill the room (1.4x as many, twice as big);
-a quarter of the matter halves the bodies and they crowd the valley (21% of its cells under a body, e026's
-whole-world figure). Contacts per body are 0.3-0.6 in every world: the bodies make their own crowd where the
-food is. Room, if it is to be given, is a matter of spreading the food (terrain, rain), not of the grid; the eye's
-test stays the season world. The 256 grid costs 2-3x per step and is kept as an argument only.
-Done 2026-09-04: #32 what a gut digests (e028) - not kept. A heritable digestion axis on the gut material (plant
-yield 1 - d/2, flesh 1/2 + d/2; the dung to the soil) is neutral as the issue's line: the world's flesh is its own
-dead, lying where the bodies are, so every gut eats a mix (the control digests 70% flesh) and the world settles at
-the mix where the line has no slope. As a sharp curve (the middle worse than the mean of the ends) it is selected,
-one way: four seeds of four go to the plant gut (d 0.15-0.32), no flesh gut, kills stop, the winners drop their
-muscle and sit (speed 0.001-0.005). Either form costs the world two thirds of its bodies: a gut that leaves a
-quarter of every pass in the soil breaks the cycle of the dead that fed e026 (an intake of 1.5-2.5 times the sun).
-A flesh gut needs flesh that lies apart from the plants (a place, #14, or a hunter that carries its prey); the
-split between grazers and hunters stays with the tooth and the state of the world.
-Done 2026-09-05: #28 small and large bodies (e029) - not kept as the default (`side` stays 8; the argument stays: a
-number up to 16, or `grow`, the side the genome expresses from 4 to 16). The grid is not the size: on a 16x16 grid
-the bodies are 12.5-14.2 cells (control 8-21), and under `grow` four seeds settle on sides 4.4, 5.2, 8.1 and 14.3
-with bodies of 11-16 cells in all four; the side sorts a seed's two kinds (a dense mover, a sitting gut) onto grids
-by chance, the giants (up to 240 cells) are newborns that starve, and the 16 grid costs 2x per step and the tooth
-(gone in three seeds of four). Size is the sun's: a body of 16 cells costs the sun of six cells, and a cell of
-ground holds what the sun gives it whatever stands on it. Size will pay when a body can do with size what a small
-body cannot: carry a store through the winter, or reach food a small body cannot.
-Done 2026-09-05: a store a body can spend (e030) - kept, at `store` 5. The fat a body fixes from its upkeep is its
-own: the flesh holds at most `store` per unit of mass, the fat pays the upkeep when the energy cannot and what it pays
-is breathed, the rest is e024's (the eater's share, the ground at death). Half the bodies live on their fat at every
-season (the crowded world's bodies wait instead of dying: starvation deaths 17-21 a step to 2-6), and the winter at
-0.75 is no longer a lottery: the floors are 327-1,186 bodies with 2-22 lineages over 45 winters of three seeds, where
-the control falls to 18-45 with one or two. Size does not pay: the side falls (4.0-5.6 against 4.8-7.2) and the mass
-rises by density (32 against 15 in two seeds), because the store is per unit of mass and mass is free of upkeep - a
-full 4x4 block at density 2 is the store's body, and the light sitting gut (with an eye in two seeds) holds the other
-place, 151,000-300,000 steps in one seed. The cycle moves from the ground to the air: the winners eat 13-49% flesh
-against 70-84%, the air rains three times as much. The tooth stays gone under `grow` (the side-8 pilot had it, 1-21%). At amplitude 1 the world lives now (e026's died in
-its first winter) but as a lottery of 7-25 bodies each winter (a pilot on seed 9): a store of 1,300 steps of upkeep does
-not span a winter of 6,700 steps under a quarter of the sun.
-Done 2026-09-05: the child of the flesh, and breeding as a decision (e031) - not kept, both stay as arguments. A child
-made of half its parent's fat (`yolk`) shares the store among the same crowd: the fat per body falls and the floors at
-amplitude 1 are the control's (8-26 bodies). Breeding as the policy's fifth output (`breed`) is never selected toward a
-time: 98-99% of the decisions to breed are below the threshold from the first log step to the last in six runs of
-300,000 steps at 0.75, because a denied decision costs nothing and a body at the threshold breeds within a few steps
-either way; at amplitude 1 the world dies in its second winter, alone or with the yolk. At 0.75 the floors (498-728 in
-lineages of 5 or more) and the lineages (4-16) are the control's. The dark winter is the world's arithmetic: 131,000 of
-matter cannot carry 3,000 bodies of 0.056 upkeep through 3,000 dark steps however the fat is divided. (The lineage
-count of the floors is 17-35% under the bodies alive; e030's floors are that much undercounted too.)
-Done 2026-09-05: a winter that differs by place (e032) - kept: the season world is `winter high` at amplitude 2
-from here (the cell's amplitude is a times its height over the relief, at most 1; the argument's default stays
-`flat`, e031 byte for byte). The dark winter is a place now and the world stands: floors of 673-1,230 bodies with
-2-10 lineages at amplitude 2 (44% of the cells dark at midwinter) and 364-476 at 3 (72% dark), where the flat season
-at 1 is a lottery of 8-22; the floor is the valley's capacity and returns within 5% every winter. The valley holds
-68-90% of the bodies at every floor, the ridge's winter bodies are 58-100% born below, and the ridge is refilled to
-16-24% of the peak every summer: migration as an outcome, as a wave of the whole world (no lineage is a place's).
-The crowd the winter makes in the valley brought the tooth back in one seed of three (24-37% of the bodies for
-150,000 steps: a flesh column at density 2 beside a light gut, two kinds 260,000 steps together). Not reached: no
-body holds the ridge through the winter, because the valley is the best place at every season but the summer.
-Done 2026-09-05: the wet ridge (e033) - not kept, the rain stays on every cell alike. e020's rain on the mountains
-under e032's winter changes nothing the bodies notice (two pilots on seed 9: floors 553-764 against 542-825, the
-valley 70-79% of them against 73-85%, the ridge's summer share 17-20% against 17-19%): the ridge gets 25 of rain a
-step instead of 16 and loses the same sun for want of soil (27 a step, half its sun), because the soil runs downhill
-a tenth of the drop per step where the plant grows a hundredth - the rain's place is not the soil's place, and the
-lake stands in the valley whatever the sky does. No batch: the pilot settles the mechanism.
-Done 2026-09-05: the soil barely moves (e034, #35) - not kept, the flow stays 0.1. Five pilots on seed 9 (flow 0,
-0.0001 and 0.001 with the rain alike on every cell; 0 and 0.001 with the rain on the mountains) against the flow-0.1
-pilots: with the soil still the soil climbs - it leaves the valley (18,300 of 131,000; 41-56% of the valley's cells
-bare, its soil heaped) and piles on the slope and the ridge (61,000-72,000, even), because the dead do not lie in
-this world (the world eats them, e024) and the matter returns through the air, which rains alike on every cell; the
-soil stays where nothing eats (the ridge: dark in winter, its plants full at the cap in summer) and comes down only
-by the flow. The world stands at half (floors 178-462 against 542-825, 52-63% of the sun lost for want of soil, the
-matter in the soil instead of the bodies). 0.001 is the plant's own rate (a lake cell gives 0.008 a step) and re-forms
-the lake at 80% of the floors with 16,600 left on the ridge, which the bodies use in summer (the ridge's summer share
-30-38% in every still world against 17-19%). The rain on the mountains under a still soil puts 104,400 on the ridge
-and 20 in the valley: a lottery of 22-80. What this settles for #29: the return road is the air, the carrier's job is
-to bring the matter back to the sunlit crowd at the order of the plant's use (a hundredth of the flow now), and the
-ridge is worth holding through the winter only with a store in the ground.
-Done 2026-09-06: a store in the ground (e036, #36) - not kept for the ridge, and no batch was run. The law: what a
-cell grows past the plant's cap (the fruit that falls since e022) goes into the ground of a cell instead, up to `root`
-per cell, where it does not rot and no bite reaches it; a gut block digs `dig` of a bite out of it per step. Nine
-pilots on seed 9 at 100k in e035's season world, in three rounds (where the surplus grew; where the fruit falls; the
-rate where a body just breaks even). The ridge's winter is unchanged at every rate: 33-91 bodies at the floors against
-36-63, 74-100% of them born below against 72-92%. The reason is one inequality used twice: eight gut blocks take
-8 x dig x 0.02 a step, so a store stands through the summer exactly while that is under the 0.048 a small body owes.
-At dig 0.2 the ridge still holds 977 at midwinter while its bodies fall from 965 to 62 (the food is there, the rate is
-not); at dig 0.3-0.5 the rate pays and the ground is empty by the autumn. What the store does do: the world eats
-10-12% more (112-130 a step against 116, a third of it dug), because the fruit that used to rot into the soil and be
-regrown at 0.01 a cell is eaten as it stands - spent on bigger bodies (median mass up to 27.3 against 17.6), not more
-of them, and paid for in soil (barren 8.8 to 11-22 a step, trees 239 to 109-254). The dig-0.2 world is a hunter's
-(30% of bodies bite against 2%), a state to come back to. Care with the reading: a negative on the ridge is not a
-negative on stores - under `winter high` 2 the season's amplitude is 0.56 in the valley and 0.80-1.00 everywhere
-above, so the winter makes two places and not three; the ridge is also the dry band under e035's water and the one
-farthest from the valley the crowd winters in, and none of the three was varied. The ridge's sun is under a fifth of
-its mean for 4,097 steps of the 20,000 and a season gives it as much sun as the valley. `root` and `dig` stay as
-arguments, 0 by default.
-Done 2026-09-06: water that flows (e035, #29) - kept: the season world is water 0.1, leach 0.01, depth 0.01, mix 0.2,
-flow 0 from here. Water is a field of the world: the sky gives every cell 1 a step, 1% evaporates, a share runs to
-the lower neighbors by the drop of the water's surface (a pool spreads level), and a plant grows under its sun times
-min(1, water / 100), so the ridge's plants get half their sun and the valley's all. The soil is the matter, laid where
-the dead rot and the breath rains; it moves only with the water that leaves a cell (the leaching, a hundredth of the
-old flow) and by mixing between wet neighbors. Three rounds of pilots on seed 9 found which part of e019's flow the
-crowd lived on: on the terrain alone the water and the leached soil pile in one-cell pits (81% of the valley's soil
-in 1% of its cells, the world at 60%); with the surface the pool spreads but a level lake does not flow, so a cell
-the crowd strips is not refilled (barren 77 a step, still 60%); with the mixing the soil is uniform (5-8 per cell,
-none bare, the ridge holding the most) and the world stands above e032's pilot. The batch (seeds 1-3, 300k): e032's
-floors in two seeds of three (720-874 and 659-736 against 716-792 and 673-738), 70% in the third, 10% more eaten
-(dryness costs 25 a step, the uniform soil gives back 30-40), the ridge's summer share 29-34% against 19-25%, the eye
-in 29-35% of the bodies in two seeds, the winners e032's kinds. No lake of matter: the soil is uphill. Open: a body
-that needs water, the rain on the ridge again, the mixing's rate.
-Decided 2026-09-05 (the user, after e033): what runs downhill in the real world is water, not soil. The soil is
-roughly uniform and rich where the dead and the dung lie; a little moves with the water, not as the main cycle.
-e019's flow moves the nutrient itself at 10-100x what a plant can use, and the lake, the barren ridge and e033's
-negative are its products. So the order is:
-1. (Done: #35, e034 - the still soil climbs to where nothing eats; the world stands at half. Done: #29, e035 -
-   water as the carrier, kept: wet and dry are places, the soil is uniform and uphill, the crowd lives on the
-   lake's mixing.) (Done 2026-09-09: #37, e040 - a body that needs water, not kept: a fill that drains by `thirst` a step and
-   fills on a pool (water above WET), the eye seeing the pools and the thirst as five more inputs. No trips: the
-   ridge's bodies born elsewhere stay at the control's 15-19% over five winters at three doses and the eye decides
-   less (26% to 16-22%); the ridge does not empty either, it lives on its own pools (one cell in 25); the bodies
-   off the water die dry (23-72% of all deaths), the world loses 28-71% of its bodies, and the winner at every
-   dose is a gut with no muscle. The world's answer to a need for water is to sit on it, not walk to it: a trip
-   needs a body that must move for its food before a second need can shape its route.) Open from e035, as an
-   issue: #38 the rain on the ridge again (e033's question, with a carrier that keeps the soil there) with the mixing's rate.
-2. (Done: #36, e036 - a store in the ground, not kept for the ridge: standing through the summer and feeding a
-   body are the same comparison, so no digging rate does both.) Read the bands with this in mind: at `winter high`
-   2 the season's amplitude is 0.45 in the valley and 0.91-1.00 above it (e032's own table), so the winter makes
-   two places, not three, and every "three bands" reading since e032 is valley against everything above.
-   The amplitude was chosen with that known (e032 ran 1, 2 and 3: at 1 the ridge keeps 306-412 bodies through
-   midwinter and half of them are its own, at 2 it keeps 13-56 and 80-92% are born below), so it is a dial, not
-   an open question.
-3. (Done: #39, e037 - the cost of a body, UPKEEP x 16 x (size/16)^k, not kept: on seeds 1-3 at k 0.6 the world
-   is the control's after 60,000 steps, a median of 15-16 cells and 0-1% biters. Seed 9's pilot held a 16-cell
-   grazer beside armored hunters of 37-44 cells for 100,000 steps; every run, the control included, passes
-   through such a world in its first 40,000 steps (the start's population is random) and selection purges it by
-   60,000; the law only made the transient larger. The upkeep's slope is not what binds size. The reading, not
-   yet tested: the income binds - a gut block earns 0.002-0.004 a step, a fifth of its bite or less, and less
-   the wider the body stands, because intake is the regrowth under the footprint. One short run with a higher
-   regrowth would test it: #40.) (Done: #40, e038 - the sun's rate per cell at 2 and 4 times today's, at k 1
-   and k 0.6, seed 9, 100,000 steps: a gut block earns the same in summer under every sun, 0.003-0.005 a step;
-   the extra sun becomes 1.3-1.5x as many bodies, denser, of the same size or smaller (the median 9-15 cells at
-   k 1; at k 0.6 the hunters' 90th percentile falls 53, 37, 30 and the biters 33%, 29%, 6%). e027's reading holds
-   on the same grid: the world converts sun into bodies at the size it has. The income per block is pinned by the
-   crowd, not by the sun, so a law that gives the world more food is eaten by more small bodies; what escapes the
-   pinning is an income the crowd cannot dilute - a food only a big body reaches. The soil never bound the
-   regrowth, 2.2-6.2 per cell against a sun of 0.01-0.04. `sun` stays an argument, 1 by default.) (Done: #41, e039 - a food only a big body reaches. The law: a gut block's bite from the
-   standing plant is its bite times min(1, reach / the column's height in cells), the body's reach
-   `reach` cells per world cell of its length front to back, the fruit and the dead taken whole as
-   before. Not kept; `reach` stays an argument at 0. The law selects what it prices and nothing
-   else: the length rises in four seeds of four at 100,000 steps (+0.34, +0.56, +0.66, +2.18
-   sub-cells) where the knockout - the same reach for every body, e009's rule - does not (+1.48,
-   +0.62, -0.38, -1.12); at 300,000 steps on three seeds one world stands at 13.4 long against its
-   control's 5.1, its winner a pole of 12.7 cells, 14.7 long and 2.8 wide over four world cells,
-   nine gut blocks and no bite, holding 75% of the body-steps of the last third over a forest six
-   times the control's. Size does not follow: the mean body is +1.0, -0.9 and +1.9 cells at
-   300,000 against a control that is itself 13.6-16.2, and the knockout moves it as much (+10.0,
-   +6.3, +0.5, -2.0 at 100,000): the pilot's step from 11 to 17 cells on seed 9 is the loss's, not
-   the reach's. The world pays 4-26% of its bodies; seed 2's winter floors fall from 691-874 to
-   144-551 and its winners from two to one. A tax on taking the standing plant is mostly a subsidy
-   to it: the forest grows 1.5-7.7 times under the law and under the knockout alike. The lesson:
-   nothing here makes a long body cost more than a short one with the same cells, so a food out of
-   reach buys a shape, not a mass. A reach has to be priced on mass - the first concrete argument
-   for #5, a body axis that costs matter to stand up in.) What is
-   still missing for size is
-   the real world's other half: a food a big body reaches and a small one does not (tall trees, tough grass,
-   large prey). The canopy's trees (e021) are the candidate already in the world, eaten today by any gut; a
-   law about the tree as a material (what a bite takes from a column of height h) is #41. Read #41 as the first
-   law of the third axis of an environment (principles: by place, by time, by the size of the body looking at
-   it): the tree's height is an environment only a tall body sees, and what follows it are the ground a body
-   can dig into, the water a body can enter, the gap only a small body fits. Order now (after e040, the user's reading): #43 a reason to leave - plant regrowth that follows the standing
-   plant, with the thirst, as a 2x2 (the sitter wins because nothing in the world forbids sitting; a law that needs
-   movement must be tested in a world where movement pays; frame a hypothesis as "Y pays when A and B" and test the
-   minimal combination). (Done 2026-09-09: #43, e041 - a plant that grows from what stands, not kept. A cell uses
-   max(0.1, min(1, res / stock)) of the light it has. At a knee of 1 and 4 it binds on 92-98% of the cells, takes
-   10.0 and 16.8 of the sun's 164 a step, cuts the cells' own regrowth from 9.0 to 3.5 and 3.0 and the trees from
-   239 to 111 and 74, and costs the world 39% and 49% of its bodies - and buys no movement: the energy a body pays
-   for moving is flat, and the muscle-free lineages end holding 76% and 88% of the bodies against the control's 68%;
-   with the thirst on top, one gutted lineage holds every body alive and the mean muscle is 0.27. The reason is where
-   the food comes from: 91% of what the bodies eat is fruit lying on the ground. Since e021 and e022 the world's food
-   is a fountain - a column takes the light of every cell within its height, and a column under a body cannot grow,
-   so everything it takes falls at the body's feet. A body standing on a tree is paid for standing, and a law on a
-   cell's own regrowth throttles a tenth of the world. The condition "the food under a body runs out" is not a
-   property of the regrowth law but of the fall: the next test is e022's exception, the held column that still
-   claims, taken away.) Measured after e041 (the user's question - is that much fruit right?): the food is a rain onto
-   points. Of 146 of light a step the canopy moves 135 (92%) into the tall columns and 96 of it falls back as fruit;
-   the fruit lies on 7-15% of the cells with 30-56% of it on the richest 1% (about 164 of 16,384), a wet cell holding
-   0.7-1.4 and the biggest pile 21-26; only 22-25% of the cells carry anything, the world's living plant is 1,232
-   (941 of it on the 239 tree cells, the lawn at 0.018 a cell) against 3,486 of fruit on the ground. e021's canopy,
-   with its saturation, moved 5-18 of sun a step; e022 added the fall and dropped the saturation in the same change,
-   and the two have never been separated. That is #45, and it is the environment every law since e022 that needed
-   movement was tested against. Order: #45 (`sat` and `hold`, four runs), which contains #44 as its `hold` half, then
-   #38 the rain on the ridge, then #5 with the reach in mind. Open from e037 and e038: whether seed 9's hunter world outlasts 100,000 steps, and
-   what the weight law costs a big body per step (the other candidate for what binds size).
+### G. Cycles of the world
 
-   Done 2026-09-10: #46 a body pays what it owes (e042) - kept: the season world is `strict` 1 from here. From e030 to
-   e041 the upkeep a body could not pay from its energy, its food and its fat was dropped, and with `flesh` 1 the food
-   it had just eaten was fixed as fat, so any body that ate lived on (seen in the viewer: a body of 36 blocks sat 454
-   steps owing three times what it ate); the work of moving was free at zero energy. In the control 6-18% of the upkeep
-   owed went unpaid over the second half (up to 35% early) and about half the moving was free. Under `strict` (a body
-   that cannot pay dies; the fat pays the moves too) the world stands on seeds 9 and 10 at 100,000 steps with 20-35%
-   fewer bodies on the same food and floors 13-20% lower; the median body is 10-12 cells against 5-9, the muscle 4.3
-   and 3.0 against 3.1 and 1.5, the moving 1.6-1.7 times, and the top lineage is a mover in both seeds (a sitter in
-   both controls); diversity 2. Without the store the floors are as high and the world eats its dead (68% flesh): the
-   store decides where the matter cycles, and the valley carries the winter. Read what e030-e041 say about bodies at
-   zero energy, the floors, the sitter and size as measured with the gap. Order now: #45 under `strict`, then #47
-   ageing, #38, #5.
+| element | ideal | today | gap |
+|---|---|---|---|
+| matter | closes between land and sea | conserved in total; the land gains 6.5-7.3% over 90,000 steps, the runoff halves the pump (e072) | small |
+| water | a body drinks from the world and gives back | free to the body in the default world (W1 closes it, not kept, e081) | small |
+| heat | bodies and places exchange heat | a body holds heat and pays to hold its band (e072); it does not warm its cell | small |
 
-   Done 2026-09-11: #45 and #44, what a crown takes (e043) - kept: the season world is `sat` 1 and `hold` 1 from
-   here. When e022 added the fall it changed the canopy twice: a full crown kept claiming light (e021's saturation
-   dropped) and so did a column under a body (e021's rest dropped). Put back under the fall one at a time (seed 9,
-   100,000 steps, under `strict`), each leaves a third or more of the rain: the fruit is 94 a step in the control,
-   49 with the saturation alone (the bitten columns under bodies now claim hardest, and all of it falls), 80 with
-   the held column's rest alone (the free full crowns still pour), 0.5 with both. With both, on seeds 9 and 10, the
-   light stays on the cells (78 a step grown on them against 12), food lies on 65-68% of the cells against 37%,
-   40-44 of the 146 of light is lost under bodies (e016's shadow), the bodies move on 40-46% of their decisions
-   against 23-24%, and diversity is 3 against the controls' 2. The world stands on eight seeds (six only through
-   the first winter, 409-796 bodies at the trough: no lottery), with winter floors 8% and 33% lower. Who wins turns
-   on the seed: a grazer of 8 muscle and 8 gut cells on seed 9 (61% of the last third), a light gut of 16 cells on
-   seed 10 (69%); muscle-free lineages hold 47% and 74% of the bodies (a gut without muscle still steps a sub-cell
-   at a time). The laws since e022 that needed movement (e023, e037-e041) were tested in the rain and can be tried
-   again. Order now: #47 ageing, #38, #5.
+## 3. Where the bottlenecks are
 
-   Done 2026-09-11: #47 wear (e044) - kept: the season world ages by wear from here (`wear` 3,000), and the fixed
-   age is gone. Every step each block of a living body fails with a chance that doubles every 300 steps of the body's
-   age (half the blocks of age 3,000 have failed) and falls as dead matter with its share of energy and fat; a body
-   dies of wear when no block is left, or of hunger when it cannot pay for what is left. On seed 9, where the winning
-   grazer lives past 1,000 steps, the fixed age took 10.9% of the deaths on the one step 3,001; under wear no 50-step
-   bin past age 1,000 holds more than 0.8%, the old die between 2,000 and 4,200, and 96% of those deaths follow a worn
-   block (61% hunger, 35% wear). Births rise 31%, the winner's plan holds 32% of the last third against 61%, and the
-   lineages alive swing 5-34 against 2-10 (one seed: a reading). On seed 10 the bodies rarely get old (p90 age at
-   death 456-480) and wear touches 1.5% of the deaths. The world stands on both; diversity 2 against 3, with more
-   winners. Whether size buys a longer life cannot be read yet (the bodies that reach 2,000 are one lineage's).
-   Order now: #38, #5.
+1. **A life is too short and too local for the world we built** (E, and through it D and part of F). To a body the
+   world is the same everywhere and all the time; places and seasons are felt only by lines over generations. What
+   follows from it: sight not bought (e070), cold a flat tax (e071), no kind by temperature band (e072, e073), no
+   refuge (e077-e080), lines held by places, not by bodies moving (e083). The migrant is impossible at this ratio.
+2. **Few kinds of food** (B, and through it F). A gut eats any plant, and there are three producers. Each food with
+   the right mouthful added a way of living: wood's browse (e073), the flesh of kills (e075).
+3. **Parts whose worth does not depend on shape** (C). Forms differ by what they hold, not by how they are built.
 
-   Done 2026-09-11: #48 a body is what holds together (e045) - kept: from here a body is the largest part its blocks
-   make through their sides (`connect` 1). Every block a genome wrote had been part of the body, touching or not; in
-   e044's wear runs 4-15% of the living bodies were in pieces. Under the law only the largest part is built at birth
-   (0.6-4.4% of the births cut on five seeds; 12% on seed 11, whose winner writes parts), and a part cut off by a break
-   or a worn block falls as dead matter. A break drops 3-6% more blocks than it breaks (a push breaks surface blocks,
-   which rarely hold two parts together); a worn block 0.1-0.4 more. The world stands on six seeds with 4-18% fewer
-   bodies. After the ungrazed start the season world settles in one of two states, picked by the seed: a hunter world
-   (kills 30-41% of the intake) on 4 of 6 seeds under both laws, or a grazer world (16-20%). A law about predation has
-   to be judged by that count over seeds and by the kills' share within a state.
-   Order now: #49 plant matter harder to digest than flesh, #14 the regions (with #38 as its first pilot), #5.
+The crowd and the dominant line may follow from 1 and 2: bodies that neither move nor eat differently pile up, and
+the best eater of the one food spreads.
 
-   Done 2026-09-11: #49 plant matter harder to digest than flesh (e046) - not kept: `plant_yield` stays 1. Every gut
-   digested half of the plant it took (the rest as dung to the soil of the cell) and all of the flesh, on seeds 9-14
-   against e045's connect runs. The world stands at half its bodies (1,164 against 2,246; floors 125-233 against
-   345-590), digesting 73 a step against 126; the plant left uneaten stands as forest (trees on 27-31% of the cells
-   against 3-16%). Hunter worlds come on 5 of 6 seeds against 4, but three seeds swap
-   states, and within a state the kills' share of what is digested holds (28-36% against 30-37%): the crowd thins
-   until a gut breaks even again, a kill is worth what it was, and a hunter meets others as often (0.36-0.56 contacts
-   a step against 0.44-0.69). The sitter answers with a bigger gut, 12-19 gut blocks per body against 7-12 on all six
-   seeds, and on three seeds the winner is a gut of 22-25 blocks without muscle beside small hunters: a body's fixed
-   cost (0.032 a step) carried by more gut, the Jarman-Bell principle out of the costs. Muscle-free lineages hold
-   34-64% of the bodies in the hunter worlds against 24-47%. 0.3 was not run. A law that lowers what food yields
-   everywhere acts as a weaker sun; hunting may pay where places differ and the crowd cannot even them out.
-   Order now: #14 the regions (with #38 as its first pilot), #5.
+## 4. Lessons that hold across experiments
 
-   After e046 the user found the bodies too still and too square. Measured in e045's runs: the policy picks forward on
-   73-84% of its decisions, 40-67% of those tries are blocked, a shove almost never happens, and 23-63% of the bodies
-   carry no muscle (a body without muscle still steps one sub-cell). The bodies are jammed, not choosing to sit: food
-   renews evenly, the crowd fills the world to the density where a gut breaks even, and a child is placed beside its
-   parent (at half the bodies, e046, the jam stayed). A body lives on about 7 cells' worth of light, its own footprint
-   and a ring: in these ratios the world is nearer a microbial mat than a savanna. New order (issues #50-#52 and a
-   design comment on #14): corners hold, moving takes a motor, a place difference that moves (a band of rain crossing
-   the world), then materials whose worth depends on shape.
+Each holds under the conditions it was found in.
 
-   Done 2026-09-11: #50 corners hold (e047) - kept: from here blocks that touch at a corner join a body (`connect` 2),
-   the physics the user asked for. It changes nothing measured: on seeds 9-14 the world stands (lowest floor 420), the
-   hunter world comes on the same four seeds, and 2-7% of the living bodies hold through a corner, but none of the 30
-   leading lineages' bodies does; the winners stay compact, and the cut at birth follows the winning genome (0.6-41%).
-   The rectangles are what pays, not the rule: every block's work pays best packed. Order now: #51 moving takes a
-   motor, #14 (the rain band), #52, #5.
+- A difference a body can ride out is not an axis (e060). A law must differ over more ground than a body covers in a
+  life, or the crowd averages it away (e057), and change close to a life's length if behaviour is to follow it (e049).
+- A law that moves the amount, time or place of the one food changes the number of bodies, not the ways (e060).
+- A food is its mouthful: what a bite gives is the law, not what it costs (e075). A thin patchy food buys movement; a
+  rich one buys one winner (e073).
+- The crowd makes hunters and the thin land makes movers (#68). Without the hunter the crowd doubles (e076).
+- A way that needs a part the population has lost is a question of reach, not of ecology: test it by injection
+  beside a control (e074, e076).
+- Heat is paid in water, and water sets where land bodies live (e078). Lines are kept apart by places a leader does
+  not cross (e083), and a world's regions can be read from its climate alone (e084, e085).
+- A law added alone meets a world without its counterweights (e066-e071); a set searched together can hold (e072).
 
-   Done 2026-09-11: #51 moving takes a motor (e048) - kept: from here a step and a turn need the motor (`motor` 1):
-   each sub-cell of a forward action and each turn happens with chance speed, muscle over mass, where a clear forward
-   had moved any body one sub-cell. On seeds 9-14 no lineage is muscle-free (e047: 21-55% of the bodies), speed rises
-   on every seed (0.16-0.25), and the leading bodies are hunters of 25-28 blocks with 9-10 muscle behind a hard front
-   or grazers of 14-23 blocks with 5-7.5 muscle beside the gut. But every body moves about a third as far (seed 9:
-   0.09 sub-cells a step against 0.30; grown bodies 13 cells from their birthplace against 38): the motor is the price
-   of leaving the cells a body has grazed bare, not of travel, and nothing asks a body to go far. The world stands
-   (lowest floor 347); the hunter world comes on three seeds of six. Order now: #14 (the rain band, under this law:
-   speed pays when the food moves and a step needs muscle), #52, #5.
+## 5. Next
 
-   Done 2026-09-11: #14's first pilot, a band of rain (e049) - not kept (it stays as the argument `band`): all the sky's
-   rain on a quarter of the world, moving west. The crowd follows it, but by births: a body lives about 200 steps (the
-   median age at death), so at 50 steps a column it is born and dies under the rain (60-63% of the body-steps under the
-   band, walking west at 2% of its speed); at 25 the crowd lags, hunger kills behind the band, and bodies still walk west
-   at 2-6% of its speed. Under thirst (e040) the few bodies that live 1,000 steps walk with the band at half its speed;
-   the crowd does not. Speed is not selected; the world holds half the bodies, packs into the band and hunts (the hunter
-   world on four seeds of four under thirst), and nearly dies in winter (one world of eight dead). A place that changes
-   slower than a life is followed by births: travel by one body needs lives longer than the change, or a sense of where
-   it goes.
+The next piece fills the largest gap of section 2; it is designed as cycles before it is built (`CLAUDE.md`).
+Candidates, none designed yet, to be chosen with the user:
 
-   After e049 the user: a body needs a motive to move built into the world (staying is the safe answer now), and a brain
-   that can use one (look for food, go to it, hunt, flee, move to better water or warmth). The brain today is a reflex:
-   10 inputs to 4 actions, fixed at birth, with no memory, no learning and no noise, and a body cannot tell a predator
-   from a neighbor. A brain pays only where the world changes within a life, so the two are tested together. Order now,
-   a behavior track first: #53 a brain that remembers and learns, as a material (e050, in e048's world and in e049's
-   band with thirst); #54 a place that gets worse the longer a body stays (e051; first e041's `stock`, untested since
-   e043 closed the fruit fountain); #55 life history (how many children, how long a life). Then #52, #5.
+| piece | fills | contains |
+|---|---|---|
+| **P1. A life that meets its world** | E, D, part of F | the ratio of a grown life to the year and to the places: a shorter year (stages A and B again), what kills the young today, a body that waits out a bad season on its fat, what makes travel pay (#93) |
+| **P2. A food web** | B, F | kinds of plant matter that need different mouths and guts (#34), seasonal rich food, each food's mouthful set so that it feeds a way |
+| **P3. Bodies whose shape does something** | C | parts that work only at a tip or an edge, a leg that walks only where it touches (#52); later 3D (#5) |
 
-   Done 2026-09-11: #53 a brain that remembers and learns (e050) - not kept (it stays as the argument `brain`): hidden units
-   in the sensor blocks that carry a state from step to step, and output weights that learn from the energy balance less its
-   running mean, at a heritable rate (0 for half of the random genomes). Learning is used (it changes 26-62% of a learner's
-   decisions) but not selected where the world changes: under e049's band with thirst the learners fall to 1-27% on four
-   seeds of four, while in e048's world the fast muscle blocks of two seeds learn and the gut sitters beside them do not.
-   Memory is hardly used (0.6-5% of decisions), sensors are not kept above the old brain's, and bodies do not walk with the
-   band (0.98-1.35 times the old brain's). These answers hold for this brain in this world, both of our making (a one-step
-   energy reward, learning only into the outputs, units that are the eye's tissue, four seeds of 100,000 steps): they do not
-   say a brain is not needed. What a brain is worth depends on what the world asks of it, and a change of the world changes
-   every condition of the bodies above it, so the world comes first: next #54, a place that gets worse the longer a body
-   stays, with the brain on and off.
-
-   Done 2026-09-12: #54 a place that gets worse the longer a body stays (e051) - not kept (`stock` stays as the argument
-   37): e041's law, a cell uses the light it grows by in the share it stands of a knee, run with and without e050's brain
-   in e048's world. There the bodies live on standing trees (77-81% of the plant eaten), whose growth already follows
-   their height, and a tree under a body does not grow. At knee 1 the law binds on the ground between the trees: it
-   takes a third of the growth, the world loses 13-44% of its bodies, and nothing moves more. At knee 4 it slows the
-   bitten trees too: the growth falls by 60%, the world holds 24-46% of its bodies, two first winters fall below 50, and
-   bodies move 1.1-1.8 times as much with no more muscle, in a crowd whose moves are blocked less (the law and the
-   thinner crowd are not separated). Learning is selected at neither knee (above half on one run of eight); where it is
-   kept, in e050 and here, it rides on hunters (5 of the 6 fast-learning lineages take 51-72% of their food from
-   flesh). A slow return worsens a place for the next visitor, not for the one who stays, and lowers every grazed place
-   alike. These answers hold for this law in this world (trees as the food, a knee on the light, a one-step energy
-   reward, two knees, four seeds of 100,000 steps). Next #55, life history (a body must live long enough to follow a
-   change itself, e049), starting from a time that scales with size (agreed 2026-09-12); open: a worsening that falls
-   on the stayer (fouling, #56), a density control for knee 4 (#57), and a world where the food runs as the brain's
-   test (#58).
-   Done 2026-09-12: #55 life history, a time that scales with size (e052) - not kept (`clock` stays as the
-   argument 47): a body of mass m takes (16 / m)^clock turns per world step, at most one, and everything it
-   does happens on its turns (eating, paying, ageing by wear, deciding, acting, breeding) while the world's
-   own clocks run on. At 0.25 the bodies of e048's world run at 0.78-0.88 of a turn a step. Lives lengthen:
-   the mean age of the living rises from 278-739 to 874-1,432 on three seeds of four, the 90th percentile of
-   the age at death from 580-863 to 1,163-3,835, and wear kills for the first time (281-1,837 deaths a log
-   interval against 0.6-534). The world holds 8-37% more bodies, with higher winter floors (465-776 against
-   347-742) and more lineages alive. But the masses do not spread (the 90th percentile above the control's on
-   one seed of four), the diversity number falls to 1 on all four seeds against 2, 2, 1, 1, and the hunters
-   go: no winning lineage carries a hard block, and hunter worlds come on 0 of 4 seeds against 2. A control at
-   a flat pace of 0.84 (the same slowdown for every body, whatever it weighs) separates the two: it keeps the
-   hunters (3 of 4, one seed turning hunter) and gives half of the extra bodies (2,338 against 2,180 and the
-   clock's 2,569). Scaling time by size is a tax on the body whose living is made of its own actions - a
-   grazer's income is the world's clock, a hunter's is its own - while the slowdown itself is what fills the
-   world. These answers hold for this exponent, this reference mass (16, so the pace spans only 0.78-0.88
-   here), e048's world without the brain, four seeds of 100,000 steps. Long lives are now an argument we can
-   switch on. Order now: e049's moving rain under the clock, with and without the brain (does a long-lived
-   body follow the change itself, instead of being followed by births?), then #52, #5.
-4. #5 3D bodies (the vertical axis for legs and wings), after size pays (e037 says: after a food for big bodies exists): 12-16 cells in 3D is a blob. An arm is an
-   outcome to watch for there, not a rule.
-5. Later: #34 kinds of matter (several conserved substances - water, plant stuff, animal stuff of different
-   hardness - and blocks as mixtures, so that organs are outcomes of the mix; starts with #29 water that flows:
-   rivers, lakes, deserts as outcomes, a rewrite of the closed cycle's carrier, when a question needs wet and dry
-   as places), #4 learning, growth, aging, health as a layer on top of birth traits.
-Also open on the weight: whether the net state can be entered at all under the law (e025's pilot on seed 9 came
-close: no tooth, but kills), and why a seed takes density or hard blocks as its route to resistance. On the flesh:
-which side of the switch (between 0.7 and 0.85) a run takes was a lottery of the start without the weight law.
-Also open on the spill: a start with soil in the ground (the lottery may be the all-plants start meeting the dark
-lawn), and whether the crowd state is entered by chance or by history (half seed 2 flipped at 400,000, half seed 1
-at 900,000, half seed 4 fell back; e023 flat seed 2 entered it at 750,000 with its eyes, flat seed 3 left it at
-500,000 and lost them: the eye and the crowd select each other, and which comes first is open).
-Other laws still open on the height axis under #14: cold by height (huddling as an outcome), slope grip.
-
-How we judge whether a law worked (#19): count the winners. e013-e021 end with one body winning every run and 1-5
-lineages alive (e018's closed cycle: 1-3, fewer than the open world's 4, so a law can also lose by this rule; e019's
-terrain: 1-2; e020's rain: 1-2, but graded by height for the first time, with second lineages holding the low ground
-for 300,000-520,000 steps; e021's canopy: 1-5, with two lineages coexisting 921,000 steps and the winners sorted by
-state as well as height - kin of one winner still, not other kinds; e022's spill: 1-3, with a new winner, the frame,
-where the crowd is, the middle body where it is half there, and the bar where it never came - a different winner,
-not a second one; e023's eye: 1-2, the frame that sees where the crowd is, the blind bar elsewhere - the first
-block whose worth depends on the state of the world; e024's flesh: 1-3, the net everywhere but in the hunter
-state, where the tooth and a gut hold together 286,000 steps - the first second winner that is another kind of
-body, not kin on other ground); a world with one optimum is
-reached fast and is dull to watch. A wider genome or more parts would only
-make the one optimum slower to reach; what makes several winners is more pressures (places, seasons, matter that
-cycles), so every law is judged by how many different bodies prosper at once, not by how many are possible.
-
-What we want the viewer to be able to do: look at a body and guess what it does, the way a fang, four legs, or a wing
-is read at a glance. That needs the physics the reader already knows (a front, ground, air), written as laws of
-materials and the world.
-
-## Kept from earlier experiments
-
-- e001: the minimal loop (food grid, energy, split, die) is stable and cheap. Keep.
-- e002: the genome map (promoter, tag + product, binding, settle, fixed table) is climbable and unreadable. Keep.
-- e003: traits need two-sided trade-offs; pleiotropy is real; snapshots plus a replay viewer are enough to watch.
-- e004: the e002 network grows bodies once position enters as morphogens (6 gradients in [-1, 1], binding on 2 of 4). Keep that rule as part of the laws. Bodies are dense by default and mutations move regions; let e005's upkeep act on both before changing the read-out.
-- e005: attack = min(front hard, muscle) is the rule that made a food web; with hard alone one immune body won in 10,000 steps. Two body types recur (armored grazer, omnivore with teeth) and the world keeps moving. Costs scale the population; trade-offs decide what evolves. Open: no pure carnivores (prey is worth little), sensors unused.
-- e005, after the run: development is batched (all 65 network runs of one body settle together) and a child whose
-  gene list equals its parent's reuses the parent's body (60% of births). Results bit-identical, 8,000-40,000 steps/s
-  instead of 1,000-6,000. A cheaper sigmoid was tried and rejected: 11% faster, results diverge.
-- e006: lineages are groups linked by gene-list distance (at most 6 genes apart, single linkage, at least 5 agents, kept
-  once they last 5,000 steps). This gives an event log a person can read (birth, split, merge, extinct; about one
-  event per 5,000 steps) and lineages of 60-100 generations with different bodies. Keep the detector, the log, and
-  the lineage-colored viewer. Sex under the compatibility limit changed nothing: a mate is in reach at 16-23% of
-  births and is a near-clone when found. Species boundaries here come from mutation, drift, and clonal sweeps; the
-  limit only names them. Mating stays in the code but is not a mechanism until it has a reason to exist.
-- e007: patchy food (one Gaussian patch of width 8 per 64x64 cells, drifting one cell every 50 steps, same total
-  regrowth as uniform) is a law of the world from here on. A bigger world with uniform food is the same world
-  sixteen times over (food per cell sets the density). Patches make islands: 12-21 lineages alive instead of 4-6,
-  three times the splits, predation deaths per birth halved. Sensor blocks stayed for the first time (one seed:
-  a grazer lineage with 2-3 sensor cells for 880,000 steps, its sensor changing one move in five), but the eye
-  is not shown to pay: intake per digestive block is the same with and without, and two sensor blocks cost 2%
-  of a grazer's intake. Cost is linear in agents (400-700 steps/s at 256).
-- e008: what a kill is worth is not the lever. A prize of up to 30x for an old body (keep x the upkeep it paid)
-  doubles the energy per kill and leaves meat at 3-5% of intake: kills get fewer and stay on newborns (nine in ten),
-  because a catchable body next to a predator is eaten within a few dozen steps of appearing, so only the
-  uncatchable grow old. The population answers with armor (hard 32-38 to 41-48; attack is capped at 24 by the
-  body plan, defense goes to 32). Carnivore lineages (mean meat > plant) exist even in the control, and ten
-  appear at keep 1: hunters with 24 front hard and 20-25 muscle, 52-89% meat, up to 430,000 steps, as booms of
-  100-1,200 agents that armor ends. Every hunter also grazes (the gut for prey mass is the same organ). keep
-  stays 0. Keep the diet columns in the lineage log. Access (a bite that beats armor, seeing who is next to
-  you) is what limits carnivory, not the prize.
-- e009: perception is not the lever. Given inputs that say, per direction, how many neighbors can eat me and
-  how many I can eat (the predation rule itself, times sense), those inputs are non-zero in 1% of the decisions
-  of agents with sensors: an armored grazer among armored kin is immune and bites nobody. Sensor blocks are
-  selected less with the inputs than without (16 sensor lineages vs 43 in four seeds), escapes and predation
-  are unchanged, grazers with eyes take in no more food. The knockout (sense forced to 0): the population mean
-  is the same, but sensor lineages drop to 6 and never reach a mean of 1, fewer in every seed; e007's eyes were
-  a passenger with a slight tailwind. Predation is decided by the body plan and by move order (the eater moves
-  first in 75% of kills; 15% of prey die before their first move). The who inputs stay in the code at zero
-  cost; the world stays e007's (counts). The knockout is how an eye is tested from now on.
-- e010: the laws are now about materials and the world only. A cell costs what it holds (0.02 to build, 0.02
-  when eaten plus its share of the body's energy); a body pays 0.032 per step besides its cells (a world law, for
-  the population bound: regrowth / 0.032); force acts the way a body moves: a body moving into an occupied cell
-  pushes into the bodies there line by line, and the softer tip breaks if the pusher's muscle in that line exceeds
-  the tip's hardness (3 per contiguous hard cell, else 1). No attack, defense, gut, escape roll, kin exclusion,
-  or kill rule. Keep these laws and the measures (bite, shell, open lines). What they showed: bodies were full
-  squares only because defense counted hard blocks; without that, every seed goes to 3-4 digestive cells in a
-  corner (intake is capped by the food in one cell, cost is per cell). Teeth pay ten to one and appeared once in
-  twelve million births (seed 1, step 985,000; gone in 12,000 steps: a body that pushes with a tooth also breaks
-  its own children). Emergence here is a reachability problem: a hunter needs a tooth, a policy that moves into
-  occupied cells, and a way not to hurt kin, all at once.
-- e011: the width of a food patch is a law of the world from here on (the total regrowth is fixed, so a narrower patch
-  puts the same food on fewer cells). Width 8 (e010) makes five-cell grazers; width 4 seven-cell ones; width 2 is the
-  edge (two seeds of four go to the arms race); width 1 (6.5 regrowth per cell per step, 45-77 bodies to a cell) goes
-  there in every seed: hard 6-26 per body, 12-24% of bodies with a bite, meat 9-19% of intake, 26-50 hunter lineages
-  per seed lasting up to 483,000 steps, shell 2.3-8. Three body kinds coexist: the tortoise (a full square, a two-cell
-  wall of hard around a 4x4 gut, no muscle), the hunter (hard tip, muscle behind it, 26-85% meat), and the corner body (2-12
-  digestive cells in the corners of the grid only, where the middle-row muscle of a hunter has no force: hiding as a
-  shape). The gut is not the reason for size (it stays at 10-16 cells: bodies crowd and share the cell, 0.005-0.009
-  per digestive cell per step in every world); armor is. What a cell can hold (the cap) does nothing: a crowded cell
-  never fills. Lineages are fewer (1-13 alive) with one holder per island at a time. Fewer, larger bodies run faster
-  (585-846 steps/s at width 1).
-- e012: the patches of one world can have different widths (patch k has the k-th width of a list, cycling), a law of the
-  world from here on; the cap on what a cell holds is a constant 8. Grass (width 8) and trees (width 1) in one world
-  keep their regimes in every seed: 6-cell grazers with no armor on the grass, bodies of 16-32 cells with 4-15 hard
-  cells, 12-34% with a bite and meat 14-18% of the intake on the trees, each place at the population its single-kind
-  world had per patch. Bodies cross (0.1-0.7% stand in the other kind of place, up to 6%): small grazers walk into the
-  trees, tortoises walk out onto the grass, hunters never leave; 2-4 lineages per seed straddle both places for 20,000+
-  steps, and one lived 978,000 steps with half its members on each place and a different body on each (4 cells on the
-  grass, 8-12 on the trees). Lineages alive 9-13, e010's number, not the sum. The edge width (2) next to grass does not
-  flip more often than alone, but once the edge's hunters held the grass for 400,000 steps and lost it. Use 128 with
-  two patches of each kind for questions about places; 256 (eight and eight) is the world people watch.
-- e013: a body faces a direction (one number per body; the grid turns with it, only the front pushes, the policy sees
-  the world from the body: keep, it costs nothing and the viewer reads a front) and takes up space at the cell level
-  (one world cell per 4x4 quarter of the grid that holds a cell, no two bodies in one cell, a push into a taken cell
-  that succeeds only if the way clears, a child that needs room). The world stands and runs at 700-1,500 steps/s, and
-  reach pays: the winning grass body is 3-4 digestive cells at the center of the grid, one per quarter, eating from
-  four cells at once. But the arms race is gone at every patch width (1, 2, 4) in every seed: no bite, hard under
-  0.1, meat under 0.001%, no hunter lineage. The crowd was the premise of e011's arms race: with one body to a cell,
-  contact fell from 2-4 to 0.1-0.3 touches per body per step, a tooth breaks even at best, births fell 8-fold (a
-  child needs room), the trees feed one body per rich cell and half the regrowth is wasted, and 80-94% of moves are
-  blocked: each patch is a jammed disc of two or three lineages. Cell-level space is too coarse (a 3-cell body blocks a whole
-  cell, three in four blocked moves press on nothing); the next step is space at the resolution of the body.
-- e014: space at the resolution of the body (occupancy per sub-cell, 4x4 per world cell; a body holds exactly the
-  sub-cells its grid fills; a move is one sub-cell; a push meets face to face with e010's rule; a child needs room for its
-  cells). Keep it: it costs 16 times the cells and about twice the time per body, a small body is small, bodies pass and
-  nest, births are four times e013's and the narrow places hold three to four times e013's bodies. What it showed:
-  contact does not come back with room (0.06-0.22 touches per body per step at every width in every seed, no tooth, no
-  armor, 1-3 lineages). Contact is a failed move now, and a body without a tooth has no reason to fail one: forward is
-  7-15% of decisions, turning (free, mostly blocked) takes the rest, and a push costs the mover as if it had moved.
-  Selection keeps reach alone, and reach alone makes plants: the winning body everywhere is four to eight digestive
-  cells at the four corners of its grid, a constellation lying over four world cells that hardly moves; other bodies
-  stand between its cells. Space and the arms race are in tension until pushing into a body is free to try.
-- e016: a cell held by a body does not regrow (the strict reading: no regrowth while any of its 16 sub-cells is held), a
-  law of the world from here on. It makes bodies move (moves that happen 11-20% of decisions, 74-88% of forward actions
-  find room) and brings the mouths together (a block or wedge of 7-9 gut cells over 1.6-2.7 world cells wins every
-  run); the price is two thirds of the regrowth and half the bodies. The free reading (regrowth by the free sub-cells)
-  is a tax that reach pays for and keeps e015's lawn. Contact does not return: 0.02-0.05 per body per step.
-- e017: what a body is made of does not vanish when it dies (every cell lays CELL_ENERGY plus its share of the body's
-  energy on the world cell under it; a child never placed lies under its parent; a broken cell nobody eats lies where it
-  was; added in full, the cap bounds only what a plant grows to), a law of the world from here on, at a cell of 0.02.
-  The dead matter of a cell is kept next to its food as a measure (`carrion`), so what a body ate of the dead is known
-  (`meat`). It is free and honest, and it changes nothing by itself: a body is worth what it cost (2.5-3.2% of the food
-  at 0.02, 7-11% at 0.1, where the winning body is a cell smaller because a cell is dearer to build), it is eaten within
-  a few dozen steps where it fell, neighbors per body (from the snapshots, a measure to keep) and contacts are e016's
-  in all sixteen runs, and the same wedge wins. The dead are where the crowd is: 7-12% of the intake on the trees, one
-  small tree lineage living on the dead for 50,000 steps at 0.1. A crowd will not form around 2% of the food; a place
-  that keeps what falls on it (the closed cycle, #20) is the version of the premise with a memory.
-- e018: the soil (one f32 per cell: what was spent and died on the cell, drawn out by the sun into the plant) is kept as
-  the world's memory and as a layer in the viewer; the maps of it are the history of a run. The closed cycle as e018 ran
-  it (a plant grows only out of its own cell's soil, nothing moves matter but a body) is not kept as it stands: the world
-  eats what its bodies spend (regrowth = spent, 23-26 per step of 164 of sun), the trees lose their bodies (a tree cell's
-  6.5 of sun empties its soil in a step), the population swings 2-5x, lineages fall to 1-3, three scarce worlds of four
-  die, and under a uniform sun the soil weaves into the bodies' trails (one cell wide) and the food supply falls through
-  the run. Two lessons: a cell in a closed world can be rich only if matter flows into it from elsewhere, so rich places
-  need a flow law (water, #22), not a sun law; and a closed loop with a delay (rot at 1% per step, the sun's rate) and no
-  reserve swings, so principle 4 has to be checked by the population's swing, not only by extinction. Matter is
-  conserved to 0.01% (f32 rounding at 0.8% with 2,000 bodies); the leak (a parent paying for a child's cells with energy
-  it does not have) is under 0.02%.
-- e019: the flow (the surface of a cell is its height plus its soil; each step a cell gives a tenth of its soil to the
-  neighbors whose surface is lower, split by the drop, never more than an eighth of a drop) is a law of the world from
-  here on, with or without a terrain: it is what makes the closed cycle stand (every cell with soil grows, a trail
-  spreads as fast as it is laid; food eaten steady to 1%, population to 1-3%, over a million steps in twelve runs of
-  twelve). The rate hardly matters (0.01, 0.1 and 1 give the same world; the volume of soil and the shape of the ground
-  set the lake). The terrain (smooth noise from the seed, a relief in soil units) is kept as the source of the world's
-  shape: a level lake in the low ground, a shore, a desert above; the viewer gets it as a layer. The sun is uniform from
-  here: drawn patches over a terrain put the sun where the soil is not, and the world dies of it. The soil is an f64 (an
-  f32 soil drifted up to 1.8% of the matter over a million steps; f64 holds 0.0003%). Places under the uniform sun are
-  read by height band (thirds of the cells): keep that in the per-place log.
-- e020: the breath to the air with the rain by height is a law of the world from here on: what a body burns rises
-  to one pool of air, and the air rains on every cell at most the sun's worth per step times height over relief.
-  It is the high ground's income (soil runs off it), the closed world's second store, and the first place effect
-  on bodies under a uniform sun. Half the breath is the richest world and has no places: productivity trades
-  against difference.
-- e021: the canopy is a law of the world from here on, at rate 2: a taller column takes a shorter one's light, as
-  far as it is tall (the height difference less the distance, over the cap), times its own room over the cap
-  (saturation - a full crown intercepts nothing; without it the hoarded light of full columns starves the world
-  dead, and without the reach a tree gathers less than one body's upkeep and nothing changes). A column under a
-  body neither grows nor claims. It gives standing stores of 50-400 bites, a second state (orchard and forest,
-  entered and left as booms), the closed world's record income (the canopy takes back light the bodies' shadow
-  wasted), and the deepest coexistence since e012 - at half the speed (178-212 steps/s against 429-492). The
-  terrain's mean height is normalized to half the relief from here on (geography, not a law): every seed's rain
-  then adds up to the same income, and e020's 73-94 spread collapses to 83.2-83.8.
-- e007 calibration: 128x128 (4 islands) matches 256x256 per island for what happens on an island (population,
-  food, predation, body composition, rate of sensor lineages) but not between islands (lineages per island and
-  lifetime move with the number of islands). Use 128 with more seeds for questions about bodies and behavior;
-  use 256 for lineages across islands and for the world people watch. 1,000,000 steps: the uniform world's
-  statistics are stationary after 100,000 steps; the patchy world's are not (late sweeps and sensor lineages
-  after 500,000), so do not shorten runs on the patchy world without checking the conclusion at the cutoff.
+P1 is the deepest root: it decides whether any place or season can act on a body. P2 is the most direct route to
+more ways of living. P3 waits until a differing world asks for shapes (`principles.md`).
