@@ -626,3 +626,39 @@ read, not required), then today's default world on it against c1225 (seeds 9-11,
 hour or more for a larger land), judged by kinds and by the regions held. Wrong if its regions are not held apart
 or kinds do not rise with them. The alternative is the other direction on a world we have: c1236 (1.24 regions)
 with bodies, which tests the same claim but differs from c1225 in climate as well.
+
+## 21. What e085 settled (2026-09-19)
+
+Section 20's count over stage A (`experiments/e085_climate_regions`, #98): e061's climate with maps on its 34
+passing climates, e084's rule and calibration unchanged. No bodies were run.
+
+**The climate alone is enough.** On c1225 the climate's map (20 years, no producers) gives the producers map's
+regions: 8, 5.03 effective, from either; the blocks' dryness agrees at 0.999. The producers do not touch the
+ground's water, so a region count costs one stage A run (2-7 minutes at 512).
+
+**No climate holds clearly more regions than c1225.** None reaches 8 effective. The most: c1288 7.53 (11 regions,
+the same at the dense lines 0.025-0.035), c1251 5.22, then c1225 5.03; 9 more hold 3-5, 18 hold 1-3, 4 deserts
+none. So among the worlds stage A made, c1225 is near the top.
+
+**What divides a land is not what I expected.** Over the 30 climates at 512 the effective number follows a small
+land share (rank correlation -0.57) and a cold coolest quarter (-0.45), a higher relief (+0.36) and a wider
+latitude span (+0.37); not the mean dryness (-0.06) or the rain (-0.09). c1225 is divided on one continent by dry
+land that is hot all year; c1288 (21% land, 3.7 C, coolest quarter -6.3 C) is divided by the sea (its 11 regions
+lie on 5 land masses) and, inside its two large masses (3 and 5 regions), by the cold.
+
+**c1288 carries producers.** With draw d11 (10 years): grass 47%, wood 42%, algae 10%, fire 3.4% of the land a
+year, matter conserved; it fails one of stage B's lines (wood is the larger part of no habitat). Its regions on
+the producers' map are the climate's (7.53).
+
+**Next (proposed, not agreed): do kinds follow regions at all?** The claim behind this track is untested, and a
+search for a more divided world is worth doing only if it holds. The recommendation is three worlds in one batch:
+today's default world (e082's binary, `unit` 0, `fresh` 0.05) on c1236 (1.24 effective regions) and c1288 (7.53),
+seeds 9-11 at 100,000 steps, against e081's control ladder on c1225 (5.03). 6 runs on 6 Mac cores, about 70
+minutes (c1225's ladder took 46 minutes a run; c1236 predicts twice the bodies). Judged by the kinds at the census
+(the seed means in the order 1.24 < 5.03 < 7.53) and by the regions held (in a world's predicted regions other than
+its leader's own, the leader's share under a fifth). Wrong if kinds do not rise with regions. Confounds to read
+with it: c1288 is cold and small (predicted 2,125 land bodies against c1225's 3,680) and its year is 2.2 times
+c1225's; c1236 is cool and large (7,380). If the claim holds, the next is a stage A search aimed at regions (a small
+land, cold winters, high relief, a wide span of latitude), cheap because the count needs no producers. The
+alternatives: c1236 alone (#98's fallback, 3 cores, the direction "fewer regions, fewer kinds" only), or ending the
+regions track here and taking #91's refuge question up again on c1225.

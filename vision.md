@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-09-19 (after e084: a world's regions can be counted from its map without bodies, and c1225 holds the most of our six worlds).
+Last updated: 2026-09-19 (after e085: no climate of stage A holds clearly more regions than c1225; a small, cold land is what divides one).
 
 ## What the viewer should see
 
@@ -358,6 +358,13 @@ a time. The design is `foundation.md`.
    wide is enough to hold a boundary. c1225 holds the most regions of the six (5.0 effective; the next 2.2).
    What it changes: stage A gains a measure of the regions a land holds apart; no better world among ours.
    Proposed next: the same count over stage A's 34 passing climates (`balance.md` section 20).
+   #98 done 2026-09-19 (e085): stage A's 34 passing climates counted from the climate alone, no bodies.
+   **No climate holds clearly more regions than c1225.** The climate's map gives the producers map's regions, so
+   the count costs one stage A run. None reaches 8 effective; the most, c1288, holds 7.5 and c1225 (5.0) is
+   third. More regions come with a small, cold land (land share -0.57, coolest quarter -0.45), not with dryness.
+   What it changes: c1225 is near the top of what stage A made; a world divided much more would need a search
+   aimed at it. Proposed next: test whether kinds follow regions at all, with bodies on c1236 (1.2) and c1288
+   (7.5) against c1225 (`balance.md` section 21).
 
 #73 (each axis alone) is withdrawn; #14 and #38 are folded into stages A and B; #58 is superseded.
 
