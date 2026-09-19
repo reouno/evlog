@@ -446,8 +446,8 @@ world (e078's control, steps 36,000-60,000) unless marked e080 (its control, the
 - **The unit.** A block of water is the water a sub-cell of ground holds at capacity: 150 mm / 16 = 9.4 mm of
   its cell. A body is about as wet as full ground under it, as a real animal holds about as much water as the
   soil beneath its feet. At that unit today's crowd would drink 11% of a mid stand's rain over a year, 6% of the
-  lawn's and 7% of a tropical stand's; in the low-rain winter (0.06-0.09 mm a step on a mid stand) it would
-  drink 60-80% of what falls. A few bodies refilling at a pool take it under the line within a turn or two.
+  lawn's and 7% of a tropical stand's; in the low-rain winter (0.16 mm a step on a mid stand, 0.035 on the
+  lawn) it would drink about a third of what falls on the stand and a quarter on the lawn. A few bodies refilling at a pool take it under the line within a turn or two.
 - **Kept as they are:** a wet ground's drink (`fresh` 0.05 of a pool's at full fill), the dry air, the sweat,
   the sea that does not quench (bodies in the sea exchange with the sea, as the climate's sea does). No new rate
   on the lawn: its budget nearly closes in spring and autumn today (e078's budget), and what W1 changes is the
