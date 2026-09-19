@@ -51,8 +51,10 @@ export interface Season {
   period: number;
   amp: number;
   byHeight: boolean;
-  at: Float32Array; // how much of its sun a cell loses in winter
+  at: Float32Array; // how much of its sun a cell loses in winter (negative: gains, the other hemisphere)
   top: number;
+  tilt: boolean; // the sun's own path over a tilted axis (stage C): the frames' `year` places the step in it
+  off: number;   // steps to add to a body step to place it in the year (the climate ran before the bodies)
 }
 
 /** What a frame after the last one a body was in says it died of. */
@@ -149,6 +151,7 @@ export class World {
    * places are in winter while others are not - which is the whole point of that law. */
   seasonOf(): Season {
     const p = this.params;
+    if (p.weather === undefined && (p.tilt ?? 0) > 0) return this.tiltSeason();
     const amp = p.amplitude ?? 1;
     const on = p.weather === 'season' && amp > 0;
     const at = new Float32Array(this.cells);
@@ -158,17 +161,50 @@ export class World {
     }
     let top = 0;
     for (let c = 0; c < this.cells; c++) top = Math.max(top, at[c]);
-    return { on, period: p.season || 20000, amp, byHeight, at, top };
+    return { on, period: p.season || 20000, amp, byHeight, at, top, tilt: false, off: 0 };
+  }
+
+  /** Stage C's season: the sun's height over a tilted axis (e061's climate), with no season law in
+   * the params. A cell's `at` is how far its day's sun moves from the equinox's at midsummer in the
+   * north, from the day's mean sunlight at the cell's latitude: positive in the north, negative in the
+   * south, where the same step is the other season. The step's place in the year comes with the frames. */
+  tiltSeason(): Season {
+    const p = this.params;
+    const tilt = ((p.tilt as number) * Math.PI) / 180;
+    const lo = p.lat_lo ?? -60, hi = p.lat_hi ?? 60;
+    // The day's mean sunlight at latitude `lat` when the sun stands over `decl`.
+    const day = (lat: number, decl: number): number => {
+      const x = -Math.tan(lat) * Math.tan(decl);
+      const h0 = x >= 1 ? 0 : x <= -1 ? Math.PI : Math.acos(x);
+      return (h0 * Math.sin(lat) * Math.sin(decl) + Math.cos(lat) * Math.cos(decl) * Math.sin(h0)) / Math.PI;
+    };
+    const at = new Float32Array(this.cells);
+    let top = 0;
+    for (let y = 0; y < this.d; y++) {
+      const lat = ((lo + (hi - lo) * (1 - Math.abs((2 * (y + 0.5)) / this.d - 1))) * Math.PI) / 180;
+      const eq = day(lat, 0);
+      const a = eq > 1e-6 ? Math.max(-1, Math.min(1, day(lat, tilt) / eq - 1)) : 0;
+      at.fill(a, y * this.w, (y + 1) * this.w);
+      top = Math.max(top, Math.abs(a));
+    }
+    return { on: true, period: (p.year as number) || 20000, amp: top, byHeight: false, at, top, tilt: true, off: 0 };
+  }
+
+  /** The hemisphere a row of the world is in: 1 north, -1 south (where the season is the other one). */
+  hemi(z: number): number {
+    if (!this.season.tilt) return 1;
+    const j = ((Math.round(z) % this.d) + this.d) % this.d;
+    return this.season.at[j * this.w] < 0 ? -1 : 1;
   }
 
   /** Where in the year a step falls, as the sine of it: +1 midsummer, -1 midwinter, 0 between. */
   swing(step: number): number {
-    return this.season.on ? Math.sin((2 * Math.PI * step) / this.season.period) : 0;
+    return this.season.on ? Math.sin((2 * Math.PI * (step + this.season.off)) / this.season.period) : 0;
   }
 
   /** The year as a turn of the dial: 0 spring, 0.25 summer, 0.5 autumn, 0.75 winter. */
   year(step: number): number {
-    return ((step / this.season.period) % 1 + 1) % 1;
+    return (((step + this.season.off) / this.season.period) % 1 + 1) % 1;
   }
 
   /** The factor on a cell's own sun: 0 (the sun is out there) to 1 + a. */
@@ -250,6 +286,12 @@ export class World {
     const index = new Map<number, number>();
     for (let i = 0; i < n; i++) index.set(a.id[i], i);
     this.frames.set(step, { step, globals, n, a, index, deaths, births });
+    // Stage C's year began with the climate, long before the bodies' step 1: the frame says where.
+    const yr = globals.year;
+    if (this.season.tilt && yr !== undefined) {
+      const P = this.season.period;
+      this.season.off = (((yr * P - step) % P) + P) % P;
+    }
     insort(this.steps, step);
     return step;
   }

@@ -437,7 +437,7 @@ function hud(a: Frame | null, b: Frame | null, t: number, here: number, swing: n
   hudAt = now;
   $('step').textContent = Math.round(step).toLocaleString();
   $('pop').textContent = a ? (a.globals.pop ?? a.n).toLocaleString() : '—';
-  dial(swing);
+  dial(swing, world.hemi(rig.target.z));
   $('where').textContent = `${rig.target.x.toFixed(0)}, ${rig.target.z.toFixed(0)}`;
   $('localsun').textContent = here.toFixed(2) + (here < 0.08 ? ' (日が出ない)' : '');
   $('fps').textContent = fps.toFixed(0);
@@ -456,7 +456,9 @@ function hud(a: Frame | null, b: Frame | null, t: number, here: number, swing: n
 // The year as a dial: a ring of the four seasons with a hand on it, and the name under it.
 // The world with no season law (`weather` 0 or cloud) says so and shows no ring.
 const SEASONS: [string, string][] = [['春', '#7fb84a'], ['夏', '#e0b520'], ['秋', '#c4701f'], ['冬', '#7fa8c8']];
-function dial(swing: number): void {
+function dial(swingNorth: number, hemi: number): void {
+  // In the south of a tilted world the same step is the other season: the dial is the eye's hemisphere's.
+  const swing = swingNorth * hemi;
   const c = $c('dial'), g = c.getContext('2d')!;
   const R = c.width / 2;
   g.clearRect(0, 0, c.width, c.width);
@@ -465,7 +467,7 @@ function dial(swing: number): void {
     $('year').textContent = '—';
     return;
   }
-  const year = world.year(step);
+  const year = (world.year(step) + (hemi < 0 ? 0.5 : 0)) % 1;
   // Straight up on the dial is the spring equinox, and it turns clockwise. A season is the
   // quarter of the year around its own extreme, so midsummer is the middle of summer, not
   // the start of it: the quarters are set back an eighth of a year.
@@ -485,7 +487,7 @@ function dial(swing: number): void {
   g.lineWidth = R * 0.1;
   g.lineCap = 'round';
   g.stroke();
-  $('seasonname').textContent = SEASONS[seg][0] + (swing > 0.92 ? ' (盛夏)' : swing < -0.92 ? ' (真冬)' : '');
+  $('seasonname').textContent = SEASONS[seg][0] + (swing > 0.92 ? ' (盛夏)' : swing < -0.92 ? ' (真冬)' : '') + (world.season.tilt ? (hemi < 0 ? ' ・南半球' : ' ・北半球') : '');
   $('seasonname').style.color = SEASONS[seg][1];
   $('year').textContent = (step / world.season.period).toFixed(2) + ' 年';
 }

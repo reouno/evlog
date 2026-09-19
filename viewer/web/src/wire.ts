@@ -60,6 +60,10 @@ export interface Params {
   amplitude?: number;
   season?: number;
   winter?: string;
+  tilt?: number;   // stage C's climate (e061 on): degrees of the axis' tilt, 0 for no seasons
+  year?: number;   // its year in steps
+  lat_lo?: number; // the latitude of the first row and of the last (the rows run there and back)
+  lat_hi?: number; // the latitude of the middle row
   max_age?: number;
   wear?: number;
   thirst?: number;
