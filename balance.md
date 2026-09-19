@@ -401,3 +401,90 @@ autumn). R1 fails, and R3 with it: the stand is already full when the bad season
 already prefer. The missing half is a season in which the open land is livable, and on this land that is
 set by where a body drinks (wet ground gives a twentieth of a pool; pools are 0.3% of the land). The next
 design is the land's water by season, before any run.
+
+## 16. The land's water, as a cycle (#91, draft 2026-09-19, awaiting agreement)
+
+e080 closed the crown's path: the stand is the land's home in every season and the crown can only make it a
+better one. This section designs the half the refuge lacks, the land's water, as a cycle before any run. It is
+also section 3's open cycle ("a body's water is a state"), open since #87. Numbers are seed 9 of the default
+world (e078's control, steps 36,000-60,000) unless marked e080 (its control, the crowned world).
+
+### What the land's water does today
+
+1. **Bodies sit where the rain falls.** A mid-latitude (20-50 degrees) stand holds 0.084 bodies a cell and the
+   lawn 0.025 (3.4 times); the rain on them is 0.455 and 0.159 mm a step (2.9 times). So section 13's R1 read
+   per cell ("the lawn is the better place in the good season") cannot hold anywhere the stand grows where the
+   rain falls. A refuge has to be read by how the crowd's share moves with the season, and by lines or kinds
+   that keep to one place in one season, not by which place is richer per cell.
+2. **Two limits side by side** (e080). On the lawn water binds: at the equinoxes 29% of its bodies are near dry
+   (under 0.2 of their water; 13% in stands) while they are fed as well (energy 2.21 against 2.34, the same fat
+   and age). In the stand food binds: its bodies hold 0.72-0.95 of their water. The lawn is food-rich and dry,
+   the stand wet and food-poor, within a life's travel of each other.
+3. **The calendar** (e080, 20-50 degrees, both hemispheres folded). Rain and heat peak together in late spring
+   (the lawn's ground is driest, 0.11 full, when it rains most, at 15-18 degrees over 30 C); grass stands
+   highest just after the solstice; the crowd peaks in late summer and autumn and is lowest in late spring,
+   on lawn and stand alike. The lawn's bodies a cell over the stand's swing from 0.09-0.13 (late spring) to
+   0.40 (autumn): the season already moves the crowd's share fourfold.
+4. **Water is free where a body touches it.** Drinking takes nothing from the ground and what a body loses goes
+   nowhere. A crowd sits on its water at no cost to the water, so only food limits the home, and the home
+   makes one winner (a lineage holds 73% of the land at e080's c3 0.1).
+
+### The set
+
+- **W1. Drinking takes the water it drinks.** A block that drinks takes what it drinks from the cell under it:
+  from the ground, or from the standing water of a pool. A body drinks only up to full (today the surplus of a
+  turn is lost), so it takes its deficit, not the offer.
+  *Takes* water from the ground under a crowd. *Refilled* by the rain on the cell and the runoff into it.
+  *Limited* by the crowd itself: a crowd draws its ground down, the drink falls with the fill, and the crowd
+  thins to what its water keeps. A pool drunk below its line (500 mm standing) stops being a pool.
+- **W2. What a body loses goes back.** The water the dry air takes and the water paid to cool go to the air
+  over the cell the block stands on; a dead body's water goes into its cell's ground; a child's water (its
+  parent's fill, as today) is taken from the ground under it, and a child born on dry ground starts with what
+  the ground gives. The start's bodies take theirs the same way.
+  *Takes* nothing new. It closes the ledger (the air, the ground and the bodies' water are conserved with the
+  sea's exchanges, as the climate's water is), and a crowd's losses fall as rain near it, as a forest's do.
+- **The unit.** A block of water is the water a sub-cell of ground holds at capacity: 150 mm / 16 = 9.4 mm of
+  its cell. A body is about as wet as full ground under it, as a real animal holds about as much water as the
+  soil beneath its feet. At that unit today's crowd would drink 11% of a mid stand's rain over a year, 6% of the
+  lawn's and 7% of a tropical stand's; in the low-rain winter (0.06-0.09 mm a step on a mid stand) it would
+  drink 60-80% of what falls. A few bodies refilling at a pool take it under the line within a turn or two.
+- **Kept as they are:** a wet ground's drink (`fresh` 0.05 of a pool's at full fill), the dry air, the sweat,
+  the sea that does not quench (bodies in the sea exchange with the sea, as the climate's sea does). No new rate
+  on the lawn: its budget nearly closes in spring and autumn today (e078's budget), and what W1 changes is the
+  stand's surplus, not the lawn's income.
+
+### The balance expected
+
+- **The home pays for its crowd.** A stand's ground falls where its crowd is dense, most in the low-rain winter
+  and in late spring when the lawn empties into it. Its bodies' water falls from 0.72-0.95 toward the lawn's,
+  and the stand becomes water- and food-limited at once, so it holds fewer bodies than its rain alone would.
+- **The lawn's good season widens.** With the stand's surplus gone, a body on the autumn lawn (grass standing,
+  the heat broken) loses less by being there, so the lawn's share of the crowd in late summer and autumn rises
+  above today's 0.40 of the stand's density, and falls as today in late spring.
+- **Water holes are contested.** Pools and the wettest stands are drunk down by the crowd of the dry season;
+  hunters already lead the stands, and prey crowding at the last water are the savanna's hunting ground.
+- **Movement gets a motive.** A place drunk dry pushes its bodies on; bodies that commute (drink at the stand,
+  eat on the lawn) pay less than bodies that sit. e040's trips never came because water was free where it lay.
+- **More kinds by place and season**, because the one home no longer feeds an unlimited sitter.
+
+### What would show it wrong
+
+- The land empties: land bodies fall by more than half, or thirst rises past 60% of deaths (the unit is too
+  wet for this rain; W1 prices the land's life, not the crowd's).
+- The home holds: the stand over the lawn per cell at the equinoxes stays near 3, and a stand's bodies still
+  hold 0.7 of their water (W1 too weak at this unit, or water is not what makes the stand the home).
+- The lawn's share in autumn does not rise above 0.40 of the stand's.
+- The largest lineage's share and the kinds kept to a place do not move.
+- The water ledger drifts (a leak in W2).
+
+### Order and cost
+
+1. Build W1 and W2 on e080's crate with one rate, the unit (mm of a cell per block of water; 0 is today's free
+   water, exactly). A unit test of the ledger and one of the drawdown.
+2. On the default world (S1-S3 at 0), seed 9, 60,000 steps, censuses every 1,000 from 36,000 as e080: the unit
+   at 0, 4.7, 9.4 and 28 mm (half, one and three times the anchor), read by e080's calendar, the stand's ground
+   under its crowd against the producers alone, thirst, travel and kinds. 4 cores of the Mac, about 30 minutes.
+3. If a unit passes, it on seeds 9-11 at 100,000 steps against the control (6 cores, about an hour).
+
+Cost: W1 is one write to the ground per drinking block in the loop that already reads it (`dry_turn`); W2 one
+write to the air per losing block. The water bodies are untouched.
