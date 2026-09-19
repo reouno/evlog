@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-09-19 (after e082: wet ground that gives more to drink frees the bodies, and one line then spreads over every band; kinds fall).
+Last updated: 2026-09-19 (after e083: the region other lines hold is held by a barrier of thirst, a dry belt on the upper continent; kinds follow the land's barriers).
 
 ## What the viewer should see
 
@@ -344,6 +344,14 @@ a time. The design is `foundation.md`.
    changes: `fresh` stays 0.05, `unit` 0, and #91's water track ends. In the control the north's lines are held
    through the run, so kinds on this land come from places a leader does not cross; what holds them is the
    proposed next question (a census, no runs; `balance.md` section 18).
+   #96 done 2026-09-19 (e083): that census, e081's and e082's ladders read by place.
+   **A barrier of thirst holds a region.** The held region is the upper continent's north (the map holds each
+   latitude twice), behind a dry belt near its equator where bodies live at a third of either side's density;
+   the boundary sits in the belt for the whole run, and where the lines meet they breed at the same rate. The
+   locals are soft grazers, the leader an armored half-hunter. Water sets the belt's depth: W1 empties it,
+   `fresh` 0.2 fills it and the leader crosses. What it changes: set D's small `fresh` makes dry land a barrier;
+   the refuge #91 asked for is a region behind a barrier, not a stand; kinds on this land follow the regions the
+   generated land holds apart. Proposed next: count those regions on the worlds we have (`balance.md` section 19).
 
 #73 (each axis alone) is withdrawn; #14 and #38 are folded into stages A and B; #58 is superseded.
 

@@ -548,9 +548,47 @@ lines are kept apart by places a leader does not cross, and the control holds so
 A likely reading, not measured: with wet ground giving little, the drier land between pools is what the tropical
 leader does not cross, and a larger `fresh` removes it.
 
-**Next (proposed 2026-09-19, not agreed).** A census step with no runs, as e060 and e068 were: in the control
+**Next (agreed 2026-09-19, #96, done as e083, section 19).** A census step with no runs, as e060 and e068 were: in the control
 (e081's ladder at unit 0), what holds the north's lines against the tropical leader. Candidates to tell apart
 from the censuses and `_bands.csv`: the dry land between (bodies thin in the bands between, born and dying on
 either side), the cold (the leader's cold deaths and body heat north of 30 degrees), or the north's own food and
 season (the north's lines' traits against the leader's). A design follows from the answer, as a cycle. The
 alternative is #93 (a shorter year, so a body can meet the season), which needs stage A and B's checks again.
+
+## 19. What e083 settled (2026-09-19)
+
+Section 18's census (`experiments/e083_hold`, #96, no runs): e081's and e082's ladders read by place. It corrects
+section 18's framing: the map is a torus whose latitude runs from -59 to 87 degrees twice (rows 0-255 and 256-511),
+and the region other lines hold is not "the north's mid-latitudes" but **the upper continent's north** (10-55
+degrees). The leader holds the same latitudes on the lower continent.
+
+**A barrier of thirst holds it.** On the upper continent near the equator (about -7 to 12 degrees, 40 rows, 8-10
+times the 4-6 cells a grown body ends from its birth place) the ground is the driest on the map (0.69-0.72; the
+lower continent's tropics 0.26), and bodies live at 0.010-0.020 a land cell against about 0.05 on either side. The
+leader's share falls through 50% inside the belt on all three seeds, and in the north it stays at 0-17% per 16,000
+steps from 36,000 to 100,000 while the leader fills the belt's other side (75-98% by the end). Where the two lines
+meet they have children at the same rate (4.98 and 4.75 per 1,000 steps): the locals are not held by a better fit.
+Water sets the belt's depth: under W1 at `fresh` 0.05 it empties (0.001-0.002), at 0.2 it fills to 0.6-0.7 of
+either side and the leader crosses (at a dryness of 0.72 wet ground gives 0.014 of a pool's drink at 0.05, 0.056
+at 0.2). The lower continent's north is as thin (0.017-0.020) and the leader holds it; it leads to no dense land of
+other lines. Reading: a thin place holds a boundary between two dense regions, where few of the leader's bodies
+arrive against many locals that breed as fast.
+
+**The two lines are two ways of living**: the upper north's locals are small soft grazers (27.5 blocks, hard 2.2,
+gut 17.8, meat 43%); the leader an armored half-hunter (33.5, hard 7.9, muscle 12.6, meat 51%). Other regions the
+leader does not hold: the upper east (reached only from the far south, a shallower trough at the same latitudes)
+and the islands.
+
+**What it changes.**
+- Set D's small `fresh` has a second role, which #88 did not give it: it makes dry land a barrier. It stays 0.05.
+- e081 and e082 read from one side: water that binds empties the belt, water that frees fills it.
+- For #91: the refuge this land holds is a region behind a barrier of thirst, not a stand of wood.
+- Kinds on this land follow, in part, the regions the generated land holds apart, and c1225 has one clear barrier.
+
+**Next (proposed 2026-09-19, not agreed): the generated land's barriers.** No law changes. First, with no bodies,
+a count of the regions each world we have holds apart (c1225, c1236 and the stage A/B worlds with maps in
+`e061_climate/results/pass` and `e062_producers/results/pass`): land split by the sea or by belts where wet ground
+gives a body under about a third of what its flanks give, wider than 8 lives of travel, with a dense land on each
+side. Then, if a world holds clearly more such regions than c1225, today's default world on it against c1225 (seeds
+9-11, 100,000 steps: 3 runs, 3 cores, about an hour), judged by kinds and by the regions held. Wrong if the
+regions it holds do not keep lines of their own, or kinds do not rise with them.
