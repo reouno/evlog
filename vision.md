@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-09-19 (after e081: a body's water is part of the land's; a crowd pays for its water, but water then binds every body and kinds fall).
+Last updated: 2026-09-19 (after e082: wet ground that gives more to drink frees the bodies, and one line then spreads over every band; kinds fall).
 
 ## What the viewer should see
 
@@ -336,6 +336,14 @@ a time. The design is `foundation.md`.
    autumn; but every land body holds half its water, bodies end nearer their birth place, and kinds fall in
    every seed (7.66 to 6.83). What it changes: not kept as the default world; the proposed next step is a
    larger `fresh` under W1, since a paid drink no longer needs set D's small one (`balance.md` section 17).
+   #95 done 2026-09-19 (e082): `fresh` 0.2 and 0.5 under W1, then 0.2 on seeds 9-11.
+   **Water that frees the bodies lets one line spread over every band.** Bodies end 14.8 cells from their birth
+   place (3.1), and the lawn carries the crowd in spring and autumn (0.43 to 0.67, 0.41 to 0.65); but the line
+   that leads the tropics now also holds the north's mid-latitudes (45-74% of the bodies at 40-50 degrees
+   against 4-20%), the largest line holds 79% of the land, and kinds fall in every seed (6.83 to 6.29). What it
+   changes: `fresh` stays 0.05, `unit` 0, and #91's water track ends. In the control the north's lines are held
+   through the run, so kinds on this land come from places a leader does not cross; what holds them is the
+   proposed next question (a census, no runs; `balance.md` section 18).
 
 #73 (each axis alone) is withdrawn; #14 and #38 are folded into stages A and B; #58 is superseded.
 

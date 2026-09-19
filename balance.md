@@ -515,10 +515,42 @@ drinks little anywhere but a pool: wet ground gives `fresh` 0.05 of a pool's dri
 (set D) when water was free, to keep the shore from being free. Under W1 the drink is paid by the ground, so
 set D's reason for a small `fresh` is gone.
 
-**Next (agreed 2026-09-19, #95, to run as e082): `fresh` under W1.** Wet ground gives more of a pool's drink, and pays it out of
+**Next (agreed 2026-09-19, #95, run as e082, section 18): `fresh` under W1.** Wet ground gives more of a pool's drink, and pays it out of
 the ground. *Takes* the ground's water where a crowd sits (the lawn's spring ground at 0.38 becomes drinkable);
 *refilled* by the rain; *limited* by W1 (a crowd that drinks more draws its ground down faster). Expected: the
 lawn's wet season carries bodies without pools, the tether loosens (bodies follow wet ground), and the stand's
 lead falls further in spring. Wrong if the lawn's share does not rise over e081's, if travel does not rise, or
 if kinds fall again. Runs: unit 9.4 with `fresh` 0.05 (e081's), 0.2 and 0.5 on seed 9 at 60,000 steps
 (2 new runs, 2 cores of the Mac, 30 minutes; the 0.05 run is e081's search), then the best against e081's control on seeds 9-11.
+
+## 18. What e082 settled (2026-09-19)
+
+Section 17 run (`experiments/e082_fresh`, #95): e081's crate unchanged, unit 9.4, `fresh` 0.2 and 0.5 on seed 9 at
+60,000 steps beside e081's 0.05 and its control, then 0.2 on seeds 9-11 at 100,000 against e081's ladder.
+
+**The cycle runs as drawn.** At 0.2 wet ground away from pools carries bodies: the lawn's bodies a cell over the
+stand's rise in spring (0.43 to 0.67) and in autumn (0.41 to 0.65, the season section 16 expected), the stand's
+lead at the equinoxes falls from 2.42 to 1.51, and grown bodies end 14.8 cells from their birth place (3.1; control
+5.3). Bodies drink 3,900 mm a step over the world against 1,700, and a stand's ground is lower in every season.
+The land keeps 95% of the control's bodies.
+
+**One line then spreads over every band.** The largest lineage holds 72-84% of the land's bodies (e081 39-69%,
+control 42-63%), a large mover that eats half meat. In the control and at 0.05 the line that leads the tropics
+holds 4-20% of the bodies at 40-50 degrees north, and its share at 30-50 degrees stays flat from step 36,000 to
+100,000 (seed 9 19-35%, seed 10 8-21%, seed 11 0-14%): the north's lines are held, not merely not yet reached. At
+0.2 the leader's share there climbs through the run (seed 11: 2% to 73%) and ends at 45-74%. Kinds fall in all
+three seeds (6.83 to 6.29; control 7.66), kinds kept to a place 4.14 to 3.39.
+
+**What it changes.** `fresh` stays 0.05 and `unit` 0. e081 (water that binds) and e082 (water that frees) both
+lower kinds against the control, from opposite sides: water moves the crowd between stand and lawn but holds no
+line in a place. For #91 the water track ends. The finding it leaves is about where kinds come from on this land:
+lines are kept apart by places a leader does not cross, and the control holds some (the north's mid-latitudes).
+A likely reading, not measured: with wet ground giving little, the drier land between pools is what the tropical
+leader does not cross, and a larger `fresh` removes it.
+
+**Next (proposed 2026-09-19, not agreed).** A census step with no runs, as e060 and e068 were: in the control
+(e081's ladder at unit 0), what holds the north's lines against the tropical leader. Candidates to tell apart
+from the censuses and `_bands.csv`: the dry land between (bodies thin in the bands between, born and dying on
+either side), the cold (the leader's cold deaths and body heat north of 30 degrees), or the north's own food and
+season (the north's lines' traits against the leader's). A design follows from the answer, as a cycle. The
+alternative is #93 (a shorter year, so a body can meet the season), which needs stage A and B's checks again.
