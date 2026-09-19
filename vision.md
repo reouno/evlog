@@ -4,7 +4,7 @@ The ideal world, today's world against it, and the next piece of work. Read it b
 update it after every experiment (`CLAUDE.md`, Documents). History is not kept here: it is in each experiment's
 README and in git.
 
-Last updated: 2026-09-19 (rewritten after e085: the gaps by layer replace the plan and the history).
+Last updated: 2026-09-19 (after e086: the year for P1).
 
 ## 1. The ideal
 
@@ -76,8 +76,8 @@ rest it holds back.
 
 | element | ideal | today | gap |
 |---|---|---|---|
-| life against the year | many animals live through several seasons; short-lived ones sleep through the bad one | a grown body lives 500-570 steps, **1/20 of a year**; half the dead die by 75 steps, as children (#93) | **large** |
-| travel against the places | a migrant crosses places within a year; a resident's home fits in one place | a grown body travels a few cells of 512; the season is felt by a line over 20 lives, never by a body | **large** |
+| life against the year | many animals live through several seasons; short-lived ones sleep through the bad one | a grown body lives 500-570 steps, **1/20 of a year**; half the dead die by 75 steps, as children (#93); at a year of 1,200 a seasonal place's winter lasts 400 steps, less than a grown life (e086) | **large** |
+| travel against the places | a migrant crosses places within a year; a resident's home fits in one place | a grown body travels a few cells of 512; the season is felt by a line over 20 lives, never by a body; a place fed in a lean month is 9-15 cells away over land, beyond the eye (e086) | **large** |
 | the day against a life | a body lives many days and can tell night from day | a grown life is about 7 days; the day's swing is wider than the bands (e071) | medium |
 
 ### F. The ecosystem (outcomes, never written)
@@ -126,11 +126,13 @@ Each holds under the conditions it was found in.
 - Heat is paid in water, and water sets where land bodies live (e078). Lines are kept apart by places a leader does
   not cross (e083), and a world's regions can be read from its climate alone (e084, e085).
 - A law added alone meets a world without its counterweights (e066-e071); a set searched together can hold (e072).
+- A seasonal place's winter is a third of its year at any year length: the year sets whether a body meets it, the
+  terrain how far the refuge is (e086).
 
 ## 5. Next
 
 The next piece fills the largest gap of section 2; it is designed as cycles before it is built (`CLAUDE.md`).
-**Chosen 2026-09-19: P1, as #93.** Its design goes into the issue.
+**Chosen 2026-09-19: P1, as #93.** Its design is in the issue; its year is 1,200 steps (e086).
 
 | piece | fills | contains |
 |---|---|---|
