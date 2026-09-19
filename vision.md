@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-09-19 (after e078: a crown that damps the day a body feels does not make a refuge, because the stand's day's mean is itself over the heat law's band).
+Last updated: 2026-09-19 (after e079: wood resting in the cold puts stands beside the seasonal lawns, and a crown can keep its ground wet only by taking the land's rain).
 
 ## What the viewer should see
 
@@ -316,6 +316,13 @@ a time. The design is `foundation.md`.
    thirst is 42-48% of all deaths. What it changes: the refuge is
    designed as a cycle before any run (`balance.md` section 13: wet ground under crowns, wood resting in
    the cold, the crown's share of the sun's heat). The two rates stay as arguments, 0 by default.
+   #91 step 2 done 2026-09-19 (e079): the plants' two laws of that design, read with no bodies on seven
+   worlds. **Wood that rests in the cold puts stands beside the seasonal lawns** (7-11 times the stand cells
+   at 20-50 degrees). **A crown that keeps its ground wet stops at a summer floor of 0.58** (0.43 today):
+   the land's rain is its own evaporation here (a slow wind), so what a crown keeps is taken from the rain,
+   and past rate 1 the land's water drains to the sea. What it changes: the refuge's summer turns on the
+   crown's share of the sun's heat (S3, bodies), on the world with `crown_wet` 1 and `wood_rest` 0.5
+   (`balance.md` section 14).
 
 #73 (each axis alone) is withdrawn; #14 and #38 are folded into stages A and B; #58 is superseded.
 

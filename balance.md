@@ -352,3 +352,27 @@ alone on c1225 with S1 and S2 at a few rates, read for where stands stand, the g
 rain (no bodies; 5-10 minutes a candidate, e062). Then the bodies, with S3, on the new world against the same world with
 S3 at 0: a few candidates on seed 9 at 60,000 steps, then three seeds. The new world then needs its own
 controls, and stage C's default world moves if it is kept.
+
+## 14. What e079 settled (2026-09-19)
+
+Step 2 of section 13: S1 and S2 built on the plants' side and read with no bodies (`experiments/e079_crown`,
+seven worlds of c1225, 6 minutes each). Stands: wood 1 or more; mid: 20-50 degrees.
+
+**S2 places the stands.** Wood that rests in the cold multiplies the mid stands by 7-11 (2,165 cells in the
+control). At `wood_rest` 1 growth and death both follow the warmth, so warmth cancels out of where wood
+settles: stands reach the cold south and halve the mid lawn, and settle slowly. At 0.5 the lawn keeps 72%
+of its mid cells and the forest is settled in 17 years.
+
+**S1 cannot wet the floor past about 0.58 without taking the rain.** At `crown_wet` 1 a mid stand's summer
+floor rises from 0.43 to 0.58-0.59; past 1 it rises only as the land's rain falls (0.75 with the lawn's rain
+halved at 1.5; 0.98 with the land's rain down 92% at 2, a third of the land at full fill and its rain running
+off to the sea). The cause is the climate: with a wind of 0.1 cells an update the land's rain is its own
+evaporation (the sea rains 386 mm a year, the tropical land 8,900), so the water a crown keeps is taken from
+the rain. Section 13 assumed that water stays under the crown. At rate 1 the land still ends wetter (the
+ground's fill rises in every band from 60 S to 50 N with a quarter less rain): the water turns over slower.
+
+**What it changes.** Hypotheses 1 and 3 hold, 2 fails at 0.59 against 0.6 (the ground's fill that closes a
+body's summer water if S3 halves its cooling; `budget.py`'s "fill" in section 13 is the body's, and its 0.4
+line stays for the bodies). The refuge's summer now turns on S3. The world for step 3 is `crown_wet` 1,
+`wood_rest` 0.5 (the same floor as rate 1 with more lawn and a settled forest), at the cost of a quarter
+less rain on the land. Both rates are 0 by default.
