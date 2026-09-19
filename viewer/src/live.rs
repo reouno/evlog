@@ -21,7 +21,7 @@ struct Backlog {
 }
 
 struct Client {
-    q: Mutex<VecDeque<Arc<Vec<u8>>>>,
+    q: Mutex<VecDeque<(Arc<Vec<u8>>, bool)>>, // a record, and whether it is a frame (else a body shape)
     cv: Condvar,
 }
 
@@ -38,7 +38,9 @@ pub struct Live {
     rejoin: AtomicBool,
 }
 
-const QUEUE_MAX: usize = 240; // a browser that falls behind loses the oldest frames, not the world
+// A browser that falls behind loses the oldest frames, not the world. Only frames count and only frames
+// are dropped: a shape is sent once, so a dropped one is never drawn, and a rejoin sends thousands at once.
+const QUEUE_MAX: usize = 240;
 
 impl Live {
     pub fn start(port: u16, header_json: String, header_rec: Vec<u8>, speed: f32, from: u64) -> Arc<Live> {
@@ -70,7 +72,7 @@ impl Live {
     }
 
     pub fn push_body(&self, rec: Arc<Vec<u8>>) {
-        self.push(rec);
+        self.push(rec, false);
     }
 
     /// Whether the frame being written now has to carry the shape of every body in it.
@@ -82,16 +84,18 @@ impl Live {
         if key {
             self.backlog.lock().unwrap().key = Some(rec.clone());
         }
-        self.push(rec);
+        self.push(rec, true);
     }
 
-    fn push(&self, rec: Arc<Vec<u8>>) {
+    fn push(&self, rec: Arc<Vec<u8>>, frame: bool) {
         for c in self.clients.lock().unwrap().iter() {
             let mut q = c.q.lock().unwrap();
-            if q.len() >= QUEUE_MAX {
-                q.pop_front();
+            if frame && q.iter().filter(|(_, f)| *f).count() >= QUEUE_MAX {
+                if let Some(i) = q.iter().position(|(_, f)| *f) {
+                    q.remove(i);
+                }
             }
-            q.push_back(rec.clone());
+            q.push_back((rec.clone(), frame));
             c.cv.notify_one();
         }
     }
@@ -166,7 +170,7 @@ impl Live {
                             break;
                         }
                     }
-                    q.pop_front()
+                    q.pop_front().map(|(r, _)| r)
                 };
                 match rec {
                     Some(r) => {
