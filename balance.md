@@ -376,3 +376,28 @@ body's summer water if S3 halves its cooling; `budget.py`'s "fill" in section 13
 line stays for the bodies). The refuge's summer now turns on S3. The world for step 3 is `crown_wet` 1,
 `wood_rest` 0.5 (the same floor as rate 1 with more lawn and a settled forest), at the cost of a quarter
 less rain on the land. Both rates are 0 by default.
+
+## 15. What e080 settled (2026-09-19)
+
+Step 3 of section 13: S3 (`crown_cool`, the crown's share of the day's sun heat off what a body feels) with
+bodies on e079's world at `crown_wet` 1 and `wood_rest` 0.5 (`experiments/e080_cool`, seed 9, 60,000 steps,
+c3 0 / 0.1 / 0.2 / 0.4, e078's control as the old world).
+
+**The crown's laws make the stand a better home, not a refuge.** The plants' half alone moves the
+mid-latitude crowd into the stands for the whole year (66% of the bodies on stand or lawn at the equinoxes,
+16% in the old world), and a stand's bodies hold 0.40 of their water in summer (0.20). S3 closes the summer
+(0.77 at c3 0.4, the stand's cooling halved) and the stands stop emptying in summer (bodies a cell in summer
+over the equinoxes 0.50 to 1.01), but they never fill: at the equinoxes a mid stand holds 3.0-3.3 times the
+bodies of a mid lawn cell in every run. The winter's price is paid as designed (warming 2.5-fold, cold deaths
+1.5% to 3.7%), and kinds fall (7.00 / 4.32 to 3.72 / 2.24): a better home makes one winner.
+
+**Correction to section 13's R1 row.** R1 ("the lawn pays more than the stand in the good season") was read as
+food per body (4.0 against 2.7). That number is high on the lawn only because water keeps bodies off it; per
+cell the mid lawn is the poorer place in every season (its bodies hold 0.46-0.54 of their water in spring and
+autumn). R1 fails, and R3 with it: the stand is already full when the bad season comes.
+
+**What it changes.** S1-S3 are not kept; stage C's default world stays e075's, the rates stay as arguments at
+0. A refuge needs two places that trade places over the year, and the crown can only improve the place bodies
+already prefer. The missing half is a season in which the open land is livable, and on this land that is
+set by where a body drinks (wet ground gives a twentieth of a pool; pools are 0.3% of the land). The next
+design is the land's water by season, before any run.

@@ -1,7 +1,7 @@
 # Vision
 
 Where we are heading right now. Unlike `principles.md`, this changes as experiments teach us things.
-Last updated: 2026-09-19 (after e079: wood resting in the cold puts stands beside the seasonal lawns, and a crown can keep its ground wet only by taking the land's rain).
+Last updated: 2026-09-19 (after e080: a crown that cools, wets and places the stands makes them a better home, not a refuge; water keeps the open land thin in every season).
 
 ## What the viewer should see
 
@@ -323,6 +323,13 @@ a time. The design is `foundation.md`.
    and past rate 1 the land's water drains to the sea. What it changes: the refuge's summer turns on the
    crown's share of the sun's heat (S3, bodies), on the world with `crown_wet` 1 and `wood_rest` 0.5
    (`balance.md` section 14).
+   #91 step 3 done 2026-09-19 (e080): the crown's share of the sun's heat (S3) with bodies on that world, seed 9.
+   **The crown makes the stand a better home, not a refuge.** The mid-latitude crowd moves into the stands for
+   the whole year; S3 closes a stand body's summer water (0.77 against 0.40) and the stands stop emptying in
+   summer, but never fill: at the equinoxes a stand holds three times a lawn cell's bodies in every run, and
+   kinds fall (7.00 to 3.72). Water keeps the open lawn thin in every season, so the good season never comes to
+   it. What it changes: S1-S3 are not kept; the refuge's missing half is the land's water by season, to be
+   designed as a cycle before any run (`balance.md` section 15).
 
 #73 (each axis alone) is withdrawn; #14 and #38 are folded into stages A and B; #58 is superseded.
 
