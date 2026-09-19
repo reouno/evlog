@@ -650,7 +650,8 @@ lie on 5 land masses) and, inside its two large masses (3 and 5 regions), by the
 year, matter conserved; it fails one of stage B's lines (wood is the larger part of no habitat). Its regions on
 the producers' map are the climate's (7.53).
 
-**Next (proposed, not agreed): do kinds follow regions at all?** The claim behind this track is untested, and a
+**Superseded 2026-09-19:** the next step is chosen from `gaps.md` from here, not from this section. The proposal is
+kept as it was written. **Next (proposed, not agreed): do kinds follow regions at all?** The claim behind this track is untested, and a
 search for a more divided world is worth doing only if it holds. The recommendation is three worlds in one batch:
 today's default world (e082's binary, `unit` 0, `fresh` 0.05) on c1236 (1.24 effective regions) and c1288 (7.53),
 seeds 9-11 at 100,000 steps, against e081's control ladder on c1225 (5.03). 6 runs on 6 Mac cores, about 70

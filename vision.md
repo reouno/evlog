@@ -363,8 +363,8 @@ a time. The design is `foundation.md`.
    the count costs one stage A run. None reaches 8 effective; the most, c1288, holds 7.5 and c1225 (5.0) is
    third. More regions come with a small, cold land (land share -0.57, coolest quarter -0.45), not with dryness.
    What it changes: c1225 is near the top of what stage A made; a world divided much more would need a search
-   aimed at it. Proposed next: test whether kinds follow regions at all, with bodies on c1236 (1.2) and c1288
-   (7.5) against c1225 (`balance.md` section 21).
+   aimed at it. From here the next step is chosen from `gaps.md` (2026-09-19): the ideal against today, by layer,
+   filled one large piece at a time, and updated by every result.
 
 #73 (each axis alone) is withdrawn; #14 and #38 are folded into stages A and B; #58 is superseded.
 
