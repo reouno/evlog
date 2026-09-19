@@ -146,8 +146,9 @@ than a redesign of P1 would. Y and Q stay out of the default world; Q is a law r
 
 **Chosen 2026-09-20: P2, as #99.** Its cycle design is written there before it is built. Stage B (e088): seed at
 `seed_share` 0.2 passes stage B. Stage C, first of three (e089): S+Fb not kept; kinds fall on two seeds of three, no
-seed-led kind, the largest line grows on two. Seed needs a mouthful apart from the grass, or P2 another food; the next
-step is a decision on #99.
+seed-led kind, the largest line grows on two. The next step, designed as cycles in #100, gives seed a
+mouthful of its own (it drifts with the wind, a beak opens it, and fiber makes grass a poor food for a fast body);
+if it makes no seed eater, P2's seed track ends and the next piece is chosen from the gap table above.
 
 | piece | fills | contains |
 |---|---|---|
