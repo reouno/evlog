@@ -515,7 +515,7 @@ drinks little anywhere but a pool: wet ground gives `fresh` 0.05 of a pool's dri
 (set D) when water was free, to keep the shore from being free. Under W1 the drink is paid by the ground, so
 set D's reason for a small `fresh` is gone.
 
-**Proposed next (not agreed): `fresh` under W1.** Wet ground gives more of a pool's drink, and pays it out of
+**Next (agreed 2026-09-19, #95, to run as e082): `fresh` under W1.** Wet ground gives more of a pool's drink, and pays it out of
 the ground. *Takes* the ground's water where a crowd sits (the lawn's spring ground at 0.38 becomes drinkable);
 *refilled* by the rain; *limited* by W1 (a crowd that drinks more draws its ground down faster). Expected: the
 lawn's wet season carries bodies without pools, the tether loosens (bodies follow wet ground), and the stand's
