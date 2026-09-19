@@ -4,7 +4,7 @@ The ideal world, today's world against it, and the next piece of work. Read it b
 update it after every experiment (`CLAUDE.md`, Documents). History is not kept here: it is in each experiment's
 README and in git.
 
-Last updated: 2026-09-19 (after e086: the year for P1).
+Last updated: 2026-09-20 (after e087: P1 closed, P2 chosen).
 
 ## 1. The ideal
 
@@ -134,14 +134,18 @@ Each holds under the conditions it was found in.
 ## 5. Next
 
 The next piece fills the largest gap of section 2; it is designed as cycles before it is built (`CLAUDE.md`).
-**Chosen 2026-09-19: P1, as #93.** Its design is in the issue; its year is 1,200 steps (e086). e087 (Y+Q) met the
-winter (1, 3) but not the year or the kinds (2, 4); one of its three stage C experiments is spent, and what is left
-binding a grown life is the crowd.
+**P1 (#93) closed 2026-09-20 after e087**, by the user's choice, with two of its three experiments unspent. A year of
+1,200 steps with Q lets a grown body wait a winter out (81-84% live through it, torpid), so the season can now reach
+a body. But a grown life stays at 3/4 of a year: it ends in the crowd, of hunger, thirst and wounds, wherever the
+body lives, and kinds kept to a place fall. The gap left is the crowd's income, which P2 addresses more directly
+than a redesign of P1 would. Y and Q stay out of the default world; Q is a law ready for a piece that needs it.
+
+**Chosen 2026-09-20: P2, as #99.** Its cycle design is written there before it is built.
 
 | piece | fills | contains |
 |---|---|---|
 | **P1. A life that meets its world** | E, D, part of F | the ratio of a grown life to the year and to the places: a shorter year (stages A and B again), what kills the young today, a body that waits out a bad season on its fat, what makes travel pay (#93) |
-| **P2. A food web** | B, F | kinds of plant matter that need different mouths and guts (#34), seasonal rich food, each food's mouthful set so that it feeds a way |
+| **P2. A food web** | B, F | kinds of plant matter that need different mouths and guts (#34), seasonal rich food, each food's mouthful set so that it feeds a way; first design: seed behind a tooth and fiber digested over time (#99) |
 | **P3. Bodies whose shape does something** | C | parts that work only at a tip or an edge, a leg that walks only where it touches (#52); later 3D (#5) |
 
 P1 is the deepest root: it decides whether any place or season can act on a body. P2 is the most direct route to
