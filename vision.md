@@ -4,7 +4,7 @@ The ideal world, today's world against it, and the next piece of work. Read it b
 update it after every experiment (`CLAUDE.md`, Documents). History is not kept here: it is in each experiment's
 README and in git.
 
-Last updated: 2026-09-20 (after e088: P2's seed on the producers' side).
+Last updated: 2026-09-20 (after e089: seed and fiber, not kept).
 
 ## 1. The ideal
 
@@ -52,7 +52,7 @@ rest it holds back.
 
 | element | ideal | today | gap |
 |---|---|---|---|
-| kinds of plant food | several, each needing its own mouth and gut; some seasonal | grass (any gut), algae (a surface gut), wood's browse at 3e-5 (a hard tip, e073); carrion and litter. Seed (#99 S, not in the default world): at `seed_share` 0.2 a steady bank of 0.43 of the grass on the land, more than the leaf in the winter at 50 degrees; no body eats it yet (e088) | **large**: few ways to eat |
+| kinds of plant food | several, each needing its own mouth and gut; some seasonal | grass (any gut), algae (a surface gut), wood's browse at 3e-5 (a hard tip, e073); carrion and litter. Seed (#99 S, not in the default world): at `seed_share` 0.2 a steady bank of 0.43 of the grass on the land, more than the leaf in the winter at 50 degrees (e088). Behind a tooth of 2 it feeds no kind of its own: it is 3% of what bodies eat, a side dish of the toothed hunters, since a gut takes it mixed with the grass (e089) | **large**: few ways to eat |
 | response to eating | grazed plants regrow, defended plants resist, fruit is offered | every producer grows by its stand and is grazed to a few percent of it (e065) | medium |
 | plants as places | a forest is a home, a cover and a food | a stand is a home only through its wet ground (e078) | medium |
 
@@ -61,7 +61,7 @@ rest it holds back.
 | element | ideal | today | gap |
 |---|---|---|---|
 | parts | parts whose worth depends on where they sit and how they move | 4 block kinds on a 2D grid of side 4-16; every block pays best packed, so bodies fill their grids (#52, e047) | **large** |
-| size | a thousandfold range, each size with its place | 21-35 blocks; winners differ 1.3-2.2x (e055, e075) | large |
+| size | a thousandfold range, each size with its place | 21-35 blocks; winners differ 1.3-2.2x (e055, e075). Fiber digested over time (Fb, not kept) makes grass eaters 14-27% heavier and slower, with no new kind (e089) | large |
 | life history | lives that span seasons; fat and dormancy chosen by selection | breeding values fixed (from the genome they cost kinds, e069); fat from the genome (e072); a cold body can go torpid (Q, not in the default world, e087) | medium |
 
 ### D. Behaviour
@@ -128,6 +128,8 @@ Each holds under the conditions it was found in.
 - A law added alone meets a world without its counterweights (e066-e071); a set searched together can hold (e072).
 - A store the producers fill and empty by the growth's own factors (warmth x water) sits at the same level all
   year: it outlasts the leaf in the cold but does not pile up or flush with the season (e088).
+- A food that comes in one mouthful with another does not part the kinds: seed taken with the grass of its cell, by
+  the hunter's tooth, fed no seed eater (e089). A food is its mouthful (e075) from the other side.
 - A seasonal place's winter is a third of its year at any year length: the year sets whether a body meets it, the
   terrain how far the refuge is (e086).
 - A body that can wait lives through a winter it meets, and then does not move (e087). What ends a grown life is
@@ -142,8 +144,10 @@ a body. But a grown life stays at 3/4 of a year: it ends in the crowd, of hunger
 body lives, and kinds kept to a place fall. The gap left is the crowd's income, which P2 addresses more directly
 than a redesign of P1 would. Y and Q stay out of the default world; Q is a law ready for a piece that needs it.
 
-**Chosen 2026-09-20: P2, as #99.** Its cycle design is written there before it is built. Stage B done (e088): seed at
-`seed_share` 0.2 passes stage B and costs the grass nothing; stage C (e089: S with a tooth of 2, and Fb) is next.
+**Chosen 2026-09-20: P2, as #99.** Its cycle design is written there before it is built. Stage B (e088): seed at
+`seed_share` 0.2 passes stage B. Stage C, first of three (e089): S+Fb not kept; kinds fall on two seeds of three, no
+seed-led kind, the largest line grows on two. Seed needs a mouthful apart from the grass, or P2 another food; the next
+step is a decision on #99.
 
 | piece | fills | contains |
 |---|---|---|
