@@ -154,10 +154,12 @@ tip) and a worth (grass 0.8 fiber) of its own - still no seed-led kind on any se
 line grows on two; and the drift that moves seed off the lawn drains the land into the sea, so stage B caps it at
 0.02. By #100's stopping rule the seed track ends with one stage C slot unspent.
 
-**The next piece is open.** What e088-e090 rule out is a food parted by what is mixed into a mouthful. What is left
-in P2 is a food parted by **where a body must be to take it** (the shore's litter and the crown's browse are the two
-that already feed kinds), and outside P2 the bodies' own side, P3 (#52): parts whose worth depends on where they sit,
-which section 2 marks **large** and no experiment has touched.
+**Next, as #101 (e091): the crown as a place.** What e088-e090 rule out is a food parted by what is mixed into a
+mouthful. What parts kinds today is where a body must be: three of the four media hold their own kinds, and the two
+plant foods with kinds of their own are reached by being somewhere, not by carrying a tool. So the land gets a second
+place - a crown over a stand (17% of the land's cells), holding the yield that today falls to the floor, and holding
+only bodies light enough for a branch. If no fruit-led kind holds 5%, P2 ends and the next piece is P3 (#52) or what
+is left of P1.
 
 | piece | fills | contains |
 |---|---|---|
