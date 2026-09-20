@@ -74,15 +74,22 @@ larger part of a habitat; none dies out in 10 years; fire burns 1-20% of the lan
 of 96 candidates pass, and no draw of the rates passes on more than two worlds. Stage C takes draw d11 (grass 0.009983,
 wood 0.0017, algae 0.009112, ignite 1.613e-6) on c1225. A candidate costs about 8 minutes at 512.
 
-**Stage C, bodies.** Judged by kinds of living by birth form (e068) at a census and kept to a place, on three seeds
-(e069), and by stability: a kind left out or halved returns, tested by paired injection beside a control (#72, e074,
-e076). The first pass line (#76: 4 kinds on 4 of 6 seeds, each at 5% for 5 years) is not yet met; the ideal and the
-gaps are in `vision.md`.
+**Stage C, bodies.** Judged by kinds of living by birth form (e068) at a census and kept to a place, on **six seeds
+(9-14)**, read as a distribution against the control ladder's - median and spread - never as "+1 kind on every seed",
+and with the effect's spread across seeds recorded beside the effect. The ladder's own count spreads 1.02 kinds
+(median 7.53) and its kinds kept to a place 1.24 (median 4.35), so an effect of one kind is not readable at all
+(e092). The categorical done-whens - is there a kind led by the new food, does a form keep to the new place - are not
+noise-limited and decide as before. A piece meant to replace the world (e072's shape) is judged on its own measures
+and becomes the new control if it passes, instead of being scored against the old one. Stability: a kind left out or
+halved returns, tested by paired injection beside a control (#72, e074, e076). The first pass line (#76: 4 kinds on 4
+of 6 seeds, each at 5% for 5 years) is not yet met; the ideal and the gaps are in `vision.md`.
 
 **Today's default world** (stage C, c1225 with d11, s = 1/16): the trade-offs marked kept in section 2 at the rates
 #88 set, with `wood_food` 0, `wood_yield` 3e-5 and the flesh line; the command line is
-`experiments/e082_fresh/run.sh` with `unit` 0 and `fresh` 0.05. The controls are e081's ladder,
-`experiments/e081_drink/results/ladder/c1225_life{9,10,11}_u0`, 100,000 steps, about 46 minutes a run on one core.
+`experiments/e082_fresh/run.sh` with `unit` 0 and `fresh` 0.05. The controls are the six-seed ladder (e092):
+`experiments/e081_drink/results/ladder/c1225_life{9,10,11}_u0` and
+`experiments/e092_yardstick/results/ladder/c1225_life{12,13,14}_ctl`, 100,000 steps, 52-73 minutes a run with four at
+once. `experiments/e092_yardstick` is the crate that reproduces them.
 
 ## 4. Compute
 
@@ -90,9 +97,9 @@ gaps are in `vision.md`.
 |---|---|---|
 | A | 1-8 minutes at 512 on one core (20 years, e061, e085) | 300 candidates in about an hour on 10 cores |
 | B | about 8 minutes at 512 (spin-up and 10 years of producers) | about 100 an hour |
-| C | about 28 ms a step with about 10,000 bodies (e081); 100,000 steps in about 46 minutes | a handful of worlds, three seeds each |
+| C | about 28 ms a step with about 10,000 bodies (e081); 100,000 steps in about an hour | a handful of worlds, six seeds each (about two hours a batch on 6 cores) |
 
-Stage C cannot be searched widely: it takes the few worlds A and B pass, and a step is judged on three seeds.
+Stage C cannot be searched widely: it takes the few worlds A and B pass, and a step is judged on six seeds.
 
 ## 5. Search
 

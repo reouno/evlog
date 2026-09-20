@@ -4,7 +4,7 @@ The ideal world, today's world against it, and the next piece of work. Read it b
 update it after every experiment (`CLAUDE.md`, Documents). History is not kept here: it is in each experiment's
 README and in git.
 
-Last updated: 2026-09-20 (after e091: P2 ends; the crowd moves from a consequence to a cause, and the next piece is P3).
+Last updated: 2026-09-20 (after e092: the yardstick is six seeds wide and the judging is written down; the next piece is P3).
 
 ## 1. The ideal
 
@@ -28,8 +28,8 @@ coast, as a film crew would show it:
 **The measure is ways of living, not shapes.** A way of living is what a body does: what it eats, whether it can
 break another body, whether it stays or roams, where it lives. Stage C counts kinds by birth form (e068): the body a
 genome develops, read over all the grown bodies of that form, at a census and as kinds kept to a place. A step is
-judged on three seeds (kinds spread 3-5 between seeds, e069). Shape kinds and the leading line's share are second
-numbers.
+judged on six seeds against the control ladder's distribution (`foundation.md`; the ladder spreads 1.02 kinds and
+1.24 placed kinds on its own, e092). Shape kinds and the leading line's share are second numbers.
 
 **The working hypothesis** (competitive exclusion): the ways of living that coexist are at most the independent
 things they live on, each with a trade-off no single body escapes, laid out at scales the bodies feel. It is
@@ -84,10 +84,10 @@ rest it holds back.
 
 | element | ideal | today | gap |
 |---|---|---|---|
-| ways of living | many; the user asked for about 20 (2026-09-11) | 7.66 kinds at a census, 4.62 kept to a place (e081's control); no plant law since has raised the count (e088-e091) | **large** |
-| dominance | no line above a fifth of the animals | the largest line holds 42-63% of the land's bodies (e082) | large |
+| ways of living | many; the user asked for about 20 (2026-09-11) | 7.53 kinds at a census, 4.35 kept to a place, over the six-seed ladder (e092); no plant law since has raised the count on any seed (e088-e091) | **large** |
+| dominance | no line above a fifth of the animals | the largest line holds 42-78% of the land's bodies, by the seed (e092) | large |
 | food web | three or more levels; hunters of several kinds | kills are 27% of what bodies eat; the largest land kind takes half its food from kills; pure flesh kinds 2-4% (e075) | medium |
-| crowding | numbers limited by food, hunters and seasons | numbers limited by room: 24-33% of children have no room (e070); without the hunter the grazers double (e076) | medium |
+| crowding | numbers limited by food, hunters and seasons | numbers limited by room: **46-49% of children have no room and 44-51% of moves are blocked, in every one of six seeds** (e092; e070 read 24-33% in its world); without the hunter the grazers double (e076) | **large** |
 | cycles over time | predator and prey swing; seasons move numbers | the land's bodies swing twofold over a year; forms do not follow (e070) | medium |
 
 ### G. Cycles of the world
@@ -111,13 +111,16 @@ rest it holds back.
    listed as a consequence of 1 and 2 until P1 and P2 argued otherwise: what ends a grown life is the crowd's
    income, wherever it lives (e087), and the three foods of P2 each died of the same thing - the bodies already
    there ate the new food (e089, e090) or filled the new place with the light tail of their own forms (e091).
-   24-33% of children find no room and 60% of moves are blocked. A new axis has to thin the crowd, or make a
-   place differ over more ground than a body covers, or it is averaged away.
+   Nearly half of all births fail for want of room (46-49%) and 44-51% of moves are blocked, and those are the
+   numbers the six seeds agree on (e092). A new axis has to thin the crowd, or make a place differ over more
+   ground than a body covers, or it is averaged away.
 
-The dominant line may still follow from 1 and 2: the best eater of the one food spreads. **Judged how**: ten laws
-proposed since e075 were all rejected on three seeds against a line (+1 kind) no larger than the spread the seeds
-make on their own (#102). Until the yardstick is six seeds wide, "the law did nothing" and "the measure could not
-see it" are the same reading.
+The dominant line may still follow from 1 and 2: the best eater of the one food spreads. **Judged how**: the ten
+laws rejected since e075 were read on three seeds against a line (+1 kind) no larger than the spread the seeds make
+on their own - 1.02 kinds over six runs of the same world, and every large "effect" among the last three belongs to
+the seed whose control counts highest (e092). The ladder is six seeds wide now and the rule is in `foundation.md`:
+a distribution against a distribution, with the categorical done-whens deciding as before. None of the three laws
+raised the count on any seed, so what was unreadable was the size of the fall, not its direction.
 
 ## 4. Lessons that hold across experiments
 
@@ -151,6 +154,9 @@ Each holds under the conditions it was found in.
   terrain how far the refuge is (e086).
 - A body that can wait lives through a winter it meets, and then does not move (e087). What ends a grown life is
   the crowd's income, wherever it lives, not the season (e037, e038, e087).
+- The seed re-draws the world, so a law's effect on one seed carries the control's draw as well as its own: six runs
+  of the same world spread 1.02 kinds and 1.24 placed kinds, and each law's own three spread as widely (e092). Read
+  a distribution against a distribution, and keep the categorical questions for the deciding.
 
 ## 5. Next
 
@@ -179,8 +185,11 @@ below (born at 44-48, counted at 36-37, nine blocks lost), and nothing about it 
 worth is set by the shape a genome develops and by nothing a body can change while it lives - which is what P2's
 law asks for - and every counterweight is already in the world (an open face loses water, loses heat, and is what a
 tooth breaks). It is also the crowd's side: a body that lives by its faces takes more room per unit of income, so
-where it wins the crowd thins. The two are done-whens of the same piece. Before it, #102: the control ladder at six
-seeds, and the judging that goes with it. Afterwards, once the crowd has moved, #104 re-tests P2's foods there.
+where it wins the crowd thins. The two are done-whens of the same piece. **#102 is done (e092)**: the ladder is six
+seeds wide, the judging is in `foundation.md`, and the crowd it measured - nearly half of all births failing for want
+of room, in every seed - is what #103 is aimed at. Afterwards, once the crowd has moved, #104 re-tests P2's foods
+there. While the runs of #103 are out, #105 makes a long batch watchable from outside (a flushed log, a status
+reader, and stop rules declared before the runs start, about failed preconditions only).
 
 | piece | fills | contains |
 |---|---|---|
