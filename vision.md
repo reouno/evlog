@@ -213,11 +213,18 @@ driven out: `kinds_held` was an AND over 51 censuses of a share that swings by 6
 world stands at 3 of #76's 4 kinds instead of 1. The size of the gap is unchanged - 8 ways against an ideal near 20,
 the largest line 42-78%, half of all births with no room - but one of the two numbers we read it with was broken.
 
-**The next step of P3, not yet designed as a cycle:** the one law left out of e093 on purpose - bodies that shade
+**The next step of P3 is filed as #107 and not yet settled: the spike and the leg, as one set** - two materials
+that work only at a body's edge, which only a genome sets. A spike breaks what presses on it where it is a tip with
+nothing beside it; a leg adds to the motor force only where it touches the outside. Alone each is e093 on land: a
+body that sticks out into a world that charges for sticking out. Together the spike makes a protruding body
+dangerous and the leg makes it quick, so each pays the other's bill - and everything this project has kept since
+the staged search began was a set (e072's seven, e073's two, e075's two) while eleven single laws in a row were not.
+
+**The alternative P3 could spend instead, also unsettled:** the law left out of e093 on purpose - bodies that shade
 each other and the cell under them, which turns the light from an income each face draws into a flux the bodies on
-a cell share, so that one body's income falls when another arrives. It is the only form of the light that could
-thin the crowd, and it is also the first law of this world in which a body is a place for another body. #104
-(re-testing P2's foods in a thinner crowd) still waits on a crowd that has moved.
+a cell share, so that one body's income falls when another arrives. It is the only candidate that could thin the
+crowd, and the first law of this world in which a body is a place for another body. #104 (re-testing P2's foods in
+a thinner crowd) waits on a crowd that has moved, so it waits on that one.
 
 | piece | fills | contains |
 |---|---|---|
