@@ -22,7 +22,7 @@ declare global {
 const $ = (id: string) => document.getElementById(id)!;
 const $i = (id: string) => document.getElementById(id) as HTMLInputElement;
 const $c = (id: string) => document.getElementById(id) as HTMLCanvasElement;
-const KIND_COLORS: Record<string, string> = { hard: '#2a2622', muscle: '#a8553c', sensor: '#1b1b20', digestive: '#b09760', empty: '#00000000' };
+const KIND_COLORS: Record<string, string> = { hard: '#2a2622', muscle: '#a8553c', sensor: '#1b1b20', digestive: '#b09760', leaf: '#6f9e4a', empty: '#00000000' };
 const DIET = ['植物', 'まぜ', '肉', 'まだ'];
 // What a layer is called on the cell panel. A world sends whatever layers it has and the panel
 // shows them in the header's own order; one it has no name for is shown under the world's.

@@ -42,21 +42,24 @@ MEDIA = ["land", "surface", "bottom"]
 FORM = 20        # grown bodies over the second half that make a birth signature a form
 KEEP = 0.9       # share of a group's grown bodies in one medium for the group to live there (e067's line)
 NULLS = 5        # shuffles per null
-DOES = ("plant", "meat", "bite_any", "travel", "medium")  # what a body does: shuffled by the null
+DOES = ("plant", "meat", "light", "bite_any", "travel", "medium")  # what a body does: shuffled by the null
 SWEEP = [(0.8, 20), (0.95, 20), (0.9, 10), (0.9, 50)]  # (KEEP, FORM)
 
 
 # ---------------------------------------------------------------- one body
 
 def signature(r):
+    # e093 (#103): the leaf blocks a body is born with part its form too. A run with no leaf column
+    # reads 0 for every body, so the signature is the one e068 read.
     return (int(r["side"]), int(r["born_hard"]), int(r["born_muscle"]), int(r["born_sensor"]),
-            int(r["born_digestive"]), int(r["born_bite"]), r["density"])
+            int(r["born_digestive"]), int(r.get("born_leaf") or 0), int(r["born_bite"]), r["density"])
 
 
 def traits(r):
     n = float(r["born_size"])
     return [math.log(n), int(r["born_hard"]) / n, int(r["born_muscle"]) / n, int(r["born_sensor"]) / n,
-            int(r["born_digestive"]) / n, float(r["born_bite"]), float(r["density"]), float(r["side"])]
+            int(r["born_digestive"]) / n, int(r.get("born_leaf") or 0) / n, float(r["born_bite"]),
+            float(r["density"]), float(r["side"])]
 
 
 def medium(r):
@@ -136,7 +139,7 @@ class Run:
 
     def does(self, keys=(), seed=1):
         """What each grown body does, with `keys` shuffled among the grown bodies of its lineage and side of density 1."""
-        d = [{k: r[k] for k in DOES} for r in self.grown]
+        d = [{k: r[k] for k in DOES if k in r} for r in self.grown]
         if keys:
             rng = np.random.default_rng(seed)
             src = [dict(x) for x in d]

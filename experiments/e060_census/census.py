@@ -39,6 +39,7 @@ RAREFY = 100         # grown bodies per draw
 DRAWS = 200
 
 KINDS = ["hard", "muscle", "sensor", "digestive"]
+LEAF = "leaf"        # e093 (#103): a fifth block kind, in the runs that have the column
 SIZE_EDGES = [8, 16, 32, 64]
 BIN = 4
 
@@ -50,6 +51,15 @@ def flesh_share(r):
     return m / (p + m) if p + m > 0 else None
 
 
+def light_share(r):
+    """e093 (#103): the share of a body's life's matter its leaf blocks took from the light, or None
+    where the run has no light (every census before e093)."""
+    if r.get("light") in (None, ""):
+        return None
+    p, m, l = float(r["plant"]), float(r["meat"]), float(r["light"])
+    return l / (p + m + l) if p + m + l > 0 else None
+
+
 def has_tooth(r):
     return int(float(r.get("bite_any") or r["bite"])) >= TOOTH
 
@@ -57,9 +67,17 @@ def has_tooth(r):
 def way(r, roam=True):
     """The way of living of one row of agents.csv, or None for a body that has eaten nothing."""
     f = flesh_share(r)
-    if f is None:
+    lt = light_share(r)
+    if f is None and lt is None:
         return None
-    diet = "plant" if f < FLESH[0] else "flesh" if f > FLESH[1] else "mixed"
+    # e093 (#103): a body that took most of its matter from the light lives by the light, whatever
+    # the rest of it ate. Without the column (every run before e093) this reads as it always did.
+    if lt is not None and lt >= 0.5:
+        diet = "light"
+    elif f is None:
+        return None
+    else:
+        diet = "plant" if f < FLESH[0] else "flesh" if f > FLESH[1] else "mixed"
     w = (diet, "tooth" if has_tooth(r) else "no tooth")
     if not roam or r.get("travel") in (None, ""):
         return w
@@ -76,7 +94,8 @@ def kind(r):
     """#66's shape kind: size class and block mix in quarters, from the birth shape where the run
     has it (e058 on), else from the current shape."""
     pre = "born_" if "born_hard" in r else ""
-    c = [float(r[pre + k]) for k in KINDS]
+    kinds = KINDS + ([LEAF] if pre + LEAF in r else [])
+    c = [float(r[pre + k]) for k in kinds]
     n = sum(c)
     if n <= 0:
         return None
