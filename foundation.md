@@ -85,8 +85,16 @@ recorded beside the effect. The ladder's own count spreads 1.02 kinds
 (e092). The categorical done-whens - is there a kind led by the new food, does a form keep to the new place - are not
 noise-limited and decide as before. A piece meant to replace the world (e072's shape) is judged on its own measures
 and becomes the new control if it passes, instead of being scored against the old one. Stability: a kind left out or
-halved returns, tested by paired injection beside a control (#72, e074, e076). The first pass line (#76: 4 kinds on 4
-of 6 seeds, each at 5% for 5 years) is not yet met; the ideal and the gaps are in `vision.md`.
+halved returns, tested by paired injection beside a control (#72, e074, e076).
+
+**No measure may be a conjunction over the censuses** (e094). A way's share of the grown bodies swings by 61% of its
+own size from census to census and the year explains a tenth of that, so asking a kind to hold 5% at every one of 65
+censuses counts 1 in a world that holds 8 ways in the mean and drives none of them out: four fifths of the failures
+are a dip with the forms still there and five sixths come back. `kinds_held` is therefore dropped. A step is judged
+on **kinds at a census** (median 7.26 over the twelve runs read) and on **ways at 5% of the grown bodies in the mean**
+(8.0); "held" survives only as "at the line in 90% of the censuses" (3.0). The first pass line (#76: 4 kinds on 4 of
+6 seeds, each at 5% for 5 years) is read the same way - on 90% of the censuses the world stands at 3 of the 4, not at
+1. The ideal and the gaps are in `vision.md`.
 
 **Today's default world** (stage C, c1225 with d11, s = 1/16): the trade-offs marked kept in section 2 at the rates
 #88 set, with `wood_food` 0, `wood_yield` 3e-5 and the flesh line; the command line is

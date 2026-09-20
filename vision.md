@@ -4,7 +4,8 @@ The ideal world, today's world against it, and the next piece of work. Read it b
 update it after every experiment (`CLAUDE.md`, Documents). History is not kept here: it is in each experiment's
 README and in git.
 
-Last updated: 2026-09-20 (after e093: light pays for a face, a face is not room; P3 step 1 spent).
+Last updated: 2026-09-21 (after e094: the ways of living flicker across the 5% line, they are not driven out;
+`kinds_held` dropped as a measure).
 
 ## 1. The ideal
 
@@ -84,7 +85,7 @@ rest it holds back.
 
 | element | ideal | today | gap |
 |---|---|---|---|
-| ways of living | many; the user asked for about 20 (2026-09-11) | 7.53 kinds at a census, 4.35 kept to a place, over the six-seed ladder (e092); no plant law since has raised the count on any seed (e088-e091) | **large** |
+| ways of living | many; the user asked for about 20 (2026-09-11) | 7.53 kinds at a census, 4.35 kept to a place, over the six-seed ladder (e092); no plant law since has raised the count on any seed (e088-e091). Read over a run instead of at a census: 8 ways hold 5% of the grown bodies **in the mean**, 17 reach the line at some point, 3 hold it in 90% of the censuses, and 1 at every one - because a way's share swings by 61% of its own size and 84% of the dips come back (e094) | **large** |
 | dominance | no line above a fifth of the animals | the largest line holds 42-78% of the land's bodies, by the seed (e092) | large |
 | food web | three or more levels; hunters of several kinds | kills are 27% of what bodies eat; the largest land kind takes half its food from kills; pure flesh kinds 2-4% (e075) | medium |
 | crowding | numbers limited by food, hunters and seasons | numbers limited by room: **46-49% of children have no room and 44-51% of moves are blocked, in every one of six seeds** (e092; e070 read 24-33% in its world); without the hunter the grazers double (e076). Room is counted in blocks, not in outline, so a law that pays per open face does not thin it: under the light the crowd is 1.05 bodies a cell against 1.04, and 1.76-2.18 where the light-led kinds stand (e093) | **large** |
@@ -157,6 +158,10 @@ Each holds under the conditions it was found in.
   terrain how far the refuge is (e086).
 - A body that can wait lives through a winter it meets, and then does not move (e087). What ends a grown life is
   the crowd's income, wherever it lives, not the season (e037, e038, e087).
+- A measure that is a conjunction over the censuses says nothing about the world. Asking a kind to hold 5% of the
+  grown bodies at every one of 65 censuses counts 1 where the world holds 8 in the mean and drives none of them out,
+  because a way's share swings by 61% of its own size (the year explains a tenth of it) and 84% of the dips come
+  back (e094). Judge on a census and on the mean, never on an AND.
 - A material whose worth is set by the shape a genome develops does part kinds - where its counterweights leave
   it somewhere to live. The light parted a kind on three seeds of six and only in the water, because on land an
   open face is a water bill (e093). It is P2's law from the other side: the thing a body must be born with was
@@ -201,6 +206,12 @@ Every one of those kinds lives in the water, because on land an open face is a w
 1.76-2.18 where the light-led kinds stand. That was the piece's own wrong-if, and it says why the crowd is not
 broken this way (section 3, item 4). **#102 is done (e092)** and **#105 is done**: the ladder is six seeds wide, the
 judging is in `foundation.md`, and a long batch is watchable from outside.
+
+**Before that, e094 (#106) re-read the twelve censuses we had, with no runs.** The ways of living were never being
+driven out: `kinds_held` was an AND over 65 censuses of a share that swings by 61% of itself. It is dropped
+(`foundation.md`), stage C is judged on kinds at a census and ways at 5% in the mean, and on 90% of the censuses the
+world stands at 3 of #76's 4 kinds instead of 1. The size of the gap is unchanged - 8 ways against an ideal near 20,
+the largest line 42-78%, half of all births with no room - but one of the two numbers we read it with was broken.
 
 **The next step of P3, not yet designed as a cycle:** the one law left out of e093 on purpose - bodies that shade
 each other and the cell under them, which turns the light from an income each face draws into a flux the bodies on
