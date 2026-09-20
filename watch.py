@@ -41,7 +41,7 @@ def running():
     out = subprocess.run(["ps", "-eo", "pid=,command="], capture_output=True, text=True).stdout
     found = {}
     for line in out.splitlines():
-        pid, _, command = line.partition(" ")
+        pid, _, command = line.strip().partition(" ")  # `ps` right-aligns the pid, so strip first
         args = command.split()
         if "/target/release/e" not in command or len(args) < 2 or args[1].startswith("-"):
             continue
