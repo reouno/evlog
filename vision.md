@@ -4,7 +4,7 @@ The ideal world, today's world against it, and the next piece of work. Read it b
 update it after every experiment (`CLAUDE.md`, Documents). History is not kept here: it is in each experiment's
 README and in git.
 
-Last updated: 2026-09-20 (after e091: the crown as a place, not kept; P2 ends).
+Last updated: 2026-09-20 (after e091: P2 ends; the crowd moves from a consequence to a cause, and the next piece is P3).
 
 ## 1. The ideal
 
@@ -107,9 +107,17 @@ rest it holds back.
 2. **Few kinds of food** (B, and through it F). A gut eats any plant, and there are three producers. Each food with
    the right mouthful added a way of living: wood's browse (e073), the flesh of kills (e075).
 3. **Parts whose worth does not depend on shape** (C). Forms differ by what they hold, not by how they are built.
+4. **The crowd sits at its income edge, and absorbs what is added to it** (F, and through it B and C). It was
+   listed as a consequence of 1 and 2 until P1 and P2 argued otherwise: what ends a grown life is the crowd's
+   income, wherever it lives (e087), and the three foods of P2 each died of the same thing - the bodies already
+   there ate the new food (e089, e090) or filled the new place with the light tail of their own forms (e091).
+   24-33% of children find no room and 60% of moves are blocked. A new axis has to thin the crowd, or make a
+   place differ over more ground than a body covers, or it is averaged away.
 
-The crowd and the dominant line may follow from 1 and 2: bodies that neither move nor eat differently pile up, and
-the best eater of the one food spreads.
+The dominant line may still follow from 1 and 2: the best eater of the one food spreads. **Judged how**: ten laws
+proposed since e075 were all rejected on three seeds against a line (+1 kind) no larger than the spread the seeds
+make on their own (#102). Until the yardstick is six seeds wide, "the law did nothing" and "the measure could not
+see it" are the same reading.
 
 ## 4. Lessons that hold across experiments
 
@@ -167,9 +175,12 @@ hunters, and travel of 20-26 cells where the floor's bodies manage 4-7 - and no 
 is the reason: mass is moved within a life by damage and fat, so the crown holds the broken bodies of forms that live
 below (born at 44-48, counted at 36-37, nine blocks lost), and nothing about it is inherited. Kinds fall on two seeds.
 
-**The next piece is not yet chosen.** P3 (#52, parts whose worth depends on shape) and what is left of P1 are the two
-candidates in the table below; e091 leaves a third, cheap one: the same three laws with the ceiling read on a body's
-**birth** mass or on a part it is born with, which tests the lesson above directly on a crate that is already built.
+**Next, as #103 (P3's first piece): a block that eats the light.** Light falls on a body's exposed faces, so its
+worth is set by the shape a genome develops and by nothing a body can change while it lives - which is what P2's
+law asks for - and every counterweight is already in the world (an open face loses water, loses heat, and is what a
+tooth breaks). It is also the crowd's side: a body that lives by its faces takes more room per unit of income, so
+where it wins the crowd thins. The two are done-whens of the same piece. Before it, #102: the control ladder at six
+seeds, and the judging that goes with it. Afterwards, once the crowd has moved, #104 re-tests P2's foods there.
 
 | piece | fills | contains |
 |---|---|---|
@@ -177,5 +188,6 @@ candidates in the table below; e091 leaves a third, cheap one: the same three la
 | **P2. A food web** | B, F | kinds of plant matter that need different mouths and guts (#34), seasonal rich food, each food's mouthful set so that it feeds a way. Spent (#99, #100, #101): parted by a mouthful, by a tool and by a place, no plant food has fed a kind |
 | **P3. Bodies whose shape does something** | C | parts that work only at a tip or an edge, a leg that walks only where it touches (#52); later 3D (#5) |
 
-P1 is the deepest root: it decides whether any place or season can act on a body. P2 is the most direct route to
-more ways of living. P3 waits until a differing world asks for shapes (`principles.md`).
+P1 was called the deepest root and P2 the most direct route; both are spent without a law kept, and both pointed
+at the crowd instead (section 3, item 4). P3 is taken now because it is the one piece that works on the crowd and on
+the ways of living at once. What is left of P1 (what kills the young, what makes travel pay) waits.
