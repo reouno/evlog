@@ -4,7 +4,7 @@ The ideal world, today's world against it, and the next piece of work. Read it b
 update it after every experiment (`CLAUDE.md`, Documents). History is not kept here: it is in each experiment's
 README and in git.
 
-Last updated: 2026-09-20 (after e090: the seed's own mouthful, not kept; P2's seed track ends).
+Last updated: 2026-09-20 (after e091: the crown as a place, not kept; P2 ends).
 
 ## 1. The ideal
 
@@ -52,9 +52,9 @@ rest it holds back.
 
 | element | ideal | today | gap |
 |---|---|---|---|
-| kinds of plant food | several, each needing its own mouth and gut; some seasonal | grass (any gut), algae (a surface gut), wood's browse at 3e-5 (a hard tip, e073); carrion and litter. Seed (#99 S, not in the default world): at `seed_share` 0.2 a steady bank of 0.43 of the grass on the land, more than the leaf in the winter at 50 degrees (e088). Behind a tooth of 2 it feeds no kind of its own: it is 3% of what bodies eat, a side dish of the toothed hunters, since a gut takes it mixed with the grass (e089). Given a place (the wind moves it), a tool (any hard tip) and a worth of its own (grass 0.8 fiber) it reaches 4.5% of what bodies eat and two fifths of the leading land kind's plant energy, and still leads no kind (e090) | **large**: few ways to eat |
+| kinds of plant food | several, each needing its own mouth and gut; some seasonal | grass (any gut), algae (a surface gut), wood's browse at 3e-5 (a hard tip, e073); carrion and litter. Seed (#99 S, not in the default world): at `seed_share` 0.2 a steady bank of 0.43 of the grass on the land, more than the leaf in the winter at 50 degrees (e088). Behind a tooth of 2 it feeds no kind of its own: it is 3% of what bodies eat, a side dish of the toothed hunters, since a gut takes it mixed with the grass (e089). Given a place (the wind moves it), a tool (any hard tip) and a worth of its own (grass 0.8 fiber) it reaches 4.5% of what bodies eat and two fifths of the leading land kind's plant energy, and still leads no kind (e090). Fruit held in a crown, out of reach of the floor (#101, not in the default world): 3-5% of the grown bodies live up there and take a third of their food from it, and no kind does (e091) | **large**: few ways to eat |
 | response to eating | grazed plants regrow, defended plants resist, fruit is offered | every producer grows by its stand and is grazed to a few percent of it (e065) | medium |
-| plants as places | a forest is a home, a cover and a food | a stand is a home only through its wet ground (e078) | medium |
+| plants as places | a forest is a home, a cover and a food | a stand is a home only through its wet ground (e078). Made a place of its own - a crown a body stands in, with a food no body below reaches - it holds a crowd with its own hunters and the only bodies in this world that travel (20-26 cells against 4-7), and still no kind (e091) | medium |
 
 ### C. Bodies and genome
 
@@ -84,7 +84,7 @@ rest it holds back.
 
 | element | ideal | today | gap |
 |---|---|---|---|
-| ways of living | many; the user asked for about 20 (2026-09-11) | 7.66 kinds at a census, 4.62 kept to a place (e081's control); no plant law since has raised the count (e088-e090) | **large** |
+| ways of living | many; the user asked for about 20 (2026-09-11) | 7.66 kinds at a census, 4.62 kept to a place (e081's control); no plant law since has raised the count (e088-e091) | **large** |
 | dominance | no line above a fifth of the animals | the largest line holds 42-63% of the land's bodies (e082) | large |
 | food web | three or more levels; hunters of several kinds | kills are 27% of what bodies eat; the largest land kind takes half its food from kills; pure flesh kinds 2-4% (e075) | medium |
 | crowding | numbers limited by food, hunters and seasons | numbers limited by room: 24-33% of children have no room (e070); without the hunter the grazers double (e076) | medium |
@@ -131,6 +131,12 @@ Each holds under the conditions it was found in.
 - A food that comes in one mouthful with another does not part the kinds: seed taken with the grass of its cell, by
   the hunter's tooth, fed no seed eater (e089). A food is its mouthful (e075) from the other side. Raising its worth
   moves the share, not the kinds: at two fifths of a kind's plant energy seed still led none (e090).
+- A food feeds a new kind only when what it takes to reach it is something a body is born with. Browse needed a
+  tooth and made one (e073); the water's layers need a density and hold theirs. Seed was parted by a mouthful (e089)
+  and by a tool half the world already carried (e090); a crown by a mass that damage and fat move within a life, so
+  its bodies are the broken ones of forms that live below, and no form is bound to it (e091).
+- A measure of place breaks when bodies change place within a life: kinds kept to a place fell 1.6 with the crown on,
+  and two thirds of that came back when the crown was read as the land (e091).
 - A law that carries matter one way over a world with a sea drains the land, and the drain is the price of the
   distance: what moves a food off the lawn moves a tenth of it into the sea (e090).
 - A seasonal place's winter is a third of its year at any year length: the year sets whether a body meets it, the
@@ -154,17 +160,21 @@ tip) and a worth (grass 0.8 fiber) of its own - still no seed-led kind on any se
 line grows on two; and the drift that moves seed off the lawn drains the land into the sea, so stage B caps it at
 0.02. By #100's stopping rule the seed track ends with one stage C slot unspent.
 
-**Next, as #101 (e091): the crown as a place.** What e088-e090 rule out is a food parted by what is mixed into a
-mouthful. What parts kinds today is where a body must be: three of the four media hold their own kinds, and the two
-plant foods with kinds of their own are reached by being somewhere, not by carrying a tool. So the land gets a second
-place - a crown over a stand (17% of the land's cells), holding the yield that today falls to the floor, and holding
-only bodies light enough for a branch. If no fruit-led kind holds 5%, P2 ends and the next piece is P3 (#52) or what
-is left of P1.
+**P2 ended 2026-09-20 with e091 (#101), by its own stopping rule.** The crown over a stand was built as a place:
+a layer of its own, holding half the stand's yield as fruit that nothing on the floor reaches, and holding only bodies
+under ten times their cell's wood. It is lived in - 3-5% of the grown bodies, a third of their food fruit, their own
+hunters, and travel of 20-26 cells where the floor's bodies manage 4-7 - and no kind lives there, on any seed. The door
+is the reason: mass is moved within a life by damage and fat, so the crown holds the broken bodies of forms that live
+below (born at 44-48, counted at 36-37, nine blocks lost), and nothing about it is inherited. Kinds fall on two seeds.
+
+**The next piece is not yet chosen.** P3 (#52, parts whose worth depends on shape) and what is left of P1 are the two
+candidates in the table below; e091 leaves a third, cheap one: the same three laws with the ceiling read on a body's
+**birth** mass or on a part it is born with, which tests the lesson above directly on a crate that is already built.
 
 | piece | fills | contains |
 |---|---|---|
 | **P1. A life that meets its world** | E, D, part of F | the ratio of a grown life to the year and to the places: a shorter year (stages A and B again), what kills the young today, a body that waits out a bad season on its fat, what makes travel pay (#93) |
-| **P2. A food web** | B, F | kinds of plant matter that need different mouths and guts (#34), seasonal rich food, each food's mouthful set so that it feeds a way; the seed track (#99, #100) is spent, so what is left is a food parted by where it lies |
+| **P2. A food web** | B, F | kinds of plant matter that need different mouths and guts (#34), seasonal rich food, each food's mouthful set so that it feeds a way. Spent (#99, #100, #101): parted by a mouthful, by a tool and by a place, no plant food has fed a kind |
 | **P3. Bodies whose shape does something** | C | parts that work only at a tip or an edge, a leg that walks only where it touches (#52); later 3D (#5) |
 
 P1 is the deepest root: it decides whether any place or season can act on a body. P2 is the most direct route to
