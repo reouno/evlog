@@ -4,7 +4,7 @@ The ideal world, today's world against it, and the next piece of work. Read it b
 update it after every experiment (`CLAUDE.md`, Documents). History is not kept here: it is in each experiment's
 README and in git.
 
-Last updated: 2026-09-20 (after e089: seed and fiber, not kept).
+Last updated: 2026-09-20 (after e090: the seed's own mouthful, not kept; P2's seed track ends).
 
 ## 1. The ideal
 
@@ -52,7 +52,7 @@ rest it holds back.
 
 | element | ideal | today | gap |
 |---|---|---|---|
-| kinds of plant food | several, each needing its own mouth and gut; some seasonal | grass (any gut), algae (a surface gut), wood's browse at 3e-5 (a hard tip, e073); carrion and litter. Seed (#99 S, not in the default world): at `seed_share` 0.2 a steady bank of 0.43 of the grass on the land, more than the leaf in the winter at 50 degrees (e088). Behind a tooth of 2 it feeds no kind of its own: it is 3% of what bodies eat, a side dish of the toothed hunters, since a gut takes it mixed with the grass (e089) | **large**: few ways to eat |
+| kinds of plant food | several, each needing its own mouth and gut; some seasonal | grass (any gut), algae (a surface gut), wood's browse at 3e-5 (a hard tip, e073); carrion and litter. Seed (#99 S, not in the default world): at `seed_share` 0.2 a steady bank of 0.43 of the grass on the land, more than the leaf in the winter at 50 degrees (e088). Behind a tooth of 2 it feeds no kind of its own: it is 3% of what bodies eat, a side dish of the toothed hunters, since a gut takes it mixed with the grass (e089). Given a place (the wind moves it), a tool (any hard tip) and a worth of its own (grass 0.8 fiber) it reaches 4.5% of what bodies eat and two fifths of the leading land kind's plant energy, and still leads no kind (e090) | **large**: few ways to eat |
 | response to eating | grazed plants regrow, defended plants resist, fruit is offered | every producer grows by its stand and is grazed to a few percent of it (e065) | medium |
 | plants as places | a forest is a home, a cover and a food | a stand is a home only through its wet ground (e078) | medium |
 
@@ -61,7 +61,7 @@ rest it holds back.
 | element | ideal | today | gap |
 |---|---|---|---|
 | parts | parts whose worth depends on where they sit and how they move | 4 block kinds on a 2D grid of side 4-16; every block pays best packed, so bodies fill their grids (#52, e047) | **large** |
-| size | a thousandfold range, each size with its place | 21-35 blocks; winners differ 1.3-2.2x (e055, e075). Fiber digested over time (Fb, not kept) makes grass eaters 14-27% heavier and slower, with no new kind (e089) | large |
+| size | a thousandfold range, each size with its place | 21-35 blocks; winners differ 1.3-2.2x (e055, e075). Fiber digested over time (Fb, not kept) makes grass eaters 14-27% heavier and slower, with no new kind (e089); at a harsher rate (0.8 fiber, ferment 0.005) they do not grow at all - grass falls to a fifth of what is eaten and the bodies leave it (e090) | large |
 | life history | lives that span seasons; fat and dormancy chosen by selection | breeding values fixed (from the genome they cost kinds, e069); fat from the genome (e072); a cold body can go torpid (Q, not in the default world, e087) | medium |
 
 ### D. Behaviour
@@ -84,7 +84,7 @@ rest it holds back.
 
 | element | ideal | today | gap |
 |---|---|---|---|
-| ways of living | many; the user asked for about 20 (2026-09-11) | 7.66 kinds at a census, 4.62 kept to a place (e081's control) | **large** |
+| ways of living | many; the user asked for about 20 (2026-09-11) | 7.66 kinds at a census, 4.62 kept to a place (e081's control); no plant law since has raised the count (e088-e090) | **large** |
 | dominance | no line above a fifth of the animals | the largest line holds 42-63% of the land's bodies (e082) | large |
 | food web | three or more levels; hunters of several kinds | kills are 27% of what bodies eat; the largest land kind takes half its food from kills; pure flesh kinds 2-4% (e075) | medium |
 | crowding | numbers limited by food, hunters and seasons | numbers limited by room: 24-33% of children have no room (e070); without the hunter the grazers double (e076) | medium |
@@ -94,7 +94,7 @@ rest it holds back.
 
 | element | ideal | today | gap |
 |---|---|---|---|
-| matter | closes between land and sea | conserved in total; the land gains 6.5-7.3% over 90,000 steps, the runoff halves the pump (e072) | small |
+| matter | closes between land and sea | conserved in total; the land gains 6.5-7.3% over 90,000 steps, the runoff halves the pump (e072). Nothing carries matter back from the sea, so a law that moves matter downwind drains the land: seed drifting at 0.02 sends a tenth of what the grass sets into the sea and costs the land a fifth of its grass, at 0.2 the wood dies out (e090) | small, but it prices every law that moves matter |
 | water | a body drinks from the world and gives back | free to the body in the default world (W1 closes it, not kept, e081) | small |
 | heat | bodies and places exchange heat | a body holds heat and pays to hold its band (e072); it does not warm its cell | small |
 
@@ -129,7 +129,10 @@ Each holds under the conditions it was found in.
 - A store the producers fill and empty by the growth's own factors (warmth x water) sits at the same level all
   year: it outlasts the leaf in the cold but does not pile up or flush with the season (e088).
 - A food that comes in one mouthful with another does not part the kinds: seed taken with the grass of its cell, by
-  the hunter's tooth, fed no seed eater (e089). A food is its mouthful (e075) from the other side.
+  the hunter's tooth, fed no seed eater (e089). A food is its mouthful (e075) from the other side. Raising its worth
+  moves the share, not the kinds: at two fifths of a kind's plant energy seed still led none (e090).
+- A law that carries matter one way over a world with a sea drains the land, and the drain is the price of the
+  distance: what moves a food off the lawn moves a tenth of it into the sea (e090).
 - A seasonal place's winter is a third of its year at any year length: the year sets whether a body meets it, the
   terrain how far the refuge is (e086).
 - A body that can wait lives through a winter it meets, and then does not move (e087). What ends a grown life is
@@ -144,16 +147,22 @@ a body. But a grown life stays at 3/4 of a year: it ends in the crowd, of hunger
 body lives, and kinds kept to a place fall. The gap left is the crowd's income, which P2 addresses more directly
 than a redesign of P1 would. Y and Q stay out of the default world; Q is a law ready for a piece that needs it.
 
-**Chosen 2026-09-20: P2, as #99.** Its cycle design is written there before it is built. Stage B (e088): seed at
-`seed_share` 0.2 passes stage B. Stage C, first of three (e089): S+Fb not kept; kinds fall on two seeds of three, no
-seed-led kind, the largest line grows on two. The next step, designed as cycles in #100, gives seed a
-mouthful of its own (it drifts with the wind, a beak opens it, and fiber makes grass a poor food for a fast body);
-if it makes no seed eater, P2's seed track ends and the next piece is chosen from the gap table above.
+**Chosen 2026-09-20: P2, as #99. Its seed track ended the same day.** Stage B (e088): seed at `seed_share` 0.2
+passes. Stage C, first (e089): S+Fb not kept, no seed-led kind, since a gut takes seed mixed with the grass and the
+tooth that opens it is the hunter's. Stage C, second (e090, #100): seed given a place (the wind), a tool (any hard
+tip) and a worth (grass 0.8 fiber) of its own - still no seed-led kind on any seed, kinds do not rise, the largest
+line grows on two; and the drift that moves seed off the lawn drains the land into the sea, so stage B caps it at
+0.02. By #100's stopping rule the seed track ends with one stage C slot unspent.
+
+**The next piece is open.** What e088-e090 rule out is a food parted by what is mixed into a mouthful. What is left
+in P2 is a food parted by **where a body must be to take it** (the shore's litter and the crown's browse are the two
+that already feed kinds), and outside P2 the bodies' own side, P3 (#52): parts whose worth depends on where they sit,
+which section 2 marks **large** and no experiment has touched.
 
 | piece | fills | contains |
 |---|---|---|
 | **P1. A life that meets its world** | E, D, part of F | the ratio of a grown life to the year and to the places: a shorter year (stages A and B again), what kills the young today, a body that waits out a bad season on its fat, what makes travel pay (#93) |
-| **P2. A food web** | B, F | kinds of plant matter that need different mouths and guts (#34), seasonal rich food, each food's mouthful set so that it feeds a way; first design: seed behind a tooth and fiber digested over time (#99) |
+| **P2. A food web** | B, F | kinds of plant matter that need different mouths and guts (#34), seasonal rich food, each food's mouthful set so that it feeds a way; the seed track (#99, #100) is spent, so what is left is a food parted by where it lies |
 | **P3. Bodies whose shape does something** | C | parts that work only at a tip or an edge, a leg that walks only where it touches (#52); later 3D (#5) |
 
 P1 is the deepest root: it decides whether any place or season can act on a body. P2 is the most direct route to

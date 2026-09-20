@@ -1,0 +1,1822 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>e090 The Seed's Own Mouthful - Report</title>
+<style>
+:root {
+  color-scheme: dark;
+  --surface: #1a1a19; --page: #0d0d0d; --ink: #ffffff; --ink2: #c3c2b7; --grid: #2c2c2a; --border: rgba(255,255,255,0.10);
+  --s1: #3987e5;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--page); color: var(--ink); font: 15px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+main { max-width: 960px; margin: 0 auto; padding: 32px 20px 64px; }
+h1 { font-size: 26px; margin: 0 0 4px; }
+h2 { font-size: 19px; margin: 40px 0 8px; }
+h3 { font-size: 16px; margin: 24px 0 8px; }
+p, li { color: var(--ink); max-width: 72ch; }
+.sub { color: var(--ink2); margin: 0 0 24px; }
+.tldr { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--s1); border-radius: 8px; padding: 12px 18px; }
+.tldr h2 { margin: 0 0 6px; font-size: 15px; }
+.tldr p { margin: 0; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 20px; }
+.grid2 > .fig:only-child { max-width: 470px; }
+.fig { margin: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 14px 8px; }
+.fig svg { width: 100%; height: auto; display: block; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+figcaption strong { display: block; font-size: 15px; }
+figcaption span { display: block; color: var(--ink2); font-size: 13px; min-height: 2.6em; margin-bottom: 6px; }
+.diagram { margin: 12px 0; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px 8px; color: var(--ink); }
+.diagram figcaption { color: var(--ink2); font-size: 13px; margin-top: 4px; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; }
+.card { margin: 0; display: flex; gap: 12px; align-items: flex-start; }
+.card figcaption { font-size: 12px; color: var(--ink2); }
+.card figcaption strong { color: var(--ink); font-size: 12.5px; }
+.measures { columns: 2; column-gap: 24px; max-width: none; padding-left: 20px; } .measures li { break-inside: avoid; }
+table { border-collapse: collapse; font-size: 13.5px; font-variant-numeric: tabular-nums; }
+th, td { padding: 6px 12px; text-align: right; border-bottom: 1px solid var(--grid); }
+th:first-child, td:first-child { text-align: left; }
+th { color: var(--ink2); font-weight: 600; }
+.tw { overflow-x: auto; }
+details { margin: 8px 0; } summary { cursor: pointer; color: var(--ink2); }
+.verdicts { list-style: none; padding: 0; margin: 12px 0 0; } .verdicts li { margin: 4px 0; }
+.verdict { display: inline-block; padding: 1px 8px; border-radius: 4px; font-size: 12.5px; font-weight: 600; background: rgba(12,163,12,0.12); color: #0ca30c; }
+.verdict.no { background: rgba(208,59,59,0.12); color: #e66767; }
+.verdict.partly { background: rgba(250,178,25,0.15); color: #fab219; }
+</style>
+</head>
+<body>
+<main>
+<h1>e090: does a seed with a place, a tool and a worth of its own feed a kind?</h1>
+<p class="sub">Experiment report - 2026-09-20 - c1225, seeds 9-11, 100,000 steps, against e081's control ladder</p>
+
+<section class="tldr">
+<h2>TL;DR</h2>
+<p>No. Seed given a place of its own (the wind carries it), a tool of its own (a beak) and a worth of its own (grass is 0.8 fiber) still leads no kind. It reaches 4.5% of what the world eats and two fifths of the leading land kind's plant energy, and stops there. The drift that moves it off the lawn also sends a tenth of it into the sea, which never gives it back. P2's seed track ends here.</p>
+</section>
+
+<h2>1. Question</h2>
+<p>e089 put seed behind a tooth and no body lived on it: a gut takes a cell's grass and seed in one mouthful, and the tooth that opens seed opens bodies. #100 answers both: the wind moves seed away from the grass that set it, any hard tip opens it, and slow fiber makes grass a poor food for a fast body.</p>
+<ol>
+  <li><strong>More ways of living.</strong> Kinds at a census +1 over each control.</li>
+  <li><strong>The foods part the kinds.</strong> A seed-led and a grass-led kind each hold 5% of the grown bodies.</li>
+  <li><strong>Size follows the food.</strong> Grass-led kinds 1.3 times heavier than seed-led.</li>
+  <li><strong>No harm.</strong> The largest line no higher than the control.</li>
+</ol>
+
+<h2>2. The world</h2>
+<p>Today's default world with e088's seed at 0.2, plus three laws that go in together (Figure 1). Grass keeps setting seed; the wind moves it; a beak opens it; grass is 0.8 fiber, fermented at 0.005 a step.</p>
+
+<figure class="diagram">
+<svg viewBox="0 0 720 280" role="img" aria-label="Grass sets seed, the wind carries it downwind onto thin ground or into the sea, and a beak opens it" style="max-width:100%;height:auto;display:block">
+<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+<g fill="none" stroke="currentColor" stroke-width="1.2" font-size="12" font-family="system-ui, sans-serif">
+  <rect x="16" y="112" width="110" height="44" rx="6"/>
+  <text x="71" y="139" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">grass</text>
+  <rect x="196" y="112" width="110" height="44" rx="6" stroke="var(--s1)" stroke-width="2"/>
+  <text x="251" y="139" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">seed</text>
+  <rect x="386" y="24" width="150" height="44" rx="6"/>
+  <text x="461" y="51" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">thin ground: a bank</text>
+  <rect x="386" y="112" width="150" height="44" rx="6"/>
+  <text x="461" y="139" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">good ground: grass</text>
+  <rect x="386" y="200" width="150" height="44" rx="6"/>
+  <text x="461" y="227" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">the sea: litter</text>
+  <rect x="596" y="24" width="108" height="44" rx="6"/>
+  <text x="650" y="45" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">a beak</text>
+  <text x="650" y="60" text-anchor="middle" fill="currentColor" stroke="none">all of it</text>
+  <rect x="596" y="112" width="108" height="44" rx="6"/>
+  <text x="650" y="133" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">a gut</text>
+  <text x="650" y="148" text-anchor="middle" fill="currentColor" stroke="none">0.36 of it</text>
+  <line x1="126" y1="134" x2="194" y2="134" marker-end="url(#arr)"/>
+  <text x="160" y="126" text-anchor="middle" fill="currentColor" stroke="none">0.2</text>
+  <line x1="306" y1="126" x2="384" y2="58" marker-end="url(#arr)"/>
+  <line x1="306" y1="134" x2="384" y2="134" marker-end="url(#arr)"/>
+  <line x1="306" y1="146" x2="384" y2="216" marker-end="url(#arr)"/>
+  <text x="332" y="82" text-anchor="middle" fill="currentColor" stroke="none">the wind</text>
+  <line x1="536" y1="46" x2="594" y2="46" marker-end="url(#arr)"/>
+  <line x1="536" y1="134" x2="594" y2="134" marker-end="url(#arr)"/>
+  <text x="565" y="126" text-anchor="middle" fill="currentColor" stroke="none">0.8 fiber</text>
+  <text x="20" y="236" fill="currentColor" stroke="none">the wind: seed_drift of a cell's seed,</text>
+  <text x="20" y="254" fill="currentColor" stroke="none">one cell downwind an update</text>
+</g>
+</svg>
+<figcaption>Figure 1. The three laws as one cycle. Grass keeps a fifth of its growth as seed (e088); a share of the seed on a cell
+moves one cell downwind every producers' update (D); seed that lands where it cannot sprout waits as a bank, seed that lands
+on water sinks as the bottom's litter. A hard tip with any force behind it opens seed (B) and gets all of its matter, while
+grass is 0.8 fiber, so a body taking a turn every step gets 0.36 of it (Fb').</figcaption>
+</figure>
+
+<p><strong>Runs.</strong> A check with the producers alone first, at five drift rates, to price the drift and pick one: 0.02, the largest rate that still passes stage B. Then D+B+Fb' on seeds 9-11, 100,000 steps, a census every 1,000 from 36,000, as the controls. 35 minutes a run on one core.</p>
+<ul class="measures">
+  <li><strong>Kinds</strong> - ways of living by birth form (e068), at a census and kept to a place.</li>
+  <li><strong>Led by</strong> - the food that gives a kind the most energy: matter less the fiber it cannot digest.</li>
+  <li><strong>Mass, pace</strong> - medians over a kind's grown bodies; pace is turns a step.</li>
+  <li><strong>Thin ground</strong> - a cell whose grass is under a tenth of the land's mean.</li>
+  <li><strong>Largest line</strong> - its share of the land's bodies at a census.</li>
+</ul>
+
+<h2>3. Results</h2>
+<div class="tw"><table>
+<thead><tr><th>run</th><th>kinds</th><th>kept to a place</th><th>largest line</th><th>seed-led</th><th>grass-led mass</th><th>its pace</th><th>seed eaten</th><th>bodies</th></tr></thead>
+<tbody><tr><td>control 9</td><td>7.45</td><td>4.75</td><td>58%</td><td>0%</td><td>50</td><td>0.56</td><td>0%</td><td>9,470</td></tr><tr><td>control 10</td><td>8.27</td><td>4.65</td><td>63%</td><td>0%</td><td>44</td><td>0.59</td><td>0%</td><td>8,902</td></tr><tr><td>control 11</td><td>7.25</td><td>4.47</td><td>42%</td><td>0%</td><td>43</td><td>0.61</td><td>0%</td><td>9,012</td></tr><tr><td>D+B+Fb 9</td><td>7.16</td><td>5.22</td><td>64%</td><td>0%</td><td>46</td><td>0.59</td><td>4%</td><td>8,963</td></tr><tr><td>D+B+Fb 10</td><td>6.76</td><td>4.06</td><td>62%</td><td>0%</td><td>44</td><td>0.59</td><td>4%</td><td>8,255</td></tr><tr><td>D+B+Fb 11</td><td>7.25</td><td>5.18</td><td>78%</td><td>0%</td><td>45</td><td>0.59</td><td>5%</td><td>8,353</td></tr></tbody></table></div>
+<ol class="verdicts">
+<li><span class="verdict no">No</span> Kinds at a census 7.16 / 6.76 / 7.25 against 7.45 / 8.27 / 7.25. Kinds kept to a place rise on two seeds and fall on one.</li>
+<li><span class="verdict no">No</span> No seed-led kind on any seed, though seed gives the largest toothed land kind 40-42% of its plant energy.</li>
+<li><span class="verdict partly">Partly</span> No seed-led kind to compare. Grass eaters did not grow heavier either: 44-46 against the controls' 43-50.</li>
+<li><span class="verdict no">No</span> The largest line holds 64% of the land on seed 9 (control 58%) and 78% on 11 (42%). Land bodies fall 9-16%.</li>
+</ol>
+
+<h3>3.1 The wind cannot move the seed without emptying the land</h3>
+<div class="grid2">
+
+<figure class="fig">
+  <figcaption><strong>What the drift takes to the sea</strong><span>Share of all the seed the grass sets that lands on water and sinks. Drift 0 is e088&#x27;s world, with no drift at all.</span></figcaption>
+  <?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="391.323906pt" height="183.544703pt" viewBox="0 0 391.323906 183.544703" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-09-20T09:05:03.496242</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.1, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 183.544703 
+L 391.323906 183.544703 
+L 391.323906 0 
+L 0 0 
+L 0 183.544703 
+z
+" style="fill: none"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 30.603906 163.944703 
+L 387.723906 163.944703 
+L 387.723906 19.800703 
+L 30.603906 19.800703 
+L 30.603906 163.944703 
+z
+" style="fill: none"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 46.836634 163.944703 
+L 96.360208 163.944703 
+L 96.360208 163.944703 
+L 46.836634 163.944703 
+z
+" clip-path="url(#p66d812ee0e)" style="fill: #eb6834"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 115.619376 163.944703 
+L 165.142951 163.944703 
+L 165.142951 152.494231 
+L 115.619376 152.494231 
+z
+" clip-path="url(#p66d812ee0e)" style="fill: #eb6834"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 184.402119 163.944703 
+L 233.925694 163.944703 
+L 233.925694 141.415502 
+L 184.402119 141.415502 
+z
+" clip-path="url(#p66d812ee0e)" style="fill: #eb6834"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 253.184862 163.944703 
+L 302.708436 163.944703 
+L 302.708436 109.714042 
+L 253.184862 109.714042 
+z
+" clip-path="url(#p66d812ee0e)" style="fill: #eb6834"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 321.967604 163.944703 
+L 371.491179 163.944703 
+L 371.491179 26.664703 
+L 321.967604 26.664703 
+z
+" clip-path="url(#p66d812ee0e)" style="fill: #eb6834"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1">
+      <defs>
+       <path id="m2cf350df19" d="M 0 0 
+L 0 3.5 
+" style="stroke: #898781; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#m2cf350df19" x="71.598421" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_1">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="71.598421" y="177.782594" transform="rotate(-0 71.598421 177.782594)">0</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_2">
+      <g>
+       <use xlink:href="#m2cf350df19" x="140.381164" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_2">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="140.381164" y="177.782594" transform="rotate(-0 140.381164 177.782594)">0.01</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_3">
+      <g>
+       <use xlink:href="#m2cf350df19" x="209.163906" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_3">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="209.163906" y="177.782594" transform="rotate(-0 209.163906 177.782594)">0.02</text>
+     </g>
+    </g>
+    <g id="xtick_4">
+     <g id="line2d_4">
+      <g>
+       <use xlink:href="#m2cf350df19" x="277.946649" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_4">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="277.946649" y="177.782594" transform="rotate(-0 277.946649 177.782594)">0.05</text>
+     </g>
+    </g>
+    <g id="xtick_5">
+     <g id="line2d_5">
+      <g>
+       <use xlink:href="#m2cf350df19" x="346.729392" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_5">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="346.729392" y="177.782594" transform="rotate(-0 346.729392 177.782594)">0.2</text>
+     </g>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_6">
+      <path d="M 30.603906 163.944703 
+L 387.723906 163.944703 
+" clip-path="url(#p66d812ee0e)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_6">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="23.603906" y="167.363648" transform="rotate(-0 23.603906 167.363648)">0%</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_7">
+      <path d="M 30.603906 118.247917 
+L 387.723906 118.247917 
+" clip-path="url(#p66d812ee0e)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_7">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="23.603906" y="121.666862" transform="rotate(-0 23.603906 121.666862)">20%</text>
+     </g>
+    </g>
+    <g id="ytick_3">
+     <g id="line2d_8">
+      <path d="M 30.603906 72.551131 
+L 387.723906 72.551131 
+" clip-path="url(#p66d812ee0e)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_8">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="23.603906" y="75.970076" transform="rotate(-0 23.603906 75.970076)">40%</text>
+     </g>
+    </g>
+    <g id="ytick_4">
+     <g id="line2d_9">
+      <path d="M 30.603906 26.854345 
+L 387.723906 26.854345 
+" clip-path="url(#p66d812ee0e)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_9">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="23.603906" y="30.27329" transform="rotate(-0 23.603906 30.27329)">60%</text>
+     </g>
+    </g>
+   </g>
+   <g id="patch_8">
+    <path d="M 30.603906 163.944703 
+L 387.723906 163.944703 
+" style="fill: none; stroke: #898781; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="legend_1">
+    <g id="patch_9">
+     <path d="M 34.203906 14.038594 
+L 45.003906 14.038594 
+L 45.003906 7.738594 
+L 34.203906 7.738594 
+z
+" style="fill: #eb6834"/>
+    </g>
+    <g id="text_10">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="52.203906" y="14.038594" transform="rotate(-0 52.203906 14.038594)">seed sunk</text>
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p66d812ee0e">
+   <rect x="30.603906" y="19.800703" width="357.12" height="144.144"/>
+  </clipPath>
+ </defs>
+</svg>
+
+</figure>
+<figure class="fig">
+  <figcaption><strong>What the land is left with</strong><span>Grass standing on a land cell, the mean over two years of producers alone. Flat would mean the drift costs the land nothing.</span></figcaption>
+  <?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="385.632812pt" height="183.544703pt" viewBox="0 0 385.632812 183.544703" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-09-20T09:05:03.514067</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.1, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 183.544703 
+L 385.632812 183.544703 
+L 385.632812 0 
+L 0 0 
+L 0 183.544703 
+z
+" style="fill: none"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 24.912813 163.944703 
+L 382.032812 163.944703 
+L 382.032812 19.800703 
+L 24.912813 19.800703 
+L 24.912813 163.944703 
+z
+" style="fill: none"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 41.14554 163.944703 
+L 90.669115 163.944703 
+L 90.669115 26.664703 
+L 41.14554 26.664703 
+z
+" clip-path="url(#p565c130ac5)" style="fill: #2a78d6"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 109.928282 163.944703 
+L 159.451857 163.944703 
+L 159.451857 41.61365 
+L 109.928282 41.61365 
+z
+" clip-path="url(#p565c130ac5)" style="fill: #2a78d6"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 178.711025 163.944703 
+L 228.2346 163.944703 
+L 228.2346 56.10214 
+L 178.711025 56.10214 
+z
+" clip-path="url(#p565c130ac5)" style="fill: #2a78d6"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 247.493768 163.944703 
+L 297.017343 163.944703 
+L 297.017343 90.240896 
+L 247.493768 90.240896 
+z
+" clip-path="url(#p565c130ac5)" style="fill: #2a78d6"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 316.27651 163.944703 
+L 365.800085 163.944703 
+L 365.800085 141.563532 
+L 316.27651 141.563532 
+z
+" clip-path="url(#p565c130ac5)" style="fill: #2a78d6"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1">
+      <defs>
+       <path id="m555a3c3afb" d="M 0 0 
+L 0 3.5 
+" style="stroke: #898781; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#m555a3c3afb" x="65.907327" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_1">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="65.907327" y="177.782594" transform="rotate(-0 65.907327 177.782594)">0</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_2">
+      <g>
+       <use xlink:href="#m555a3c3afb" x="134.69007" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_2">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="134.69007" y="177.782594" transform="rotate(-0 134.69007 177.782594)">0.01</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_3">
+      <g>
+       <use xlink:href="#m555a3c3afb" x="203.472813" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_3">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="203.472813" y="177.782594" transform="rotate(-0 203.472813 177.782594)">0.02</text>
+     </g>
+    </g>
+    <g id="xtick_4">
+     <g id="line2d_4">
+      <g>
+       <use xlink:href="#m555a3c3afb" x="272.255555" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_4">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="272.255555" y="177.782594" transform="rotate(-0 272.255555 177.782594)">0.05</text>
+     </g>
+    </g>
+    <g id="xtick_5">
+     <g id="line2d_5">
+      <g>
+       <use xlink:href="#m555a3c3afb" x="341.038298" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_5">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="341.038298" y="177.782594" transform="rotate(-0 341.038298 177.782594)">0.2</text>
+     </g>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_6">
+      <path d="M 24.912813 163.944703 
+L 382.032812 163.944703 
+" clip-path="url(#p565c130ac5)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_6">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="17.912813" y="167.363648" transform="rotate(-0 17.912813 167.363648)">0</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_7">
+      <path d="M 24.912813 127.206077 
+L 382.032812 127.206077 
+" clip-path="url(#p565c130ac5)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_7">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="17.912813" y="130.625022" transform="rotate(-0 17.912813 130.625022)">0.3</text>
+     </g>
+    </g>
+    <g id="ytick_3">
+     <g id="line2d_8">
+      <path d="M 24.912813 90.467451 
+L 382.032812 90.467451 
+" clip-path="url(#p565c130ac5)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_8">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="17.912813" y="93.886396" transform="rotate(-0 17.912813 93.886396)">0.6</text>
+     </g>
+    </g>
+    <g id="ytick_4">
+     <g id="line2d_9">
+      <path d="M 24.912813 53.728824 
+L 382.032812 53.728824 
+" clip-path="url(#p565c130ac5)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_9">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="17.912813" y="57.14777" transform="rotate(-0 17.912813 57.14777)">0.9</text>
+     </g>
+    </g>
+   </g>
+   <g id="patch_8">
+    <path d="M 24.912813 163.944703 
+L 382.032813 163.944703 
+" style="fill: none; stroke: #898781; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="legend_1">
+    <g id="patch_9">
+     <path d="M 28.512813 14.038594 
+L 39.312812 14.038594 
+L 39.312812 7.738594 
+L 28.512813 7.738594 
+z
+" style="fill: #2a78d6"/>
+    </g>
+    <g id="text_10">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="46.512813" y="14.038594" transform="rotate(-0 46.512813 14.038594)">grass a cell</text>
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p565c130ac5">
+   <rect x="24.912813" y="19.800703" width="357.12" height="144.144"/>
+  </clipPath>
+ </defs>
+</svg>
+
+</figure>
+</div>
+<p>Seed is light enough to travel and the world is a third land, so what leaves the lawn largely leaves for the sea, where it sinks as the bottom's litter and stays. Nothing carries it back. At 0.05 the grass halves; at 0.2 the wood dies out. Stage B's line falls between 0.02 and 0.05, and that ceiling, not the bodies, sets how far seed can go.</p>
+
+<h3>3.2 What the drift buys is a bank the grazers eat</h3>
+<div class="grid2">
+
+<figure class="fig">
+  <figcaption><strong>The bank on ground the grass does not hold</strong><span>Seed lying on a cell whose grass is under a tenth of the land&#x27;s mean. Higher means more seed away from the grass that set it.</span></figcaption>
+  <?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="391.359062pt" height="183.544703pt" viewBox="0 0 391.359062 183.544703" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-09-20T09:05:03.531152</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.1, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 183.544703 
+L 391.359062 183.544703 
+L 391.359062 0 
+L 0 0 
+L 0 183.544703 
+z
+" style="fill: none"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 30.639063 163.944703 
+L 387.759063 163.944703 
+L 387.759063 19.800703 
+L 30.639063 19.800703 
+L 30.639063 163.944703 
+z
+" style="fill: none"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 46.87179 163.944703 
+L 96.395365 163.944703 
+L 96.395365 96.274693 
+L 46.87179 96.274693 
+z
+" clip-path="url(#pa21e858d47)" style="fill: #1baf7a"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 115.654532 163.944703 
+L 165.178107 163.944703 
+L 165.178107 35.791425 
+L 115.654532 35.791425 
+z
+" clip-path="url(#pa21e858d47)" style="fill: #1baf7a"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 184.437275 163.944703 
+L 233.96085 163.944703 
+L 233.96085 26.664703 
+L 184.437275 26.664703 
+z
+" clip-path="url(#pa21e858d47)" style="fill: #1baf7a"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 253.220018 163.944703 
+L 302.743593 163.944703 
+L 302.743593 48.066204 
+L 253.220018 48.066204 
+z
+" clip-path="url(#pa21e858d47)" style="fill: #1baf7a"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 322.00276 163.944703 
+L 371.526335 163.944703 
+L 371.526335 122.940592 
+L 322.00276 122.940592 
+z
+" clip-path="url(#pa21e858d47)" style="fill: #1baf7a"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1">
+      <defs>
+       <path id="md528e0ef24" d="M 0 0 
+L 0 3.5 
+" style="stroke: #898781; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#md528e0ef24" x="71.633577" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_1">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="71.633577" y="177.782594" transform="rotate(-0 71.633577 177.782594)">0</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_2">
+      <g>
+       <use xlink:href="#md528e0ef24" x="140.41632" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_2">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="140.41632" y="177.782594" transform="rotate(-0 140.41632 177.782594)">0.01</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_3">
+      <g>
+       <use xlink:href="#md528e0ef24" x="209.199062" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_3">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="209.199062" y="177.782594" transform="rotate(-0 209.199062 177.782594)">0.02</text>
+     </g>
+    </g>
+    <g id="xtick_4">
+     <g id="line2d_4">
+      <g>
+       <use xlink:href="#md528e0ef24" x="277.981805" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_4">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="277.981805" y="177.782594" transform="rotate(-0 277.981805 177.782594)">0.05</text>
+     </g>
+    </g>
+    <g id="xtick_5">
+     <g id="line2d_5">
+      <g>
+       <use xlink:href="#md528e0ef24" x="346.764548" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_5">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="346.764548" y="177.782594" transform="rotate(-0 346.764548 177.782594)">0.2</text>
+     </g>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_6">
+      <path d="M 30.639063 163.944703 
+L 387.759063 163.944703 
+" clip-path="url(#pa21e858d47)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_6">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="23.639063" y="167.363648" transform="rotate(-0 23.639063 167.363648)">0</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_7">
+      <path d="M 30.639063 119.854261 
+L 387.759063 119.854261 
+" clip-path="url(#pa21e858d47)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_7">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="23.639063" y="123.273207" transform="rotate(-0 23.639063 123.273207)">0.05</text>
+     </g>
+    </g>
+    <g id="ytick_3">
+     <g id="line2d_8">
+      <path d="M 30.639063 75.763819 
+L 387.759063 75.763819 
+" clip-path="url(#pa21e858d47)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_8">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="23.639063" y="79.182765" transform="rotate(-0 23.639063 79.182765)">0.1</text>
+     </g>
+    </g>
+    <g id="ytick_4">
+     <g id="line2d_9">
+      <path d="M 30.639063 31.673377 
+L 387.759063 31.673377 
+" clip-path="url(#pa21e858d47)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_9">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="23.639063" y="35.092323" transform="rotate(-0 23.639063 35.092323)">0.15</text>
+     </g>
+    </g>
+   </g>
+   <g id="patch_8">
+    <path d="M 30.639062 163.944703 
+L 387.759063 163.944703 
+" style="fill: none; stroke: #898781; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="legend_1">
+    <g id="patch_9">
+     <path d="M 34.239063 14.038594 
+L 45.039062 14.038594 
+L 45.039062 7.738594 
+L 34.239063 7.738594 
+z
+" style="fill: #1baf7a"/>
+    </g>
+    <g id="text_10">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="52.239063" y="14.038594" transform="rotate(-0 52.239063 14.038594)">seed a thin cell</text>
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="pa21e858d47">
+   <rect x="30.639063" y="19.800703" width="357.12" height="144.144"/>
+  </clipPath>
+ </defs>
+</svg>
+
+</figure>
+<figure class="fig">
+  <figcaption><strong>Kinds at a census</strong><span>Ways of living holding 5% of the grown bodies, the mean over the censuses. Done-when: +1 on every seed.</span></figcaption>
+  <?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="385.632812pt" height="183.545406pt" viewBox="0 0 385.632812 183.545406" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-09-20T09:05:03.548360</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.1, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 183.545406 
+L 385.632812 183.545406 
+L 385.632812 0 
+L 0 0 
+L 0 183.545406 
+z
+" style="fill: none"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 24.912813 163.944703 
+L 382.032812 163.944703 
+L 382.032812 19.800703 
+L 24.912813 19.800703 
+L 24.912813 163.944703 
+z
+" style="fill: none"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 41.14554 163.944703 
+L 83.491785 163.944703 
+L 83.491785 40.32717 
+L 41.14554 40.32717 
+z
+" clip-path="url(#p19b30a6a6c)" style="fill: #2a78d6"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 158.773998 163.944703 
+L 201.120243 163.944703 
+L 201.120243 26.664703 
+L 158.773998 26.664703 
+z
+" clip-path="url(#p19b30a6a6c)" style="fill: #2a78d6"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 276.402457 163.944703 
+L 318.748702 163.944703 
+L 318.748702 43.580612 
+L 276.402457 43.580612 
+z
+" clip-path="url(#p19b30a6a6c)" style="fill: #2a78d6"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 88.196923 163.944703 
+L 130.543168 163.944703 
+L 130.543168 45.206504 
+L 88.196923 45.206504 
+z
+" clip-path="url(#p19b30a6a6c)" style="fill: #eb6834"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 205.825382 163.944703 
+L 248.171627 163.944703 
+L 248.171627 51.713388 
+L 205.825382 51.713388 
+z
+" clip-path="url(#p19b30a6a6c)" style="fill: #eb6834"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 323.45384 163.944703 
+L 365.800085 163.944703 
+L 365.800085 43.580612 
+L 323.45384 43.580612 
+z
+" clip-path="url(#p19b30a6a6c)" style="fill: #eb6834"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1">
+      <defs>
+       <path id="m0e00f51564" d="M 0 0 
+L 0 3.5 
+" style="stroke: #898781; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#m0e00f51564" x="85.844354" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_1">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="85.844354" y="177.783297" transform="rotate(-0 85.844354 177.783297)">seed 9</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_2">
+      <g>
+       <use xlink:href="#m0e00f51564" x="203.472813" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_2">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="203.472813" y="177.783297" transform="rotate(-0 203.472813 177.783297)">seed 10</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_3">
+      <g>
+       <use xlink:href="#m0e00f51564" x="321.101271" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_3">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="321.101271" y="177.783297" transform="rotate(-0 321.101271 177.783297)">seed 11</text>
+     </g>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_4">
+      <path d="M 24.912813 163.944703 
+L 382.032812 163.944703 
+" clip-path="url(#p19b30a6a6c)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_4">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="17.912813" y="167.363648" transform="rotate(-0 17.912813 167.363648)">0</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_5">
+      <path d="M 24.912813 122.467877 
+L 382.032812 122.467877 
+" clip-path="url(#p19b30a6a6c)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_5">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="17.912813" y="125.886822" transform="rotate(-0 17.912813 125.886822)">2.5</text>
+     </g>
+    </g>
+    <g id="ytick_3">
+     <g id="line2d_6">
+      <path d="M 24.912813 80.99105 
+L 382.032812 80.99105 
+" clip-path="url(#p19b30a6a6c)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_6">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="17.912813" y="84.409996" transform="rotate(-0 17.912813 84.409996)">5</text>
+     </g>
+    </g>
+    <g id="ytick_4">
+     <g id="line2d_7">
+      <path d="M 24.912813 39.514224 
+L 382.032812 39.514224 
+" clip-path="url(#p19b30a6a6c)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_7">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="17.912813" y="42.933169" transform="rotate(-0 17.912813 42.933169)">7.5</text>
+     </g>
+    </g>
+   </g>
+   <g id="patch_9">
+    <path d="M 24.912812 163.944703 
+L 382.032813 163.944703 
+" style="fill: none; stroke: #898781; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="legend_1">
+    <g id="patch_10">
+     <path d="M 28.512813 14.038594 
+L 39.312812 14.038594 
+L 39.312812 7.738594 
+L 28.512813 7.738594 
+z
+" style="fill: #2a78d6"/>
+    </g>
+    <g id="text_8">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="46.512813" y="14.038594" transform="rotate(-0 46.512813 14.038594)">control</text>
+    </g>
+    <g id="patch_11">
+     <path d="M 88.509062 14.038594 
+L 99.309062 14.038594 
+L 99.309062 7.738594 
+L 88.509062 7.738594 
+z
+" style="fill: #eb6834"/>
+    </g>
+    <g id="text_9">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="106.509062" y="14.038594" transform="rotate(-0 106.509062 14.038594)">D+B+Fb'</text>
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p19b30a6a6c">
+   <rect x="24.912813" y="19.800703" width="357.12" height="144.144"/>
+  </clipPath>
+ </defs>
+</svg>
+
+</figure>
+</div>
+<p>At 0.02 a cell the grass does not hold carries twice the seed it did (0.16 against 0.08), and a fifth of the land holds more seed than grass. With bodies in the world that bank is 0.09-0.12 a cell against 0.37 without them: the crowd takes the new food as fast as the wind brings it, and the kinds do not rise.</p>
+
+<h3>3.3 Seed is worth more and still leads nobody</h3>
+<div class="grid2">
+
+<figure class="fig">
+  <figcaption><strong>Seed of what the world&#x27;s bodies eat</strong><span>Share of all the matter bodies take in, over the second half of the run. The control has no seed; e089, behind a tooth of 2, had 3%.</span></figcaption>
+  <?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="385.597656pt" height="183.545406pt" viewBox="0 0 385.597656 183.545406" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-09-20T09:05:03.565184</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.1, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 183.545406 
+L 385.597656 183.545406 
+L 385.597656 0 
+L 0 0 
+L 0 183.545406 
+z
+" style="fill: none"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 24.877656 163.944703 
+L 381.997656 163.944703 
+L 381.997656 19.800703 
+L 24.877656 19.800703 
+L 24.877656 163.944703 
+z
+" style="fill: none"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 41.110384 163.944703 
+L 127.048351 163.944703 
+L 127.048351 31.425774 
+L 41.110384 31.425774 
+z
+" clip-path="url(#p9e87408e9b)" style="fill: #1baf7a"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 160.468672 163.944703 
+L 246.40664 163.944703 
+L 246.40664 34.687714 
+L 160.468672 34.687714 
+z
+" clip-path="url(#p9e87408e9b)" style="fill: #1baf7a"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 279.826961 163.944703 
+L 365.764929 163.944703 
+L 365.764929 26.664703 
+L 279.826961 26.664703 
+z
+" clip-path="url(#p9e87408e9b)" style="fill: #1baf7a"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1">
+      <defs>
+       <path id="m32636e5256" d="M 0 0 
+L 0 3.5 
+" style="stroke: #898781; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#m32636e5256" x="84.079367" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_1">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="84.079367" y="177.783297" transform="rotate(-0 84.079367 177.783297)">seed 9</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_2">
+      <g>
+       <use xlink:href="#m32636e5256" x="203.437656" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_2">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="203.437656" y="177.783297" transform="rotate(-0 203.437656 177.783297)">seed 10</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_3">
+      <g>
+       <use xlink:href="#m32636e5256" x="322.795945" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_3">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="322.795945" y="177.783297" transform="rotate(-0 322.795945 177.783297)">seed 11</text>
+     </g>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_4">
+      <path d="M 24.877656 163.944703 
+L 381.997656 163.944703 
+" clip-path="url(#p9e87408e9b)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_4">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="17.877656" y="167.363648" transform="rotate(-0 17.877656 167.363648)">0%</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_5">
+      <path d="M 24.877656 119.504095 
+L 381.997656 119.504095 
+" clip-path="url(#p9e87408e9b)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_5">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="17.877656" y="122.923041" transform="rotate(-0 17.877656 122.923041)">2%</text>
+     </g>
+    </g>
+    <g id="ytick_3">
+     <g id="line2d_6">
+      <path d="M 24.877656 75.063488 
+L 381.997656 75.063488 
+" clip-path="url(#p9e87408e9b)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_6">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="17.877656" y="78.482433" transform="rotate(-0 17.877656 78.482433)">3%</text>
+     </g>
+    </g>
+    <g id="ytick_4">
+     <g id="line2d_7">
+      <path d="M 24.877656 30.62288 
+L 381.997656 30.62288 
+" clip-path="url(#p9e87408e9b)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_7">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="17.877656" y="34.041825" transform="rotate(-0 17.877656 34.041825)">4%</text>
+     </g>
+    </g>
+   </g>
+   <g id="patch_6">
+    <path d="M 24.877656 163.944703 
+L 381.997656 163.944703 
+" style="fill: none; stroke: #898781; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="legend_1">
+    <g id="patch_7">
+     <path d="M 28.477656 14.038594 
+L 39.277656 14.038594 
+L 39.277656 7.738594 
+L 28.477656 7.738594 
+z
+" style="fill: #1baf7a"/>
+    </g>
+    <g id="text_8">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="46.477656" y="14.038594" transform="rotate(-0 46.477656 14.038594)">D+B+Fb'</text>
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p9e87408e9b">
+   <rect x="24.877656" y="19.800703" width="357.12" height="144.144"/>
+  </clipPath>
+ </defs>
+</svg>
+
+</figure>
+<figure class="fig">
+  <figcaption><strong>The largest toothed land kind&#x27;s plant energy</strong><span>Shares of the plant energy of the kind with a tooth that holds the most land bodies. Seed would have to pass grass to lead it.</span></figcaption>
+  <?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="391.323906pt" height="183.545406pt" viewBox="0 0 391.323906 183.545406" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-09-20T09:05:03.583474</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.1, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 183.545406 
+L 391.323906 183.545406 
+L 391.323906 0 
+L 0 0 
+L 0 183.545406 
+z
+" style="fill: none"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 30.603906 163.944703 
+L 387.723906 163.944703 
+L 387.723906 19.800703 
+L 30.603906 19.800703 
+L 30.603906 163.944703 
+z
+" style="fill: none"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 46.836634 163.944703 
+L 89.182879 163.944703 
+L 89.182879 28.234986 
+L 46.836634 28.234986 
+z
+" clip-path="url(#pa03fcbbdfd)" style="fill: #2a78d6"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 164.465092 163.944703 
+L 206.811337 163.944703 
+L 206.811337 26.664703 
+L 164.465092 26.664703 
+z
+" clip-path="url(#pa03fcbbdfd)" style="fill: #2a78d6"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 282.093551 163.944703 
+L 324.439796 163.944703 
+L 324.439796 28.195064 
+L 282.093551 28.195064 
+z
+" clip-path="url(#pa03fcbbdfd)" style="fill: #2a78d6"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 93.888017 163.944703 
+L 136.234262 163.944703 
+L 136.234262 52.066028 
+L 93.888017 52.066028 
+z
+" clip-path="url(#pa03fcbbdfd)" style="fill: #1baf7a"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 211.516475 163.944703 
+L 253.86272 163.944703 
+L 253.86272 56.811476 
+L 211.516475 56.811476 
+z
+" clip-path="url(#pa03fcbbdfd)" style="fill: #1baf7a"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 329.144934 163.944703 
+L 371.491179 163.944703 
+L 371.491179 53.359515 
+L 329.144934 53.359515 
+z
+" clip-path="url(#pa03fcbbdfd)" style="fill: #1baf7a"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1">
+      <defs>
+       <path id="mdbf5ea3dd7" d="M 0 0 
+L 0 3.5 
+" style="stroke: #898781; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#mdbf5ea3dd7" x="91.535448" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_1">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="91.535448" y="177.783297" transform="rotate(-0 91.535448 177.783297)">seed 9</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_2">
+      <g>
+       <use xlink:href="#mdbf5ea3dd7" x="209.163906" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_2">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="209.163906" y="177.783297" transform="rotate(-0 209.163906 177.783297)">seed 10</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_3">
+      <g>
+       <use xlink:href="#mdbf5ea3dd7" x="326.792365" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_3">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="326.792365" y="177.783297" transform="rotate(-0 326.792365 177.783297)">seed 11</text>
+     </g>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_4">
+      <path d="M 30.603906 163.944703 
+L 387.723906 163.944703 
+" clip-path="url(#pa03fcbbdfd)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_4">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="23.603906" y="167.363648" transform="rotate(-0 23.603906 167.363648)">0%</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_5">
+      <path d="M 30.603906 124.022253 
+L 387.723906 124.022253 
+" clip-path="url(#pa03fcbbdfd)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_5">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="23.603906" y="127.441198" transform="rotate(-0 23.603906 127.441198)">15%</text>
+     </g>
+    </g>
+    <g id="ytick_3">
+     <g id="line2d_6">
+      <path d="M 30.603906 84.099802 
+L 387.723906 84.099802 
+" clip-path="url(#pa03fcbbdfd)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_6">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="23.603906" y="87.518747" transform="rotate(-0 23.603906 87.518747)">30%</text>
+     </g>
+    </g>
+    <g id="ytick_4">
+     <g id="line2d_7">
+      <path d="M 30.603906 44.177351 
+L 387.723906 44.177351 
+" clip-path="url(#pa03fcbbdfd)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_7">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="23.603906" y="47.596297" transform="rotate(-0 23.603906 47.596297)">45%</text>
+     </g>
+    </g>
+   </g>
+   <g id="patch_9">
+    <path d="M 30.603906 163.944703 
+L 387.723906 163.944703 
+" style="fill: none; stroke: #898781; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="legend_1">
+    <g id="patch_10">
+     <path d="M 34.203906 14.038594 
+L 45.003906 14.038594 
+L 45.003906 7.738594 
+L 34.203906 7.738594 
+z
+" style="fill: #2a78d6"/>
+    </g>
+    <g id="text_8">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="52.203906" y="14.038594" transform="rotate(-0 52.203906 14.038594)">grass</text>
+    </g>
+    <g id="patch_11">
+     <path d="M 87.309531 14.038594 
+L 98.109531 14.038594 
+L 98.109531 7.738594 
+L 87.309531 7.738594 
+z
+" style="fill: #1baf7a"/>
+    </g>
+    <g id="text_9">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="105.309531" y="14.038594" transform="rotate(-0 105.309531 14.038594)">seed</text>
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="pa03fcbbdfd">
+   <rect x="30.603906" y="19.800703" width="357.12" height="144.144"/>
+  </clipPath>
+ </defs>
+</svg>
+
+</figure>
+</div>
+<div class="grid2">
+
+<figure class="fig">
+  <figcaption><strong>The largest line&#x27;s share of the land</strong><span>Over the censuses. Done-when: no higher than the control.</span></figcaption>
+  <?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="391.323906pt" height="183.545406pt" viewBox="0 0 391.323906 183.545406" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-09-20T09:05:03.605129</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.1, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 183.545406 
+L 391.323906 183.545406 
+L 391.323906 0 
+L 0 0 
+L 0 183.545406 
+z
+" style="fill: none"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 30.603906 163.944703 
+L 387.723906 163.944703 
+L 387.723906 19.800703 
+L 30.603906 19.800703 
+L 30.603906 163.944703 
+z
+" style="fill: none"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 46.836634 163.944703 
+L 89.182879 163.944703 
+L 89.182879 61.899264 
+L 46.836634 61.899264 
+z
+" clip-path="url(#p86edee52c0)" style="fill: #2a78d6"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 164.465092 163.944703 
+L 206.811337 163.944703 
+L 206.811337 53.414393 
+L 164.465092 53.414393 
+z
+" clip-path="url(#p86edee52c0)" style="fill: #2a78d6"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 282.093551 163.944703 
+L 324.439796 163.944703 
+L 324.439796 89.542839 
+L 282.093551 89.542839 
+z
+" clip-path="url(#p86edee52c0)" style="fill: #2a78d6"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 93.888017 163.944703 
+L 136.234262 163.944703 
+L 136.234262 51.091699 
+L 93.888017 51.091699 
+z
+" clip-path="url(#p86edee52c0)" style="fill: #eb6834"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 211.516475 163.944703 
+L 253.86272 163.944703 
+L 253.86272 54.948779 
+L 211.516475 54.948779 
+z
+" clip-path="url(#p86edee52c0)" style="fill: #eb6834"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 329.144934 163.944703 
+L 371.491179 163.944703 
+L 371.491179 26.664703 
+L 329.144934 26.664703 
+z
+" clip-path="url(#p86edee52c0)" style="fill: #eb6834"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1">
+      <defs>
+       <path id="m7adefabfed" d="M 0 0 
+L 0 3.5 
+" style="stroke: #898781; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#m7adefabfed" x="91.535448" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_1">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="91.535448" y="177.783297" transform="rotate(-0 91.535448 177.783297)">seed 9</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_2">
+      <g>
+       <use xlink:href="#m7adefabfed" x="209.163906" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_2">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="209.163906" y="177.783297" transform="rotate(-0 209.163906 177.783297)">seed 10</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_3">
+      <g>
+       <use xlink:href="#m7adefabfed" x="326.792365" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_3">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="326.792365" y="177.783297" transform="rotate(-0 326.792365 177.783297)">seed 11</text>
+     </g>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_4">
+      <path d="M 30.603906 163.944703 
+L 387.723906 163.944703 
+" clip-path="url(#p86edee52c0)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_4">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="23.603906" y="167.363648" transform="rotate(-0 23.603906 167.363648)">0%</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_5">
+      <path d="M 30.603906 119.954291 
+L 387.723906 119.954291 
+" clip-path="url(#p86edee52c0)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_5">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="23.603906" y="123.373236" transform="rotate(-0 23.603906 123.373236)">25%</text>
+     </g>
+    </g>
+    <g id="ytick_3">
+     <g id="line2d_6">
+      <path d="M 30.603906 75.963878 
+L 387.723906 75.963878 
+" clip-path="url(#p86edee52c0)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_6">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="23.603906" y="79.382824" transform="rotate(-0 23.603906 79.382824)">50%</text>
+     </g>
+    </g>
+    <g id="ytick_4">
+     <g id="line2d_7">
+      <path d="M 30.603906 31.973466 
+L 387.723906 31.973466 
+" clip-path="url(#p86edee52c0)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_7">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="23.603906" y="35.392411" transform="rotate(-0 23.603906 35.392411)">75%</text>
+     </g>
+    </g>
+   </g>
+   <g id="patch_9">
+    <path d="M 30.603906 163.944703 
+L 387.723906 163.944703 
+" style="fill: none; stroke: #898781; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="legend_1">
+    <g id="patch_10">
+     <path d="M 34.203906 14.038594 
+L 45.003906 14.038594 
+L 45.003906 7.738594 
+L 34.203906 7.738594 
+z
+" style="fill: #2a78d6"/>
+    </g>
+    <g id="text_8">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="52.203906" y="14.038594" transform="rotate(-0 52.203906 14.038594)">control</text>
+    </g>
+    <g id="patch_11">
+     <path d="M 94.200156 14.038594 
+L 105.000156 14.038594 
+L 105.000156 7.738594 
+L 94.200156 7.738594 
+z
+" style="fill: #eb6834"/>
+    </g>
+    <g id="text_9">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="112.200156" y="14.038594" transform="rotate(-0 112.200156 14.038594)">D+B+Fb'</text>
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p86edee52c0">
+   <rect x="30.603906" y="19.800703" width="357.12" height="144.144"/>
+  </clipPath>
+ </defs>
+</svg>
+
+</figure>
+<figure class="fig">
+  <figcaption><strong>Bodies on land</strong><span>The mean over the second half of the run. The drift&#x27;s thinner land holds fewer of them.</span></figcaption>
+  <?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="390.844375pt" height="183.545406pt" viewBox="0 0 390.844375 183.545406" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-09-20T09:05:03.623003</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.1, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 183.545406 
+L 390.844375 183.545406 
+L 390.844375 0 
+L 0 0 
+L 0 183.545406 
+z
+" style="fill: none"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 30.124375 163.944703 
+L 387.244375 163.944703 
+L 387.244375 19.800703 
+L 30.124375 19.800703 
+L 30.124375 163.944703 
+z
+" style="fill: none"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 46.357102 163.944703 
+L 88.703347 163.944703 
+L 88.703347 26.664703 
+L 46.357102 26.664703 
+z
+" clip-path="url(#p7a82b36aa5)" style="fill: #2a78d6"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 163.985561 163.944703 
+L 206.331806 163.944703 
+L 206.331806 40.421448 
+L 163.985561 40.421448 
+z
+" clip-path="url(#p7a82b36aa5)" style="fill: #2a78d6"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 281.614019 163.944703 
+L 323.960264 163.944703 
+L 323.960264 39.07215 
+L 281.614019 39.07215 
+z
+" clip-path="url(#p7a82b36aa5)" style="fill: #2a78d6"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 93.408486 163.944703 
+L 135.754731 163.944703 
+L 135.754731 45.203167 
+L 93.408486 45.203167 
+z
+" clip-path="url(#p7a82b36aa5)" style="fill: #eb6834"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 211.036944 163.944703 
+L 253.383189 163.944703 
+L 253.383189 60.860426 
+L 211.036944 60.860426 
+z
+" clip-path="url(#p7a82b36aa5)" style="fill: #eb6834"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 328.665403 163.944703 
+L 371.011648 163.944703 
+L 371.011648 52.940491 
+L 328.665403 52.940491 
+z
+" clip-path="url(#p7a82b36aa5)" style="fill: #eb6834"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1">
+      <defs>
+       <path id="m5324c2d11f" d="M 0 0 
+L 0 3.5 
+" style="stroke: #898781; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#m5324c2d11f" x="91.055917" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_1">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="91.055917" y="177.783297" transform="rotate(-0 91.055917 177.783297)">seed 9</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_2">
+      <g>
+       <use xlink:href="#m5324c2d11f" x="208.684375" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_2">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="208.684375" y="177.783297" transform="rotate(-0 208.684375 177.783297)">seed 10</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_3">
+      <g>
+       <use xlink:href="#m5324c2d11f" x="326.312833" y="163.944703" style="fill: #898781; stroke: #898781; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_3">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle; fill: #898781" x="326.312833" y="177.783297" transform="rotate(-0 326.312833 177.783297)">seed 11</text>
+     </g>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_4">
+      <path d="M 30.124375 163.944703 
+L 387.244375 163.944703 
+" clip-path="url(#p7a82b36aa5)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_4">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="23.124375" y="167.363648" transform="rotate(-0 23.124375 167.363648)">0</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_5">
+      <path d="M 30.124375 113.219244 
+L 387.244375 113.219244 
+" clip-path="url(#p7a82b36aa5)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_5">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="23.124375" y="116.638541" transform="rotate(-0 23.124375 116.638541)">1.5k</text>
+     </g>
+    </g>
+    <g id="ytick_3">
+     <g id="line2d_6">
+      <path d="M 30.124375 62.493786 
+L 387.244375 62.493786 
+" clip-path="url(#p7a82b36aa5)" style="fill: none; stroke: #898781; stroke-opacity: 0.25; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="text_6">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #898781" x="23.124375" y="65.913082" transform="rotate(-0 23.124375 65.913082)">3k</text>
+     </g>
+    </g>
+   </g>
+   <g id="patch_9">
+    <path d="M 30.124375 163.944703 
+L 387.244375 163.944703 
+" style="fill: none; stroke: #898781; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="legend_1">
+    <g id="patch_10">
+     <path d="M 33.724375 14.038594 
+L 44.524375 14.038594 
+L 44.524375 7.738594 
+L 33.724375 7.738594 
+z
+" style="fill: #2a78d6"/>
+    </g>
+    <g id="text_7">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="51.724375" y="14.038594" transform="rotate(-0 51.724375 14.038594)">control</text>
+    </g>
+    <g id="patch_11">
+     <path d="M 93.720625 14.038594 
+L 104.520625 14.038594 
+L 104.520625 7.738594 
+L 93.720625 7.738594 
+z
+" style="fill: #eb6834"/>
+    </g>
+    <g id="text_8">
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #898781" x="111.720625" y="14.038594" transform="rotate(-0 111.720625 14.038594)">D+B+Fb'</text>
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p7a82b36aa5">
+   <rect x="30.124375" y="19.800703" width="357.12" height="144.144"/>
+  </clipPath>
+ </defs>
+</svg>
+
+</figure>
+</div>
+<p>Read by energy, seed is two fifths of the leading toothed land kind's plant food, against a fifth of its plant matter in e089. The eater is the same body: a tooth of force 2 or more is carried by 26-40% of grown bodies anyway, so the beak separated nothing. A bigger share of one diet is not a second way of living.</p>
+<figure class="diagram"><div class="cards"><figure class="card"><svg viewBox="-1 -1 89 89" width="104" height="104" role="img" aria-label="plant / no tooth / stays / bottom">
+<rect x="-1" y="-1" width="89" height="89" fill="var(--grid)"/><rect x="0" y="0" width="21" height="21" fill="#1baf7a"/><rect x="22" y="0" width="21" height="21" fill="#1baf7a"/><rect x="44" y="0" width="21" height="21" fill="#1baf7a"/><rect x="66" y="0" width="21" height="21" fill="#1baf7a"/><rect x="0" y="22" width="21" height="21" fill="#1baf7a"/><rect x="22" y="22" width="21" height="21" fill="#1baf7a"/><rect x="44" y="22" width="21" height="21" fill="#1baf7a"/><rect x="66" y="22" width="21" height="21" fill="#1baf7a"/><rect x="0" y="44" width="21" height="21" fill="#1baf7a"/><rect x="22" y="44" width="21" height="21" fill="#1baf7a"/><rect x="44" y="44" width="21" height="21" fill="#1baf7a"/><rect x="66" y="44" width="21" height="21" fill="#1baf7a"/><rect x="0" y="66" width="21" height="21" fill="#1baf7a"/><rect x="22" y="66" width="21" height="21" fill="#1baf7a"/><rect x="44" y="66" width="21" height="21" fill="#1baf7a"/><rect x="66" y="66" width="21" height="21" fill="#1baf7a"/></svg>
+<figcaption><strong>plant / no tooth / stays / bottom</strong><br>D+B+Fb 9, 22% of the grown bodies<br>
+16 blocks, mass 32, pace 0.70<br>
+98% on the bottom; plant: grass 1%, seed 0%; kills 7% of its food</figcaption></figure><figure class="card"><svg viewBox="-1 -1 89 89" width="104" height="104" role="img" aria-label="plant / no tooth / stays / shore">
+<rect x="-1" y="-1" width="89" height="89" fill="var(--grid)"/><rect x="0" y="0" width="21" height="21" fill="#1baf7a"/><rect x="22" y="0" width="21" height="21" fill="#1baf7a"/><rect x="44" y="0" width="21" height="21" fill="#1baf7a"/><rect x="66" y="0" width="21" height="21" fill="#1baf7a"/><rect x="0" y="22" width="21" height="21" fill="#1baf7a"/><rect x="22" y="22" width="21" height="21" fill="#1baf7a"/><rect x="44" y="22" width="21" height="21" fill="#1baf7a"/><rect x="66" y="22" width="21" height="21" fill="#1baf7a"/><rect x="0" y="44" width="21" height="21" fill="#1baf7a"/><rect x="22" y="44" width="21" height="21" fill="#1baf7a"/><rect x="44" y="44" width="21" height="21" fill="#1baf7a"/><rect x="66" y="44" width="21" height="21" fill="#1baf7a"/><rect x="0" y="66" width="21" height="21" fill="#1baf7a"/><rect x="22" y="66" width="21" height="21" fill="#1baf7a"/><rect x="44" y="66" width="21" height="21" fill="#1baf7a"/><rect x="66" y="66" width="21" height="21" fill="#1baf7a"/></svg>
+<figcaption><strong>plant / no tooth / stays / shore</strong><br>D+B+Fb 9, 14% of the grown bodies<br>
+25 blocks, mass 34, pace 0.67<br>
+60% on the bottom; plant: grass 38%, seed 2%; kills 7% of its food</figcaption></figure><figure class="card"><svg viewBox="-1 -1 89 89" width="104" height="104" role="img" aria-label="plant / tooth / stays / land">
+<rect x="-1" y="-1" width="89" height="89" fill="var(--grid)"/><rect x="0" y="0" width="13" height="13" fill="#2a78d6"/><rect x="14" y="0" width="13" height="13" fill="#2a78d6"/><rect x="28" y="0" width="13" height="13" fill="#2a78d6"/><rect x="42" y="0" width="13" height="13" fill="#2a78d6"/><rect x="56" y="0" width="13" height="13" fill="#2a78d6"/><rect x="70" y="0" width="13" height="13" fill="#2a78d6"/><rect x="0" y="14" width="13" height="13" fill="#2a78d6"/><rect x="14" y="14" width="13" height="13" fill="#1baf7a"/><rect x="28" y="14" width="13" height="13" fill="#1baf7a"/><rect x="42" y="14" width="13" height="13" fill="#1baf7a"/><rect x="56" y="14" width="13" height="13" fill="#1baf7a"/><rect x="70" y="14" width="13" height="13" fill="#2a78d6"/><rect x="0" y="28" width="13" height="13" fill="#eb6834"/><rect x="14" y="28" width="13" height="13" fill="#1baf7a"/><rect x="28" y="28" width="13" height="13" fill="#1baf7a"/><rect x="42" y="28" width="13" height="13" fill="#1baf7a"/><rect x="56" y="28" width="13" height="13" fill="#1baf7a"/><rect x="70" y="28" width="13" height="13" fill="#eb6834"/><rect x="0" y="42" width="13" height="13" fill="#eb6834"/><rect x="14" y="42" width="13" height="13" fill="#1baf7a"/><rect x="28" y="42" width="13" height="13" fill="#1baf7a"/><rect x="42" y="42" width="13" height="13" fill="#1baf7a"/><rect x="56" y="42" width="13" height="13" fill="#1baf7a"/><rect x="70" y="42" width="13" height="13" fill="#eb6834"/><rect x="0" y="56" width="13" height="13" fill="#eb6834"/><rect x="14" y="56" width="13" height="13" fill="#1baf7a"/><rect x="28" y="56" width="13" height="13" fill="#1baf7a"/><rect x="42" y="56" width="13" height="13" fill="#1baf7a"/><rect x="56" y="56" width="13" height="13" fill="#1baf7a"/><rect x="70" y="56" width="13" height="13" fill="#eb6834"/><rect x="0" y="70" width="13" height="13" fill="#eb6834"/><rect x="14" y="70" width="13" height="13" fill="#eb6834"/><rect x="28" y="70" width="13" height="13" fill="#1baf7a"/><rect x="42" y="70" width="13" height="13" fill="#1baf7a"/><rect x="56" y="70" width="13" height="13" fill="#eb6834"/><rect x="70" y="70" width="13" height="13" fill="#eb6834"/></svg>
+<figcaption><strong>plant / tooth / stays / land</strong><br>D+B+Fb 9, 10% of the grown bodies<br>
+36 blocks, mass 48, pace 0.57<br>
+97% on the land; plant: grass 67%, seed 25%; kills 19% of its food</figcaption></figure><figure class="card"><svg viewBox="-1 -1 89 89" width="104" height="104" role="img" aria-label="plant / no tooth / roams / bottom">
+<rect x="-1" y="-1" width="89" height="89" fill="var(--grid)"/><rect x="0" y="0" width="21" height="21" fill="#eb6834"/><rect x="22" y="0" width="21" height="21" fill="#eb6834"/><rect x="44" y="0" width="21" height="21" fill="#eb6834"/><rect x="66" y="0" width="21" height="21" fill="#eb6834"/><rect x="0" y="22" width="21" height="21" fill="#eb6834"/><rect x="22" y="22" width="21" height="21" fill="#1baf7a"/><rect x="44" y="22" width="21" height="21" fill="#1baf7a"/><rect x="66" y="22" width="21" height="21" fill="#eb6834"/><rect x="0" y="44" width="21" height="21" fill="#1baf7a"/><rect x="22" y="44" width="21" height="21" fill="#1baf7a"/><rect x="44" y="44" width="21" height="21" fill="#1baf7a"/><rect x="66" y="44" width="21" height="21" fill="#1baf7a"/><rect x="0" y="66" width="21" height="21" fill="#1baf7a"/><rect x="22" y="66" width="21" height="21" fill="#1baf7a"/><rect x="44" y="66" width="21" height="21" fill="#1baf7a"/><rect x="66" y="66" width="21" height="21" fill="#1baf7a"/></svg>
+<figcaption><strong>plant / no tooth / roams / bottom</strong><br>D+B+Fb 9, 7% of the grown bodies<br>
+16 blocks, mass 32, pace 0.69<br>
+98% on the bottom; plant: grass 1%, seed 0%; kills 15% of its food</figcaption></figure><figure class="card"><svg viewBox="-1 -1 89 89" width="104" height="104" role="img" aria-label="mixed / tooth / roams / land">
+<rect x="-1" y="-1" width="89" height="89" fill="var(--grid)"/><rect x="0" y="0" width="13" height="13" fill="#2a78d6"/><rect x="14" y="0" width="13" height="13" fill="#2a78d6"/><rect x="28" y="0" width="13" height="13" fill="#2a78d6"/><rect x="42" y="0" width="13" height="13" fill="#2a78d6"/><rect x="56" y="0" width="13" height="13" fill="#2a78d6"/><rect x="70" y="0" width="13" height="13" fill="#2a78d6"/><rect x="0" y="14" width="13" height="13" fill="#2a78d6"/><rect x="14" y="14" width="13" height="13" fill="#2a78d6"/><rect x="28" y="14" width="13" height="13" fill="#eb6834"/><rect x="42" y="14" width="13" height="13" fill="#eb6834"/><rect x="56" y="14" width="13" height="13" fill="#eb6834"/><rect x="70" y="14" width="13" height="13" fill="#2a78d6"/><rect x="0" y="28" width="13" height="13" fill="#eb6834"/><rect x="14" y="28" width="13" height="13" fill="#eb6834"/><rect x="28" y="28" width="13" height="13" fill="#1baf7a"/><rect x="42" y="28" width="13" height="13" fill="#1baf7a"/><rect x="56" y="28" width="13" height="13" fill="#1baf7a"/><rect x="70" y="28" width="13" height="13" fill="#eb6834"/><rect x="0" y="42" width="13" height="13" fill="#eb6834"/><rect x="14" y="42" width="13" height="13" fill="#eb6834"/><rect x="28" y="42" width="13" height="13" fill="#1baf7a"/><rect x="42" y="42" width="13" height="13" fill="#1baf7a"/><rect x="56" y="42" width="13" height="13" fill="#1baf7a"/><rect x="70" y="42" width="13" height="13" fill="#eb6834"/><rect x="0" y="56" width="13" height="13" fill="#eb6834"/><rect x="14" y="56" width="13" height="13" fill="#eb6834"/><rect x="28" y="56" width="13" height="13" fill="#1baf7a"/><rect x="42" y="56" width="13" height="13" fill="#1baf7a"/><rect x="56" y="56" width="13" height="13" fill="#eb6834"/><rect x="70" y="56" width="13" height="13" fill="#eb6834"/><rect x="0" y="70" width="13" height="13" fill="#eb6834"/><rect x="14" y="70" width="13" height="13" fill="#eb6834"/><rect x="28" y="70" width="13" height="13" fill="#eb6834"/><rect x="42" y="70" width="13" height="13" fill="#eb6834"/><rect x="56" y="70" width="13" height="13" fill="#eb6834"/><rect x="70" y="70" width="13" height="13" fill="#eb6834"/></svg>
+<figcaption><strong>mixed / tooth / roams / land</strong><br>D+B+Fb 9, 7% of the grown bodies<br>
+36 blocks, mass 42, pace 0.61<br>
+96% on the land; plant: grass 60%, seed 19%; kills 37% of its food</figcaption></figure><figure class="card"><svg viewBox="-1 -1 89 89" width="104" height="104" role="img" aria-label="mixed / no tooth / roams / shore">
+<rect x="-1" y="-1" width="89" height="89" fill="var(--grid)"/><rect x="0" y="0" width="21" height="21" fill="#eb6834"/><rect x="22" y="0" width="21" height="21" fill="#eb6834"/><rect x="44" y="0" width="21" height="21" fill="#eb6834"/><rect x="66" y="0" width="21" height="21" fill="#eb6834"/><rect x="0" y="22" width="21" height="21" fill="#eb6834"/><rect x="22" y="22" width="21" height="21" fill="#eb6834"/><rect x="44" y="22" width="21" height="21" fill="#eb6834"/><rect x="66" y="22" width="21" height="21" fill="#eb6834"/><rect x="0" y="44" width="21" height="21" fill="#1baf7a"/><rect x="22" y="44" width="21" height="21" fill="#1baf7a"/><rect x="44" y="44" width="21" height="21" fill="#1baf7a"/><rect x="66" y="44" width="21" height="21" fill="#1baf7a"/><rect x="0" y="66" width="21" height="21" fill="#1baf7a"/><rect x="22" y="66" width="21" height="21" fill="#1baf7a"/><rect x="44" y="66" width="21" height="21" fill="#1baf7a"/><rect x="66" y="66" width="21" height="21" fill="#1baf7a"/></svg>
+<figcaption><strong>mixed / no tooth / roams / shore</strong><br>D+B+Fb 9, 7% of the grown bodies<br>
+16 blocks, mass 32, pace 0.70<br>
+75% on the bottom; plant: grass 26%, seed 0%; kills 40% of its food</figcaption></figure></div>
+<figcaption>Figure 2. The six largest kinds of seed 9, each its commonest birth body (hard blue, muscle orange, gut aqua, sensor yellow). The two land kinds carry a hard tip with muscle behind it: the beak that opens seed is the tooth that opens bodies.</figcaption></figure>
+
+<h2>4. Discussion</h2>
+<p>The three laws each did what they say. The seed moved, the beak opened it, and the fiber made grass poor: bodies digest 23% of the fiber they take in and grass fell to a fifth of what they eat. What did not happen is a body that lives on seed.</p>
+<p>The reason is where the seed ends up. It piles on thin ground, but thin ground is thin for the bodies too: little grass, little water, and the same crowd walking over it. A body that could hold such a place would need to reach it and stay; at a life of 500 steps and a few cells of travel it simply eats the seed that blows past the lawn it already lives on.</p>
+<p>It does not show that seed cannot part the kinds - only that a food a body meets mixed with its ordinary meal, taken with the tool it already carries, stays a share of a diet, however much it is worth. The drift also prices a general rule: a law that moves matter one way over a world with a sea drains the land.</p>
+
+<h2>5. Conclusion and next step</h2>
+<p>D, B and Fb' are not kept, and by #100's stopping rule P2's seed track ends: two of its three stage C slots are spent and seed has not fed a kind at either. The next piece is chosen from vision.md's gap table - a food separated by where a body must be to take it, or the bodies' own side (parts whose worth depends on shape).</p>
+
+<h2>Appendix: data</h2>
+<p>The full tables are in <code>results/sweep.csv</code>, <code>results/kinds.csv</code>, <code>results/bodies.csv</code> and
+<code>results/alone.csv</code>. Build with <code>uv run python experiments/e090_drift/sweep.py</code> and
+<code>alone.py</code>, then <code>report.py</code>.</p>
+<details><summary>Kinds holding 3% or more of a run's grown bodies</summary><div class='tw'><table><thead><tr><th>run</th><th>kind</th><th>share</th><th>led by</th><th>mass</th><th>pace</th><th>grass of its energy</th><th>seed of its energy</th><th>kills of food</th></tr></thead><tbody><tr><td>control 9</td><td>mixed / tooth / roams / land</td><td>15%</td><td>grass</td><td>46</td><td>0.58</td><td>56%</td><td>0%</td><td>50%</td></tr><tr><td>control 9</td><td>mixed / no tooth / stays / shore</td><td>12%</td><td>grass</td><td>40</td><td>0.63</td><td>57%</td><td>0%</td><td>26%</td></tr><tr><td>control 9</td><td>mixed / tooth / stays / land</td><td>9%</td><td>grass</td><td>57</td><td>0.53</td><td>84%</td><td>0%</td><td>36%</td></tr><tr><td>control 9</td><td>mixed / no tooth / stays / bottom</td><td>8%</td><td>litter</td><td>32</td><td>0.70</td><td>2%</td><td>0%</td><td>20%</td></tr><tr><td>control 9</td><td>mixed / no tooth / roams / shore</td><td>8%</td><td>litter</td><td>32</td><td>0.70</td><td>35%</td><td>0%</td><td>43%</td></tr><tr><td>control 9</td><td>plant / no tooth / stays / shore</td><td>7%</td><td>grass</td><td>43</td><td>0.60</td><td>55%</td><td>0%</td><td>8%</td></tr><tr><td>control 9</td><td>plant / no tooth / roams / surface</td><td>7%</td><td>algae</td><td>21</td><td>0.86</td><td>1%</td><td>0%</td><td>17%</td></tr><tr><td>control 9</td><td>plant / no tooth / stays / bottom</td><td>7%</td><td>litter</td><td>32</td><td>0.70</td><td>1%</td><td>0%</td><td>8%</td></tr><tr><td>control 9</td><td>mixed / no tooth / roams / bottom</td><td>6%</td><td>litter</td><td>32</td><td>0.70</td><td>2%</td><td>0%</td><td>38%</td></tr><tr><td>control 9</td><td>plant / no tooth / stays / land</td><td>4%</td><td>grass</td><td>77</td><td>0.45</td><td>96%</td><td>0%</td><td>6%</td></tr><tr><td>control 9</td><td>flesh / no tooth / roams / shore</td><td>3%</td><td>litter</td><td>32</td><td>0.70</td><td>45%</td><td>0%</td><td>67%</td></tr><tr><td>control 10</td><td>mixed / no tooth / stays / bottom</td><td>15%</td><td>litter</td><td>32</td><td>0.70</td><td>2%</td><td>0%</td><td>24%</td></tr><tr><td>control 10</td><td>mixed / tooth / roams / land</td><td>11%</td><td>grass</td><td>38</td><td>0.65</td><td>49%</td><td>0%</td><td>46%</td></tr><tr><td>control 10</td><td>mixed / no tooth / stays / shore</td><td>10%</td><td>litter</td><td>32</td><td>0.69</td><td>44%</td><td>0%</td><td>24%</td></tr><tr><td>control 10</td><td>plant / no tooth / stays / shore</td><td>9%</td><td>grass</td><td>33</td><td>0.68</td><td>52%</td><td>0%</td><td>6%</td></tr><tr><td>control 10</td><td>plant / no tooth / stays / bottom</td><td>9%</td><td>litter</td><td>32</td><td>0.70</td><td>2%</td><td>0%</td><td>6%</td></tr><tr><td>control 10</td><td>mixed / no tooth / roams / shore</td><td>7%</td><td>litter</td><td>32</td><td>0.70</td><td>23%</td><td>0%</td><td>43%</td></tr><tr><td>control 10</td><td>plant / no tooth / roams / surface</td><td>6%</td><td>algae</td><td>28</td><td>0.74</td><td>1%</td><td>0%</td><td>16%</td></tr><tr><td>control 10</td><td>mixed / tooth / roams / shore</td><td>5%</td><td>grass</td><td>39</td><td>0.64</td><td>56%</td><td>0%</td><td>45%</td></tr><tr><td>control 10</td><td>mixed / no tooth / roams / bottom</td><td>5%</td><td>litter</td><td>32</td><td>0.70</td><td>3%</td><td>0%</td><td>40%</td></tr><tr><td>control 10</td><td>mixed / tooth / stays / land</td><td>5%</td><td>grass</td><td>63</td><td>0.50</td><td>86%</td><td>0%</td><td>34%</td></tr><tr><td>control 10</td><td>mixed / tooth / stays / shore</td><td>5%</td><td>grass</td><td>55</td><td>0.54</td><td>67%</td><td>0%</td><td>38%</td></tr><tr><td>control 10</td><td>plant / no tooth / stays / land</td><td>4%</td><td>grass</td><td>73</td><td>0.47</td><td>98%</td><td>0%</td><td>6%</td></tr><tr><td>control 11</td><td>mixed / no tooth / roams / shore</td><td>17%</td><td>litter</td><td>32</td><td>0.70</td><td>27%</td><td>0%</td><td>42%</td></tr><tr><td>control 11</td><td>mixed / no tooth / stays / bottom</td><td>12%</td><td>litter</td><td>32</td><td>0.70</td><td>1%</td><td>0%</td><td>27%</td></tr><tr><td>control 11</td><td>plant / no tooth / stays / shore</td><td>12%</td><td>litter</td><td>32</td><td>0.70</td><td>29%</td><td>0%</td><td>9%</td></tr><tr><td>control 11</td><td>mixed / tooth / roams / land</td><td>11%</td><td>grass</td><td>35</td><td>0.67</td><td>60%</td><td>0%</td><td>47%</td></tr><tr><td>control 11</td><td>plant / no tooth / stays / bottom</td><td>9%</td><td>litter</td><td>32</td><td>0.70</td><td>2%</td><td>0%</td><td>5%</td></tr><tr><td>control 11</td><td>mixed / no tooth / roams / bottom</td><td>7%</td><td>litter</td><td>32</td><td>0.70</td><td>4%</td><td>0%</td><td>37%</td></tr><tr><td>control 11</td><td>plant / no tooth / roams / surface</td><td>5%</td><td>algae</td><td>28</td><td>0.74</td><td>1%</td><td>0%</td><td>18%</td></tr><tr><td>control 11</td><td>mixed / no tooth / stays / shore</td><td>5%</td><td>grass</td><td>32</td><td>0.69</td><td>51%</td><td>0%</td><td>20%</td></tr><tr><td>control 11</td><td>plant / no tooth / stays / land</td><td>4%</td><td>grass</td><td>75</td><td>0.46</td><td>98%</td><td>0%</td><td>4%</td></tr><tr><td>control 11</td><td>mixed / tooth / stays / land</td><td>4%</td><td>grass</td><td>60</td><td>0.51</td><td>90%</td><td>0%</td><td>37%</td></tr><tr><td>D+B+Fb 9</td><td>plant / no tooth / stays / bottom</td><td>22%</td><td>litter</td><td>32</td><td>0.70</td><td>1%</td><td>0%</td><td>7%</td></tr><tr><td>D+B+Fb 9</td><td>plant / no tooth / stays / shore</td><td>14%</td><td>litter</td><td>34</td><td>0.67</td><td>29%</td><td>4%</td><td>7%</td></tr><tr><td>D+B+Fb 9</td><td>plant / tooth / stays / land</td><td>10%</td><td>grass</td><td>48</td><td>0.57</td><td>51%</td><td>42%</td><td>19%</td></tr><tr><td>D+B+Fb 9</td><td>plant / no tooth / roams / bottom</td><td>7%</td><td>litter</td><td>32</td><td>0.69</td><td>1%</td><td>0%</td><td>15%</td></tr><tr><td>D+B+Fb 9</td><td>mixed / tooth / roams / land</td><td>7%</td><td>grass</td><td>42</td><td>0.61</td><td>47%</td><td>36%</td><td>37%</td></tr><tr><td>D+B+Fb 9</td><td>mixed / no tooth / roams / shore</td><td>7%</td><td>litter</td><td>32</td><td>0.70</td><td>18%</td><td>0%</td><td>40%</td></tr><tr><td>D+B+Fb 9</td><td>plant / no tooth / roams / surface</td><td>6%</td><td>algae</td><td>32</td><td>0.70</td><td>2%</td><td>0%</td><td>6%</td></tr><tr><td>D+B+Fb 9</td><td>mixed / no tooth / roams / bottom</td><td>5%</td><td>litter</td><td>32</td><td>0.70</td><td>1%</td><td>0%</td><td>38%</td></tr><tr><td>D+B+Fb 9</td><td>plant / tooth / roams / land</td><td>4%</td><td>grass</td><td>41</td><td>0.62</td><td>48%</td><td>41%</td><td>26%</td></tr><tr><td>D+B+Fb 9</td><td>mixed / no tooth / stays / bottom</td><td>3%</td><td>litter</td><td>32</td><td>0.70</td><td>1%</td><td>0%</td><td>29%</td></tr><tr><td>D+B+Fb 10</td><td>plant / no tooth / stays / bottom</td><td>21%</td><td>litter</td><td>30</td><td>0.71</td><td>2%</td><td>0%</td><td>8%</td></tr><tr><td>D+B+Fb 10</td><td>plant / no tooth / stays / shore</td><td>11%</td><td>litter</td><td>40</td><td>0.63</td><td>26%</td><td>6%</td><td>7%</td></tr><tr><td>D+B+Fb 10</td><td>plant / tooth / stays / land</td><td>11%</td><td>grass</td><td>56</td><td>0.53</td><td>52%</td><td>40%</td><td>19%</td></tr><tr><td>D+B+Fb 10</td><td>plant / tooth / stays / shore</td><td>6%</td><td>grass</td><td>47</td><td>0.58</td><td>42%</td><td>32%</td><td>19%</td></tr><tr><td>D+B+Fb 10</td><td>mixed / tooth / roams / land</td><td>6%</td><td>grass</td><td>44</td><td>0.60</td><td>43%</td><td>35%</td><td>35%</td></tr><tr><td>D+B+Fb 10</td><td>plant / no tooth / roams / bottom</td><td>6%</td><td>litter</td><td>30</td><td>0.71</td><td>1%</td><td>0%</td><td>15%</td></tr><tr><td>D+B+Fb 10</td><td>mixed / tooth / roams / shore</td><td>5%</td><td>grass</td><td>35</td><td>0.67</td><td>32%</td><td>28%</td><td>37%</td></tr><tr><td>D+B+Fb 10</td><td>plant / no tooth / roams / surface</td><td>5%</td><td>algae</td><td>31</td><td>0.71</td><td>1%</td><td>0%</td><td>11%</td></tr><tr><td>D+B+Fb 10</td><td>mixed / no tooth / roams / shore</td><td>4%</td><td>litter</td><td>32</td><td>0.70</td><td>10%</td><td>0%</td><td>42%</td></tr><tr><td>D+B+Fb 10</td><td>plant / tooth / roams / land</td><td>4%</td><td>grass</td><td>41</td><td>0.62</td><td>43%</td><td>33%</td><td>25%</td></tr><tr><td>D+B+Fb 10</td><td>mixed / no tooth / stays / bottom</td><td>3%</td><td>litter</td><td>31</td><td>0.71</td><td>2%</td><td>0%</td><td>32%</td></tr><tr><td>D+B+Fb 10</td><td>plant / tooth / roams / shore</td><td>3%</td><td>grass</td><td>36</td><td>0.66</td><td>35%</td><td>29%</td><td>24%</td></tr><tr><td>D+B+Fb 11</td><td>plant / no tooth / stays / bottom</td><td>21%</td><td>litter</td><td>31</td><td>0.71</td><td>1%</td><td>0%</td><td>7%</td></tr><tr><td>D+B+Fb 11</td><td>plant / no tooth / stays / shore</td><td>11%</td><td>litter</td><td>36</td><td>0.66</td><td>32%</td><td>8%</td><td>7%</td></tr><tr><td>D+B+Fb 11</td><td>plant / tooth / stays / land</td><td>11%</td><td>grass</td><td>55</td><td>0.54</td><td>51%</td><td>42%</td><td>19%</td></tr><tr><td>D+B+Fb 11</td><td>mixed / tooth / roams / land</td><td>9%</td><td>grass</td><td>41</td><td>0.62</td><td>45%</td><td>37%</td><td>37%</td></tr><tr><td>D+B+Fb 11</td><td>mixed / no tooth / roams / bottom</td><td>9%</td><td>litter</td><td>32</td><td>0.70</td><td>1%</td><td>0%</td><td>39%</td></tr><tr><td>D+B+Fb 11</td><td>plant / no tooth / roams / surface</td><td>8%</td><td>algae</td><td>24</td><td>0.80</td><td>0%</td><td>0%</td><td>14%</td></tr><tr><td>D+B+Fb 11</td><td>mixed / no tooth / roams / shore</td><td>5%</td><td>litter</td><td>32</td><td>0.70</td><td>10%</td><td>1%</td><td>39%</td></tr><tr><td>D+B+Fb 11</td><td>mixed / tooth / roams / shore</td><td>4%</td><td>grass</td><td>40</td><td>0.63</td><td>38%</td><td>36%</td><td>38%</td></tr><tr><td>D+B+Fb 11</td><td>plant / no tooth / roams / bottom</td><td>4%</td><td>litter</td><td>32</td><td>0.70</td><td>1%</td><td>0%</td><td>17%</td></tr><tr><td>D+B+Fb 11</td><td>mixed / tooth / stays / land</td><td>3%</td><td>grass</td><td>52</td><td>0.55</td><td>51%</td><td>41%</td><td>32%</td></tr></tbody></table></div></details><details><summary>The stage B check: the producers alone at five drift rates</summary><div class='tw'><table><thead><tr><th>drift</th><th>grass a cell</th><th>seed a cell</th><th>seed sunk</th><th>grass / wood / algae</th><th>fire a year</th><th>seed on thin ground</th><th>seed a thin cell</th></tr></thead><tbody><tr><td>0</td><td>1.121</td><td>0.479</td><td>0.0%</td><td>0.64 / 0.22 / 0.14</td><td>1.0%</td><td>3.1%</td><td>0.08</td></tr><tr><td>0.01</td><td>0.999</td><td>0.425</td><td>5.0%</td><td>0.64 / 0.20 / 0.16</td><td>1.4%</td><td>6.8%</td><td>0.15</td></tr><tr><td>0.02</td><td>0.881</td><td>0.366</td><td>9.9%</td><td>0.64 / 0.19 / 0.18</td><td>1.1%</td><td>8.8%</td><td>0.16</td></tr><tr><td>0.05</td><td>0.602</td><td>0.225</td><td>23.7%</td><td>0.61 / 0.13 / 0.26</td><td>0.9%</td><td>12.3%</td><td>0.13</td></tr><tr><td>0.2</td><td>0.183</td><td>0.042</td><td>60.1%</td><td>0.39 / 0.01 / 0.60</td><td>0.4%</td><td>20.4%</td><td>0.05</td></tr></tbody></table></div></details>
+</main>
+</body>
+</html>
