@@ -34,4 +34,18 @@ uv sync
 uv run python experiments/e001_minimal_world/report.py
 ```
 
+## Disk
+
+A run writes hundreds of MB of censuses. Now and then (and before a long batch):
+
+```
+uv run python tidy.py                    what is on disk, what could be freed (changes nothing)
+uv run python tidy.py --apply --viewer   compress the regenerable files and the viewer's recordings
+uv run python tidy.py --restore <path>   put an experiment's files back before reading them again
+```
+
+It compresses only what a run writes and a reader rebuilds (`zstd -12`, lossless, about 5x), never
+anything git tracks, never the settled worlds, never a run with a live process. `--stale` lists what is
+kept only so that an old report could be rebuilt; deleting that is a person's decision.
+
 Work is tracked in GitHub issues.
