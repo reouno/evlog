@@ -88,8 +88,8 @@ and becomes the new control if it passes, instead of being scored against the ol
 halved returns, tested by paired injection beside a control (#72, e074, e076).
 
 **No measure may be a conjunction over the censuses** (e094). A way's share of the grown bodies swings by 61% of its
-own size from census to census and the year explains a tenth of that, so asking a kind to hold 5% at every one of 65
-censuses counts 1 in a world that holds 8 ways in the mean and drives none of them out: four fifths of the failures
+own size from census to census and the year explains a tenth of that, so asking a kind to hold 5% at every one of the
+51 censuses a run is read on counts 1 in a world that holds 8 ways in the mean and drives none of them out: four fifths of the failures
 are a dip with the forms still there and five sixths come back. `kinds_held` is therefore dropped. A step is judged
 on **kinds at a census** (median 7.26 over the twelve runs read) and on **ways at 5% of the grown bodies in the mean**
 (8.0); "held" survives only as "at the line in 90% of the censuses" (3.0). The first pass line (#76: 4 kinds on 4 of

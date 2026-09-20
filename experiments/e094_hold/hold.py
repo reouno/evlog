@@ -3,8 +3,9 @@
 
 Run from the repo root: `uv run python experiments/e094_hold/hold.py` (about ten minutes on one core).
 
-The six-seed control ladder and e093's six, over the second half of each run (censuses every 1,000 steps
-from 36,000 to 100,000). e068's reading is kept exactly: a grown body's form is (lineage, birth
+The six-seed control ladder and e093's six. A run writes a census - every living body, a row each - every
+1,000 steps from 36,000; e068's reader takes the second half of them by step, so what is read here is the
+51 censuses from 50,000 to 100,000 (50,000 steps, 4.2 years at a year of 11,880, about 93 grown lifetimes). e068's reading is kept exactly: a grown body's form is (lineage, birth
 signature), a form's way of living is read over all its grown bodies in the run, and a kind is a way
 holding 5% of the grown bodies at a census. So a kind's label never moves; what moves is how many
 bodies its forms have at a census.

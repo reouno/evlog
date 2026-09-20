@@ -198,13 +198,13 @@ RUNS = [f"control {s}" for s in SEEDS] + [f"light {s}" for s in SEEDS]
 
 DIAGRAM = """
 <figure class="diagram">
-<svg viewBox="0 0 720 260" role="img" aria-label="A way of living's share wanders across the five per cent line over sixty-five censuses, so an AND over all of them reports one" style="max-width:100%;height:auto;display:block">
+<svg viewBox="0 0 720 260" role="img" aria-label="A way of living's share wanders across the five per cent line over fifty-one censuses, so an AND over all of them reports one" style="max-width:100%;height:auto;display:block">
 <defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
 <g fill="none" stroke="currentColor" stroke-width="1.2" font-size="12" font-family="system-ui, sans-serif">
   <line x1="60" y1="190" x2="660" y2="190"/>
   <line x1="60" y1="40" x2="60" y2="190"/>
   <text x="52" y="44" text-anchor="end" fill="currentColor" stroke="none">share</text>
-  <text x="360" y="212" text-anchor="middle" fill="currentColor" stroke="none">65 censuses, 64,000 steps, 5.4 years</text>
+  <text x="360" y="212" text-anchor="middle" fill="currentColor" stroke="none">51 censuses, 50,000 steps, 4.2 years</text>
   <line x1="60" y1="130" x2="660" y2="130" stroke="var(--s1)" stroke-width="1.6" stroke-dasharray="6 4"/>
   <text x="668" y="134" text-anchor="end" fill="var(--s1)" stroke="none" font-size="11" transform="translate(0,-14)">the 5% line</text>
   <path d="M60,105 C100,70 130,150 165,120 C200,92 225,160 260,140 C295,122 320,95 355,112 C390,128 415,155 450,135 C485,116 510,80 545,100 C580,118 615,140 655,118" stroke-width="1.8"/>
@@ -213,12 +213,12 @@ DIAGRAM = """
   <text x="245" y="176" text-anchor="middle" fill="currentColor" stroke="none" font-size="11">dips</text>
   <text x="435" y="176" text-anchor="middle" fill="currentColor" stroke="none" font-size="11">dips</text>
   <text x="80" y="62" fill="currentColor" stroke="none">one way of living, its forms in the world the whole time</text>
-  <text x="60" y="242" fill="currentColor" stroke="none">at a census: it counts 63 times out of 65. Held at EVERY census: it counts 0 times.</text>
+  <text x="60" y="242" fill="currentColor" stroke="none">at a census: it counts 49 times out of 51. Held at EVERY census: it counts 0 times.</text>
 </g>
 </svg>
 <figcaption>Figure 1. What the measure does. A way of living's share of the grown bodies swings by 61% of its own size
 from census to census. Counting it at a census gives what the world holds; asking it to stand over 5% at every one of
-65 censuses is an AND over 65 draws, and two dips are enough to fail it. Four fifths of the failures are a dip like
+51 censuses is an AND over 51 draws, and two dips are enough to fail it. Four fifths of the failures are a dip like
 these, with the way&apos;s birth forms still in the world, and five sixths of them come back to the line later.</figcaption>
 </figure>
 """
@@ -248,7 +248,7 @@ def bars(title, subtitle, groups, series, pct=False, rotate=False):
 # a verdict 30, a results paragraph 70, discussion 200, conclusion 80; TEXT 1,000 in all.
 TEXT = {
     "tldr": "The ways of living do not turn over - the measure turns them off. A way's share of the grown bodies "
-            "swings by 61% of its own size, so asking it to stand over 5% at every one of 65 censuses reports 1 for "
+            "swings by 61% of its own size, so asking it to stand over 5% at every one of 51 censuses reports 1 for "
             "a world that holds 8 ways in the mean and loses none of them. Four fifths of the failures are a dip; "
             "five sixths come back. Stage C's pass line has to be re-read.",
     "question": "Stage C's pass line asks for four kinds holding 5% of the grown bodies for five years. The six-seed "
@@ -260,9 +260,10 @@ TEXT = {
              "control ladder and e093's six - with e068's reading unchanged, so every number is comparable with "
              "every experiment since. A way's label never moves; what moves is how many bodies its birth forms have "
              "at a census (Figure 1).",
-    "runs": "Twelve runs, the second half of each: 65 censuses every 1,000 steps from 36,000 to 100,000, which is "
-            "5.4 years at a year of 11,880 steps and about 120 grown lifetimes. Ten minutes on one core. The "
-            "censuses were restored from the archives to read and compressed again afterwards.",
+    "runs": "Twelve runs. A run writes a census - every living body, a row each - every 1,000 steps from 36,000, "
+            "and the second half of them by step is read: 51 censuses from 50,000 to 100,000, which is 4.2 years at "
+            "a year of 11,880 steps and about 93 grown lifetimes. Ten minutes on one core; the censuses were "
+            "restored from the archives to read and compressed again afterwards.",
     "v1": "751 stretches at the line end across the twelve runs. 609 of them - 81% - end with the way's forms still "
           "in the world and only their share under 5%.", "v1w": "",
     "v2": "632 of the 751 - 84% - stand over the line again later. Only 187 fall on a census where the largest "
@@ -274,7 +275,8 @@ TEXT = {
     "h1": "A way loses the line and comes back",
     "p1": "This is the whole finding in one picture: the shares wander, and the 5% line cuts through the middle of "
           "where they wander. Seventeen ways cross the line in a run, each in three or four stretches, each over it "
-          "for 17 of the 65 censuses at the median - and not one of them over it in as many as 59. Nothing is being "
+          "for 17 of the 51 censuses at the median; 3.3 of them stand over it in 90% of the censuses and 0.9 in "
+          "every one, which is the 1. Nothing is being "
           "driven out; a number is crossing a threshold.",
     "h2": "It is not the sample and it is not the season",
     "p2": "Both alternatives are ruled out. A 5% share is read off 2,000-4,000 grown bodies, so the count is not "
@@ -287,7 +289,7 @@ TEXT = {
           "3% line: 5. At a 10% line nothing is held at all. The 1 is a property of the conjunction, not of the "
           "world.",
     "d1": "This number has stood in every sweep since e068, beside the ones that decided, and it could not have "
-          "moved: no law changes an AND over 65 draws of a wandering share. The number that does move with the world "
+          "moved: no law changes an AND over 51 draws of a wandering share. The number that does move with the world "
           "- kinds at a census - stayed at 7.3 through eleven rejected laws, and that reading stands. What we lose "
           "is the claim that stage C is far from its first pass line: on 90% of the censuses it scores 3 of the 4.",
     "d2": "The rest of the gap is untouched. The world holds about 8 ways of living against an ideal near 20, the "
@@ -313,7 +315,7 @@ PAGE = """<!doctype html>
 <body>
 <main>
 <h1>e094: is one way of living all this world keeps, or is that the measure?</h1>
-<p class="sub">Experiment report - 2026-09-21 - no runs: twelve finished censuses, 65 each, read again</p>
+<p class="sub">Experiment report - 2026-09-21 - no runs: twelve finished runs, 51 censuses each, read again</p>
 
 <section class="tldr">
 <h2>TL;DR</h2>
@@ -414,7 +416,7 @@ def main():
     c0 = [figure("The four largest ways of seed 9, census by census",
                  "Share of the grown bodies; the dashes are the 5% line. A flat line over the dashes would be a kind that holds.",
                  to_svg(fig)),
-          hist_chart("How long a way holds the line", "Stretches of consecutive censuses, all twelve runs. A run is 65 censuses, so 65 would be a kind that never dips.",
+          hist_chart("How long a way holds the line", "Stretches of consecutive censuses, all twelve runs. 51 censuses are read, so 51 would be a kind that never dips.",
                      [("stretches", [float(s["censuses"]) for s in spells], 1)], bins=range(1, 30), xlabel="censuses in a row")]
 
     # 3.2 the null and the season
@@ -424,7 +426,7 @@ def main():
                groups, [("the year", f("season"), 2)], pct=True, rotate=True)]
 
     # 3.3 the line and the conjunction
-    c2 = [bars("The same runs, counted four ways", "Medians over the twelve runs. Only the last bar is an AND over all 65 censuses.",
+    c2 = [bars("The same runs, counted four ways", "Medians over the twelve runs. Only the last bar is an AND over all 51 censuses.",
                ["at a census", "at 5% in the mean", "held in 90%", "held in every"],
                [("kinds", [st.median(f("kinds_at")), st.median(f("ways_mean5")),
                            st.median(f("almost_0.05")), st.median(f("kinds_held"))], 0)]),

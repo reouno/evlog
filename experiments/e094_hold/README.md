@@ -20,7 +20,7 @@ each asks for a different kind of work:
 ## Hypothesis
 
 Most stretches end without an extinction: the forms that made the kind are still in the world at the next
-census, and the kind comes back. The count at a census is not noise. The 1 is a conjunction over 65 censuses,
+census, and the kind comes back. The count at a census is not noise. The 1 is a conjunction over the censuses,
 not a statement about stability.
 
 ## Method
@@ -28,7 +28,9 @@ not a statement about stability.
 e068's reading is kept exactly, so the numbers are comparable with every experiment since: a grown body's form
 is (lineage, birth signature); a form's way of living is read over all its grown bodies in the run, so a way's
 label never moves; a kind is a way holding 5% of the grown bodies at a census. Over the second half of each run
-(censuses every 1,000 steps from 36,000 to 100,000, 65 of them, 5.4 years at a year of 11,880):
+(a run writes a census - every living body, a row each - every 1,000 steps from 36,000, and e068's reader takes
+the second half of them by step: **51 censuses from 50,000 to 100,000**, 4.2 years at a year of 11,880 and about
+93 grown lifetimes):
 
 - **How long a way holds the line**: the maximal stretches of consecutive censuses, in censuses, steps, years
   and grown lifetimes (535 steps, e087). The same for a single birth form.
@@ -67,7 +69,7 @@ Medians over the twelve runs (control and light read alike; they differ nowhere 
 | held in 90% of the censuses, line 5% / 3% | 3.0 / 5.5 | 3.5 / 5.0 | **3.0 / 5.0** |
 | a way's share: sd over mean | 0.59 | 0.65 | **0.61** |
 | of that swing, what the year explains | 0.09 | 0.14 | **0.10** |
-| changes of the largest lineage over 65 censuses | 13 | 10 | 10 |
+| changes of the largest lineage over the 51 censuses | 13 | 10 | 10 |
 
 **It flickers.** Over the twelve runs a stretch at the line ends 751 times. **609 of them (81%) end with the
 way's forms still in the world** and only their share under 5%; 142 (19%) lose their forms. **632 (84%) come
@@ -75,8 +77,8 @@ back to the line later.** Only 187 (25%) fall on a census where the largest line
 
 **A stretch is short**: 2,000 steps at the median - 0.17 of a year, four grown lifetimes - with a p90 of 12
 censuses. A single birth form holds the line for one census at the median. Per run, 17 ways cross the line, in
-3.5 stretches each, and a way stands over it for 17.5 of the 65 censuses at the median (p90 50). **In no run is
-any way over the line in as many as 59 of the 65 censuses**, which is what "held" asks for at every one.
+3.5 stretches each, and a way stands over it for 17.5 of the 51 censuses at the median (p90 50). Per run **3.3
+ways stand over it in 90% of the censuses and 0.9 in every one** - which is the 1 that `kinds_held` reports.
 
 **The count is not noise.** Resampling each census's grown bodies from its own composition gives 7.26 kinds at
 a census and 1.0 held, the same numbers. The 5% share is read off 2,000-4,000 grown bodies; the swing is in the
@@ -86,12 +88,12 @@ world, not in the sample.
 the year explain a tenth of it.
 
 **The line and the conjunction are what make the 1.** The world holds **8 ways at 5% in the mean** and 16-19
-ever reach it. Asking for 5% at *every one of 65* censuses leaves 1. Asking for 5% in 90% of them leaves 3; at
+ever reach it. Asking for 5% at *every one of the 51* censuses leaves 1. Asking for 5% in 90% of them leaves 3; at
 a 3% line, 5. At a 10% line nothing is held at all and only 3.0 kinds stand at a census.
 
 ## Conclusion
 
-**The ways of living do not turn over; the measure turns them off.** `kinds_held` is a conjunction over 65
+**The ways of living do not turn over; the measure turns them off.** `kinds_held` is a conjunction over 51
 censuses of a share that swings by 61% of its own size, so it reports 1 for a world that holds 8 ways in the
 mean and never loses them - four fifths of the losses are a share dipping under the line, and five sixths come
 back. It is a measure, not a property, and no law will move it.
