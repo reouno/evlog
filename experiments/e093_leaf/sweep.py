@@ -39,7 +39,6 @@ e075 = load("e075_sweep", os.path.join(ROOT, "experiments", "e075_hunt", "sweep.
 e092 = load("e092_sweep", os.path.join(ROOT, "experiments", "e092_yardstick", "sweep.py"))
 kinds = e075.kinds
 
-LED = 0.5    # a kind whose grown bodies took this share of their matter from the light lives by it
 SHARE = 0.05  # of the grown bodies, e060's line for a kind
 SEEDS = [9, 10, 11, 12, 13, 14]
 CTL = {s: os.path.join(ROOT, "experiments", "e081_drink" if s < 12 else "e092_yardstick", "results", "ladder",
@@ -76,7 +75,7 @@ def light_of(pre, run, unit, ways):
             continue
         got = [kinds.census.light_share(r) for r in rs]
         got = [g for g in got if g is not None]
-        if got and st.mean(got) >= LED:
+        if got and st.mean(got) >= kinds.census.LIGHT:
             led.append(w)
             in_led += len(rs)
             open_led += [kinds.open_soft(r) / max(float(r["size"]), 1) for r in rs]

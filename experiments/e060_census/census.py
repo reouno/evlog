@@ -31,6 +31,7 @@ EXP = os.path.dirname(HERE)
 
 GROWN = 300          # steps of age
 FLESH = (1 / 3, 2 / 3)
+LIGHT = 0.5          # e093 (#103): a body or a group that took this share of its matter from the light lives by it
 TOOTH = 2            # force behind a hard tip
 ROAM = 8.0           # world cells from the birthplace
 SHARE = 0.05         # of the grown bodies
@@ -72,7 +73,7 @@ def way(r, roam=True):
         return None
     # e093 (#103): a body that took most of its matter from the light lives by the light, whatever
     # the rest of it ate. Without the column (every run before e093) this reads as it always did.
-    if lt is not None and lt >= 0.5:
+    if lt is not None and lt >= LIGHT:
         diet = "light"
     elif f is None:
         return None

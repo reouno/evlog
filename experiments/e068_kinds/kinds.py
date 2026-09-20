@@ -90,6 +90,11 @@ def way_of(ds, keep=KEEP):
     meat = sum(float(d["meat"]) for d in ds)
     flesh = meat / (plant + meat) if plant + meat else 0.0
     diet = "plant" if flesh < census.FLESH[0] else "flesh" if flesh > census.FLESH[1] else "mixed"
+    # e093 (#103): a group that took most of its matter from the light lives by the light, whatever
+    # the rest of it ate. A run with no light column reads 0 and the diet is the one e068 read.
+    light = sum(float(d.get("light") or 0.0) for d in ds)
+    if light > 0.0 and light >= census.LIGHT * (plant + meat + light):
+        diet = "light"
     tooth = "tooth" if st.median(int(float(d["bite_any"])) for d in ds) >= census.TOOTH else "no tooth"
     roams = "roams" if st.median(float(d["travel"]) for d in ds) >= census.ROAM else "stays"
     m, v = Counter(d["medium"] for d in ds).most_common(1)[0]
