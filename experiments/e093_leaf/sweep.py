@@ -40,6 +40,7 @@ e092 = load("e092_sweep", os.path.join(ROOT, "experiments", "e092_yardstick", "s
 kinds = e075.kinds
 
 SHARE = 0.05  # of the grown bodies, e060's line for a kind
+PROV = []  # e094 (#106): what each reading actually used, written beside the results
 SEEDS = [9, 10, 11, 12, 13, 14]
 CTL = {s: os.path.join(ROOT, "experiments", "e081_drink" if s < 12 else "e092_yardstick", "results", "ladder",
                        f"c1225_life{s}_" + ("u0" if s < 12 else "ctl")) for s in SEEDS}
@@ -126,6 +127,7 @@ def bodies_of(seed, pre, least=0.03):
 
 def read(seed, pre):
     run = kinds.Run(f"seed{seed}", pre)
+    PROV.append(kinds.provenance(run))
     unit = run.forms()
     ways = kinds.by_group(run, unit, run.does())
     row, ks = e075.read_run(f"seed{seed}", pre)
@@ -173,6 +175,14 @@ def main():
             w = csv.DictWriter(f, fieldnames=list(bodies[0]))
             w.writeheader()
             w.writerows(bodies)
+    if PROV:
+        p = PROV[0]
+        print(f"\nwhat was read: {p['censuses']} censuses every {p['every']:,} steps, {p['from']:,} to "
+              f"{p['to']:,}; a kind is {p['kind_share']:.0%} of the bodies aged {p['grown_age']}+")
+        with open(os.path.join(HERE, "results", "provenance.csv"), "w", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=list(p))
+            w.writeheader()
+            w.writerows(PROV)
     rows = out.get("control", []) + out.get("light", [])
     if not rows:
         return

@@ -28,6 +28,8 @@ from collections import Counter, defaultdict
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 EXP = os.path.dirname(HERE)
+sys.path.insert(0, os.path.dirname(EXP))
+from analysis import schema  # noqa: E402  (the guard: a column no reader has classified stops the reading)
 
 GROWN = 300          # steps of age
 FLESH = (1 / 3, 2 / 3)
@@ -94,8 +96,9 @@ def place_of(r):
 def kind(r):
     """#66's shape kind: size class and block mix in quarters, from the birth shape where the run
     has it (e058 on), else from the current shape."""
+    # e094: the kinds of block are read off the census, so a new one needs no line here.
     pre = "born_" if "born_hard" in r else ""
-    kinds = KINDS + ([LEAF] if pre + LEAF in r else [])
+    kinds = schema.blocks(list(r)) or KINDS
     c = [float(r[pre + k]) for k in kinds]
     n = sum(c)
     if n <= 0:
@@ -106,10 +109,13 @@ def kind(r):
 # ---------------------------------------------------------------- a world
 
 def read(path):
-    """The rows of agents.csv by census step."""
+    """The rows of agents.csv by census step, once every column of it has been classified."""
     by = defaultdict(list)
     with open(path) as f:
-        for r in csv.DictReader(f):
+        rows = csv.DictReader(f)
+        for r in rows:
+            if not by:
+                schema.check(rows.fieldnames, os.path.basename(path))
             by[int(r["step"])].append(r)
     return dict(sorted(by.items()))
 

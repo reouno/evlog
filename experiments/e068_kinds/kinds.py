@@ -30,7 +30,9 @@ import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
 sys.path.insert(0, os.path.join(ROOT, "experiments", "e060_census"))
+sys.path.insert(0, ROOT)
 import census  # noqa: E402  (e060's census of ways of living)
+from analysis import schema  # noqa: E402  (e094: the blocks of a form are read off the census)
 
 RUNS = [
     ("e065", os.path.join(ROOT, "experiments", "e065_layers", "results", "c1225_life9_water")),
@@ -48,17 +50,17 @@ SWEEP = [(0.8, 20), (0.95, 20), (0.9, 10), (0.9, 50)]  # (KEEP, FORM)
 
 # ---------------------------------------------------------------- one body
 
-def signature(r):
-    # e093 (#103): the leaf blocks a body is born with part its form too. A run with no leaf column
-    # reads 0 for every body, so the signature is the one e068 read.
-    return (int(r["side"]), int(r["born_hard"]), int(r["born_muscle"]), int(r["born_sensor"]),
-            int(r["born_digestive"]), int(r.get("born_leaf") or 0), int(r["born_bite"]), r["density"])
+def signature(r, born=None):
+    """A body's birth signature. e094: which blocks part a form is read off the census's own columns
+    (`born` from `analysis.schema`), so a new kind of block parts the forms with no line rewritten."""
+    born = born if born is not None else schema.born(list(r))
+    return (int(r["side"]), *(int(r[b]) for b in born), int(r["born_bite"]), r["density"])
 
 
-def traits(r):
+def traits(r, born=None):
+    born = born if born is not None else schema.born(list(r))
     n = float(r["born_size"])
-    return [math.log(n), int(r["born_hard"]) / n, int(r["born_muscle"]) / n, int(r["born_sensor"]) / n,
-            int(r["born_digestive"]) / n, int(r.get("born_leaf") or 0) / n, float(r["born_bite"]),
+    return [math.log(n), *(int(r[b]) / n for b in born), float(r["born_bite"]),
             float(r["density"]), float(r["side"])]
 
 
@@ -108,19 +110,21 @@ class Run:
         self.name = name
         agents = census.read(pre + "_agents.csv")
         self.steps = census.late(list(agents))
+        first = next((rs[0] for rs in agents.values() if rs), None)
+        self.born = schema.born(list(first) if first else [])  # the blocks this run's census names
         self.grown = [r for s in self.steps for r in census.grown(agents[s]) if census.way(r)]
         # A signature's bodies share one exact density, so one layer; `density` is printed to 3 decimals and many
         # lineages sit at 1.000, so the layer is read from where the signature's bodies in the water stand.
         wet = defaultdict(Counter)
         for r in self.grown:
             if r["medium"] != "0":
-                wet[signature(r)][r["medium"] == "1"] += 1
+                wet[signature(r, self.born)][r["medium"] == "1"] += 1
         self.mixed_layers = sum(len(c) > 1 for c in wet.values())
-        self.light = [wet[signature(r)].most_common(1)[0][0] if wet.get(signature(r)) else float(r["density"]) < 1 for r in self.grown]
+        self.light = [wet[signature(r, self.born)].most_common(1)[0][0] if wet.get(signature(r, self.born)) else float(r["density"]) < 1 for r in self.grown]
         self.groups = defaultdict(list)  # (lineage, lighter than water) -> body indices
         for i, r in enumerate(self.grown):
             self.groups[(r["lineage"], self.light[i])].append(i)
-        t = np.array([traits(r) for r in self.grown])
+        t = np.array([traits(r, self.born) for r in self.grown])
         sd = t.std(0)
         self.traits = (t - t.mean(0)) / np.where(sd > 0, sd, 1)
         self.at = defaultdict(list)
@@ -133,9 +137,9 @@ class Run:
         if minimum not in self._forms:
             of = [None] * len(self.grown)
             for (lineage, _), idx in self.groups.items():
-                sigs = Counter(signature(self.grown[i]) for i in idx)
+                sigs = Counter(signature(self.grown[i], self.born) for i in idx)
                 keys = [s for s, v in sigs.items() if v >= minimum] or [sigs.most_common(1)[0][0]]
-                centre = np.array([self.traits[[i for i in idx if signature(self.grown[i]) == s]].mean(0) for s in keys])
+                centre = np.array([self.traits[[i for i in idx if signature(self.grown[i], self.born) == s]].mean(0) for s in keys])
                 near = ((self.traits[idx][:, None, :] - centre[None]) ** 2).sum(-1).argmin(1)
                 for i, k in zip(idx, near):
                     of[i] = (lineage, keys[k])
@@ -157,6 +161,33 @@ class Run:
     def tally(self, unit, ways):
         """Grown bodies by kind at each census; unit[i] is body i's group and ways[group] its way."""
         return {s: Counter(ways[unit[i]] for i in self.at[s]) for s in self.steps}
+
+
+def provenance(run):
+    """e094 (#106): what a reading of `run` actually used - the censuses, the window, the blocks the
+    census named, and every threshold a body was classified by. A sweep writes this beside its
+    results and a report prints it, so no prose can drift from the code again (e094 said 65 censuses
+    from 36,000 where the reader takes the second half by step, 51 from 50,000).
+    """
+    steps = sorted(run.steps)
+    every = min((b - a for a, b in zip(steps, steps[1:])), default=0)
+    return {"run": run.name, "censuses": len(steps), "from": steps[0] if steps else 0,
+            "to": steps[-1] if steps else 0, "every": every,
+            "span": (steps[-1] - steps[0]) if steps else 0,
+            "grown_bodies": len(run.grown), "blocks": "|".join(b[len("born_"):] for b in run.born),
+            "grown_age": census.GROWN, "kind_share": census.SHARE, "flesh_lo": census.FLESH[0],
+            "flesh_hi": census.FLESH[1], "light_share": census.LIGHT, "tooth": census.TOOTH,
+            "roam": census.ROAM, "keep_to_a_place": KEEP, "bodies_for_a_form": FORM}
+
+
+def write_provenance(path, runs):
+    """`runs`: the `Run`s a sweep read. Writes one row each and returns the rows."""
+    rows = [provenance(r) for r in runs]
+    with open(path, "w", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=list(rows[0]))
+        w.writeheader()
+        w.writerows(rows)
+    return rows
 
 
 def kinds(tallies):
@@ -344,11 +375,11 @@ def main():
         modal_null = st.mean(mean_count(modal_forms(run, DOES, s)[0]) for s in range(1, NULLS + 1))
         unit = run.forms()
         ways = by_group(run, unit, run.does())
-        sig_count = Counter(signature(r) for r in run.grown)
+        sig_count = Counter(signature(r, run.born) for r in run.grown)
         row = {
             "run": name, "censuses": len(run.steps), "grown": len(run.grown) / len(run.steps),
             "lineages": len({r["lineage"] for r in run.grown}), "forms": len(set(unit)), "mixed_layers": run.mixed_layers,
-            "in_forms": sum(sig_count[signature(r)] >= FORM for r in run.grown) / len(run.grown),
+            "in_forms": sum(sig_count[signature(r, run.born)] >= FORM for r in run.grown) / len(run.grown),
             "body_medium": mean_count(body), "body_medium_null": body_null,
             "lineage_e060": lineage_e060(run), "lineage": mean_count(lin), "lineage_held": len(lin_held),
             "modal_form": mean_count(modal), "modal_form_null": modal_null,

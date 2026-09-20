@@ -29,6 +29,7 @@ ROOT = os.path.dirname(os.path.dirname(HERE))
 sys.path.insert(0, os.path.join(ROOT, "experiments", "e068_kinds"))
 import kinds  # noqa: E402
 
+PROV = []         # what each reading actually used (kinds.provenance), written beside the results
 SHARE = 0.05      # of the grown bodies: e060's line for a kind
 LINES = (0.03, 0.05, 0.10)  # the line, and what a looser and a tighter one would count
 ALMOST = 0.9      # "held" loosened: a kind at the line in this share of the censuses
@@ -75,6 +76,7 @@ def by_quarter(steps, share):
 
 def read(name, pre):
     run = kinds.Run(name, pre)
+    PROV.append(kinds.provenance(run))
     unit = run.forms()
     ways = kinds.by_group(run, unit, run.does())
     steps = list(run.steps)
@@ -191,7 +193,8 @@ def main():
               f"null held {row['null_held']:.1f}")
     if not rows:
         return
-    for name, data in (("holds", rows), ("census", censuses), ("spells", sps), ("events", evs), ("shares", shares)):
+    for name, data in (("holds", rows), ("census", censuses), ("spells", sps), ("events", evs),
+                       ("shares", shares), ("provenance", PROV)):
         with open(os.path.join(HERE, "results", f"{name}.csv"), "w", newline="") as f:
             w = csv.DictWriter(f, fieldnames=list(data[0]))
             w.writeheader()
@@ -223,6 +226,9 @@ def main():
           f"{sum(e['comes_back'] for e in evs)} come back later; "
           f"{sum(e['top_changed'] for e in evs)} fall on a change of the largest lineage")
     steps = [s["steps"] for s in sps]
+    p = PROV[0]
+    print(f"\nwhat was read: {p['censuses']} censuses every {p['every']:,} steps, {p['from']:,} to {p['to']:,} "
+          f"(a span of {p['span']:,} steps); a kind is {p['kind_share']:.0%} of the bodies aged {p['grown_age']}+")
     print(f"a stretch lasts {st.median(steps):,.0f} steps at the median "
           f"({st.median(steps) / YEAR:.2f} years, {st.median(steps) / LIFE:.0f} grown lifetimes)")
 

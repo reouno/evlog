@@ -81,10 +81,27 @@ Record seed, parameters, and results. Use `experiments/TEMPLATE.md`.
 Each experiment also ships a `report.html`. Build it with the `experiment-report` skill,
 and keep it inside the skill's word budgets: a report is read only if it is short.
 
+## Measuring
+
+Fix as shared code only what decides **how a body is classified** - it has changed twice in thirty experiments.
+What a particular law means stays in that experiment's `sweep.py` and is not built out.
+
+- `analysis/` holds the schema of a census and the audit of a run, and depends on no experiment.
+- **A census column no reader has classified stops the reading** (`analysis/schema.py`). When a crate starts
+  writing something new, the analysis fails loudly instead of counting the world wrong in silence.
+- The blocks a birth form is parted by are read off the census's own columns, so a new kind of block needs no
+  line of analysis rewritten.
+- Every sweep writes `results/provenance.csv` - the window it read and every threshold it classified by - and
+  its report prints it. What a README or a report says about a reading is quoted from that file, never from
+  memory (e094 said 65 censuses where the reader takes 51).
+- After a batch, before reading anything: `uv run python analysis/audit.py <results dir>`.
+
 ## Layout
 
 Cargo workspace. Each experiment is its own crate: `experiments/eNNN_<name>/` with a `README.md` based on the template.
-Experiments are disposable. Shared code moves to a separate crate only after it survives several experiments.
+Experiments are disposable, but `analysis/`, `experiments/e060_census/census.py` and `experiments/e068_kinds/kinds.py`
+are not: every reading since e068 goes through them. Shared code moves out of an experiment only after it survives
+several of them.
 
 Run: `cargo run --release -p eNNN_<name>`
 

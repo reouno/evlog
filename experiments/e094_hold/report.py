@@ -385,6 +385,8 @@ PAGE = """<!doctype html>
 <p>The full tables are in <code>results/holds.csv</code> (a row a run), <code>results/spells.csv</code> (a row a
 stretch), <code>results/events.csv</code> (a row an end) and <code>results/census.csv</code>. Build with
 <code>uv run python experiments/e094_hold/hold.py</code>, then <code>report.py</code>.</p>
+<p><strong>What was read</strong> (from <code>results/provenance.csv</code>, written by the reading itself so that
+this page cannot drift from it): {prov}</p>
 {tables}
 </main>
 </body>
@@ -457,8 +459,17 @@ def main():
 
     LABEL = {"": "Yes", "no": "No", "partly": "Partly"}
     labels_v = {f"v{i}w_label": LABEL[TEXT[f"v{i}w"]] for i in (1, 2, 3, 4)}
+    p = rows("provenance.csv")[0]
+    prov = (f"{p['censuses']} censuses every {int(p['every']):,} steps, {int(p['from']):,} to {int(p['to']):,} "
+            f"(a span of {int(p['span']):,} steps), in each run. A body counts from age {p['grown_age']}; a kind "
+            f"holds {float(p['kind_share']):.0%} of the grown bodies; a diet is plant under "
+            f"{float(p['flesh_lo']):.2f} of flesh and flesh over {float(p['flesh_hi']):.2f}, or light over "
+            f"{float(p['light_share']):.0%}; a tooth is a force of {p['tooth']}; a body roams at {p['roam']} cells; "
+            f"a form keeps to a place at {float(p['keep_to_a_place']):.0%} and needs "
+            f"{p['bodies_for_a_form']} grown bodies; the blocks a form is parted by are "
+            f"{p['blocks'].replace('|', ', ')}.")
     page = PAGE.format(css=CSS, diagram=DIAGRAM, c0="".join(c0), c1="".join(c1), c2="".join(c2),
-                       table=table, tables=tables, **TEXT, **labels_v)
+                       table=table, tables=tables, prov=html.escape(prov), **TEXT, **labels_v)
     import re
     words = len(re.sub(r"<[^>]+>", " ", page.split("<h2>Appendix")[0].split("</style>")[1]).split())
     out = os.path.join(HERE, "report.html")
