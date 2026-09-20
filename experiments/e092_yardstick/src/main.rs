@@ -2688,6 +2688,7 @@ fn main() {
             let (line, point) = sim.log_row((step - 1) % LOG_INTERVAL + 1, matter0, last.elapsed().as_secs_f64());
             last = Instant::now();
             writeln!(log, "{line}").unwrap();
+            log.flush().unwrap(); // #105: the log is what a running batch is watched by, so it goes to disk now
             if step % (10 * LOG_INTERVAL) == 0 || extinct {
                 eprintln!(
                     "step {step}: {} bodies, {} lineages, {:.2} ms a step (world {:.2}, bodies {:.2}, lineages {:.2}), matter err {:.1e}",

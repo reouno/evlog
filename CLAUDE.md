@@ -60,6 +60,9 @@ Every experiment must state, before starting:
 - **Purpose**: why we do this
 - **Hypothesis**: what we expect
 - **Method**: what we verify and how (compare, measure, check feasibility, ...)
+- **Stop early if** (when a run can be judged before it ends): each rule a log column, a threshold and a
+  step (`- pop < 500 at 20000`), read by `watch.py`. Only failed preconditions - the world does not stand,
+  the law's mechanism never engages - never the measure the experiment is judged by.
 
 A law that needs a behavior is tested in a world where that behavior already pays: name the two
 conditions together ("Y pays when A and B") and run the minimal combination, not a factorial.
