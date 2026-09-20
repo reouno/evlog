@@ -4,7 +4,7 @@ The ideal world, today's world against it, and the next piece of work. Read it b
 update it after every experiment (`CLAUDE.md`, Documents). History is not kept here: it is in each experiment's
 README and in git.
 
-Last updated: 2026-09-20 (after e092: the yardstick is six seeds wide and the judging is written down; the next piece is P3).
+Last updated: 2026-09-20 (after e093: light pays for a face, a face is not room; P3 step 1 spent).
 
 ## 1. The ideal
 
@@ -60,7 +60,7 @@ rest it holds back.
 
 | element | ideal | today | gap |
 |---|---|---|---|
-| parts | parts whose worth depends on where they sit and how they move | 4 block kinds on a 2D grid of side 4-16; every block pays best packed, so bodies fill their grids (#52, e047) | **large** |
+| parts | parts whose worth depends on where they sit and how they move | 4 block kinds on a 2D grid of side 4-16; every block pays best packed, so bodies fill their grids (#52, e047). A fifth that gains by its faces open to the air (#103, `light_gain` 0.016, not in the default world) parts a kind on three seeds of six, and its bodies are the first in this world that are not filled rectangles - a hollow frame, a bar one block wide, 1.38-1.62 open faces a block against 0.94. They live only in the water: on land an open face is a water bill (e093) | **large** |
 | size | a thousandfold range, each size with its place | 21-35 blocks; winners differ 1.3-2.2x (e055, e075). Fiber digested over time (Fb, not kept) makes grass eaters 14-27% heavier and slower, with no new kind (e089); at a harsher rate (0.8 fiber, ferment 0.005) they do not grow at all - grass falls to a fifth of what is eaten and the bodies leave it (e090) | large |
 | life history | lives that span seasons; fat and dormancy chosen by selection | breeding values fixed (from the genome they cost kinds, e069); fat from the genome (e072); a cold body can go torpid (Q, not in the default world, e087) | medium |
 
@@ -87,7 +87,7 @@ rest it holds back.
 | ways of living | many; the user asked for about 20 (2026-09-11) | 7.53 kinds at a census, 4.35 kept to a place, over the six-seed ladder (e092); no plant law since has raised the count on any seed (e088-e091) | **large** |
 | dominance | no line above a fifth of the animals | the largest line holds 42-78% of the land's bodies, by the seed (e092) | large |
 | food web | three or more levels; hunters of several kinds | kills are 27% of what bodies eat; the largest land kind takes half its food from kills; pure flesh kinds 2-4% (e075) | medium |
-| crowding | numbers limited by food, hunters and seasons | numbers limited by room: **46-49% of children have no room and 44-51% of moves are blocked, in every one of six seeds** (e092; e070 read 24-33% in its world); without the hunter the grazers double (e076) | **large** |
+| crowding | numbers limited by food, hunters and seasons | numbers limited by room: **46-49% of children have no room and 44-51% of moves are blocked, in every one of six seeds** (e092; e070 read 24-33% in its world); without the hunter the grazers double (e076). Room is counted in blocks, not in outline, so a law that pays per open face does not thin it: under the light the crowd is 1.05 bodies a cell against 1.04, and 1.76-2.18 where the light-led kinds stand (e093) | **large** |
 | cycles over time | predator and prey swing; seasons move numbers | the land's bodies swing twofold over a year; forms do not follow (e070) | medium |
 
 ### G. Cycles of the world
@@ -113,7 +113,10 @@ rest it holds back.
    there ate the new food (e089, e090) or filled the new place with the light tail of their own forms (e091).
    Nearly half of all births fail for want of room (46-49%) and 44-51% of moves are blocked, and those are the
    numbers the six seeds agree on (e092). A new axis has to thin the crowd, or make a place differ over more
-   ground than a body covers, or it is averaged away.
+   ground than a body covers, or it is averaged away. **What will not thin it**: a law that pays a body per unit
+   of its outline. Room here is counted in blocks - one block, one sub-cell, whatever sits around it - so
+   spreading buys faces and no room, and the light's own kinds stand twice as thick as the world (e093). A law
+   that thins the crowd has to make one body's income fall when another arrives on its cell.
 
 The dominant line may still follow from 1 and 2: the best eater of the one food spreads. **Judged how**: the ten
 laws rejected since e075 were read on three seeds against a line (+1 kind) no larger than the spread the seeds make
@@ -154,6 +157,13 @@ Each holds under the conditions it was found in.
   terrain how far the refuge is (e086).
 - A body that can wait lives through a winter it meets, and then does not move (e087). What ends a grown life is
   the crowd's income, wherever it lives, not the season (e037, e038, e087).
+- A material whose worth is set by the shape a genome develops does part kinds - where its counterweights leave
+  it somewhere to live. The light parted a kind on three seeds of six and only in the water, because on land an
+  open face is a water bill (e093). It is P2's law from the other side: the thing a body must be born with was
+  the open face, and the place where it pays was the water.
+- A law whose income does not fall as the crowd grows has no middle. One step of the ladder separates a light
+  that earns less than a block's upkeep from a light that makes the whole world a mat of 11-block bodies and
+  halves the ways of living (e093).
 - The seed re-draws the world, so a law's effect on one seed carries the control's draw as well as its own: six runs
   of the same world spread 1.02 kinds and 1.24 placed kinds, and each law's own three spread as widely (e092). Read
   a distribution against a distribution, and keep the categorical questions for the deciding.
@@ -181,15 +191,22 @@ hunters, and travel of 20-26 cells where the floor's bodies manage 4-7 - and no 
 is the reason: mass is moved within a life by damage and fat, so the crown holds the broken bodies of forms that live
 below (born at 44-48, counted at 36-37, nine blocks lost), and nothing about it is inherited. Kinds fall on two seeds.
 
-**Next, as #103 (P3's first piece): a block that eats the light.** Light falls on a body's exposed faces, so its
-worth is set by the shape a genome develops and by nothing a body can change while it lives - which is what P2's
-law asks for - and every counterweight is already in the world (an open face loses water, loses heat, and is what a
-tooth breaks). It is also the crowd's side: a body that lives by its faces takes more room per unit of income, so
-where it wins the crowd thins. The two are done-whens of the same piece. **#102 is done (e092)**: the ladder is six
-seeds wide, the judging is in `foundation.md`, and the crowd it measured - nearly half of all births failing for want
-of room, in every seed - is what #103 is aimed at. Afterwards, once the crowd has moved, #104 re-tests P2's foods
-there. While the runs of #103 are out, #105 makes a long batch watchable from outside (a flushed log, a status
-reader, and stop rules declared before the runs start, about failed preconditions only).
+**P3 step 1 spent 2026-09-20 with e093 (#103): a block that eats the light, not kept.** A fifth block kind gains
+matter for each of its faces open to the air, times the light on its cell, out of that cell's soil. At the one rate
+the ladder leaves (`light_gain` 0.016; 0.008 earns under a block's upkeep, 0.032 makes the world a mat of 11-block
+bodies and halves the kinds) it parts a light-led kind on three seeds of six and gives this world its first bodies
+that are not filled rectangles - a hollow frame, a bar one block wide, 1.38-1.62 open faces a block against 0.94.
+Every one of those kinds lives in the water, because on land an open face is a water bill (e067). Kinds do not rise
+(7.02 against 7.53, inside the spread) and **the crowd does not thin**: 1.05 bodies a cell against 1.04, and
+1.76-2.18 where the light-led kinds stand. That was the piece's own wrong-if, and it says why the crowd is not
+broken this way (section 3, item 4). **#102 is done (e092)** and **#105 is done**: the ladder is six seeds wide, the
+judging is in `foundation.md`, and a long batch is watchable from outside.
+
+**The next step of P3, not yet designed as a cycle:** the one law left out of e093 on purpose - bodies that shade
+each other and the cell under them, which turns the light from an income each face draws into a flux the bodies on
+a cell share, so that one body's income falls when another arrives. It is the only form of the light that could
+thin the crowd, and it is also the first law of this world in which a body is a place for another body. #104
+(re-testing P2's foods in a thinner crowd) still waits on a crowd that has moved.
 
 | piece | fills | contains |
 |---|---|---|

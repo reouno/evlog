@@ -28,7 +28,9 @@ cheapest layer. `principles.md` holds throughout: laws are about materials and t
   10-step clock; wood shades what grows under it; fire burns dry standing matter and spreads (e062).
 - **Bodies**: a genome of 512 bases develops blocks (hard, muscle, sensor, gut) on a grid of side 4-16 and a linear
   reflex policy (e002-e004); weight and density (e025); contact and force at four sub-cells a cell, a softer face
-  broken by the muscle behind a pressing line (e010, e014, e015); moves paid as work and made with chance muscle over
+  broken by the muscle behind a pressing line (e010, e014, e015). A block holds one sub-cell whatever sits around
+  it, so the room a body takes is its block count and not its outline: a law that pays per open face buys a body
+  faces and no room (e093); moves paid as work and made with chance muscle over
   mass (e048); a store of fat, strict upkeep, wear, connection, a clock that slows heavy bodies (e030-e055); a child
   from a mate within 6 genes. One scale s = 1/16 converts a body's matter to the world's (e064).
 - **The material trade-offs** of section 2.
@@ -75,8 +77,10 @@ of 96 candidates pass, and no draw of the rates passes on more than two worlds. 
 wood 0.0017, algae 0.009112, ignite 1.613e-6) on c1225. A candidate costs about 8 minutes at 512.
 
 **Stage C, bodies.** Judged by kinds of living by birth form (e068) at a census and kept to a place, on **six seeds
-(9-14)**, read as a distribution against the control ladder's - median and spread - never as "+1 kind on every seed",
-and with the effect's spread across seeds recorded beside the effect. The ladder's own count spreads 1.02 kinds
+(9-14)**. A birth form counts a body's blocks of every kind, and a group that took half its life's matter from one
+food that is not a plant or flesh lives by that food (`census.LIGHT`, e093). Read as a distribution against the
+control ladder's - median and spread - never as "+1 kind on every seed", and with the effect's spread across seeds
+recorded beside the effect. The ladder's own count spreads 1.02 kinds
 (median 7.53) and its kinds kept to a place 1.24 (median 4.35), so an effect of one kind is not readable at all
 (e092). The categorical done-whens - is there a kind led by the new food, does a form keep to the new place - are not
 noise-limited and decide as before. A piece meant to replace the world (e072's shape) is judged on its own measures
