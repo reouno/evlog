@@ -101,8 +101,100 @@ runs at once, about 1.5 hours. Nothing on the Ubuntu box.
 
 ## Result
 
-(to come)
+Every run stood its 100,000 steps and the ledger drifts by at most 4.5e-14. A step costs 20-32 ms
+against the control's 24-39: the light is one pass over a body's leaf blocks and is free.
+
+**The rate ladder** (seed 9, 40,000 steps; the control's own row at 40,000 beside it). `light_gain` is
+what a face open to the air earns in full light; the sun's height averaged over day and night is about a
+quarter of full, so a face earns about a quarter of the rate.
+
+| light_gain | 0 (ctl) | 0.0005 | 0.001 | 0.002 | 0.004 | 0.008 | 0.016 | 0.032 |
+|---|---|---|---|---|---|---|---|---|
+| bodies | 10,253 | 7,596 | 9,563 | 9,803 | 9,634 | 10,497 | 11,621 | 50,161 |
+| blocks a body | 27.6 | 35.1 | 28.7 | 26.6 | 28.3 | 24.6 | 25.1 | 10.8 |
+| leaf blocks | 0 | 0.35 | 0.33 | 0.39 | 0.33 | 0.67 | 0.98 | 3.71 |
+| light's share of what is eaten | 0% | 0.0% | 0.1% | 0.1% | 0.2% | 1.3% | **4.8%** | 71.4% |
+| grown bodies led by the light | 0% | 0% | 0% | 0% | 0% | 1.1% | **10.4%** | 74.3% |
+| bodies a cell held | 1.07 | 1.05 | 1.06 | 1.05 | 1.05 | 1.07 | 1.08 | 2.00 |
+
+Under 0.008 a leaf block earns less than its own upkeep and the blocks that appear are mutations nobody
+keeps. At 0.032 the light is the world: bodies of 10.8 blocks, three quarters of them led by the light,
+two bodies a cell instead of one, and 66% of moves blocked - and the ways of living collapse, 4.0 kinds
+at a census and 3 kept to a place against the control's 7.53 and 4.35. That run was stopped after its
+first censuses (21,000 steps): it had answered. **0.016 is the rate the ladder picks** and the batch's.
+
+**The batch** (`light_gain` 0.016, seeds 9-14, 100,000 steps, against the control ladder's six):
+
+| measure | control | light | effect | control spread | light spread |
+|---|---|---|---|---|---|
+| kinds at a census | 7.53 | 7.02 | -0.51 | 1.02 | 1.57 |
+| kinds kept to a place | 4.35 | 3.74 | -0.62 | 1.24 | 1.41 |
+| kinds led by the light | 0 | 0 | 0 | 0 | 2 |
+| grown bodies in them | 0% | 2.9% | +2.9% | 0% | 15.5% |
+| open faces a block, in them | - | 0.69 | - | - | 1.62 |
+| open faces a block, all | 0.94 | 1.02 | +0.07 | 0.15 | 0.12 |
+| bodies a cell held | 1.04 | 1.05 | +0.01 | 0.02 | 0.04 |
+| where the light-led stand | - | 0.88 | - | - | 2.18 |
+| the largest line's share | 54.9% | 62.6% | +7.7% | 35.5% | 15.0% |
+| kills' share of what is eaten | 27.8% | 30.0% | +2.3% | 4.7% | 7.0% |
+| bodies | 8,809 | 8,954 | +146 | 1,611 | 2,549 |
+| grass a land cell | 0.176 | 0.185 | +0.009 | 0.027 | 0.054 |
+
+Read against the done-whens:
+
+1. **A kind of its own: on three seeds of six.** Seeds 10, 11 and 14 hold light-led kinds at 15.5%, 14.1%
+   and 5.9% of their grown bodies; seeds 9, 12 and 13 hold none over the 5% line, though 6-11% of their
+   grown bodies are light-led one by one. They are birth forms and they keep to the way, so the
+   categorical question is answered - but not on most seeds.
+2. **Shape: yes, and it is the first one in this world.** The blocks of the light-led kinds have 1.38-1.62
+   faces open to the air each, against 0.94-1.06 for every body of the world and the control's 0.94. Their
+   grids are not rectangles: seed 11's leading kind is a hollow frame of leaf blocks round an empty
+   middle on a grid of side 7, its guts along one edge and its muscle down another; seed 13's is a bar one
+   to two blocks wide down the left of a grid of side 9, two faces open per block. The world's own packing barely moves (0.94 -> 1.02, inside both spreads).
+3. **The crowd: no, and the other way.** Bodies a cell is 1.05 against 1.04, and where the light-led kinds
+   stand it is **1.76-2.18** - they pack a cell tighter than the world does. Births with no room 46.9%
+   against 46.8%, moves blocked 46.7% against 47.2%: nothing moved.
+4. **Ways of living: no.** Kinds at a census fall 0.51 and kinds kept to a place 0.62, both inside the
+   control's own spread (1.02, 1.24) and inside this batch's (1.57, 1.41).
+5. **No harm: yes.** The world stands, the ledger holds, the grass on a land cell is 0.185 against 0.176
+   (the light-led bodies do not drive it out), the largest line 62.6% against 54.9%, inside a control
+   spread of 35.5%.
+
+**Where the light-led kinds live: in the water.** Every one of them stands 97-99% in one water layer, at
+the surface or on the bottom, and none of them on land. They travel 0-1.75 cells in a grown life (the
+world's median is 4.2). On land an open face is a water bill - the dry air takes `dry` per face per turn
+(e067) - and in the water a face costs nothing and gives breath back. So the counterweights did bind, and
+they bound so hard that the light is a water food.
 
 ## Conclusion
 
-(to come)
+**Not kept.** The law makes a kind on three seeds of six, not on most; it does not raise the ways of
+living; and it does not thin the crowd. Its two done-whens that hold are the shape (the first bodies in
+this world that are not rectangles, on the seeds that have a light-led kind) and no harm.
+
+What it changes for the project:
+
+- **A face is not room.** The piece was ranked first because a body living by its exposed faces should take
+  more room per unit of income and so thin the crowd (`vision.md` section 3, item 4; section 5). It does
+  not, and the reason is in the world's own bookkeeping: a block claims one sub-cell whatever the shape
+  around it, so spreading buys faces without buying room. Where the light-led kinds win, the crowd is
+  **twice** as thick, because they are small, they sit, and their income does not need a cell of grass.
+  The crowd will be thinned by something that takes room, not by something that takes light.
+- **A material whose worth is set by shape does part kinds - where its counterweights leave it a place.**
+  P2's law (`vision.md` section 4) survives and sharpens: a food feeds a new kind when what it takes to
+  reach it is something a body is born with, *and* when the place where that thing pays is a place. Here
+  the thing is the open face and the place is the water, because on land an open face is a water bill.
+  This is the first time a kind was parted by the shape a genome develops rather than by what it holds.
+- **The rate is a knife edge.** Between 0.008 (a leaf block earns under its upkeep and nobody keeps one)
+  and 0.032 (the world is a mat of 11-block bodies and the ways of living halve) there is one step of the
+  ladder. A law whose income does not fall as the crowd grows has no middle: 0.016 works only because the
+  income per face happens to sit near a gut block's.
+- `vision.md`: section 2 C (parts) keeps its large gap, with the light read as a part whose worth depends
+  on shape that parts kinds in the water only; section 2 F (crowding) is unchanged at 46-49%; section 3
+  item 4 gains the reason a face is not room; section 4 gains the two lessons above; section 5 records P3
+  step 1 as spent.
+
+Open, for whoever takes P3 further: bodies that shade each other and the cell under them (left out here)
+would make the light a per-cell flux the bodies on it share, which is the form of the law that could thin
+a crowd - each body's income falling as its neighbours arrive. That is the one change that answers the
+"wrong if" this run hit.

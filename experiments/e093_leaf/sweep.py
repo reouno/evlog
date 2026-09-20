@@ -69,7 +69,7 @@ def light_of(pre, run, unit, ways):
     for i, r in enumerate(run.grown):
         rows[ways[unit[i]]].append(r)
     grown = len(run.grown)
-    led, in_led, open_led, cells_led = [], 0, [], Counter()
+    led, in_led, open_led, cells_led, wet_led = [], 0, [], Counter(), 0
     for w, rs in rows.items():
         if len(rs) < SHARE * grown:
             continue
@@ -80,15 +80,48 @@ def light_of(pre, run, unit, ways):
             in_led += len(rs)
             open_led += [kinds.open_soft(r) / max(float(r["size"]), 1) for r in rs]
             cells_led.update(r["cell"] for r in rs)
+            wet_led += sum(r["medium"] != "0" for r in rs)
     every = census(pre)
     at = defaultdict(list)
     for r in every:
         at[r["step"]].append(r)
     return {"by_light": len(led), "in_light": in_led / max(grown, 1),
+            "land_share": sum(r["medium"] == "0" for r in run.grown) / max(grown, 1),
+            "water_led": wet_led / max(in_led, 1),
+            "born_med": st.median(float(r["born_size"]) for r in run.grown),
             "open_light": st.mean(open_led) if open_led else 0.0,
             "open_all": st.mean(kinds.open_soft(r) / max(float(r["size"]), 1) for r in run.grown),
             "per_cell": st.mean(len(rs) / len({r["cell"] for r in rs}) for rs in at.values()),
             "per_cell_light": in_led / max(len(cells_led), 1) if cells_led else 0.0}
+
+
+def bodies_of(seed, pre, least=0.03):
+    """For the gallery: each kind of a run holding `least` of its grown bodies, with the commonest
+    birth body of its largest form, how open its blocks are, where it stands and what it ate."""
+    run = kinds.Run(f"seed{seed}", pre)
+    unit = run.forms()
+    ways = kinds.by_group(run, unit, run.does())
+    rows = defaultdict(list)
+    for i, r in enumerate(run.grown):
+        rows[ways[unit[i]]].append(r)
+    out = []
+    for w, rs in rows.items():
+        if len(rs) < least * len(run.grown):
+            continue
+        shape = Counter((r["side"], r["cells"]) for r in rs if r["size"] == r["born_size"]).most_common(1)
+        if not shape:
+            continue
+        (side, cells), _ = shape[0]
+        food = sum(float(r["plant"]) + float(r["meat"]) + float(r.get("light") or 0.0) for r in rs)
+        take = lambda k: sum(float(r.get(k) or 0.0) for r in rs) / max(food, 1e-9)  # noqa: E731
+        out.append({"seed": seed, "kind": " / ".join(w), "share": len(rs) / len(run.grown),
+                    "side": side, "cells": cells,
+                    "born_size": st.median(float(r["born_size"]) for r in rs),
+                    "open_block": st.mean(kinds.open_soft(r) / max(float(r["size"]), 1) for r in rs),
+                    "travel": st.median(float(r["travel"]) for r in rs),
+                    "light": take("light"), "plant": take("plant"), "kills": take("killed"),
+                    "water": sum(r["medium"] != "0" for r in rs) / len(rs)})
+    return sorted(out, key=lambda r: -r["share"])
 
 
 def read(seed, pre):
@@ -134,6 +167,12 @@ def main():
             l = [r[k] for r in out["light"]]
             print(f"{label:<32}{f.format(st.median(c)):>12}{f.format(st.median(l)):>12}"
                   f"{f.format(st.median(l) - st.median(c)):>12}{f.format(max(c) - min(c)):>12}{f.format(max(l) - min(l)):>14}")
+    bodies = [b for s in SEEDS if os.path.exists(RUN[s] + "_row.csv") for b in bodies_of(s, RUN[s])]
+    if bodies:
+        with open(os.path.join(HERE, "results", "bodies.csv"), "w", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=list(bodies[0]))
+            w.writeheader()
+            w.writerows(bodies)
     rows = out.get("control", []) + out.get("light", [])
     if not rows:
         return

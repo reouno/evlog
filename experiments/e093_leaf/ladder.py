@@ -87,6 +87,11 @@ def main():
     print(f"{'step':<26}" + "".join(f"{r['step']:>11,}" for _, r in runs))
     for k, label, f in COLS:
         print(f"{label:<26}" + "".join(f"{f.format(r[k]):>11}" for _, r in runs))
+    with open(os.path.join(HERE, "results", "ladder.csv"), "w", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=["rate"] + [k for k, _, _ in COLS] + ["step"])
+        w.writeheader()
+        for name, r in runs:
+            w.writerow({"rate": 0.0 if name == "control" else float(name), **{k: r[k] for k, _, _ in COLS}, "step": r["step"]})
 
 
 if __name__ == "__main__":
