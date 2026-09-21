@@ -4,8 +4,8 @@ The ideal world, today's world against it, and the next piece of work. Read it b
 update it after every experiment (`CLAUDE.md`, Documents). History is not kept here: it is in each experiment's
 README and in git.
 
-Last updated: 2026-09-21 (after e094: the ways of living flicker across the 5% line, they are not driven out;
-`kinds_held` dropped as a measure).
+Last updated: 2026-09-21 (after e095: the spike and the leg, P3 step 2, not kept - a material can build a body
+without building a way of living).
 
 ## 1. The ideal
 
@@ -61,7 +61,7 @@ rest it holds back.
 
 | element | ideal | today | gap |
 |---|---|---|---|
-| parts | parts whose worth depends on where they sit and how they move | 4 block kinds on a 2D grid of side 4-16; every block pays best packed, so bodies fill their grids (#52, e047). A fifth that gains by its faces open to the air (#103, `light_gain` 0.016, not in the default world) parts a kind on three seeds of six, and its bodies are the first in this world that are not filled rectangles - a hollow frame, a bar one block wide, 1.38-1.62 open faces a block against 0.94. They live only in the water: on land an open face is a water bill (e093) | **large** |
+| parts | parts whose worth depends on where they sit and how they move | 4 block kinds on a 2D grid of side 4-16; every block pays best packed, so bodies fill their grids (#52, e047). A fifth that gains by its faces open to the air (#103, `light_gain` 0.016, not in the default world) parts a kind on three seeds of six, and its bodies are the first in this world that are not filled rectangles - a hollow frame, a bar one block wide, 1.38-1.62 open faces a block against 0.94. They live only in the water: on land an open face is a water bill (e093). A sixth that adds to the motor only where it touches the outside (#107, `leg` 1, not in the default world) is built where the law pays (1.76 blocks a body, 1.93 of their faces open) and makes open, roaming water plant eaters - 1.29 open faces a block against 0.90, travel 17 cells against 4 - that hold 3.0-4.98% of the grown bodies on three seeds of six and never the 5% line. A spike, the hard block in a shape, buys 1-2% of the flesh at any rate: force is not what limits a break (e095) | **large** |
 | size | a thousandfold range, each size with its place | 21-35 blocks; winners differ 1.3-2.2x (e055, e075). Fiber digested over time (Fb, not kept) makes grass eaters 14-27% heavier and slower, with no new kind (e089); at a harsher rate (0.8 fiber, ferment 0.005) they do not grow at all - grass falls to a fifth of what is eaten and the bodies leave it (e090) | large |
 | life history | lives that span seasons; fat and dormancy chosen by selection | breeding values fixed (from the genome they cost kinds, e069); fat from the genome (e072); a cold body can go torpid (Q, not in the default world, e087) | medium |
 
@@ -169,6 +169,17 @@ Each holds under the conditions it was found in.
 - A law whose income does not fall as the crowd grows has no middle. One step of the ladder separates a light
   that earns less than a block's upkeep from a light that makes the whole world a mat of 11-block bodies and
   halves the ways of living (e093).
+- A material whose worth is set by shape can build a body without building a way of living. The leg is placed
+  where it pays (1.76 blocks a body, 1.93 faces open) and makes open, roaming water plant eaters that no rule
+  counts as a kind: they hold 3-5% of the grown bodies on three seeds of six (e095). What parts a kind is still
+  a food or a place a body must be born able to reach; how a body is built follows that and does not lead it.
+- A law must multiply the term that binds. The spike concentrates the force behind a tip, and a break in this
+  world needs the pusher's face to be harder than the victim's *first*; the prey are soft, so 1-3 muscle on a
+  line was already enough. From a force counted 1.5 times over to 9 times over, what comes in through a spike
+  stays at 1-2% (e095). Designing a law as a cycle does not excuse reading the arithmetic it plugs into.
+- Every shape law so far ends in the water: the open bodies of e066-e067, the light's kinds (e093) and the
+  leg's (e095, 90% of them). On land a face open to the air loses water every turn; in the water it costs
+  nothing and gives breath back. A shape law is a water law until something pays for an open face on land.
 - The seed re-draws the world, so a law's effect on one seed carries the control's draw as well as its own: six runs
   of the same world spread 1.02 kinds and 1.24 placed kinds, and each law's own three spread as widely (e092). Read
   a distribution against a distribution, and keep the categorical questions for the deciding.
@@ -213,14 +224,20 @@ driven out: `kinds_held` was an AND over 51 censuses of a share that swings by 6
 world stands at 3 of #76's 4 kinds instead of 1. The size of the gap is unchanged - 8 ways against an ideal near 20,
 the largest line 42-78%, half of all births with no room - but one of the two numbers we read it with was broken.
 
-**The next step of P3 is filed as #107 and not yet settled: the spike and the leg, as one set** - two materials
-that work only at a body's edge, which only a genome sets. A spike breaks what presses on it where it is a tip with
-nothing beside it; a leg adds to the motor force only where it touches the outside. Alone each is e093 on land: a
-body that sticks out into a world that charges for sticking out. Together the spike makes a protruding body
-dangerous and the leg makes it quick, so each pays the other's bill - and everything this project has kept since
-the staged search began was a set (e072's seven, e073's two, e075's two) while eleven single laws in a row were not.
+**P3 step 2 spent 2026-09-21 with e095 (#107): the spike and the leg, as one set, not kept.** The spike is the
+hard block in a shape - a tip with nothing beside it counts the muscle behind its line `1 + spike` times over -
+and the leg a sixth block kind that adds to the motor only for its faces open to the air. Both ladders were run
+to their tops on seed 9 and the pair at `spike` 2 and `leg` 1 on the six-seed ladder. **The spike does not
+depend on its rate**: from a force counted 1.5 to 9 times over it buys 1-2% of the flesh, because a break asks
+first that the pusher's face be harder than the victim's and the prey are soft. **The leg works and the jam
+sets its top**: up to `leg` 2 the motor and the travel rise together, at 4 legs replace muscle and the travel
+falls *below* the control's with 62% of moves blocked. It builds a body - open frames and bars with legs down
+one face, 1.29 open faces a block against 0.90, travel 17 against 4, nine in ten of them in the water - and no
+kind: 3.0-4.98% of the grown bodies on three seeds of six, and by the pre-set rule none on any seed. Kinds do
+not rise (7.29 against 7.53, inside the spread) and the world is unharmed. **P3 has one candidate left**: the
+shade below.
 
-**The alternative P3 could spend instead, also unsettled:** the law left out of e093 on purpose - bodies that shade
+**What P3 has left, still unsettled:** the law left out of e093 on purpose - bodies that shade
 each other and the cell under them, which turns the light from an income each face draws into a flux the bodies on
 a cell share, so that one body's income falls when another arrives. It is the only candidate that could thin the
 crowd, and the first law of this world in which a body is a place for another body. #104 (re-testing P2's foods in
@@ -230,8 +247,9 @@ a thinner crowd) waits on a crowd that has moved, so it waits on that one.
 |---|---|---|
 | **P1. A life that meets its world** | E, D, part of F | the ratio of a grown life to the year and to the places: a shorter year (stages A and B again), what kills the young today, a body that waits out a bad season on its fat, what makes travel pay (#93) |
 | **P2. A food web** | B, F | kinds of plant matter that need different mouths and guts (#34), seasonal rich food, each food's mouthful set so that it feeds a way. Spent (#99, #100, #101): parted by a mouthful, by a tool and by a place, no plant food has fed a kind |
-| **P3. Bodies whose shape does something** | C | parts that work only at a tip or an edge, a leg that walks only where it touches (#52); later 3D (#5) |
+| **P3. Bodies whose shape does something** | C | parts that work only at a tip or an edge, a leg that walks only where it touches (#52); later 3D (#5). Spent twice (#103, #107): a shape-material builds bodies and no ways of living; the shade is what is left |
 
 P1 was called the deepest root and P2 the most direct route; both are spent without a law kept, and both pointed
-at the crowd instead (section 3, item 4). P3 is taken now because it is the one piece that works on the crowd and on
-the ways of living at once. What is left of P1 (what kills the young, what makes travel pay) waits.
+at the crowd instead (section 3, item 4). P3's two steps are spent the same way: both built bodies this world had
+never grown, neither built a way of living, and neither touched the crowd - which is what its one remaining
+candidate, the shade, is for. What is left of P1 (what kills the young, what makes travel pay) waits.

@@ -179,8 +179,81 @@ line, against 9 at rate 2 and 8 at rate 4). **The batch is the pair at `spike` 2
 
 ### The batch (spike 2 + leg 1, seeds 9-14, 100,000 steps)
 
-(to come)
+Read over 51 censuses every 1,000 steps from 50,000 (`results/provenance.csv`), against the control ladder's
+six runs of the same worlds.
+
+| measure | control | the pair | effect | control spread | pair spread |
+|---|---|---|---|---|---|
+| kinds at a census | 7.53 | 7.29 | -0.24 | 1.02 | 1.04 |
+| kinds kept to a place | 4.35 | 4.03 | -0.32 | 1.24 | 1.18 |
+| kinds led by the spike | 0 | **0** | 0 | 0 | 0 |
+| kinds the legs move | 0 | **0** | 0 | 0 | 0 |
+| flesh taken through a spike | 0% | 0.5% | +0.5% | 0% | 2.7% |
+| the legs' share of the motor | 0% | 9.2% | +9.2% | 0% | 14.1% |
+| leg faces that pull, a body | 0 | 0.87 | +0.87 | 0 | 1.70 |
+| spikes a grown body | 0.09 | 0.08 | -0.01 | 0.12 | 0.09 |
+| open faces a block | 0.94 | 0.91 | -0.03 | 0.15 | 0.20 |
+| bodies a cell held | 1.04 | 1.05 | +0.00 | 0.02 | 0.03 |
+| births with no room | 46.8% | 47.2% | +0.3% | 2.7% | 5.9% |
+| moves blocked | 47.2% | 48.3% | +1.1% | 6.9% | 11.0% |
+| travel of a grown body | 5.2 | 4.8 | -0.5 | 2.0 | 2.5 |
+| the largest line's share | 54.9% | 51.3% | -3.6% | 35.5% | 46.5% |
+| bodies | 8,809 | 8,471 | -338 | 1,611 | 2,200 |
+| grass a land cell | 0.176 | 0.179 | +0.003 | 0.027 | 0.039 |
+
+Read against the done-whens:
+
+1. **A kind of its own: no, for either material, on any seed.** No kind takes most of its flesh through a
+   spike (the best is 13% of one kind's flesh, on seed 13), and no kind passes the leg rule - most of its
+   motor from its legs *and* twice the run's median travel *and* 5% of the grown bodies. **What does exist
+   is the body.** On three seeds of six there are kinds whose motor is 40-60% legs, holding 3.0%, 3.6% and
+   4.98% of the grown bodies (seed 13 holds three of them, 12.2% between them); the nearest miss is seed
+   13's `plant / no tooth / roams / surface` at 4.98%, its motor 50.3% legs, travelling 22.5 cells.
+2. **Shape: yes for the leg, where it is used, and no for the world.** The five leg-built kinds carry 1.29
+   open faces a block against 0.90 for the other 63 kinds of the batch, and they travel 17.0 cells against
+   4.2. Their legs are on the boundary by construction, and seed 13's bottom kind is a hollow frame of gut
+   with a column of legs down its left face. The world's own packing does not move (0.91 against 0.94,
+   inside both spreads).
+3. **Ways of living: no.** Kinds at a census fall 0.24 and kinds kept to a place 0.32, both well inside the
+   control's own spread (1.02, 1.24).
+4. **No harm: yes.** Every run stood 100,000 steps, the ledger drifts by at most 3e-14, the grass on a land
+   cell is 0.179 against 0.176, and the largest line's 51.3% is under the control's 54.9%.
+
+**Where the leg-built bodies live: in the water.** 90% of the bodies of those five kinds stand in a water
+layer, and every one of the five is a plant eater with no tooth that roams. It is e093's finding again from
+another law: on land a face open to the air is a water bill (e067), so a body that sticks out lives in the
+water, where a face costs nothing and gives breath back.
+
+**Both materials swing and neither settles.** Over seed 13's run the legs a body carries go 1.8 -> 2.3 ->
+1.1 -> 2.6 -> 1.8 blocks and the flesh taken through a spike 3.7% -> 17.1% -> 3.2% -> 5.7%; on seed 9 the
+legs fall to 0.7 by 50,000 and come back to 2.1 at 90,000. Both are used, by a tenth to a quarter of the
+bodies, and neither is ever the thing a kind is built on - e094's flicker, at the level of a material.
 
 ## Conclusion
 
-(to come)
+**Not kept, neither law.** Neither parts a kind on any of six seeds, the ways of living do not rise, and the
+crowd does not move (it was not asked to). Both rates stay out of the default world. What the piece leaves:
+
+- **A law must multiply the term that binds.** The spike was designed to make a protruding body dangerous,
+  and it multiplies the force behind a tip. In this world force is not what limits a break: the rule asks
+  first that the pusher's face be harder than the victim's, and the prey are soft, so 1-3 muscle on a line
+  is already enough. From `spike` 0.5 to 8 - a force counted 1.5 to 9 times over - what comes in through a
+  spike stays at 1-2%. Designing a law as a cycle is not enough; the arithmetic of the mechanism it plugs
+  into has to be read first.
+- **The leg builds a body but not a way of living.** It is the second material (after e093's light) whose
+  worth is set by the shape a genome develops, and the second to build recognisable bodies - open, roaming,
+  water plant eaters with a column of legs on one face, 1.29 open faces a block against 0.90. They sit at
+  3-5% of the grown bodies on half the seeds and never hold the line. A material can change what a body
+  looks like without changing what it lives on, and it is what a body lives on that the kinds are counted by.
+- **The third law in a row whose shapes live in the water.** The light (e093), the leg, and the open bodies
+  of e066-e067 all end in the water, because on land an open face is a water bill. Any further shape law is
+  a water law until something pays for an open face on land.
+- **A law with a ceiling has a top, and the top is the jam.** Unlike the light, the leg's income stops
+  mattering above a motor of 1, and the ladder found its turnover: at `leg` 4 legs replace muscle, the motor
+  reaches 0.504 and the travel falls *below* the control's while 62% of moves are blocked. What a law buys
+  can be spent by the crowd.
+
+For `vision.md`: section 2 C (parts) keeps its large gap, with the leg read as a part whose worth depends on
+shape that builds bodies and no kinds; section 2 F is unchanged; section 4 gains the two lessons above;
+section 5 records P3 step 2 as spent, which leaves the shade (bodies that shade each other and the cell
+under them) as P3's one remaining candidate and the only one that could thin the crowd.

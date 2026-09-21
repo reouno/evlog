@@ -57,6 +57,13 @@ def load_csv(path):
 
 # ---------- chart helpers ----------
 
+def pctfmt(ax):
+    """A percent axis, with a decimal where whole percents would print the same tick twice."""
+    lo, hi = ax.get_ylim()
+    digits = 0 if hi - lo > 0.04 else 1
+    return lambda y, _p: f"{y:.{digits}%}"
+
+
 def kfmt(x, _pos):
     return f"{x/1000:g}k" if abs(x) >= 1000 else f"{x:g}"
 
@@ -189,45 +196,53 @@ details { margin: 8px 0; } summary { cursor: pointer; color: var(--ink2); }
 
 
 
-KIND_COLOR = {1: SERIES[0], 2: SERIES[1], 3: SERIES[3], 4: SERIES[2], 5: "#b5d33d"}  # hard, muscle, sensor, gut, leaf
+KIND_COLOR = {1: SERIES[0], 2: SERIES[1], 3: SERIES[3], 4: SERIES[2], 5: "#b5d33d", 6: "#a08ce0"}  # hard, muscle, sensor, gut, leaf, leg
 SEEDS = ("9", "10", "11", "12", "13", "14")
 
 DIAGRAM = """
 <figure class="diagram">
-<svg viewBox="0 0 720 300" role="img" aria-label="A leaf block takes matter from the soil of its cell by its faces open to the air and the light there, and pays for those faces in water, heat and broken blocks" style="max-width:100%;height:auto;display:block">
+<svg viewBox="0 0 720 330" role="img" aria-label="A spike concentrates the muscle behind its line for a break; a leg adds to the motor for each face it has open to the air; both pay for the faces they open" style="max-width:100%;height:auto;display:block">
 <defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
 <g fill="none" stroke="currentColor" stroke-width="1.2" font-size="12" font-family="system-ui, sans-serif">
-  <rect x="16" y="18" width="190" height="48" rx="6"/>
-  <text x="111" y="40" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">the sun</text>
-  <text x="111" y="57" text-anchor="middle" fill="currentColor" stroke="none">0.25 of full over a day</text>
-  <rect x="16" y="206" width="190" height="48" rx="6"/>
-  <text x="111" y="228" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">the cell&apos;s soil</text>
-  <text x="111" y="245" text-anchor="middle" fill="currentColor" stroke="none">12 a cell; the grass too</text>
-  <rect x="270" y="102" width="200" height="72" rx="6" stroke="var(--s1)" stroke-width="2"/>
-  <text x="370" y="126" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">a leaf block</text>
-  <text x="370" y="143" text-anchor="middle" fill="currentColor" stroke="none">0.016 x faces x light</text>
-  <text x="370" y="160" text-anchor="middle" fill="currentColor" stroke="none">upkeep 0.002 a step</text>
-  <rect x="540" y="26" width="170" height="50" rx="6"/>
-  <text x="625" y="48" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">it pays for a face</text>
-  <text x="625" y="65" text-anchor="middle" fill="currentColor" stroke="none">water, heat, a tooth</text>
-  <rect x="540" y="200" width="170" height="50" rx="6"/>
-  <text x="625" y="222" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">a gut block it is not</text>
-  <text x="625" y="239" text-anchor="middle" fill="currentColor" stroke="none">0.003-0.005 a step</text>
-  <path d="M111,66 L111,128 L268,128" marker-end="url(#arr)"/>
-  <text x="120" y="120" fill="currentColor" stroke="none">the light where it stands</text>
-  <path d="M111,206 L111,150 L268,150" marker-end="url(#arr)"/>
-  <text x="120" y="168" fill="currentColor" stroke="none">the matter it gains</text>
-  <path d="M370,102 L370,51 L538,51" marker-end="url(#arr)"/>
-  <text x="378" y="41" fill="currentColor" stroke="none">every face it opens</text>
-  <path d="M370,174 L370,225 L538,225" marker-end="url(#arr)"/>
-  <text x="378" y="215" fill="currentColor" stroke="none">the grid cell it takes</text>
-  <text x="16" y="288" fill="currentColor" stroke="none">One block, one sub-cell, whatever its shape: spreading buys faces, not room.</text>
+  <rect x="16" y="20" width="200" height="54" rx="6"/>
+  <text x="116" y="42" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">the muscle on a line</text>
+  <text x="116" y="59" text-anchor="middle" fill="currentColor" stroke="none">1-3 blocks of a body of 27</text>
+  <rect x="270" y="20" width="200" height="54" rx="6" stroke="var(--s1)" stroke-width="2"/>
+  <text x="370" y="42" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">a spike</text>
+  <text x="370" y="59" text-anchor="middle" fill="currentColor" stroke="none">a hard tip, nothing beside it</text>
+  <rect x="524" y="20" width="186" height="54" rx="6"/>
+  <text x="617" y="42" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">the break</text>
+  <text x="617" y="59" text-anchor="middle" fill="currentColor" stroke="none">harder face first, then force</text>
+  <path d="M216,47 L268,47" marker-end="url(#arr)"/>
+  <path d="M470,47 L522,47" marker-end="url(#arr)"/>
+  <text x="478" y="36" fill="currentColor" stroke="none">x3</text>
+  <text x="16" y="100" fill="currentColor" stroke="none">a soft face resists 1, one hard block 3, two 6:</text>
+  <text x="16" y="116" fill="currentColor" stroke="none">the comparison decides, not the force</text>
+
+  <rect x="16" y="150" width="200" height="54" rx="6"/>
+  <text x="116" y="172" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">a leg block</text>
+  <text x="116" y="189" text-anchor="middle" fill="currentColor" stroke="none">a muscle&apos;s mass and upkeep</text>
+  <rect x="270" y="150" width="200" height="54" rx="6" stroke="var(--s1)" stroke-width="2"/>
+  <text x="370" y="172" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">its faces open to the air</text>
+  <text x="370" y="189" text-anchor="middle" fill="currentColor" stroke="none">1 each; walled in, none</text>
+  <rect x="524" y="150" width="186" height="54" rx="6"/>
+  <text x="617" y="172" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">the motor</text>
+  <text x="617" y="189" text-anchor="middle" fill="currentColor" stroke="none">(muscle + legs) / mass, max 1</text>
+  <path d="M216,177 L268,177" marker-end="url(#arr)"/>
+  <path d="M470,177 L522,177" marker-end="url(#arr)"/>
+  <rect x="270" y="242" width="200" height="54" rx="6"/>
+  <text x="370" y="264" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">what a face costs</text>
+  <text x="370" y="281" text-anchor="middle" fill="currentColor" stroke="none">water, heat, a tooth, room</text>
+  <path d="M370,204 L370,240" marker-end="url(#arr)"/>
+  <path d="M370,96 L370,148" marker-end="url(#arr)"/>
+  <text x="390" y="126" fill="currentColor" stroke="none">both laws read the same edge</text>
+  <text x="16" y="320" fill="currentColor" stroke="none">Neither block is new matter: the spike is the hard block in a shape, the leg trades a grid cell for speed.</text>
 </g>
 </svg>
-<figcaption>Figure 1. The law as one cycle. A leaf block gains matter for each of its faces open to the air, times the light
-on the cell it stands over, out of that cell&apos;s soil - the store the grass grows out of. It pays the block&apos;s upkeep, it
-pays in water, heat and broken blocks for every face it opens, and it is a grid cell that is not a gut. The last line is
-what the batch turned on: the room a body takes is its block count, not its outline.</figcaption>
+<figcaption>Figure 1. The two laws as one piece. Both read a block&apos;s edge - the faces with nothing of the body beside them,
+which only a genome sets. A spike counts the muscle behind its line three times over for a break; a leg adds to the
+motor for each face it has open. Both pay for those faces in water, heat and blocks a tooth can reach, and the motor
+is a chance per sub-cell, so it is worth nothing over 1.</figcaption>
 </figure>
 """
 
@@ -246,7 +261,7 @@ def bars(title, subtitle, groups, series, pct=False):
         ax.bar(xs, values, width=width * 0.9, color=SERIES[slot], label=label)
     ax.set_xticks(range(len(groups)))
     ax.set_xticklabels(groups)
-    ax.yaxis.set_major_formatter((lambda y, _p: f"{y:.0%}") if pct else kfmt)
+    ax.yaxis.set_major_formatter(pctfmt(ax) if pct else kfmt)
     ax.yaxis.set_major_locator(MaxNLocator(4))
     legend_above(ax, n)
     return figure(title, subtitle, to_svg(fig))
@@ -261,8 +276,8 @@ def rate_chart(title, subtitle, rates, series, pct=False, ylabel="light_gain, a 
     ax.set_xticks(list(xs))
     ax.set_xticklabels(["off"] + [f"{r:g}" for r in rates[1:]], fontsize=8)
     ax.set_xlabel(ylabel, loc="right")
-    ax.yaxis.set_major_formatter((lambda y, _p: f"{y:.0%}") if pct else kfmt)
     ax.yaxis.set_major_locator(MaxNLocator(4))
+    ax.yaxis.set_major_formatter(pctfmt(ax) if pct else kfmt)
     legend_above(ax, len(series))
     return figure(title, subtitle, to_svg(fig))
 
@@ -279,77 +294,79 @@ def gallery(picks, caption):
 <rect x="-1" y="-1" width="89" height="89" fill="var(--grid)"/>{rects}</svg>
 <figcaption><strong>{html.escape(r['kind'])}</strong><br>{float(r['share']):.0%} of the grown bodies, {int(float(r['born_size']))} blocks<br>
 {float(r['open_block']):.2f} open faces a block, {float(r['water']):.0%} in water<br>
-of its food: light {float(r['light']):.0%}, plants {float(r['plant']):.0%}, kills {float(r['kills']):.0%}</figcaption></figure>""")
+legs {float(r['leg_motor']):.0%} of its motor, travel {float(r['travel']):.0f} cells<br>
+of its food: plants {float(r['plant']):.0%}, kills {float(r['kills']):.0%}</figcaption></figure>""")
     return f"""<figure class="diagram"><div class="cards">{"".join(cards)}</div>
 <figcaption>Figure 2. {html.escape(caption)}</figcaption></figure>"""
 
 
-GALLERY_CAPTION = ("Seed 11's six largest kinds, each its commonest birth body (hard blue, muscle orange, gut aqua, "
-                   "leaf lime). The light-led one is a hollow frame with its guts along one edge; every other kind "
-                   "is a filled rectangle.")
+GALLERY_CAPTION = ("Seed 13's three leg-built kinds (top) and its three largest (bottom), each its commonest birth "
+                   "body: hard blue, muscle orange, gut aqua, leg violet. The leg-built ones are open frames and "
+                   "bars with legs down a face; the largest are filled rectangles.")
 
 # The prose of the page. Budgets (experiment-report skill): TL;DR 80 words, question 90, world 60, runs 60,
 # a verdict 30, a results paragraph 70, discussion 200, conclusion 80; TEXT 1,000 in all.
 TEXT = {
-    "tldr": "Not kept. A block that gains matter through its faces open to the air makes a kind on three seeds of "
-            "six, and gives this world its first bodies that are not rectangles - hollow frames and bars, 1.6 open "
-            "faces a block against 0.94. But they all live in the water, and where they win the crowd is twice as "
-            "thick, not thinner. The ways of living do not rise. A face is not room.",
-    "question": "Ten laws in a row were absorbed by a crowd that denies half of all births, so the crowd was ranked "
-                "the thing to break next. Light looked like the way: it falls on a body's outline, which only its "
-                "genome sets, so a body living by it should need more room per unit of food. Every counterweight - "
-                "water lost, heat lost, a face a tooth can break - was already in the world.",
-    "world": "Today's default world with one block kind added (Figure 1). A leaf block is soft, weighs and costs what "
-             "a muscle does, and each step takes 0.016 per face open to the air, times the light on its cell, out of "
-             "that cell's soil. With the rate at 0 no body develops one and the world is the control's, bit for bit.",
-    "runs": "A rate ladder first: eight rates on seed 9, 40,000 steps, to find where a leaf block is worth a grid "
-            "cell at all. Then the rate it picked, 0.016, on seeds 9-14 for 100,000 steps, against the six-seed "
-            "control ladder, a census every 1,000 steps from 36,000. Six runs at once on one core each, 1.5 hours.",
-    "v1": "On three seeds of six, holding 15.5%, 14.1% and 5.9% of the grown bodies. On the other three no light-led "
-          "kind reaches the 5% line, though 6-11% of their bodies are light-led one by one.", "v1w": "partly",
-    "v2": "Their blocks have 1.38-1.62 faces open to the air, against 0.94-1.06 for the world's bodies and 0.94 in "
-          "the control. The world's own packing barely moves.", "v2w": "",
-    "v3": "Bodies a cell 1.05 against the control's 1.04, births with no room 46.9% against 46.8%. Where the "
-          "light-led kinds stand it is 1.76-2.18 bodies a cell: they pack it tighter.", "v3w": "no",
-    "v4": "Kinds at a census 7.02 against 7.53, kinds kept to a place 3.74 against 4.35. Both falls are inside the "
-          "control ladder's own spread of 1.02 and 1.24.", "v4w": "no",
-    "v5": "Every run stood 100,000 steps, the ledger drifts by 4.5e-14, the grass on a land cell is 0.185 against "
-          "0.176, and the largest line's 62.6% sits inside a control spread of 35.5%.", "v5w": "",
-    "h1": "The rate has no middle",
-    "p1": "Under 0.008 a face earns less than the block's own upkeep and the leaf blocks that appear are mutations "
-          "nobody keeps. One step up from 0.016 the light is the whole world: bodies of 11 blocks, two a cell, and "
-          "the ways of living halve. Nothing in the law makes a face earn less as the crowd grows, so there is no "
-          "rate at which it settles - only the one where it happens to match a gut.",
-    "h2": "It parts kinds on half the seeds, and never on land",
-    "p2": "Where a light-led kind exists it is a water kind: 97-99% of its bodies in one layer, surface or bottom, "
-          "and it does not travel. On land an open face is a water bill - the dry air takes from every one of them "
-          "each turn - so the counterweights bind, and they bind hard enough to push the whole way of living into "
-          "the water, where a face costs nothing and gives breath back.",
-    "h3": "The shape changes, and that is new",
-    "p3": "These are the first bodies in this world whose grid is not a filled rectangle. The law rewards outline, "
-          "and the genome answers with a hollow frame or a bar one block wide. It is the first kind parted by the "
-          "shape a genome develops rather than by what the body holds - which is what P3 was for - and it costs "
-          "nothing in the ledger or the world's size.",
-    "h4": "The crowd does not thin",
-    "p4": "This is the piece's own wrong-if. A spread body was meant to need more room, but a block claims one "
-          "sub-cell whatever sits around it, so spreading buys faces and no room at all. The light-led kinds are "
-          "small, they sit still, and their food does not need a cell of grass, so they stand twice as thick as "
-          "the world does.",
-    "d1": "The premise was wrong in a way the world could have told us: room in this world is counted in blocks, not "
-          "in outline. Any law that pays per face will make thinner bodies and more of them. To thin a crowd a law "
-          "has to make one body's income fall when another arrives, and nothing here does: the light on a cell is "
-          "not shared, it is granted to each face that stands there.",
-    "d2": "What did work is the other half of the piece. A material whose worth is set by the shape a genome "
-          "develops parts kinds - where its counterweights leave it somewhere to live. That is P2's law from the "
-          "other side: a food feeds a kind when what it takes to reach it is something a body is born with, and "
-          "when the place where that thing pays is a place. Here the thing is the open face and the place is the "
-          "water.",
-    "d3": "It does not show what bodies shading each other would do. That was left out on purpose, and it is the one "
-          "change that makes the light a flux a cell's bodies share instead of an income each draws.",
-    "conclusion": "Not kept: a kind on three seeds of six, no rise in the ways of living, and a crowd that thickens "
-                  "where the law wins. The rate stays out of the default world. What it leaves behind is a measured "
-                  "reason the crowd is not broken this way, and the first shapes in this world that are not "
-                  "rectangles. The next piece of P3 should make the light a flux the bodies on a cell share.",
+    "tldr": "Neither is kept. A spike multiplies the force behind a tip, and force is not what limits a break in "
+            "this world, so from 0.5 to 8 it buys 1-2% of the flesh and no kind. A leg pays only where it touches "
+            "the outside, and it builds bodies - open, roaming water plant eaters with legs down one face - that "
+            "hold 3-5% of the grown bodies on half the seeds and never hold the line.",
+    "question": "e093 put the first shape-material in this world: a block that gains by its open faces parted a "
+                "kind, but only in the water, where a face is free. On land a body that sticks out pays in water, "
+                "is easy meat, and is slow to place in a jam. So two laws were built together, each rewarding an "
+                "edge in a different way - a spike to make sticking out dangerous, a leg to make it quick - to see "
+                "whether they pay each other's bills.",
+    "world": "Today's default world with two laws added (Figure 1). A spike is the hard block the world already "
+             "has: at the front of its line with nothing beside it, it counts that line's muscle three times over "
+             "for a break. A leg is a new block kind of a muscle's mass, adding to the motor for each face it has "
+             "open to the air. At 0 the world is the control's, bit for bit.",
+    "runs": "A ladder for each law first: six rates on seed 9, 40,000 steps. Then the pair at the rates they "
+            "picked - spike 2, leg 1 - on seeds 9-14 for 100,000 steps against the six-seed control ladder, a "
+            "census every 1,000 steps from 36,000. Six runs at once on one core each, 1.5 hours.",
+    "v1": "No kind, on any seed, for either material. The best a kind takes through a spike is 13% of its flesh; "
+          "the nearest leg kind holds 4.98% of the grown bodies.", "v1w": "no",
+    "v2": "The five leg-built kinds carry 1.29 open faces a block against 0.90 for the other 63, and their legs "
+          "sit on the boundary. The world's own packing does not move.", "v2w": "partly",
+    "v3": "Kinds at a census 7.29 against 7.53 and kept to a place 4.03 against 4.35, both inside the control "
+          "ladder's own spread of 1.02 and 1.24.", "v3w": "no",
+    "v4": "Every run stood 100,000 steps, the ledger drifts by 3e-14, grass on a land cell 0.179 against 0.176, "
+          "and the largest line holds 51.3% against the control's 54.9%.", "v4w": "",
+    "h1": "The spike does not depend on its rate",
+    "p1": "A force counted 1.5 times over and one counted 9 times over buy the same 1-2% of the flesh. What rises "
+          "with the rate is the shape, not what it earns: spikes a grown body go 0.08 to 0.19. The break rule is "
+          "why. It asks first that the pusher's face be harder than the victim's, and the prey here are soft, so "
+          "a line's 1-3 muscle was already enough.",
+    "h2": "The leg works, and the jam sets its top",
+    "p2": "Up to rate 2 the motor and the travel rise together. At 4 the law turns over: legs replace muscle, the "
+          "motor reaches 0.504 - and the travel falls below the control's while 62% of moves are blocked. The "
+          "body it buys is too spread to place. Rate 1 keeps the most ways of living, which is why the pair ran "
+          "there.",
+    "h3": "It builds a body, not a way of living",
+    "p3": "Legs go where the law pays: 1.76 blocks a body with 1.93 faces open. On three seeds of six that makes "
+          "kinds whose motor is half legs, travelling 17 cells where the rest manage 4. They hold 3.0 to 4.98% of "
+          "the grown bodies. A material can change what a body looks like without changing what it lives on - and "
+          "kinds are counted by what a body lives on.",
+    "h4": "And it lives in the water",
+    "p4": "Nine in ten of those bodies stand in a water layer, and every one of the five kinds is a plant eater "
+          "with no tooth that roams. This is the third law whose open bodies end there. On land a face loses water "
+          "every turn; in the water it costs nothing and gives breath back. Until something pays for an open face "
+          "on land, a shape law is a water law.",
+    "d1": "The spike was designed as a cycle - what it takes, what refills it, what limits it - and it still had "
+          "nothing to do, because the cycle was plugged into a mechanism whose arithmetic was never read. A break "
+          "needs a harder face first; force was slack. Designing a law as a cycle is not enough: the term it "
+          "multiplies has to be the term that binds.",
+    "d2": "The leg is the second material whose worth is set by the shape a genome develops, and the second to "
+          "build bodies that are not rectangles. Both times the bodies are real and the kinds are not. What parts "
+          "a kind in this world is still a food, or a place a body must be born able to reach; how a body is "
+          "built follows that, and does not lead it.",
+    "d3": "Neither law was asked to thin the crowd - e093 settled that a law paying per unit of edge cannot - and "
+          "neither did. What is not shown is what a spike would do in a world with armour worth having, which is "
+          "a world this one has never been.",
+    "conclusion": "Not kept. Both rates stay out of the default world. The leg leaves a measured body and a top "
+                  "set by the jam; the spike leaves a rule about designing laws. P3 has one candidate left - "
+                  "bodies that shade each other and the cell under them, which turns the light into a flux the "
+                  "bodies on a cell share, and is the only law in sight that makes one body's income fall when "
+                  "another arrives.",
 }
 
 PAGE = """<!doctype html>
@@ -357,13 +374,13 @@ PAGE = """<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>e093 A Block That Eats the Light - Report</title>
+<title>e095 The Spike and the Leg - Report</title>
 <style>{css}</style>
 </head>
 <body>
 <main>
-<h1>e093: does a part whose worth is set by shape make new kinds, and thin the crowd?</h1>
-<p class="sub">Experiment report - 2026-09-20 - c1225, a rate ladder on seed 9 and six seeds at 100,000 steps, against e092's control ladder</p>
+<h1>e095: two materials that work only at a body&apos;s edge</h1>
+<p class="sub">Experiment report - 2026-09-21 - c1225, two rate ladders on seed 9 and six seeds at 100,000 steps, against e092's control ladder</p>
 
 <section class="tldr">
 <h2>TL;DR</h2>
@@ -373,11 +390,10 @@ PAGE = """<!doctype html>
 <h2>1. Question</h2>
 <p>{question}</p>
 <ol>
-  <li><strong>A kind of its own.</strong> A kind taking most of its matter from the light, at 5% of the grown bodies, on most seeds.</li>
-  <li><strong>Shape.</strong> Its blocks measurably more open than the world's.</li>
-  <li><strong>The crowd.</strong> Bodies a cell falls where they win, and births with no room fall with it.</li>
-  <li><strong>Ways of living.</strong> Kinds at a census and kept to a place over the control's distribution.</li>
-  <li><strong>No harm.</strong> The world stands, the ledger holds, the grass is not driven out.</li>
+  <li><strong>A kind of its own, for each material.</strong> A kind taking most of its flesh through a spike, and a kind the legs move, each at 5% of the grown bodies on most seeds.</li>
+  <li><strong>Shape.</strong> Those kinds measurably not rectangles, with their spikes and legs where the law pays.</li>
+  <li><strong>Ways of living.</strong> Kinds at a census over the control's distribution.</li>
+  <li><strong>No harm.</strong> The world stands, the ledger holds, the largest line no higher, the grass not driven out.</li>
 </ol>
 
 <h2>2. The world</h2>
@@ -386,23 +402,22 @@ PAGE = """<!doctype html>
 <p><strong>Runs.</strong> {runs}</p>
 <ul class="measures">
   <li><strong>Kinds</strong> - ways of living by birth form (e068), at a census and kept to a place.</li>
-  <li><strong>Led by the light</strong> - a kind whose grown bodies took half or more of their life's matter from it.</li>
+  <li><strong>Led by the spike</strong> - a kind whose grown bodies took half or more of their flesh through one.</li>
+  <li><strong>The legs move it</strong> - half or more of a kind's motor from its legs, and twice the run's median travel.</li>
   <li><strong>Open faces a block</strong> - faces of a body's soft blocks with no block of its own beside them, over its blocks.</li>
-  <li><strong>Bodies a cell</strong> - bodies at a census over the world cells holding one.</li>
-  <li><strong>No room</strong> - births that failed because nothing would fit.</li>
-  <li><strong>Light's share</strong> - what leaf blocks took, over everything the world's bodies ate.</li>
+  <li><strong>Spikes a body</strong> - hard blocks at the front of a line with nothing beside them, read off the birth grid.</li>
+  <li><strong>The jam</strong> - births that found no room, and moves that were blocked.</li>
 </ul>
 
 <h2>3. Results</h2>
 <div class="tw"><table>
-<thead><tr><th>run</th><th>kinds</th><th>kept to a place</th><th>light-led kinds</th><th>bodies in them</th><th>open faces a block</th><th>bodies a cell</th><th>no room</th><th>bodies</th></tr></thead>
+<thead><tr><th>run</th><th>kinds</th><th>kept to a place</th><th>spike kinds</th><th>leg kinds</th><th>legs&apos; share of the motor</th><th>flesh through a spike</th><th>open faces a block</th><th>no room</th><th>bodies</th></tr></thead>
 <tbody>{table}</tbody></table></div>
 <ol class="verdicts">
 <li><span class="verdict {v1w}">{v1w_label}</span> {v1}</li>
 <li><span class="verdict {v2w}">{v2w_label}</span> {v2}</li>
 <li><span class="verdict {v3w}">{v3w_label}</span> {v3}</li>
 <li><span class="verdict {v4w}">{v4w_label}</span> {v4}</li>
-<li><span class="verdict {v5w}">{v5w_label}</span> {v5}</li>
 </ol>
 
 <h3>3.1 {h1}</h3>
@@ -440,7 +455,7 @@ PAGE = """<!doctype html>
 
 <h2>Appendix: data</h2>
 <p>The full tables are in <code>results/ladder.csv</code>, <code>results/batch.csv</code>, <code>results/kinds.csv</code>
-and <code>results/bodies.csv</code>. Build with <code>uv run python experiments/e093_leaf/ladder.py</code> and
+and <code>results/bodies.csv</code>. Build with <code>uv run python experiments/e095_edge/ladder.py</code> and
 <code>sweep.py</code>, then <code>report.py</code>.</p>
 {tables}
 </main>
@@ -451,70 +466,81 @@ and <code>results/bodies.csv</code>. Build with <code>uv run python experiments/
 
 def main():
     lad = rows("ladder.csv")
+    spike_lad = [r for r in lad if r["law"] == "spike"]
+    leg_lad = [r for r in lad if r["law"] == "leg"]
     bat = {(r["run"], r["seed"]): r for r in rows("batch.csv")}
     bods = rows("bodies.csv")
     groups = [f"seed {s}" for s in SEEDS]
     ctrl = [bat[("control", s)] for s in SEEDS]
-    lit = [bat[("light", s)] for s in SEEDS]
+    edge = [bat[("edge", s)] for s in SEEDS]
     f = lambda rs, k: [float(r[k]) for r in rs]  # noqa: E731
-    rates = [float(r["rate"]) for r in lad]
+    srates = [float(r["rate"]) for r in spike_lad]
+    krates = [float(r["rate"]) for r in leg_lad]
 
-    # 3.1 the rate ladder
-    c0 = [rate_chart("What the light is worth, by rate", "One run a point, seed 9 at 40,000 steps. Both would be flat at zero if leaf blocks never paid.",
-                     rates, [("light's share of what is eaten", f(lad, "light_share"), 0),
-                             ("grown bodies led by the light", f(lad, "leaf_led"), 2)], pct=True),
-          rate_chart("What the rate does to the crowd", "Bodies a cell at the same runs. The control sits at 1.07; two a cell is a world of mats.",
-                     rates, [("bodies a cell", f(lad, "per_cell"), 1)])]
+    # 3.1 the spike's ladder
+    c0 = [rate_chart("What a spike is worth, by rate", "One run a point, seed 9 at 40,000 steps. A law that bound would rise to the right.",
+                     srates, [("flesh taken through a spike", f(spike_lad, "sharp_share"), 0),
+                              ("blocks broken by a spike", f(spike_lad, "sharp_broke"), 2)], pct=True,
+                     ylabel="spike, extra force behind a tip"),
+          rate_chart("The shape, at the same runs", "Grown bodies carrying a spike. The rate buys the shape and not what it earns.",
+                     srates, [("grown bodies with a spike", f(spike_lad, "spiked"), 1)], pct=True,
+                     ylabel="spike, extra force behind a tip")]
 
-    # 3.2 the kinds it makes
-    c1 = [bars("Grown bodies in light-led kinds", "Kinds over the 5% line whose bodies took half their matter from the light. Zero means no kind lives by it.",
-               groups, [("light 0.016", f(lit, "in_light"), 2)], pct=True),
-          bars("Where the light-led kinds stand", "Share of their grown bodies in water, against every body of the run. A kind on land would sit near the orange bar.",
-               groups, [("all the run's bodies", [1 - float(r["land_share"]) for r in lit], 1),
-                        ("the light-led kinds", [float(r["water_led"]) for r in lit], 2)], pct=True)]
+    # 3.2 the leg's ladder and its top
+    c1 = [rate_chart("What the legs buy, by rate", "Seed 9 at 40,000 steps. The motor is a chance of a step per sub-cell; the control sits at 0.209.",
+                     krates, [("motor", f(leg_lad, "speed_mean"), 0)],
+                     ylabel="leg, per face open to the air"),
+          rate_chart("And what the jam takes back", "Travel in a grown life. Above rate 2 it falls below the control's 4.89 cells, with 62% of moves blocked.",
+                     krates, [("travel in a life, cells", f(leg_lad, "travel_p50"), 1)],
+                     ylabel="leg, per face open to the air")]
 
-    # 3.3 the shape
-    c2 = [bars("Open faces a block", "Faces of a body's soft blocks with nothing of its own beside them, over its blocks. A filled rectangle of 25 sits near 0.8.",
-               groups, [("control", f(ctrl, "open_all"), 0), ("light, all bodies", f(lit, "open_all"), 1),
-                        ("light, the light-led kinds", f(lit, "open_light"), 2)]),
-          bars("Blocks a body is born with", "Median over the grown bodies. The light-led kinds are not bigger; they are differently arranged.",
-               groups, [("control", f(ctrl, "born_med"), 0), ("light", f(lit, "born_med"), 1)])]
+    # 3.3 what the batch built
+    c2 = [bars("The legs' share of the motor", "Mean over the grown bodies of each run. Zero in every control run: no body has a leg block.",
+               groups, [("the pair", f(edge, "leg_motor"), 1)], pct=True),
+          bars("Open faces a block", "Faces of a body's soft blocks with nothing of its own beside them, over its blocks. A filled rectangle of 25 sits near 0.8.",
+               groups, [("control", f(ctrl, "open_all"), 0), ("the pair, all bodies", f(edge, "open_all"), 1)])]
 
-    # 3.4 the crowd
-    c3 = [bars("Bodies a cell", "Bodies at a census over the cells holding one. The third bar counts only the cells the light-led kinds stand on.",
-               groups, [("control", f(ctrl, "per_cell"), 0), ("light", f(lit, "per_cell"), 1),
-                        ("where the light-led stand", f(lit, "per_cell_light"), 2)]),
-          bars("The jam", "Births that found no room and moves that were blocked, over the second half of each run. This is what the piece was meant to move.",
-               groups, [("control, no room", f(ctrl, "no_room"), 0), ("light, no room", f(lit, "no_room"), 1),
-                        ("control, blocked", f(ctrl, "blocked"), 3), ("light, blocked", f(lit, "blocked"), 2)], pct=True)]
+    # 3.4 the water, and the kinds that did not come
+    c3 = [bars("Flesh taken through a spike", "Share of what the run's grown bodies took from kills that came in through a spike. Half would be a kind living by it.",
+               groups, [("the pair", f(edge, "sharp_flesh"), 0)], pct=True),
+          bars("Ways of living", "Kinds at a census and kinds kept to a place, per seed. The control ladder spreads 1.02 and 1.24 on its own.",
+               groups, [("control, at a census", f(ctrl, "kinds_at"), 0), ("the pair, at a census", f(edge, "kinds_at"), 1),
+                        ("control, kept to a place", f(ctrl, "placed_at"), 3), ("the pair, kept to a place", f(edge, "placed_at"), 2)])]
 
-    gal = gallery(sorted([b for b in bods if b["seed"] == "11"], key=lambda b: -float(b["share"]))[:6], GALLERY_CAPTION)
+    # Seed 13's three leg-built kinds beside its three largest, so the reader can see both shapes.
+    s13 = sorted([b for b in bods if b["seed"] == "13"], key=lambda b: -float(b["share"]))
+    legged = [b for b in s13 if float(b["leg_motor"]) >= 0.4][:3]
+    gal = gallery(legged + [b for b in s13 if b not in legged][:3], GALLERY_CAPTION)
 
     table = "".join(
         f"<tr><td>{name} {s}</td><td>{float(r['kinds_at']):.2f}</td><td>{float(r['placed_at']):.2f}</td>"
-        f"<td>{int(float(r['by_light']))}</td><td>{float(r['in_light']):.1%}</td><td>{float(r['open_all']):.2f}</td>"
-        f"<td>{float(r['per_cell']):.2f}</td><td>{float(r['no_room']):.1%}</td><td>{float(r['pop']):,.0f}</td></tr>"
-        for name, rs in (("control", ctrl), ("light", lit)) for s, r in zip(SEEDS, rs))
+        f"<td>{int(float(r['by_spike']))}</td><td>{int(float(r['by_leg']))}</td><td>{float(r['leg_motor']):.1%}</td>"
+        f"<td>{float(r['sharp_flesh']):.1%}</td><td>{float(r['open_all']):.2f}</td>"
+        f"<td>{float(r['no_room']):.1%}</td><td>{float(r['pop']):,.0f}</td></tr>"
+        for name, rs in (("control", ctrl), ("the pair", edge)) for s, r in zip(SEEDS, rs))
     ltbl = "".join(
-        f"<tr><td>{float(r['rate']):g}</td><td>{float(r['pop']):,.0f}</td><td>{float(r['size_mean']):.1f}</td>"
-        f"<td>{float(r['leaf_mean']):.2f}</td><td>{float(r['light_share']):.1%}</td><td>{float(r['leaf_led']):.1%}</td>"
-        f"<td>{float(r['per_cell']):.2f}</td><td>{float(r['blocked']):.1%}</td><td>{int(float(r['step'])):,}</td></tr>" for r in lad)
+        f"<tr><td>{r['law']}</td><td>{float(r['rate']):g}</td><td>{float(r['pop']):,.0f}</td>"
+        f"<td>{float(r['sharp_share']):.1%}</td><td>{float(r['spiked']):.1%}</td><td>{float(r['leg_open']):.2f}</td>"
+        f"<td>{float(r['leg_led']):.1%}</td><td>{float(r['speed_mean']):.3f}</td><td>{float(r['travel_p50']):.2f}</td>"
+        f"<td>{float(r['blocked']):.1%}</td></tr>" for r in lad)
     btbl = "".join(
-        f"<tr><td>{r['seed']}</td><td>{html.escape(r['kind'])}</td><td>{float(r['share']):.0%}</td>"
-        f"<td>{int(float(r['born_size']))}</td><td>{float(r['open_block']):.2f}</td><td>{float(r['light']):.0%}</td>"
-        f"<td>{float(r['plant']):.0%}</td><td>{float(r['kills']):.0%}</td><td>{float(r['water']):.0%}</td>"
-        f"<td>{float(r['travel']):.1f}</td></tr>" for r in bods if float(r["share"]) >= 0.05)
-    tables = ("<details><summary>The rate ladder, seed 9</summary><div class='tw'><table><thead><tr>"
-              "<th>light_gain</th><th>bodies</th><th>blocks a body</th><th>leaf blocks</th><th>light's share</th>"
-              "<th>bodies led by it</th><th>bodies a cell</th><th>moves blocked</th><th>steps</th></tr></thead>"
-              f"<tbody>{ltbl}</tbody></table></div></details>"
-              "<details><summary>Kinds holding 5% or more of a run's grown bodies, with the light on</summary>"
+        f"<tr><td>{r['seed']}</td><td>{html.escape(r['kind'])}</td><td>{float(r['share']):.1%}</td>"
+        f"<td>{int(float(r['born_size']))}</td><td>{float(r['open_block']):.2f}</td><td>{float(r['leg_motor']):.0%}</td>"
+        f"<td>{float(r['sharp']):.0%}</td><td>{float(r['plant']):.0%}</td><td>{float(r['kills']):.0%}</td>"
+        f"<td>{float(r['water']):.0%}</td><td>{float(r['travel']):.1f}</td></tr>"
+        for r in sorted(bods, key=lambda b: -float(b["leg_motor"])) if float(r["share"]) >= 0.03)
+    tables = ("<details><summary>The two rate ladders, seed 9</summary><div class='tw'><table><thead><tr>"
+              "<th>law</th><th>rate</th><th>bodies</th><th>flesh through a spike</th><th>bodies with a spike</th>"
+              "<th>leg faces</th><th>bodies the legs move</th><th>motor</th><th>travel</th><th>moves blocked</th>"
+              f"</tr></thead><tbody>{ltbl}</tbody></table></div></details>"
+              "<details><summary>Kinds holding 3% or more of a run's grown bodies, with the pair on</summary>"
               "<div class='tw'><table><thead><tr><th>seed</th><th>kind</th><th>share</th><th>blocks</th>"
-              "<th>open faces a block</th><th>light</th><th>plants</th><th>kills</th><th>in water</th><th>travel</th>"
+              "<th>open faces a block</th><th>legs' share of the motor</th><th>flesh through a spike</th>"
+              "<th>plants</th><th>kills</th><th>in water</th><th>travel</th>"
               f"</tr></thead><tbody>{btbl}</tbody></table></div></details>")
 
     LABEL = {"": "Yes", "no": "No", "partly": "Partly"}
-    labels_v = {f"v{i}w_label": LABEL[TEXT[f"v{i}w"]] for i in (1, 2, 3, 4, 5)}
+    labels_v = {f"v{i}w_label": LABEL[TEXT[f"v{i}w"]] for i in (1, 2, 3, 4)}
     page = PAGE.format(css=CSS, diagram=DIAGRAM, c0="".join(c0), c1="".join(c1), c2="".join(c2), c3="".join(c3),
                        gallery=gal, table=table, tables=tables, **TEXT, **labels_v)
     import re
