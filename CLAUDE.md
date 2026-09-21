@@ -25,6 +25,10 @@ App, web, and monetization (ads) are ideas only. Do not build them now.
 One fact lives in one place; the others point to it. History lives in the experiments' READMEs and in git, never
 in the documents below. A new document needs a role none of these has.
 
+**A document maintained forever must not grow**: each stays under 120 lines - check when you edit one. Update by
+rewriting the rows a result changed, never by appending; a row that wants a paragraph gives the paragraph to an
+experiment's README and keeps the one sentence that decides the next step (`vision.md` reached 307 lines of it).
+
 | document | holds | read it | change it when | never change it for |
 |---|---|---|---|---|
 | `principles.md` | purpose, principles, decision rules | when unsure what is allowed or what matters | the user agrees to a change of direction | an experiment's result |
@@ -37,9 +41,9 @@ in the documents below. A new document needs a role none of these has.
 
 ## Cost of running experiments
 
-A batch of runs costs the machine (all cores for 1-2 hours lately) and the time until the
-next decision. Before launching, say what the runs cost (cores x hours, and on which machine)
-and what question each run answers. Then run the least that settles the question:
+A batch costs the machine (all cores for 1-2 hours lately) and the time until the next decision. Before launching,
+say what the runs cost (cores x hours, on which machine) and what question each answers. Run the least that
+settles it:
 
 - A law test that can be judged by "does the world stand, and what wins" needs a pilot and
   a handful of seeds, not twelve. Add seeds or worlds only when the first result is unclear.
@@ -55,28 +59,16 @@ and what question each run answers. Then run the least that settles the question
 
 ## Experiments
 
-Every experiment must state, before starting:
+Every experiment states before starting - **Purpose** (why), **Hypothesis** (what we expect), **Method** (what we
+verify and how) and **Stop early if**: each rule a log column, a threshold and a step (`- pop < 500 at 20000`), read
+by `watch.py`, and only failed preconditions (the world does not stand, the mechanism never engages), never the
+measure it is judged by. It ends with **Result** (numbers where possible) and **Conclusion** (the answer to the
+hypothesis and the rows of `vision.md` it changes). Record seed, parameters and results; use `experiments/TEMPLATE.md`.
 
-- **Purpose**: why we do this
-- **Hypothesis**: what we expect
-- **Method**: what we verify and how (compare, measure, check feasibility, ...)
-- **Stop early if** (when a run can be judged before it ends): each rule a log column, a threshold and a
-  step (`- pop < 500 at 20000`), read by `watch.py`. Only failed preconditions - the world does not stand,
-  the law's mechanism never engages - never the measure the experiment is judged by.
-
-A law that needs a behavior is tested in a world where that behavior already pays: name the two
-conditions together ("Y pays when A and B") and run the minimal combination, not a factorial.
-
-Naming two conditions is not enough: the world is a web of cycles. Before proposing a change, write what
-it takes from whom, what refills it, which feedback limits it, and the balance it should settle into
-(who wins where and when). Add and remove parts together so that design holds.
-
-And must end with:
-
-- **Result**: what happened, with numbers where possible
-- **Conclusion**: clear answer to the hypothesis, and what it changes for the project (the rows of `vision.md` it changes)
-
-Record seed, parameters, and results. Use `experiments/TEMPLATE.md`.
+A law that needs a behavior is tested in a world where that behavior already pays: name the two conditions together
+("Y pays when A and B") and run the minimal combination, not a factorial. Naming them is not enough - the world is a
+web of cycles. Before proposing a change, write what it takes from whom, what refills it, which feedback limits it,
+and the balance it should settle into (who wins where and when). Add and remove parts together so the design holds.
 
 Each experiment also ships a `report.html`. Build it with the `experiment-report` skill,
 and keep it inside the skill's word budgets: a report is read only if it is short.
@@ -87,10 +79,9 @@ Fix as shared code only what decides **how a body is classified** - it has chang
 What a particular law means stays in that experiment's `sweep.py` and is not built out.
 
 - `analysis/` holds the schema of a census and the audit of a run, and depends on no experiment.
-- **A census column no reader has classified stops the reading** (`analysis/schema.py`). When a crate starts
-  writing something new, the analysis fails loudly instead of counting the world wrong in silence.
-- The blocks a birth form is parted by are read off the census's own columns, so a new kind of block needs no
-  line of analysis rewritten.
+- **A census column no reader has classified stops the reading** (`analysis/schema.py`): when a crate writes
+  something new, the analysis fails loudly instead of counting the world wrong in silence. The blocks a birth form
+  is parted by come off the census's own columns, so a new kind of block rewrites no line of analysis.
 - Every sweep writes `results/provenance.csv` - the window it read and every threshold it classified by - and
   its report prints it. What a README or a report says about a reading is quoted from that file, never from
   memory (e094 said 65 censuses where the reader takes 51).
