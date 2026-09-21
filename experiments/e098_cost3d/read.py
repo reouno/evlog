@@ -39,7 +39,7 @@ def main():
     seq = rows(os.path.join(RES, "spike.txt"))
     more = rows(os.path.join(RES, "spike2.txt"))
     allr = seq + more
-    with open(os.path.join(RES, "spike.csv"), "w", newline="") as fh:
+    with open(os.path.join(RES, "spike.csv"), "w", newline="\n") as fh:
         keys = sorted({k for r in allr for k in r})
         w = csv.DictWriter(fh, fieldnames=keys)
         w.writeheader()
@@ -116,7 +116,7 @@ def main():
     print(f"3D at the control's population: {lo:.0f}-{hi:.0f} ms a step "
           f"(control {CONTROL['ms_step']:.1f}), a 100,000-step batch {lo * 100:.0f}-{hi * 100:.0f} s "
           f"= {lo * 100 / 3600:.1f}-{hi * 100 / 3600:.1f} h; the line is {LINE:.0f} ms a step")
-    with open(os.path.join(RES, "provenance.csv"), "w", newline="") as fh:
+    with open(os.path.join(RES, "provenance.csv"), "w", newline="\n") as fh:
         w = csv.writer(fh)
         w.writerow(["what", "value", "source"])
         for k, v in CONTROL.items():
