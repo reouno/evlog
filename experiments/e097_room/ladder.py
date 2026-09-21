@@ -14,7 +14,9 @@ import csv
 import importlib.util
 import os
 import statistics as st
+import subprocess
 import sys
+import tempfile
 from collections import Counter
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -30,6 +32,7 @@ def load(name, path):
 
 
 prov_mod = load("e097_prov", os.path.join(HERE, "prov.py"))
+e092 = load("e092_sweep", os.path.join(ROOT, "experiments", "e092_yardstick", "sweep.py"))
 e075 = load("e075_sweep", os.path.join(ROOT, "experiments", "e075_hunt", "sweep.py"))
 kinds = e075.kinds
 
@@ -43,7 +46,7 @@ COLS = [("pop", "bodies", "{:.0f}"), ("size_mean", "blocks a body", "{:.1f}"),
         ("travel_p50", "travel of a grown body", "{:.1f}"),
         ("gut_income", "intake a gut block", "{:.4f}"), ("grass", "grass standing", "{:.0f}"),
         ("digestive_mean", "gut blocks a body", "{:.1f}"),
-        ("lineages", "lineages", "{:.0f}"), ("top_lineage", "the largest line's share", "{:.1%}"),
+        ("lineages", "lineages", "{:.0f}"),
         ("ms_step", "ms a step", "{:.1f}")]
 
 
@@ -61,11 +64,21 @@ def read_log(path, upto=None):
     out["no_room"] = sum(float(r["no_room"]) for r in half) / max(born, 1)
     moves = sum(float(r["forward"]) + float(r["left"]) + float(r["right"]) for r in half)
     out["blocked"] = sum(float(r["blocked"]) for r in half) / max(moves, 1)
-    out["top_lineage"] = mean("top_lineage") / max(mean("pop"), 1)
     interval = int(rows[1]["step"]) - int(rows[0]["step"]) if len(rows) > 1 else 1
     plant = st.mean(float(r["plant_intake"]) for r in half) / SCALE / interval
     # e057's fingerprint: what one gut block takes a step, which no law we kept has moved.
     out["gut_income"] = plant / max(out["pop"], 1) / max(out["digestive_mean"], 1e-9)
+    return out
+
+
+def plain(pre):
+    """The censuses of a run `tidy.py` has compressed are read from a copy beside them."""
+    if os.path.exists(pre + "_agents.csv") or not os.path.exists(pre + "_agents.csv.zst"):
+        return pre
+    out = os.path.join(tempfile.gettempdir(), os.path.basename(pre))
+    if not os.path.exists(out + "_agents.csv"):
+        with open(out + "_agents.csv", "wb") as f:
+            subprocess.run(["zstd", "-dc", pre + "_agents.csv.zst"], stdout=f, check=True)
     return out
 
 
@@ -74,15 +87,16 @@ def read_kinds(name, pre):
     largest kind's share (`analysis`'s classifier, e068's birth form)."""
     if not (os.path.exists(pre + "_agents.csv") or os.path.exists(pre + "_agents.csv.zst")):
         return None, None
-    run = kinds.Run(name, pre)
+    run = kinds.Run(name, plain(pre))
     p = kinds.provenance(run)
     unit = run.forms()
     ways = kinds.by_group(run, unit, run.does())
     per, _held = kinds.kinds(run.tally(unit, ways))
     top = Counter(ways[unit[i]] for i in range(len(run.grown))).most_common(1)[0][1] / len(run.grown)
+    lines = e092.lines_of(plain(pre))
     return {"kinds_at": kinds.mean_count(per),
             "placed_at": st.mean(sum(w[3] != "shore" for w in ws) for ws in per.values()),
-            "top_kind": top}, p
+            "top_kind": top, "top_share": lines["top_share"], "lines": lines["lines"]}, p
 
 
 def main():
@@ -107,13 +121,14 @@ def main():
     if any(ways):
         print()
         for k, label, f in [("kinds_at", "kinds at a census", "{:.2f}"), ("placed_at", "kinds kept to a place", "{:.2f}"),
-                            ("top_kind", "the largest kind's share", "{:.1%}")]:
+                            ("top_kind", "the largest kind's share", "{:.1%}"),
+                            ("top_share", "the largest line's share", "{:.1%}"), ("lines", "lines holding 5%", "{:.0f}")]:
             print(f"{label:<34}" + "".join((f.format(w[k]) if w else "-").rjust(11) for w in ways))
     for (name, r, pre), w in zip(runs, ways):
         prov.append({"reading": "ladder-log", "run": os.path.basename(pre), "from": r["from"], "to": r["step"],
                      "items": r["rows"], "thresholds": "the run's second half, a row every 1,000 steps"})
     with open(os.path.join(HERE, "results", "ladder.csv"), "w", newline="") as f:
-        out = csv.DictWriter(f, fieldnames=["run"] + [k for k, _, _ in COLS] + ["kinds_at", "placed_at", "top_kind", "step"])
+        out = csv.DictWriter(f, fieldnames=["run"] + [k for k, _, _ in COLS] + ["kinds_at", "placed_at", "top_kind", "top_share", "lines", "step"])
         out.writeheader()
         for (name, r, _), w in zip(runs, ways):
             out.writerow({"run": name, **{k: r[k] for k, _, _ in COLS}, **(w or {}), "step": r["step"]})

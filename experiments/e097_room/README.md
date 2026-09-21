@@ -163,9 +163,64 @@ child was placed, the cells a body stands on and the land none stands on, travel
 The ring costs more per birth than the rays (at most 4`r`(`r`+1) spots against 4`r`), and what it actually
 cost is in the table's `ms a step`.
 
-## Result, step 1
+## Result, step 1 (the ladder)
 
-(to be written)
+Seed 9, 40,000 steps, every ledger at most 1e-14. The control column is e096's control run of this
+world and seed (`c1225_life9_s0g0`), which step 0's own run reproduces column for column at step 40,000
+(the timings apart), so the control's log and its 21 censuses are this ladder's control.
+
+| | control | ring r1 | rays r2 | ring r2 | rays r4 |
+|---|---|---|---|---|---|
+| bodies | 10,253 | 10,249 | 8,443 | 11,671 | 12,749 |
+| blocks a body | 27.6 | 28.8 | 31.1 | 26.0 | 25.9 |
+| **births with no room** | 50.3% | 45.5% | 40.0% | 35.6% | 31.7% |
+| moves blocked | 52.6% | 58.7% | 52.3% | 64.1% | 57.6% |
+| sub-cells a child was placed at | 5.63 | 5.23 | 8.18 | 6.65 | 12.97 |
+| cells a body stands on | 11.9% | 11.5% | 10.8% | 11.5% | 12.8% |
+| land cells none stands on | 86.6% | 87.4% | 88.6% | 88.2% | 86.2% |
+| travel of a grown body | 4.9 | 3.5 | 4.6 | 3.8 | 3.5 |
+| intake a gut block | 0.0035 | 0.0031 | 0.0034 | 0.0032 | 0.0028 |
+| grass standing | 21,381 | 16,611 | 13,838 | 12,856 | 10,358 |
+| gut blocks a body | 16.5 | 18.2 | 19.8 | 16.3 | 17.4 |
+| lineages | 12 | 15 | 11 | 16 | 13 |
+| ms a step | 29.9 | 39.4 | 29.8 | 44.6 | 47.4 |
+
+The ways of living of the same runs, read off their own censuses (21 each, from 20,000 to 40,000;
+`results/provenance.csv`). Step 0's run wrote censuses on the default clock, so its 3 are not read here -
+its world is the control's anyway.
+
+| | control | ring r1 | rays r2 | ring r2 | rays r4 |
+|---|---|---|---|---|---|
+| kinds at a census | 8.14 | 6.10 | 7.43 | 5.52 | 5.71 |
+| kinds kept to a place | 4.95 | 3.33 | 3.95 | 3.67 | 3.76 |
+| the largest kind's share | 12.6% | 19.4% | 22.0% | 32.8% | 21.7% |
+| the largest line's share | 58.9% | 56.6% | 55.6% | 30.4% | 56.5% |
+| lines holding 5% | 3 | 1 | 2 | 4 | 1 |
+
+**The jam gives way, in the order step 0 said it would.** Births with no room fall 50.3% -> 45.5% when
+only the shape changes, -> 40.0% when only the reach doubles, -> 35.6% when both, -> 31.7% at four
+lengths on the rays. Every rung is a step down the curve step 0 measured (35% of failures have room
+inside one length, 75% within two, 97% within four), so the birth rule was the binding constraint, and
+the crowd was the rule's as much as the world's.
+
+**What it buys is not ways of living.** Kinds at a census fall on every rung (8.14 -> 5.52-7.43, against
+a control ladder whose six seeds spread 1.02), kinds kept to a place fall with them (4.95 -> 3.33-3.95),
+and the largest kind's share rises (12.6% -> 19.4-32.8%). The largest line's share stays where it was on
+three rungs (55.6-56.6% against 58.9%) and falls on one (30.4%, inside the control ladder's own 42-78%
+band). The world's plant is what pays: the grass standing falls by a fifth to a half (21,381 ->
+10,358-16,611), because the children that used to be laid down as carrion are now bodies that eat.
+
+**Room does not become movement either.** Travel falls (4.9 -> 3.5-4.6) and moves blocked rise on the
+ring rungs (52.6% -> 58.7%, 64.1%): a child placed on a diagonal stands nearer its parent than one placed
+along a ray (5.23 sub-cells against 5.63), so the ring relieves the birth and tightens the standing crowd.
+
+**Cost.** The rays are free (29.8 ms a step at `reach` 2 against the control's 29.9); the ring is not
+(39.4 and 44.6), since it walks up to 4`r`(`r`+1) spots where the rays walk 4`r`.
+
+**The batch.** The ladder moved both the jam and who wins, so the rung that relieves the jam most within
+two body lengths - `ring` 1, `reach` 2 - goes to the six-seed batch (100,000 steps, a census every 1,000
+from 36,000, the control ladder's own shape): 6 runs at once, about 1.5-2.5 hours on 6 of 12 cores. One
+seed cannot tell a fall of 2.6 kinds from the seed it was run on.
 
 ## Conclusion
 
