@@ -56,7 +56,7 @@ GROUPS = [
     ("e078b", "the crown's shade (heat 5, dry 5)", "shade_heat=5 shade_dry=5",
      [(9, p("e078_shade", "results", "search", "c1225_life9_h0d0"),
        p("e078_shade", "results", "search", "c1225_life9_h5d5"))]),
-    ("e079", "the crown's ground and wood's rest (S1+S2), with no crown_cool", "crown_wet=1 wood_rest=1",
+    ("e079", "the crown's ground and wood's rest (S1+S2), with no crown_cool", "crown_wet=1 wood_rest=0.5",
      [(9, p("e078_shade", "results", "search", "c1225_life9_h0d0"),
        p("e080_cool", "results", "search", "c1225_life9_c0"))]),
     ("e080", "the crown's cooling (S3) over S1+S2", "crown_cool=0.1",

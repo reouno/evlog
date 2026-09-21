@@ -45,7 +45,7 @@ a census, 1.24 kept to a place.
 |---|---|---|---|---|
 | e078 the crown's shade (2.5/2.5) | `shade_heat` `shade_dry` | +0.04 | -0.40 | **unreadable** |
 | e078 the same at 5/5 | | +0.20 | -0.04 | **unreadable** |
-| e079 the crown's ground, wood's rest | `crown_wet` `wood_rest` | -0.08 | -0.12 | **unreadable** |
+| e079 the crown's ground, wood's rest (1, 0.5) | `crown_wet` `wood_rest` | -0.08 | -0.12 | **unreadable** |
 | e093 the light block | not carried | -0.51 (6 seeds) | -0.62 | **unreadable** ("no harm", its README) |
 | e095 the spike and the leg | not carried | -0.24 (6 seeds) | -0.32 | **unreadable** |
 | e081 the body's water in the land's | `unit` | -0.12, **-2.06**, -0.31 | -1.02, -0.20, -0.24 | one seed beyond |
@@ -56,7 +56,7 @@ a census, 1.24 kept to a place.
 | e080 the crown's cooling | `crown_cool` | **-1.16** | -0.60 | **harm** |
 | e097 the birth rule widened | `reach` `ring` | **-2.04** (6 seeds) | -1.62 | **harm** |
 
-**Three laws were thrown out with a fourth that did the harm.** e079's `crown_wet` and `wood_rest`
+**Three laws were thrown out with a fourth that did the harm.** e079's `crown_wet` 1 and `wood_rest` 0.5
 move the measure by -0.08 and -0.12 - nothing - and were rejected as part of "S1-S3" because
 `crown_cool` (S3) costs 1.16 kinds. e078's shade, tested at four rates, never moves it either.
 

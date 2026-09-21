@@ -28,7 +28,15 @@ When unsure, ask in this order:
 3. Does it add compute cost?
 4. Is it a rule about a trait, or about a material or the world? Only the second kind is allowed.
 5. Does it let more kinds of body prosper at once, or make more kinds of place? A law that improves the world the same everywhere is eaten by more of the same body (e038).
-6. Does the world already meet the law's conditions? A law that needs a behavior pays only where that behavior pays, so name the conditions together ("Y pays when A and B") and test the minimal combination, not one law at a time (e040). And before writing a law about a flow, check which flow the bodies actually live on: e041 throttled the growth of the cells while 91% of what the bodies ate fell from the crowns above them.
+6. **Is what the result says "no" to the law, or only that we could not read it?** A law is removed when it
+   **harms** - the measure falls beyond the control ladder's spread over seeds of one world - or when it costs
+   compute it does not earn. A law whose effect is smaller than that spread is **kept**, because diversity
+   presupposes a world in which many optima exist and many combinations of traits reach a similar one: what such
+   a law adds is one more dimension the next law meets, and stacking only laws whose effect is already visible
+   cannot get there. Each law kept this way is one fixed value, never a knob to search (e099: five laws had been
+   rejected for a difference smaller than the difference between two seeds of the same world, two of them thrown
+   out together with a third that did the harm; e066's dry air had already been kept this way by e067).
+7. Does the world already meet the law's conditions? A law that needs a behavior pays only where that behavior pays, so name the conditions together ("Y pays when A and B") and test the minimal combination, not one law at a time (e040). And before writing a law about a flow, check which flow the bodies actually live on: e041 throttled the growth of the cells while 91% of what the bodies ate fell from the crowns above them.
 
 ## Where new laws come from
 
