@@ -18,13 +18,15 @@ and die out, none of it scripted (`principles.md`). As a picture, a savanna as a
 - **Time that moves animals**: herds follow the rains, some sleep through the bad season, numbers swing.
 - **Bodies that differ and whose shape does something**, from mouse to elephant, with a reason for each part.
 - **Animals that behave**: look, chase, flee, go to water, return home.
-- **History**: no line holds the world for good.
+- **History**: no line holds the world for good, and **a replay is a different world** - the same laws and
+  terrain run again fill their roles with other bodies, and need not fill the same roles at all.
 
 **The measure is ways of living, not shapes** - what a body eats, whether it can break another, whether it stays
 or roams, where it lives - counted by birth form (e068) at a census and as kinds kept to a place, judged on six
-seeds against the control ladder's distribution (`foundation.md`). **The working hypothesis** (competitive
-exclusion): the ways that coexist are at most the independent things they live on, each with a trade-off no body
-escapes, laid out at scales the bodies feel. Untested: no world has yet had more than a few foods.
+seeds against the control ladder's distribution, **and beside it how much two replays of one world agree**
+(`analysis/replay.py`): the ways should converge less than they do, the bodies not at all. **The working
+hypothesis** (competitive exclusion): the ways that coexist are at most the independent things they live on,
+each with a trade-off no body escapes, laid out at scales the bodies feel. Untested: no world has had more than a few foods.
 
 ## 2. Today against the ideal
 
@@ -33,9 +35,7 @@ holds back.
 
 | layer | ideal | today | gap |
 |---|---|---|---|
-| A places | many wide places, each with its residents | 512x512 torus; 12 habitats of 2%, 5.0 effective regions (e084, e085) | small |
-| A time | a day, a year, weather | day 75 steps, year 11,880, one wind (e061) | small; see E |
-| A water, heat | rivers, lakes, rain shadows, cold and hot | emerge from the climate; ground water sets where land bodies live (e078) | small |
+| A places, time, water, heat | many wide places, a day, a year, weather, rivers and rain shadows, cold and hot | 512x512 torus; 12 habitats of 2%, 5.0 effective regions (e084, e085); day 75 steps, year 11,880, one wind (e061); water and heat emerge from the climate, and ground water sets where land bodies live (e078) | small; the time is felt only through E |
 | B plant foods | several, each needing its own mouth and gut | grass (any gut), algae (a surface gut), browse at 3e-5 (a hard tip), carrion, litter | **large**: few ways to eat |
 | B response to eating | regrowth, defence, fruit offered | every producer grows by its stand, grazed to a few percent of it (e065) | medium |
 | B plants as places | a forest is home, cover and food | a stand is a home only through its wet ground (e078) | medium |
@@ -43,31 +43,32 @@ holds back.
 | C size | a thousandfold range, each size with its place | 21-35 blocks; winners differ 1.3-2.2x (e055, e075) | large |
 | C life history | lives spanning seasons; fat and dormancy selected | breeding values fixed; fat from the genome (e069, e072) | medium |
 | D behaviour | look, chase, flee, go to water, go home; some stay, some travel far | a linear reflex, 16 readings to 4 actions, no memory (e050); eyes not bought (2-4% look out, e070); a grown body ends 3-28 cells from its birth | **large**; cause is E |
-| E life vs year | many animals live through several seasons | a grown life is 500-570 steps, 1/20 of a year; half the dead die by 75 steps (e087, #93) | **large**: bound by the crowd |
+| E life vs year, vs day | many animals live through several seasons, and many days | a grown life is 500-570 steps, 1/20 of a year and about 7 days; half the dead die by 75 steps; the day's swing is wider than the bands (e071, e087) | **large**: bound by the crowd |
 | E travel vs places | a migrant crosses places within a year | a few cells of 512; a place fed in a lean month is 9-15 cells away (e086) | **large** |
-| E day vs life | a body lives many days | a grown life is about 7 days; the day's swing is wider than the bands (e071) | medium |
 | F ways of living | many; the user asked for about 20 | 7.53 kinds at a census, 4.35 kept to a place, 8 ways at 5% in the mean (e092, e094) | **large** |
 | F dominance | no line above a fifth of the animals | the largest line holds 42-78% of the land's bodies (e092) | large |
 | F food web | three or more levels, hunters of several kinds | kills are 27% of what bodies eat; pure flesh kinds 2-4% (e075) | medium |
 | F crowding | numbers limited by food, hunters and seasons | limited by the birth rule: 47% of births find no room though a spot that fits is within two body lengths for 75% of them and off the four rays it searches; widening it thins the jam to 33% and costs 2.5 kinds (e097) | **large**, and not to be lifted by giving room |
+| F history (a replay) | the same world run again fills other roles with other bodies | ways of living agree 0.91 between two seeds (38 of 46 in every seed), birth forms 0.035 (e092, read by `analysis/replay.py`) | **large**: the bodies are already contingent, the roles are not |
 | F cycles over time | predator and prey swing | the land's bodies swing twofold over a year; forms do not follow (e070) | medium |
-| G matter | closes between land and sea | conserved; the land gains 6.5-7.3% over 90,000 steps and nothing returns from the sea (e072, e090) | small, but it prices every law that moves matter |
-| G water, heat | a body drinks and gives back; places exchange heat | water free to the body (e081); a body holds heat but does not warm its cell (e072) | small |
+| G matter, water, heat | matter closes between land and sea; a body drinks and gives back; places exchange heat | matter conserved, the land gaining 6.5-7.3% over 90,000 steps with nothing back from the sea (e072, e090); water free to the body (e081); a body holds heat but does not warm its cell (e072) | small, but matter prices every law that moves it |
 
 ## 3. Where the bottlenecks are
 
 1. **A life is too short and too local for the world we built** (E, and through it D and part of F). To a body the
    world is the same everywhere and always; places and seasons are felt only by lines over generations. Hence no
    eye bought, no refuge, no migrant.
-2. **Few kinds of food** (B, and through it F). A gut eats any plant and there are three producers. Each food with
-   the right mouthful added a way of living (e073, e075); three tried since have not (e089-e091).
+2. **Few kinds of food, and a space of ways small enough to exhaust** (B, and through it F). A gut eats any plant
+   and there are three producers; each food with the right mouthful added a way of living (e073, e075), three tried
+   since have not (e089-e091). 46 ways exist over the six control seeds and 38 turn up in every one, so a replay has
+   nothing left to choose differently: contingency needs more possible ways than one run can realize.
 3. **Parts whose worth does not depend on shape** (C). Forms differ by what they hold, not by how they are built.
    Three materials priced by shape have been tried and none made a way of living (e093, e095, e096).
 4. **The crowd absorbs what is added to it** (F, and through it B and C), and it is not an income: half of all
    births fail for room in cells that are half empty, because a rigid grid must land on contiguous free sub-cells
    reached by 24 spots on four rays (e096, e097). It is not a lid to be lifted: relieving it costs ways of living
-   (7.53 kinds to 5.01 over six seeds, e097), because the narrow rule is what keeps a lineage where its parent
-   stood. What is missing is not room but something that parts the world - a food, a place, a trade-off.
+   (e097), because the narrow rule is what keeps a lineage where its parent stood. What is missing is not room but
+   something that parts the world - a food, a place, a trade-off.
 
 ## 4. Lessons that hold across experiments
 
@@ -75,29 +76,29 @@ Each holds under the conditions it was found in.
 
 - A difference a body can ride out is not an axis: a law must differ over more ground than a body covers in a life
   (e057, e060) and change on a life's scale if behaviour is to follow it (e049).
-- A law that moves the amount, time or place of the one food changes the number of bodies, not the ways (e060).
+- A law that moves the amount, time or place of the one food changes the number of bodies, not the ways (e060), and
+  a law can transfer a resource in full and change nothing: take food away and you buy number, not a way (e057, e096).
 - A food is its mouthful (e075), and it feeds a new kind only when reaching it needs something a body is born with:
   browse needed a tooth and made a kind (e073); seed parted by a mouthful then by a tool half the world carried, and
   a crown whose door is a mass that moves within a life, fed none (e089-e091).
-- A material whose worth is set by shape builds bodies, not ways of living (e093, e095). Shape follows a food or a
-  place; it does not lead.
+- A material whose worth is set by shape builds bodies, not ways of living (e093, e095): shape follows a food or a
+  place, it does not lead.
 - Every shape law so far ends in the water: on land a face open to the air is a water bill (e066, e067, e093, e095).
-- A law added alone meets a world without its counterweights; a set searched together can hold (e066-e071, e072).
-- A law must multiply the term that binds. Designing a cycle does not excuse reading the arithmetic it plugs into
-  (e095).
-- A law whose income does not fall as the crowd grows has no middle (e093) - but one priced by how thick the bodies
-  stand has nothing to price, since that thickness is a constant (e096).
-- A law can transfer a resource in full and change nothing: take food away and you buy number, not a way (e057, e096).
+- A law added alone meets a world without its counterweights; a set searched together can hold (e066-e071, e072) -
+  and laws each unreadable alone can harm together (e100). A law must multiply the term that binds: designing a
+  cycle does not excuse reading the arithmetic it plugs into (e095).
+- A law whose income does not fall as the crowd grows has no middle (e093); one priced by how thick the bodies stand
+  has nothing to price, since that thickness is a constant (e096).
 - What ends a grown life is the crowd's income, wherever it lives, not the season (e037, e038, e087). A body that
   can wait lives through a winter and then does not move; a winter is a third of its year at any year length (e086).
 - Heat is paid in water and water sets where land bodies live (e078); lines are kept apart by places a leader does
   not cross (e083), and by how far a child may be laid from its parent - give a child room and the winner spreads
   fastest (e097); a world's regions can be read from its climate alone (e084, e085).
-- A law that carries matter one way over a world with a sea drains the land (e090).
-- A way that needs a part the population has lost is a question of reach, not ecology: test it by injection beside a
-  control (e074, e076). The crowd makes hunters; without the hunter the grazers double (e076).
-- Measures: read a distribution against a distribution, six runs of one world spreading 1.02 kinds (e092); never
-  judge on a conjunction over censuses (e094); a measure of place breaks when bodies change place within a life (e091).
+- A law that carries matter one way over a world with a sea drains the land (e090). A way that needs a part the
+  population has lost is a question of reach: test it by injection beside a control (e074, e076).
+- Measures: read a distribution against a distribution, six runs of one world spreading 1.02 kinds (e092); never judge
+  on a conjunction over censuses (e094); a measure of place breaks when bodies change place within a life (e091); a
+  spread is read by what it is made of - one collapsed seed is not a various world (e100).
 
 ## 5. Next
 

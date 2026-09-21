@@ -74,8 +74,15 @@ old ladder's 7,860-9,470). Read by `sweep.py` beside e092's ladder, the same rea
 | **median (spread)** | **7.53 (1.02) -> 5.77 (2.92)** | **4.35 (1.24) -> 2.33 (2.90)** | 51.7% -> 62.0% | **5.25 (2.0) -> 9.5 (27.8)** |
 
 **The set costs 1.76 kinds at the median and every seed loses** (-0.66 to -3.60), so this is not one
-bad seed. Kinds kept to a place fall by nearly half. **The spread nearly triples on both measures**,
-which matters as much as the median: a ladder that spreads 2.92 kinds can read almost nothing.
+bad seed. Kinds kept to a place fall by nearly half.
+
+The spread nearly triples on both measures, but **the spread is one seed, not a scatter**: five of the
+six sit at 5.45-6.59 (a spread of 1.14, the old ladder's 1.02), and seed 13 alone falls to 3.67 with
+one line holding 99.1% of the land's bodies. So what this run shows is a **systematic loss of 1.8
+kinds on every seed, and one world of six collapsing to a single line** - not a world whose outcome
+has become richly various. The distinction matters, because a wider spread between seeds is not in
+itself a fault (a replay of a world need not come out the same); what is a fault is a seed with no
+ways of living left in it.
 
 **The signature is travel.** A grown body went 5.25 cells in the old world and 9.5 here, and the spread
 goes from 2.0 to 27.8: on seed 13 a body travels 32.8 cells and **one line holds 99.1% of the land's

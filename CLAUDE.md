@@ -78,7 +78,8 @@ and keep it inside the skill's word budgets: a report is read only if it is shor
 Fix as shared code only what decides **how a body is classified** - it has changed twice in thirty experiments.
 What a particular law means stays in that experiment's `sweep.py` and is not built out.
 
-- `analysis/` holds the schema of a census and the audit of a run, and depends on no experiment.
+- `analysis/` holds the schema of a census, the audit of a run and how two replays of one world are compared
+  (`replay.py`, #112), and depends on no experiment.
 - **A census column no reader has classified stops the reading** (`analysis/schema.py`): when a crate writes
   something new, the analysis fails loudly instead of counting the world wrong in silence. The blocks a birth form
   is parted by come off the census's own columns, so a new kind of block rewrites no line of analysis.

@@ -76,26 +76,29 @@ wood 0.0017, algae 0.009112, ignite 1.613e-6) on c1225. A candidate costs about 
 **Stage C, bodies.** Judged by kinds of living by birth form (e068) at a census and kept to a place, on **six seeds
 (9-14)**. A birth form counts a body's blocks of every kind, and a group that took half its life's matter from one
 food that is not a plant or flesh lives by that food (`census.LIGHT`, e093). Read as a distribution against the
-control ladder's - median and spread, the effect's spread recorded beside the effect - never as "+1 kind on every
-seed": the ladder itself spreads 1.02 kinds (median 7.53) and 1.24 kinds kept to a place (median 4.35), so an effect
-of one kind is not readable at all (e092). The categorical done-whens - is there a kind led by the new food, does a form keep to the new place - are not
-noise-limited and decide as before. A piece meant to replace the world (e072's shape) is judged on its own measures
-and becomes the new control if it passes, instead of being scored against the old one. Stability: a kind left out or
-halved returns, tested by paired injection beside a control (#72, e074, e076).
+control ladder's - median and spread - never as "+1 kind on every seed": the ladder itself spreads 1.02 kinds (median 7.53) and 1.24 kinds kept to a place (median 4.35), so an effect
+of one kind is not readable at all (e092); a spread is read by what it is made of, since one collapsed seed is not a
+various world (e100). The categorical done-whens - a kind led by the new food, a form keeping to the new place - are
+not noise-limited and decide as before. A piece meant to replace the world (e072's shape) is judged on its own measures
+and becomes the new control if it passes. Stability: a kind left out or halved returns, tested by paired injection
+beside a control (#72, e074, e076).
+
+**How much a replay agrees** is read beside the count (`analysis/replay.py`, #112): over the six seeds, how far the
+set of ways of living agrees (e092: 0.91, 38 of 46 ways in every seed) and how far the birth forms do (0.035). The
+bodies are already contingent, the roles are not, and `vision.md` asks that they become so.
 
 **No measure may be a conjunction over the censuses** (e094): a way's share swings by 61% of its own size, so an AND
-over a run's 51 censuses counts 1 where the world holds 8 ways in the mean and drives none out. `kinds_held` is
-dropped. A step is judged on **kinds at a census** (median 7.26 over the twelve runs read) and on **ways at 5% of the
-grown bodies in the mean** (8.0); "held" survives only as "at the line in 90% of the censuses" (3.0), and #76's first
-pass line (4 kinds on 4 of 6 seeds, each at 5% for 5 years) is read the same way - the world stands at 3 of the 4, not
-at 1. The ideal and the gaps are in `vision.md`.
+over 51 censuses counts 1 where the world holds 8 ways in the mean and drives none out. `kinds_held` is dropped. A
+step is judged on **kinds at a census** (median 7.26) and on **ways at 5% of the grown bodies in the mean** (8.0);
+"held" survives only as "at the line in 90% of the censuses" (3.0), and #76's pass line (4 kinds on 4 of 6 seeds,
+each at 5% for 5 years) is read the same way - the world stands at 3 of the 4, not at 1. The gaps are in `vision.md`.
 
 **Today's default world** (stage C, c1225 with d11, s = 1/16): the trade-offs marked kept in section 2 at the rates
 #88 set, with `wood_food` 0, `wood_yield` 3e-5 and the flesh line; the command line is
 `experiments/e082_fresh/run.sh` with `unit` 0 and `fresh` 0.05. The controls are the six-seed ladder (e092):
-`experiments/e081_drink/results/ladder/c1225_life{9,10,11}_u0` and
-`experiments/e092_yardstick/results/ladder/c1225_life{12,13,14}_ctl`, 100,000 steps, 52-73 minutes a run with four at
-once. `experiments/e092_yardstick` is the crate that reproduces them.
+`e081_drink/results/ladder/c1225_life{9,10,11}_u0` and `e092_yardstick/results/ladder/c1225_life{12,13,14}_ctl`,
+100,000 steps, 52-73 minutes a run with four at once; `e092_yardstick` is the crate that reproduces them. e100 put
+three rejected laws back in and lost 1.8 kinds on every seed, so the world stays as it is (#112).
 
 ## 4. Compute
 
