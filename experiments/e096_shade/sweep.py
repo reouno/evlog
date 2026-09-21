@@ -203,6 +203,17 @@ def ladder_kinds():
             w = csv.DictWriter(f, fieldnames=list(rows[0]))
             w.writeheader()
             w.writerows(rows)
+    # The gallery: the kinds of the rung where the light fed a kind of its own, and of the control.
+    bodies = []
+    for name in ("s1g0.016", "s0g0"):
+        pre = os.path.join(HERE, "results", f"c1225_life9_{name}")
+        if os.path.exists(pre + "_agents.csv") or os.path.exists(pre + "_agents.csv.zst"):
+            bodies += [dict(b, run=name) for b in bodies_of(9, pre)]
+    if bodies:
+        with open(os.path.join(HERE, "results", "bodies.csv"), "w", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=list(bodies[0]))
+            w.writeheader()
+            w.writerows(bodies)
 
 
 def main():

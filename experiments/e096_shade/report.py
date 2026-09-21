@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build report.html for e093 (#103, stage C: a block that eats the light).
+"""Build report.html for e096 (#108, stage C: the shade, a cell's light as one flux).
 
 Charts: matplotlib, exported as SVG and inlined. Diagram: hand-written SVG.
 Run from the repo root: uv run python experiments/eNNN_name/report.py
@@ -192,42 +192,47 @@ details { margin: 8px 0; } summary { cursor: pointer; color: var(--ink2); }
 KIND_COLOR = {1: SERIES[0], 2: SERIES[1], 3: SERIES[3], 4: SERIES[2], 5: "#b5d33d"}  # hard, muscle, sensor, gut, leaf
 SEEDS = ("9", "10", "11", "12", "13", "14")
 
+RUNS = ["s0g0", "s1g0", "s2g0", "s1g0.016", "s2g0.008", "s4g0.004", "s2g0.016", "s4g0.016", "s1g0.032"]
+LABEL = {"s0g0": "control", "s1g0": "shade 1\nalone", "s2g0": "shade 2\nalone", "s1g0.016": "shade 1\n0.016",
+         "s2g0.008": "shade 2\n0.008", "s4g0.004": "shade 4\n0.004", "s2g0.016": "shade 2\n0.016",
+         "s4g0.016": "shade 4\n0.016", "s1g0.032": "shade 1\n0.032"}
+KEPT = RUNS[:6]   # the runs that stood their 40,000 steps
+MATS = RUNS[6:]   # stopped once they had answered
+
 DIAGRAM = """
 <figure class="diagram">
-<svg viewBox="0 0 720 300" role="img" aria-label="A leaf block takes matter from the soil of its cell by its faces open to the air and the light there, and pays for those faces in water, heat and broken blocks" style="max-width:100%;height:auto;display:block">
+<svg viewBox="0 0 720 268" role="img" aria-label="A cell's light is one flux: the blocks standing over the cell darken a share of it, the ground grows at what is left, and the blocks divide what they darkened" style="max-width:100%;height:auto;display:block">
 <defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
 <g fill="none" stroke="currentColor" stroke-width="1.2" font-size="12" font-family="system-ui, sans-serif">
-  <rect x="16" y="18" width="190" height="48" rx="6"/>
-  <text x="111" y="40" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">the sun</text>
-  <text x="111" y="57" text-anchor="middle" fill="currentColor" stroke="none">0.25 of full over a day</text>
-  <rect x="16" y="206" width="190" height="48" rx="6"/>
-  <text x="111" y="228" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">the cell&apos;s soil</text>
-  <text x="111" y="245" text-anchor="middle" fill="currentColor" stroke="none">12 a cell; the grass too</text>
-  <rect x="270" y="102" width="200" height="72" rx="6" stroke="var(--s1)" stroke-width="2"/>
-  <text x="370" y="126" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">a leaf block</text>
-  <text x="370" y="143" text-anchor="middle" fill="currentColor" stroke="none">0.016 x faces x light</text>
-  <text x="370" y="160" text-anchor="middle" fill="currentColor" stroke="none">upkeep 0.002 a step</text>
-  <rect x="540" y="26" width="170" height="50" rx="6"/>
-  <text x="625" y="48" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">it pays for a face</text>
-  <text x="625" y="65" text-anchor="middle" fill="currentColor" stroke="none">water, heat, a tooth</text>
-  <rect x="540" y="200" width="170" height="50" rx="6"/>
-  <text x="625" y="222" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">a gut block it is not</text>
-  <text x="625" y="239" text-anchor="middle" fill="currentColor" stroke="none">0.003-0.005 a step</text>
-  <path d="M111,66 L111,128 L268,128" marker-end="url(#arr)"/>
-  <text x="120" y="120" fill="currentColor" stroke="none">the light where it stands</text>
-  <path d="M111,206 L111,150 L268,150" marker-end="url(#arr)"/>
-  <text x="120" y="168" fill="currentColor" stroke="none">the matter it gains</text>
-  <path d="M370,102 L370,51 L538,51" marker-end="url(#arr)"/>
-  <text x="378" y="41" fill="currentColor" stroke="none">every face it opens</text>
-  <path d="M370,174 L370,225 L538,225" marker-end="url(#arr)"/>
-  <text x="378" y="215" fill="currentColor" stroke="none">the grid cell it takes</text>
-  <text x="16" y="288" fill="currentColor" stroke="none">One block, one sub-cell, whatever its shape: spreading buys faces, not room.</text>
+  <rect x="16" y="20" width="180" height="46" rx="6"/>
+  <text x="106" y="41" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">the light on a cell</text>
+  <text x="106" y="58" text-anchor="middle" fill="currentColor" stroke="none">one flux, every step</text>
+  <rect x="266" y="14" width="210" height="76" rx="6" stroke="var(--s1)" stroke-width="2"/>
+  <text x="371" y="38" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">n blocks stand over it</text>
+  <text x="371" y="55" text-anchor="middle" fill="currentColor" stroke="none">they darken min(1, shade x n/16)</text>
+  <text x="371" y="72" text-anchor="middle" fill="currentColor" stroke="none">a block reads min(shade, 16/n)</text>
+  <rect x="546" y="14" width="160" height="50" rx="6"/>
+  <text x="626" y="35" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">a leaf block</text>
+  <text x="626" y="52" text-anchor="middle" fill="currentColor" stroke="none">gain x faces x its light</text>
+  <rect x="266" y="150" width="210" height="50" rx="6"/>
+  <text x="371" y="171" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">the grass under them</text>
+  <text x="371" y="188" text-anchor="middle" fill="currentColor" stroke="none">grows at what is left</text>
+  <rect x="546" y="150" width="160" height="50" rx="6"/>
+  <text x="626" y="171" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">the gut blocks</text>
+  <text x="626" y="188" text-anchor="middle" fill="currentColor" stroke="none">eat that grass</text>
+  <line x1="196" y1="52" x2="264" y2="52" marker-end="url(#arr)"/>
+  <line x1="476" y1="40" x2="544" y2="40" marker-end="url(#arr)"/>
+  <path d="M371,90 L371,148" marker-end="url(#arr)"/>
+  <text x="382" y="122" fill="currentColor" stroke="none">what they did not darken</text>
+  <line x1="476" y1="175" x2="544" y2="175" marker-end="url(#arr)"/>
+  <text x="16" y="232" fill="currentColor" stroke="none">A cell holds 16 sub-cells. Measured: the cells bodies stand on carry 8.5-10.5 blocks, in every run.</text>
+  <text x="16" y="252" fill="currentColor" stroke="none">So min(shade, 16/n) never fell far: the second body did not halve the first&apos;s income.</text>
 </g>
 </svg>
-<figcaption>Figure 1. The law as one cycle. A leaf block gains matter for each of its faces open to the air, times the light
-on the cell it stands over, out of that cell&apos;s soil - the store the grass grows out of. It pays the block&apos;s upkeep, it
-pays in water, heat and broken blocks for every face it opens, and it is a grid cell that is not a gut. The last line is
-what the batch turned on: the room a body takes is its block count, not its outline.</figcaption>
+<figcaption>Figure 1. The law as one cycle. The light of a cell stops being granted to everything standing in it. The blocks over
+the cell darken a share of it and divide exactly that share among themselves; the ground grows at the rest, and the grass is
+what the gut blocks eat. The two lines at the bottom are the result: the law&apos;s own term is the block count of a cell, and
+that count is a constant of this world.</figcaption>
 </figure>
 """
 
@@ -237,33 +242,53 @@ def rows(name):
         return list(csv.DictReader(f))
 
 
-def bars(title, subtitle, groups, series, pct=False):
-    fig, ax = plt.subplots(figsize=(6.4, 2.6))
+def bars(title, subtitle, groups, series, pct=False, rule=None):
+    fig, ax = plt.subplots(figsize=(6.4, 2.8))
     n = len(series)
     width = 0.8 / n
     for i, (label, values, slot) in enumerate(series):
         xs = [x - 0.4 + width * (i + 0.5) for x in range(len(groups))]
         ax.bar(xs, values, width=width * 0.9, color=SERIES[slot], label=label)
+    if rule is not None:
+        ax.axhline(rule[0], color=INK, linewidth=1.0, linestyle="--")
+        ax.text(len(groups) - 0.45, rule[0], rule[1], color=INK, fontsize=8, ha="right", va="bottom")
     ax.set_xticks(range(len(groups)))
-    ax.set_xticklabels(groups)
+    ax.set_xticklabels(groups, fontsize=8)
     ax.yaxis.set_major_formatter((lambda y, _p: f"{y:.0%}") if pct else kfmt)
     ax.yaxis.set_major_locator(MaxNLocator(4))
     legend_above(ax, n)
     return figure(title, subtitle, to_svg(fig))
 
 
-def rate_chart(title, subtitle, rates, series, pct=False, ylabel="light_gain, a face in full light"):
-    """The rate ladder: one point a run, the rate on a log axis with the control at the left."""
-    fig, ax = plt.subplots(figsize=(6.4, 2.6))
-    xs = range(len(rates))
-    for label, values, slot in series:
-        ax.plot(xs, values, color=SERIES[slot], linewidth=1.6, marker="o", markersize=4, label=label)
-    ax.set_xticks(list(xs))
-    ax.set_xticklabels(["off"] + [f"{r:g}" for r in rates[1:]], fontsize=8)
-    ax.set_xlabel(ylabel, loc="right")
-    ax.yaxis.set_major_formatter((lambda y, _p: f"{y:.0%}") if pct else kfmt)
+def scatter(title, subtitle, points, xlabel, ylabel, band=None):
+    """points: list of (label, xs, ys, slot)."""
+    fig, ax = plt.subplots(figsize=(6.4, 2.8))
+    if band:
+        ax.axhspan(band[0], band[1], color=INK, alpha=0.15)
+    for label, xs, ys, slot in points:
+        ax.scatter(xs, ys, s=18, color=SERIES[slot], label=label)
+    ax.set_xlabel(xlabel, loc="right")
+    ax.set_ylabel(ylabel)
+    ax.set_ylim(0, 16)
+    ax.xaxis.set_major_formatter(kfmt)
     ax.yaxis.set_major_locator(MaxNLocator(4))
-    legend_above(ax, len(series))
+    legend_above(ax, len(points))
+    return figure(title, subtitle, to_svg(fig))
+
+
+def term_chart(title, subtitle, seen):
+    """What a block's share of its cell's light does as the cell fills, at each `shade` of the ladder,
+    with the band of block counts every run actually stood at."""
+    fig, ax = plt.subplots(figsize=(6.4, 2.8))
+    ns = [n / 4 for n in range(4, 129)]
+    for i, sh in enumerate((1.0, 2.0, 4.0)):
+        ax.plot(ns, [min(sh, 16 / n) / sh for n in ns], color=SERIES[i], linewidth=1.6, label=f"shade {sh:g}")
+    ax.axvspan(seen[0], seen[1], color=INK, alpha=0.18)
+    ax.text(seen[1] + 0.6, 0.86, "where the runs stood", color=INK, fontsize=8)
+    ax.set_xlabel("blocks standing over the cell", loc="right")
+    ax.yaxis.set_major_formatter(lambda y, _p: f"{y:.0%}")
+    ax.yaxis.set_major_locator(MaxNLocator(4))
+    legend_above(ax, 3)
     return figure(title, subtitle, to_svg(fig))
 
 
@@ -284,86 +309,84 @@ of its food: light {float(r['light']):.0%}, plants {float(r['plant']):.0%}, kill
 <figcaption>Figure 2. {html.escape(caption)}</figcaption></figure>"""
 
 
-GALLERY_CAPTION = ("Seed 11's six largest kinds, each its commonest birth body (hard blue, muscle orange, gut aqua, "
-                   "leaf lime). The light-led one is a hollow frame with its guts along one edge; every other kind "
-                   "is a filled rectangle.")
+GALLERY_CAPTION = ("The six largest kinds at shade 1, light_gain 0.016 (hard blue, muscle orange, gut aqua, leaf lime). "
+                   "The light-led one is an open frame at the water's surface; the rest are the filled rectangles this "
+                   "world always grows.")
 
 # The prose of the page. Budgets (experiment-report skill): TL;DR 80 words, question 90, world 60, runs 60,
 # a verdict 30, a results paragraph 70, discussion 200, conclusion 80; TEXT 1,000 in all.
 TEXT = {
-    "tldr": "Not kept. A block that gains matter through its faces open to the air makes a kind on three seeds of "
-            "six, and gives this world its first bodies that are not rectangles - hollow frames and bars, 1.6 open "
-            "faces a block against 0.94. But they all live in the water, and where they win the crowd is twice as "
-            "thick, not thinner. The ways of living do not rise. A face is not room.",
-    "question": "Ten laws in a row were absorbed by a crowd that denies half of all births, so the crowd was ranked "
-                "the thing to break next. Light looked like the way: it falls on a body's outline, which only its "
-                "genome sets, so a body living by it should need more room per unit of food. Every counterweight - "
-                "water lost, heat lost, a face a tooth can break - was already in the world.",
-    "world": "Today's default world with one block kind added (Figure 1). A leaf block is soft, weighs and costs what "
-             "a muscle does, and each step takes 0.016 per face open to the air, times the light on its cell, out of "
-             "that cell's soil. With the rate at 0 no body develops one and the world is the control's, bit for bit.",
-    "runs": "A rate ladder first: eight rates on seed 9, 40,000 steps, to find where a leaf block is worth a grid "
-            "cell at all. Then the rate it picked, 0.016, on seeds 9-14 for 100,000 steps, against the six-seed "
-            "control ladder, a census every 1,000 steps from 36,000. Six runs at once on one core each, 1.5 hours.",
-    "v1": "On three seeds of six, holding 15.5%, 14.1% and 5.9% of the grown bodies. On the other three no light-led "
-          "kind reaches the 5% line, though 6-11% of their bodies are light-led one by one.", "v1w": "partly",
-    "v2": "Their blocks have 1.38-1.62 faces open to the air, against 0.94-1.06 for the world's bodies and 0.94 in "
-          "the control. The world's own packing barely moves.", "v2w": "",
-    "v3": "Bodies a cell 1.05 against the control's 1.04, births with no room 46.9% against 46.8%. Where the "
-          "light-led kinds stand it is 1.76-2.18 bodies a cell: they pack it tighter.", "v3w": "no",
-    "v4": "Kinds at a census 7.02 against 7.53, kinds kept to a place 3.74 against 4.35. Both falls are inside the "
-          "control ladder's own spread of 1.02 and 1.24.", "v4w": "no",
-    "v5": "Every run stood 100,000 steps, the ledger drifts by 4.5e-14, the grass on a land cell is 0.185 against "
-          "0.176, and the largest line's 62.6% sits inside a control spread of 35.5%.", "v5w": "",
-    "h1": "The rate has no middle",
-    "p1": "Under 0.008 a face earns less than the block's own upkeep and the leaf blocks that appear are mutations "
-          "nobody keeps. One step up from 0.016 the light is the whole world: bodies of 11 blocks, two a cell, and "
-          "the ways of living halve. Nothing in the law makes a face earn less as the crowd grows, so there is no "
-          "rate at which it settles - only the one where it happens to match a gut.",
-    "h2": "It parts kinds on half the seeds, and never on land",
-    "p2": "Where a light-led kind exists it is a water kind: 97-99% of its bodies in one layer, surface or bottom, "
-          "and it does not travel. On land an open face is a water bill - the dry air takes from every one of them "
-          "each turn - so the counterweights bind, and they bind hard enough to push the whole way of living into "
-          "the water, where a face costs nothing and gives breath back.",
-    "h3": "The shape changes, and that is new",
-    "p3": "These are the first bodies in this world whose grid is not a filled rectangle. The law rewards outline, "
-          "and the genome answers with a hollow frame or a bar one block wide. It is the first kind parted by the "
-          "shape a genome develops rather than by what the body holds - which is what P3 was for - and it costs "
-          "nothing in the ledger or the world's size.",
-    "h4": "The crowd does not thin",
-    "p4": "This is the piece's own wrong-if. A spread body was meant to need more room, but a block claims one "
-          "sub-cell whatever sits around it, so spreading buys faces and no room at all. The light-led kinds are "
-          "small, they sit still, and their food does not need a cell of grass, so they stand twice as thick as "
-          "the world does.",
-    "d1": "The premise was wrong in a way the world could have told us: room in this world is counted in blocks, not "
-          "in outline. Any law that pays per face will make thinner bodies and more of them. To thin a crowd a law "
-          "has to make one body's income fall when another arrives, and nothing here does: the light on a cell is "
-          "not shared, it is granted to each face that stands there.",
-    "d2": "What did work is the other half of the piece. A material whose worth is set by the shape a genome "
-          "develops parts kinds - where its counterweights leave it somewhere to live. That is P2's law from the "
-          "other side: a food feeds a kind when what it takes to reach it is something a body is born with, and "
-          "when the place where that thing pays is a place. Here the thing is the open face and the place is the "
-          "water.",
-    "d3": "It does not show what bodies shading each other would do. That was left out on purpose, and it is the one "
-          "change that makes the light a flux a cell's bodies share instead of an income each draws.",
-    "conclusion": "Not kept: a kind on three seeds of six, no rise in the ways of living, and a crowd that thickens "
-                  "where the law wins. The rate stays out of the default world. What it leaves behind is a measured "
-                  "reason the crowd is not broken this way, and the first shapes in this world that are not "
-                  "rectangles. The next piece of P3 should make the light a flux the bodies on a cell share.",
+    "tldr": "Not kept, and the track stops here. Making a cell's light one flux does transfer it: the bodies take "
+            "54-91% of the light where they stand, the grass under them falls by a third, and a kind lives by the "
+            "light. The crowd does not move. The reason is a number nobody had measured: the cells bodies stand on "
+            "carry 8.5-10.5 blocks in every run, so a law priced by density has nothing to bite on.",
+    "question": "Half of all births in this world fail for want of room, and twelve laws in a row have been absorbed "
+                "by that crowd. This was the only law in sight that makes one body's income fall when another "
+                "arrives: the light of a cell, until now granted in full to everything standing in it, becomes one "
+                "flux that the blocks over the cell share, leaving the ground what they did not take.",
+    "world": "Today's default world with two laws, both off at zero. A leaf block (e093) gains matter through its "
+             "faces open to the air. The shade makes the cell's light one flux: n blocks over a cell darken "
+             "min(1, shade x n/16) of it, the grass and algae grow at the rest, and each block reads min(shade, 16/n) "
+             "of the light of its own footprint.",
+    "runs": "Nine runs on seed 9, 40,000 steps, one core each. Three hold the sparse income at e093's kept rate to "
+            "read the sharing alone; two run the shade with no leaf, which is subtraction with nobody to take what "
+            "was taken; three run rates that made a mat of e093's world. The control is this crate with both laws "
+            "off, which reproduces the old control body for body.",
+    "v1": "No. Births with no room 46.0-48.8% against the control's 50.3%, moves blocked 48.8-53.0% against 52.6%, "
+          "bodies a cell 1.04-1.06 against 1.06 - and the shade with no leaf moves them just as far.", "v1w": "no",
+    "v2": "Partly. A light-led kind holds 7.7% of the grown bodies at shade 1 and 5.6% at shade 2, on this seed. "
+          "99% of those bodies live in the water, as in e093 and e095.", "v2w": "partly",
+    "v3": "No. Kinds at a census 5.86-7.24 against the control's 8.14 on the same seed; kept to a place 3.48-4.00 "
+          "against 4.95. No rung is above the control.", "v3w": "no",
+    "v4": "Yes for the ledger and the world - it stands at every rung, matter closes to 5e-14, the step costs what it "
+          "did - but the grass under the bodies falls by a quarter to a third.", "v4w": "partly",
+    "h1": "The law engaged: the bodies take the light and the ground loses it",
+    "p1": "This is the transfer the piece was built for, and it is large. Where bodies stand, more than half the "
+          "light - nine tenths at shade 4 - now goes to them, and the grass standing there falls to two thirds of "
+          "the grass on land they leave alone. The world eats a fifth less plant matter than the control does.",
+    "h2": "And the income it was meant to move did not move",
+    "p2": "A gut block takes 0.0034-0.0037 a step at every rung, against 0.0035 in the control. The world shrinks "
+          "with its pasture - bodies and plant fall together, by a fifth - but each body eats what it always ate. "
+          "That is e057's result from the other side: take food away and you buy number, not a way of living.",
+    "h3": "The crowd is not a density, so the crowd did not feel it",
+    "p3": "A cell holds 16 sub-cells. The cells bodies stand on hold 8.5-10.5 blocks in the control, in the shade "
+          "runs and in the mats at four times the population: the world answers a lost income by standing on other "
+          "cells, not thicker. Half of all births fail in cells that are half empty, so the jam is a packing "
+          "problem, not a density.",
+    "h4": "The law's own term had no room to fall",
+    "p4": "A block's share of its cell's light is min(shade, 16/n). Over the band of block counts every run actually "
+          "stood at, that term varies by about a fifth. The second body was supposed to halve the first's income; it "
+          "took a fifth of it. The light-led kinds still stand 1.6-1.9 bodies a cell against the world's 1.05.",
+    "d1": "The piece was designed around a per-cell density because a per-body rule looked too rare to fire: a cell "
+          "holds 1.04 bodies. The measurement says both units were wrong. Blocks per cell is a constant of this "
+          "world, near nine, whatever the population; bodies per cell moves only where the light-led crowd packs.",
+    "d2": "What binds is placement: a body is a rigid grid that needs contiguous free sub-cells, and it fails to be "
+          "born in a cell that is half empty. No law that prices mean density can reach that. It is also why e093's "
+          "light had no middle - and why sharing the flux did not give it one: at a sparse income of 0.032 the world "
+          "becomes the same mat of 11-block bodies, kinds down to 3.4-4.5.",
+    "d3": "What the runs do not show: whether a wider ladder or six seeds would find a rung where the crowd moves. "
+          "The track's stopping rule was declared before the runs - world and plant falling together with the income "
+          "pinned - and it fired at every rung, so the batch was not run.",
+    "conclusion": "P3 is spent. Its three steps each built bodies this world had never grown - hollow frames, bars, "
+                  "legged swimmers, an open sunlit frame - and none of them built a way of living or thinned the "
+                  "crowd. The next piece is not another single law but a set that replaces the world: 3D bodies, "
+                  "with a food only a tall body reaches, so that the same cell is one environment to a large body "
+                  "and another to a small one.",
 }
+
 
 PAGE = """<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>e093 A Block That Eats the Light - Report</title>
+<title>e096 the shade - Report</title>
 <style>{css}</style>
 </head>
 <body>
 <main>
-<h1>e093: does a part whose worth is set by shape make new kinds, and thin the crowd?</h1>
-<p class="sub">Experiment report - 2026-09-20 - c1225, a rate ladder on seed 9 and six seeds at 100,000 steps, against e092's control ladder</p>
+<h1>e096: does sharing the light thin the crowd?</h1>
+<p class="sub">Experiment report - 2026-09-21 - nine runs on seed 9, 40,000 steps, stage C's default world</p>
 
 <section class="tldr">
 <h2>TL;DR</h2>
@@ -373,11 +396,10 @@ PAGE = """<!doctype html>
 <h2>1. Question</h2>
 <p>{question}</p>
 <ol>
-  <li><strong>A kind of its own.</strong> A kind taking most of its matter from the light, at 5% of the grown bodies, on most seeds.</li>
-  <li><strong>Shape.</strong> Its blocks measurably more open than the world's.</li>
-  <li><strong>The crowd.</strong> Bodies a cell falls where they win, and births with no room fall with it.</li>
-  <li><strong>Ways of living.</strong> Kinds at a census and kept to a place over the control's distribution.</li>
-  <li><strong>No harm.</strong> The world stands, the ledger holds, the grass is not driven out.</li>
+  <li><strong>The crowd thins.</strong> Bodies a cell, births with no room and moves blocked all fall.</li>
+  <li><strong>A kind of its own.</strong> A light-led kind holds 5% of the grown bodies, and where it stands is recorded.</li>
+  <li><strong>Ways of living rise.</strong> Kinds at a census and kinds kept to a place go up.</li>
+  <li><strong>No harm.</strong> The world stands, the ledger holds, the grass is not driven out from under the bodies.</li>
 </ol>
 
 <h2>2. The world</h2>
@@ -385,24 +407,23 @@ PAGE = """<!doctype html>
 {diagram}
 <p><strong>Runs.</strong> {runs}</p>
 <ul class="measures">
+  <li><strong>Of its light they take</strong> - the share of a cell's light the blocks over it darken, meaned over the cells that carry a body.</li>
+  <li><strong>Blocks over such a cell</strong> - how many blocks stand on a cell that carries any. A cell holds 16 sub-cells.</li>
+  <li><strong>Intake a gut block</strong> - the plant matter one gut block takes a step. This is what a law about the crowd must move.</li>
+  <li><strong>No room</strong> - births that failed because nothing would fit; <strong>blocked</strong> - moves that hit something.</li>
   <li><strong>Kinds</strong> - ways of living by birth form (e068), at a census and kept to a place.</li>
   <li><strong>Led by the light</strong> - a kind whose grown bodies took half or more of their life's matter from it.</li>
-  <li><strong>Open faces a block</strong> - faces of a body's soft blocks with no block of its own beside them, over its blocks.</li>
-  <li><strong>Bodies a cell</strong> - bodies at a census over the world cells holding one.</li>
-  <li><strong>No room</strong> - births that failed because nothing would fit.</li>
-  <li><strong>Light's share</strong> - what leaf blocks took, over everything the world's bodies ate.</li>
 </ul>
 
 <h2>3. Results</h2>
 <div class="tw"><table>
-<thead><tr><th>run</th><th>kinds</th><th>kept to a place</th><th>light-led kinds</th><th>bodies in them</th><th>open faces a block</th><th>bodies a cell</th><th>no room</th><th>bodies</th></tr></thead>
+<thead><tr><th>run</th><th>of its light they take</th><th>blocks over such a cell</th><th>intake a gut block</th><th>no room</th><th>bodies a cell</th><th>kinds</th><th>light-led kinds</th><th>bodies</th></tr></thead>
 <tbody>{table}</tbody></table></div>
 <ol class="verdicts">
-<li><span class="verdict {v1w}">{v1w_label}</span> {v1}</li>
-<li><span class="verdict {v2w}">{v2w_label}</span> {v2}</li>
-<li><span class="verdict {v3w}">{v3w_label}</span> {v3}</li>
-<li><span class="verdict {v4w}">{v4w_label}</span> {v4}</li>
-<li><span class="verdict {v5w}">{v5w_label}</span> {v5}</li>
+<li><span class="verdict {v1w}">{v1w_label}</span> <strong>The crowd thins:</strong> {v1}</li>
+<li><span class="verdict {v2w}">{v2w_label}</span> <strong>A kind of its own:</strong> {v2}</li>
+<li><span class="verdict {v3w}">{v3w_label}</span> <strong>Ways of living rise:</strong> {v3}</li>
+<li><span class="verdict {v4w}">{v4w_label}</span> <strong>No harm:</strong> {v4}</li>
 </ol>
 
 <h3>3.1 {h1}</h3>
@@ -422,13 +443,13 @@ PAGE = """<!doctype html>
 {c2}
 </div>
 <p>{p3}</p>
-{gallery}
 
 <h3>3.4 {h4}</h3>
 <div class="grid2">
 {c3}
 </div>
 <p>{p4}</p>
+{gallery}
 
 <h2>4. Discussion</h2>
 <p>{d1}</p>
@@ -439,9 +460,9 @@ PAGE = """<!doctype html>
 <p>{conclusion}</p>
 
 <h2>Appendix: data</h2>
-<p>The full tables are in <code>results/ladder.csv</code>, <code>results/batch.csv</code>, <code>results/kinds.csv</code>
-and <code>results/bodies.csv</code>. Build with <code>uv run python experiments/e093_leaf/ladder.py</code> and
-<code>sweep.py</code>, then <code>report.py</code>.</p>
+<p>The full tables are in <code>results/ladder.csv</code>, <code>results/ladder_kinds.csv</code> and
+<code>results/bodies.csv</code>. Build with <code>uv run python experiments/e096_shade/ladder.py</code> and
+<code>sweep.py --ladder</code>, then <code>report.py</code>.</p>
 {tables}
 </main>
 </body>
@@ -450,71 +471,76 @@ and <code>results/bodies.csv</code>. Build with <code>uv run python experiments/
 
 
 def main():
-    lad = rows("ladder.csv")
-    bat = {(r["run"], r["seed"]): r for r in rows("batch.csv")}
-    bods = rows("bodies.csv")
-    groups = [f"seed {s}" for s in SEEDS]
-    ctrl = [bat[("control", s)] for s in SEEDS]
-    lit = [bat[("light", s)] for s in SEEDS]
-    f = lambda rs, k: [float(r[k]) for r in rs]  # noqa: E731
-    rates = [float(r["rate"]) for r in lad]
+    lad = {r["run"].replace(" ", ""): r for r in rows("ladder.csv")}
+    kin = {r["run"]: r for r in rows("ladder_kinds.csv")}
+    bods = [b for b in rows("bodies.csv") if b["run"] == "s1g0.016"]
+    f = lambda rs, k: [float(lad[r][k]) for r in rs]  # noqa: E731
+    fk = lambda rs, k: [float(kin[r][k]) for r in rs]  # noqa: E731
+    kept = [LABEL[r] for r in KEPT]
+    every = [LABEL[r] for r in RUNS]
+    ctl = lad["s0g0"]
 
-    # 3.1 the rate ladder
-    c0 = [rate_chart("What the light is worth, by rate", "One run a point, seed 9 at 40,000 steps. Both would be flat at zero if leaf blocks never paid.",
-                     rates, [("light's share of what is eaten", f(lad, "light_share"), 0),
-                             ("grown bodies led by the light", f(lad, "leaf_led"), 2)], pct=True),
-          rate_chart("What the rate does to the crowd", "Bodies a cell at the same runs. The control sits at 1.07; two a cell is a world of mats.",
-                     rates, [("bodies a cell", f(lad, "per_cell"), 1)])]
+    # 3.1 the law engaged
+    c0 = [bars("The share of a cell's light the bodies take", "Meaned over the cells that carry a body. Zero is the old law, where the light was granted to everyone standing in it.",
+               every, [("taken from the ground", f(RUNS, "shaded"), 1)], pct=True),
+          bars("The grass standing, under the bodies and away from them", "Matter a land cell, over the second half of each run. Equal bars would mean the bodies cost the grass nothing.",
+               every, [("where they stand", f(RUNS, "grass_under"), 2), ("where they do not", f(RUNS, "grass_free"), 0)])]
 
-    # 3.2 the kinds it makes
-    c1 = [bars("Grown bodies in light-led kinds", "Kinds over the 5% line whose bodies took half their matter from the light. Zero means no kind lives by it.",
-               groups, [("light 0.016", f(lit, "in_light"), 2)], pct=True),
-          bars("Where the light-led kinds stand", "Share of their grown bodies in water, against every body of the run. A kind on land would sit near the orange bar.",
-               groups, [("all the run's bodies", [1 - float(r["land_share"]) for r in lit], 1),
-                        ("the light-led kinds", [float(r["water_led"]) for r in lit], 2)], pct=True)]
+    # 3.2 the income
+    c1 = [bars("What one gut block takes a step", "The crowd's own income. A law about who gets the flux would move this bar; a subtraction leaves it where it is.",
+               every, [("intake a gut block", f(RUNS, "gut_income"), 1)],
+               rule=(float(ctl["gut_income"]), "control")),
+          bars("The world and its pasture, against the control", "Bodies and the plant matter the world eats a step, each as a share of the control's, over the six runs that stood their 40,000 steps. Falling together is e057's fingerprint.",
+               kept, [("bodies", [x / float(ctl["pop"]) for x in f(KEPT, "pop")], 0),
+                      ("plant eaten", [x / float(ctl["plant_step"]) for x in f(KEPT, "plant_step")], 2)], pct=True)]
 
-    # 3.3 the shape
-    c2 = [bars("Open faces a block", "Faces of a body's soft blocks with nothing of its own beside them, over its blocks. A filled rectangle of 25 sits near 0.8.",
-               groups, [("control", f(ctrl, "open_all"), 0), ("light, all bodies", f(lit, "open_all"), 1),
-                        ("light, the light-led kinds", f(lit, "open_light"), 2)]),
-          bars("Blocks a body is born with", "Median over the grown bodies. The light-led kinds are not bigger; they are differently arranged.",
-               groups, [("control", f(ctrl, "born_med"), 0), ("light", f(lit, "born_med"), 1)])]
+    # 3.3 the crowd
+    c2 = [bars("The jam", "Births that found no room and moves that were blocked. This is what the piece was meant to move; the dashed line is the control's no room.",
+               every, [("no room", f(RUNS, "no_room"), 1), ("moves blocked", f(RUNS, "blocked"), 3)], pct=True,
+               rule=(float(ctl["no_room"]), "control, no room")),
+          scatter("Blocks over a cell that carries any", "One point a run, against its bodies. A cell holds 16 sub-cells. The band is 8.5-10.5, where every run sat.",
+                  [("the runs that stood", f(KEPT, "pop"), f(KEPT, "blocks_cell"), 0),
+                   ("the mats, stopped early", f(MATS, "pop"), f(MATS, "blocks_cell"), 1)],
+                  "bodies in the world", "blocks a cell", band=(8.5, 10.5))]
 
-    # 3.4 the crowd
-    c3 = [bars("Bodies a cell", "Bodies at a census over the cells holding one. The third bar counts only the cells the light-led kinds stand on.",
-               groups, [("control", f(ctrl, "per_cell"), 0), ("light", f(lit, "per_cell"), 1),
-                        ("where the light-led stand", f(lit, "per_cell_light"), 2)]),
-          bars("The jam", "Births that found no room and moves that were blocked, over the second half of each run. This is what the piece was meant to move.",
-               groups, [("control, no room", f(ctrl, "no_room"), 0), ("light, no room", f(lit, "no_room"), 1),
-                        ("control, blocked", f(ctrl, "blocked"), 3), ("light, blocked", f(lit, "blocked"), 2)], pct=True)]
+    # 3.4 the term and the kinds
+    c3 = [term_chart("What a block's share does as its cell fills", "min(shade, 16/n) over its value on an empty cell. The law's middle is the fall on the right of the band.",
+                     (8.5, 10.5)),
+          bars("Ways of living", "Kinds at a census and kinds kept to a place, read off each run's own censuses. The mats are read over fewer censuses.",
+               every, [("kinds at a census", fk(RUNS, "kinds_at"), 0), ("kept to a place", fk(RUNS, "placed_at"), 2)])]
 
-    gal = gallery(sorted([b for b in bods if b["seed"] == "11"], key=lambda b: -float(b["share"]))[:6], GALLERY_CAPTION)
+    gal = gallery(sorted(bods, key=lambda b: -float(b["share"]))[:6], GALLERY_CAPTION)
 
     table = "".join(
-        f"<tr><td>{name} {s}</td><td>{float(r['kinds_at']):.2f}</td><td>{float(r['placed_at']):.2f}</td>"
-        f"<td>{int(float(r['by_light']))}</td><td>{float(r['in_light']):.1%}</td><td>{float(r['open_all']):.2f}</td>"
-        f"<td>{float(r['per_cell']):.2f}</td><td>{float(r['no_room']):.1%}</td><td>{float(r['pop']):,.0f}</td></tr>"
-        for name, rs in (("control", ctrl), ("light", lit)) for s, r in zip(SEEDS, rs))
+        f"<tr><td>{LABEL[r].replace(chr(10), ' ')}</td><td>{float(lad[r]['shaded']):.1%}</td>"
+        f"<td>{float(lad[r]['blocks_cell']):.1f}</td><td>{float(lad[r]['gut_income']):.4f}</td>"
+        f"<td>{float(lad[r]['no_room']):.1%}</td><td>{float(lad[r]['per_cell']):.2f}</td>"
+        f"<td>{float(kin[r]['kinds_at']):.2f}</td><td>{int(float(kin[r]['by_light']))}</td>"
+        f"<td>{float(lad[r]['pop']):,.0f}</td></tr>" for r in RUNS)
     ltbl = "".join(
-        f"<tr><td>{float(r['rate']):g}</td><td>{float(r['pop']):,.0f}</td><td>{float(r['size_mean']):.1f}</td>"
-        f"<td>{float(r['leaf_mean']):.2f}</td><td>{float(r['light_share']):.1%}</td><td>{float(r['leaf_led']):.1%}</td>"
-        f"<td>{float(r['per_cell']):.2f}</td><td>{float(r['blocked']):.1%}</td><td>{int(float(r['step'])):,}</td></tr>" for r in lad)
-    btbl = "".join(
-        f"<tr><td>{r['seed']}</td><td>{html.escape(r['kind'])}</td><td>{float(r['share']):.0%}</td>"
-        f"<td>{int(float(r['born_size']))}</td><td>{float(r['open_block']):.2f}</td><td>{float(r['light']):.0%}</td>"
-        f"<td>{float(r['plant']):.0%}</td><td>{float(r['kills']):.0%}</td><td>{float(r['water']):.0%}</td>"
-        f"<td>{float(r['travel']):.1f}</td></tr>" for r in bods if float(r["share"]) >= 0.05)
-    tables = ("<details><summary>The rate ladder, seed 9</summary><div class='tw'><table><thead><tr>"
-              "<th>light_gain</th><th>bodies</th><th>blocks a body</th><th>leaf blocks</th><th>light's share</th>"
-              "<th>bodies led by it</th><th>bodies a cell</th><th>moves blocked</th><th>steps</th></tr></thead>"
+        f"<tr><td>{LABEL[r].replace(chr(10), ' ')}</td><td>{float(lad[r]['pop']):,.0f}</td>"
+        f"<td>{float(lad[r]['size_mean']):.1f}</td><td>{float(lad[r]['leaf_mean']):.2f}</td>"
+        f"<td>{float(lad[r]['light_share']):.1%}</td><td>{float(lad[r]['leaf_led']):.1%}</td>"
+        f"<td>{float(lad[r]['blocked']):.1%}</td><td>{float(lad[r]['grass']):,.0f}</td>"
+        f"<td>{int(float(lad[r]['step'])):,}</td></tr>" for r in RUNS)
+    ktbl = "".join(
+        f"<tr><td>{LABEL[r].replace(chr(10), ' ')}</td><td>{float(kin[r]['kinds_at']):.2f}</td>"
+        f"<td>{float(kin[r]['placed_at']):.2f}</td><td>{float(kin[r]['top_kind']):.1%}</td>"
+        f"<td>{int(float(kin[r]['by_light']))}</td><td>{float(kin[r]['in_light']):.1%}</td>"
+        f"<td>{float(kin[r]['water_led']):.0%}</td><td>{float(kin[r]['per_cell_light']):.2f}</td>"
+        f"<td>{int(float(kin[r]['censuses']))}</td></tr>" for r in RUNS)
+    tables = ("<details><summary>The ladder, read off the logs (seed 9)</summary><div class='tw'><table><thead><tr>"
+              "<th>run</th><th>bodies</th><th>blocks a body</th><th>leaf blocks</th><th>light's share of intake</th>"
+              "<th>bodies led by it</th><th>moves blocked</th><th>grass standing</th><th>steps</th></tr></thead>"
               f"<tbody>{ltbl}</tbody></table></div></details>"
-              "<details><summary>Kinds holding 5% or more of a run's grown bodies, with the light on</summary>"
-              "<div class='tw'><table><thead><tr><th>seed</th><th>kind</th><th>share</th><th>blocks</th>"
-              "<th>open faces a block</th><th>light</th><th>plants</th><th>kills</th><th>in water</th><th>travel</th>"
-              f"</tr></thead><tbody>{btbl}</tbody></table></div></details>")
+              "<details><summary>The ways of living of each run, off its own censuses</summary><div class='tw'>"
+              "<table><thead><tr><th>run</th><th>kinds at a census</th><th>kept to a place</th><th>largest kind</th>"
+              "<th>light-led kinds</th><th>bodies in them</th><th>of those in water</th>"
+              "<th>bodies a cell where they stand</th><th>censuses</th></tr></thead>"
+              f"<tbody>{ktbl}</tbody></table></div></details>")
 
-    LABEL = {"": "Yes", "no": "No", "partly": "Partly"}
-    labels_v = {f"v{i}w_label": LABEL[TEXT[f"v{i}w"]] for i in (1, 2, 3, 4, 5)}
+    VERDICT = {"": "Yes", "no": "No", "partly": "Partly"}
+    labels_v = {f"v{i}w_label": VERDICT[TEXT[f"v{i}w"]] for i in (1, 2, 3, 4)}
     page = PAGE.format(css=CSS, diagram=DIAGRAM, c0="".join(c0), c1="".join(c1), c2="".join(c2), c3="".join(c3),
                        gallery=gal, table=table, tables=tables, **TEXT, **labels_v)
     import re

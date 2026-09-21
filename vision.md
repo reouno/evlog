@@ -4,8 +4,9 @@ The ideal world, today's world against it, and the next piece of work. Read it b
 update it after every experiment (`CLAUDE.md`, Documents). History is not kept here: it is in each experiment's
 README and in git.
 
-Last updated: 2026-09-21 (after e095: the spike and the leg, P3 step 2, not kept - a material can build a body
-without building a way of living; next is #108, the shade).
+Last updated: 2026-09-21 (after e096: the shade, P3 step 3, not kept and the track stopped at its ladder - the
+crowd's density is a constant of this world, so a law priced by it has nothing to bite on. P3 is spent; the next
+piece is 3D bodies with a food only a tall body reaches).
 
 ## 1. The ideal
 
@@ -61,7 +62,7 @@ rest it holds back.
 
 | element | ideal | today | gap |
 |---|---|---|---|
-| parts | parts whose worth depends on where they sit and how they move | 4 block kinds on a 2D grid of side 4-16; every block pays best packed, so bodies fill their grids (#52, e047). A fifth that gains by its faces open to the air (#103, `light_gain` 0.016, not in the default world) parts a kind on three seeds of six, and its bodies are the first in this world that are not filled rectangles - a hollow frame, a bar one block wide, 1.38-1.62 open faces a block against 0.94. They live only in the water: on land an open face is a water bill (e093). A sixth that adds to the motor only where it touches the outside (#107, `leg` 1, not in the default world) is built where the law pays (1.76 blocks a body, 1.93 of their faces open) and makes open, roaming water plant eaters - 1.29 open faces a block against 0.90, travel 17 cells against 4 - that hold 3.0-4.98% of the grown bodies on three seeds of six and never the 5% line. A spike, the hard block in a shape, buys 1-2% of the flesh at any rate: force is not what limits a break (e095) | **large** |
+| parts | parts whose worth depends on where they sit and how they move | 4 block kinds on a 2D grid of side 4-16; every block pays best packed, so bodies fill their grids (#52, e047). A fifth that gains by its faces open to the air (#103, `light_gain` 0.016, not in the default world) parts a kind on three seeds of six, and its bodies are the first in this world that are not filled rectangles - a hollow frame, a bar one block wide, 1.38-1.62 open faces a block against 0.94. They live only in the water: on land an open face is a water bill (e093). A sixth that adds to the motor only where it touches the outside (#107, `leg` 1, not in the default world) is built where the law pays (1.76 blocks a body, 1.93 of their faces open) and makes open, roaming water plant eaters - 1.29 open faces a block against 0.90, travel 17 cells against 4 - that hold 3.0-4.98% of the grown bodies on three seeds of six and never the 5% line. A spike, the hard block in a shape, buys 1-2% of the flesh at any rate: force is not what limits a break (e095). Sharing the light instead of granting it (#108, `shade`, not in the default world) feeds the same kind - 5.6-7.7% of the grown bodies on seed 9, 99% of them in the water, an open frame at the surface - and no other (e096) | **large** |
 | size | a thousandfold range, each size with its place | 21-35 blocks; winners differ 1.3-2.2x (e055, e075). Fiber digested over time (Fb, not kept) makes grass eaters 14-27% heavier and slower, with no new kind (e089); at a harsher rate (0.8 fiber, ferment 0.005) they do not grow at all - grass falls to a fifth of what is eaten and the bodies leave it (e090) | large |
 | life history | lives that span seasons; fat and dormancy chosen by selection | breeding values fixed (from the genome they cost kinds, e069); fat from the genome (e072); a cold body can go torpid (Q, not in the default world, e087) | medium |
 
@@ -88,7 +89,7 @@ rest it holds back.
 | ways of living | many; the user asked for about 20 (2026-09-11) | 7.53 kinds at a census, 4.35 kept to a place, over the six-seed ladder (e092); no plant law since has raised the count on any seed (e088-e091). Read over a run instead of at a census: 8 ways hold 5% of the grown bodies **in the mean**, 17 reach the line at some point, 3 hold it in 90% of the run's 51 censuses, and 1 at every one - because a way's share swings by 61% of its own size and 84% of the dips come back (e094) | **large** |
 | dominance | no line above a fifth of the animals | the largest line holds 42-78% of the land's bodies, by the seed (e092) | large |
 | food web | three or more levels; hunters of several kinds | kills are 27% of what bodies eat; the largest land kind takes half its food from kills; pure flesh kinds 2-4% (e075) | medium |
-| crowding | numbers limited by food, hunters and seasons | numbers limited by room: **46-49% of children have no room and 44-51% of moves are blocked, in every one of six seeds** (e092; e070 read 24-33% in its world); without the hunter the grazers double (e076). Room is counted in blocks, not in outline, so a law that pays per open face does not thin it: under the light the crowd is 1.05 bodies a cell against 1.04, and 1.76-2.18 where the light-led kinds stand (e093) | **large** |
+| crowding | numbers limited by food, hunters and seasons | numbers limited by room: **46-49% of children have no room and 44-51% of moves are blocked, in every one of six seeds** (e092; e070 read 24-33% in its world); without the hunter the grazers double (e076). Room is counted in blocks, not in outline, so a law that pays per open face does not thin it: under the light the crowd is 1.05 bodies a cell against 1.04, and 1.76-2.18 where the light-led kinds stand (e093). **The density itself is a constant**: a cell holds 16 sub-cells and the cells bodies stand on carry 8.5-10.5 blocks in every run of e096's ladder, over a fivefold range of population - half of all births fail in cells that are half empty, so the jam is the packing of rigid grids into contiguous free sub-cells, not a density (e096) | **large** |
 | cycles over time | predator and prey swing; seasons move numbers | the land's bodies swing twofold over a year; forms do not follow (e070) | medium |
 
 ### G. Cycles of the world
@@ -116,8 +117,15 @@ rest it holds back.
    numbers the six seeds agree on (e092). A new axis has to thin the crowd, or make a place differ over more
    ground than a body covers, or it is averaged away. **What will not thin it**: a law that pays a body per unit
    of its outline. Room here is counted in blocks - one block, one sub-cell, whatever sits around it - so
-   spreading buys faces and no room, and the light's own kinds stand twice as thick as the world (e093). A law
-   that thins the crowd has to make one body's income fall when another arrives on its cell.
+   spreading buys faces and no room, and the light's own kinds stand twice as thick as the world (e093). **Nor a
+   law priced by how thick the bodies stand.** The one law that made a body's income fall when another arrived -
+   the cell's light as one flux the blocks over it share (e096) - took 54-91% of the light of every cell a body
+   stands on and left the crowd where it was: births with no room 46.0-48.8% against 50.3%, the intake per gut
+   block unmoved, and the shade alone (nobody taking what it took) moving those numbers as far as the pair did.
+   The reason is the measurement it produced: the cells bodies stand on carry 8.5-10.5 blocks of the 16 a cell
+   holds, in every run and at every population, because a body that cannot fit stands on the next cell instead of
+   standing thicker. Mean density is a constant of this world; the jam is a packing problem. A law that thins this
+   crowd has to change what must fit - the body's own grid - or where it may be born.
 
 The dominant line may still follow from 1 and 2: the best eater of the one food spreads. **Judged how**: the ten
 laws rejected since e075 were read on three seeds against a line (+1 kind) no larger than the spread the seeds make
@@ -177,6 +185,15 @@ Each holds under the conditions it was found in.
   world needs the pusher's face to be harder than the victim's *first*; the prey are soft, so 1-3 muscle on a
   line was already enough. From a force counted 1.5 times over to 9 times over, what comes in through a spike
   stays at 1-2% (e095). Designing a law as a cycle does not excuse reading the arithmetic it plugs into.
+- A law priced by how thick the bodies stand has nothing to price. The cells bodies stand on carry 8.5-10.5
+  blocks of the 16 a cell holds - the control's 9.1, the shade's 8.7-9.1, a mat's 8.5-10.5 at four times the
+  population - because a body that cannot fit stands on the next cell. So the shade's own term, a block's share
+  `min(shade, 16/n)`, varied by a fifth over the whole ladder: the second body never halved the first's income
+  (e096). Half of all births fail in cells that are half empty.
+- A law can transfer a resource in full and still change nothing about the crowd. The shade moved 54-91% of an
+  occupied cell's light from the grass to the bodies and cost the grass under them a third of its stand; the
+  world and its plant fell together by a fifth and the intake per gut block did not move, which is e057's
+  fingerprint from the other side (e096).
 - Every shape law so far ends in the water: the open bodies of e066-e067, the light's kinds (e093) and the
   leg's (e095, 90% of them). On land a face open to the air loses water every turn; in the water it costs
   nothing and gives breath back. A shape law is a water law until something pays for an open face on land.
@@ -237,29 +254,38 @@ kind: 3.0-4.98% of the grown bodies on three seeds of six, and by the pre-set ru
 not rise (7.29 against 7.53, inside the spread) and the world is unharmed. **P3 has one candidate left**: the
 shade below.
 
-**The next step is filed as #108, designed and agreed 2026-09-21: the shade, with e093's leaf, as a set.** A
-cell's light stops being granted to everything standing over it and becomes one flux: every block of a body over a
-cell shades it, the ground grows at what is left, and the bodies divide what they took by their blocks, so a second
-body halves the first's income. It is the only candidate that could thin the crowd, and the first law of this world
-in which a body is a place for another body. Two things the sketch did not have: the unit is the block's footprint,
-not the body (a cell holds 1.04 bodies, so a per-body rule would not fire), and the light must be transferred and
-not only subtracted, or it is e057's fouling again (the crowd thinned 10%, the plant fell 12.5%, the intake per gut
-block did not move, no kind appeared). The crowd **is** a done-when there, unlike e093 and e095, because the law is
-density-dependent by construction; a track-level stopping rule kills it at the ladder if the world shrinks in
-proportion with the income pinned. #104 (re-testing P2's foods in a thinner crowd) waits on it.
+**P3 step 3 spent 2026-09-21 with e096 (#108): the shade, with e093's leaf, as a set - not kept, and the track
+stopped at its ladder by the rule declared before the runs.** A cell's light stopped being granted to everything
+standing in it: the blocks over a cell darken `min(1, shade x n / 16)` of it, the ground grows at what is left,
+and the blocks divide exactly what they darkened, a block reading `min(shade, 16 / n)` of the light of its own
+footprint. It engaged - the bodies take 54-91% of the light where they stand, the grass under them falls to two
+thirds of the grass they leave alone, and a light-led kind holds 5.6-7.7% of the grown bodies on seed 9 (99% of
+them in the water, as e093's and e095's were). It did not reach the crowd: births with no room 46.0-48.8% against
+the control's 50.3% on the same seed, moves blocked 48.8-53.0% against 52.6%, bodies a cell 1.04-1.06 against
+1.06, **the intake per gut block unmoved at 0.0034-0.0037 against 0.0035** while bodies and plant fell together by
+a fifth - e057's fingerprint, this track's declared stopping rule, so the batch was not run. Kinds fall at every
+rung (5.86-7.24 against 8.14 on the same seed).
 
-**If the shade fails, P3 is spent and the next piece is not another single law** but a set that replaces the world,
-as e072 was: 3D bodies (#5) with a food only a tall body reaches - `principles.md`'s least-explored axis, the same
-cell being one environment to a large body and another to a small one. It needs 3D because in 2D the door to such a
-food is the body's mass, and mass moves within a life, which is how the crown failed (e091).
+**Why, and it is the piece's real result**: the cells bodies stand on carry **8.5-10.5 blocks of the 16 a cell
+holds, in every run and at every population**, because a body that cannot fit stands on the next cell instead of
+standing thicker. The law's own term varied by a fifth over that band. Mean density is a constant of this world,
+and half of all births fail in cells that are half empty: the jam is the packing of rigid grids into contiguous
+free sub-cells (section 3, item 4).
+
+**P3 is spent, and the next piece is not another single law** but a set that replaces the world, as e072 was:
+3D bodies (#5) with a food only a tall body reaches - `principles.md`'s least-explored axis, the same cell being
+one environment to a large body and another to a small one. It needs 3D because in 2D the door to such a food is
+the body's mass, and mass moves within a life, which is how the crown failed (e091). It is also the one change
+that touches what e096 found binding: what must fit into the room there is. The set is to be designed before
+anything is built, and #104 (re-testing P2's foods in a thinner crowd) still waits on a crowd nothing has thinned.
 
 | piece | fills | contains |
 |---|---|---|
 | **P1. A life that meets its world** | E, D, part of F | the ratio of a grown life to the year and to the places: a shorter year (stages A and B again), what kills the young today, a body that waits out a bad season on its fat, what makes travel pay (#93) |
 | **P2. A food web** | B, F | kinds of plant matter that need different mouths and guts (#34), seasonal rich food, each food's mouthful set so that it feeds a way. Spent (#99, #100, #101): parted by a mouthful, by a tool and by a place, no plant food has fed a kind |
-| **P3. Bodies whose shape does something** | C | parts that work only at a tip or an edge, a leg that walks only where it touches (#52); later 3D (#5). Spent twice (#103, #107): a shape-material builds bodies and no ways of living; the shade is what is left |
+| **P3. Bodies whose shape does something** | C | parts that work only at a tip or an edge, a leg that walks only where it touches (#52); later 3D (#5). Spent (#103, #107, #108): a shape-material builds bodies and no ways of living, and the one law that priced the crowd found the crowd's density is a constant |
 
 P1 was called the deepest root and P2 the most direct route; both are spent without a law kept, and both pointed
-at the crowd instead (section 3, item 4). P3's two steps are spent the same way: both built bodies this world had
-never grown, neither built a way of living, and neither touched the crowd - which is what its one remaining
-candidate, the shade, is for. What is left of P1 (what kills the young, what makes travel pay) waits.
+at the crowd instead (section 3, item 4). P3's three steps are spent the same way: each built bodies this world had
+never grown, none built a way of living, and the one that was aimed at the crowd found that the crowd cannot be
+priced by density. What is left of P1 (what kills the young, what makes travel pay) waits.
