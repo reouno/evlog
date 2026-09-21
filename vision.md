@@ -116,5 +116,4 @@ price is a body's **blocks** (4.9x today's at the same side), not its cells. **T
 water on six seeds, because the set's water axis is built on it (one batch, no code); #114 builds the crate and
 asks the one precondition - does anything live off the floor; the search of H1's yield against H3's thirst, and the
 ladder, are designed after #114 reads. #115 holds the rule that the way-label grows only when a law puts something
-in the world it cannot express. Kept on #5: whether the largest line's share becomes a pass line beside the count.
-#104 (P2's foods in a thinner crowd) waits for a crowd thinned without costing kinds.
+in the world it cannot express; #104 (P2's foods in a thinner crowd) waits for a crowd thinned without costing kinds.
