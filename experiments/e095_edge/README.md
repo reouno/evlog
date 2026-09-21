@@ -134,6 +134,51 @@ with the categorical done-whens deciding (`foundation.md`, e092, e094).
 
 ## Result
 
+`report.html` has the charts. Every run stood its steps and the ledger drifts by at most 3e-14.
+
+### The two ladders (seed 9, 40,000 steps, means over the second half; the control's own row beside them)
+
+The ladders were extended to 8 and to 4 while the first four ran, to find each law's top.
+
+| spike | 0 (ctl) | 0.5 | 1 | 2 | 4 | 8 |
+|---|---|---|---|---|---|---|
+| flesh taken through a spike | 0% | 1.0% | 1.8% | **2.0%** | 1.1% | 0.8% |
+| blocks broken by a spike | 0% | 0.5% | 1.0% | 1.1% | 0.6% | 0.4% |
+| grown bodies carrying a spike | - | 10.0% | 11.6% | 9.7% | 11.3% | 14.7% |
+| kills' share of what is eaten | 44.6% | 42.8% | 43.5% | 42.5% | 42.0% | 42.5% |
+| hard blocks a body | 3.31 | 3.16 | 2.87 | 2.78 | 2.53 | 3.81 |
+
+| leg | 0 (ctl) | 0.25 | 0.5 | 1 | 2 | 4 |
+|---|---|---|---|---|---|---|
+| leg blocks a body | 0 | 0.46 | 0.85 | 1.76 | 1.90 | 3.02 |
+| their faces open to the air | 0 | 0.45 | 0.86 | 1.93 | 2.00 | 3.14 |
+| muscle blocks a body | 7.50 | 7.62 | 7.80 | 8.19 | 6.88 | **4.57** |
+| motor (chance a sub-cell) | 0.209 | 0.223 | 0.215 | 0.242 | 0.313 | 0.504 |
+| travel in a life (cells) | 4.89 | 4.62 | 5.54 | 5.63 | **6.48** | 4.15 |
+| moves blocked | 52.6% | 54.0% | 54.9% | 55.1% | 55.2% | **61.6%** |
+| kinds at 5% over the censuses | - | - | - | 10 | 9 | 8 |
+| a kind the legs move (5% line) | - | - | - | **6.8%** | none | 5.3% |
+
+**The spike does not depend on its rate.** From 0.5 to 8 - a force counted 1.5 to 9 times over - the flesh
+that comes in through a spike stays at 1-2% and the blocks broken through one at 0.4-1.1%, and no kind of
+any run takes as much as 2.0% of its flesh that way. Raising the rate raises the *shape* (spikes a grown
+body 0.08 to 0.19) and not what it earns. The reason is in the break rule it was built on: a break needs
+the pusher's face to be **harder** than the victim's and only then more force than that face resists, and
+in this world the prey are soft (a soft face resists 1, a pressing line brings 1-3 muscle). The force was
+not what limited a break, so multiplying it bought nothing. The spike multiplies a term that does not bind.
+
+**The leg works, and it has a top between 2 and 4.** The leg blocks a body develops sit almost exactly on
+its boundary (1.76 blocks with 1.93 open faces at rate 1): where the law pays, and not scattered. Up to
+rate 2 the motor and the travel rise together (0.209 to 0.313, 4.89 to 6.48 cells a life). At rate 4 the
+law turns over: legs replace muscle (7.50 to 4.57 blocks), the motor reaches 0.504 - and the travel
+**falls below the control's** (4.15) while 61.6% of moves are blocked, because what the legs buy is spent
+on a body too spread to place in the jam. Rate 1 is the one that parts a kind (one kind of 6.8% of the
+grown bodies whose motor is 54% legs, travelling 15.25 cells against the run's median of 5.5, with 1.33
+open faces a block against the world's 0.91) and it keeps the most ways of living (10 kinds at the 5%
+line, against 9 at rate 2 and 8 at rate 4). **The batch is the pair at `spike` 2 and `leg` 1.**
+
+### The batch (spike 2 + leg 1, seeds 9-14, 100,000 steps)
+
 (to come)
 
 ## Conclusion

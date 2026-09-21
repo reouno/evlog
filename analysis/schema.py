@@ -26,6 +26,9 @@ IGNORED = {
     "open_soft", "breath", "inhaled", "breed", "share", "store", "kids",
     "btemp", "warmed", "cooled", "load", "fermented", "dunged", "fiber",
     "leaf_open", "born_hab", "rich",
+    # e095 (#107): the faces of a body's leg blocks that pull, and what it took through a spike. The
+    # second is not a food of its own - it is part of `killed`, read apart by that experiment's sweep.
+    "leg_open", "sharp",
 }
 
 # Columns that older crates wrote and no crate writes now (e005-e059, e071). They are named so that

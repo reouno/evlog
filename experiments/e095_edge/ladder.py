@@ -15,7 +15,7 @@ import subprocess
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
-LADDERS = [("spike", "s", ["0.5", "1", "2", "4"]), ("leg", "k", ["0.25", "0.5", "1", "2"])]
+LADDERS = [("spike", "s", ["0.5", "1", "2", "4", "8"]), ("leg", "k", ["0.25", "0.5", "1", "2", "4"])]
 CTL = os.path.join(ROOT, "experiments", "e081_drink", "results", "ladder", "c1225_life9_u0")
 COLS = [("pop", "bodies", "{:.0f}"), ("size_mean", "blocks a body", "{:.1f}"),
         ("hard_mean", "hard blocks", "{:.2f}"), ("muscle_mean", "muscle blocks", "{:.2f}"),
