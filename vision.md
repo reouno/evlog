@@ -5,7 +5,7 @@ What happened lives in the experiments' READMEs, the issues and git, never here.
 when a row wants a paragraph, the paragraph belongs in an experiment's README and the row keeps the one sentence
 that decides the next step.
 
-Last updated: 2026-09-21, after e098.
+Last updated: 2026-09-22, after e100.
 
 ## 1. The ideal
 
@@ -112,8 +112,10 @@ life (e091). **Room is its background, not an axis** (e097); but **where a child
 world has shown** (-2.52 kinds when widened uniformly), so a dispersal differing by place and by body is a
 candidate component (#111), never a law run alone.
 
-**Its price is paid** (e098, #110): 8x8x8 costs 2.8-3.2x a step at the same population and less than today at the
-same matter, so a six-seed batch of 100,000 steps is 1.6-2.2 h. The grid is not cut; what the set must price is a
-body's **blocks** (4.9x today's at the same side), not its cells. Kept on #5: whether the largest line's share
-becomes a pass line beside the count - e097 halved the ways of living while leaving that share inside the control's
-band. #104 (P2's foods in a thinner crowd) waits for a crowd thinned without costing kinds.
+**Its price is paid** (e098, #110): 8x8x8 costs 2.8-3.2x a step, a six-seed batch 1.6-2.2 h, and what the set must
+price is a body's **blocks** (4.9x today's at the same side), not its cells. **The order**: #113 reads the body's
+water on six seeds, because the set's water axis is built on it (one batch, no code); #114 builds the crate and
+asks the one precondition - does anything live off the floor; the search of H1's yield against H3's thirst, and the
+ladder, are designed after #114 reads. #115 holds the rule that the way-label grows only when a law puts something
+in the world it cannot express. Kept on #5: whether the largest line's share becomes a pass line beside the count.
+#104 (P2's foods in a thinner crowd) waits for a crowd thinned without costing kinds.
