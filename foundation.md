@@ -16,11 +16,10 @@ in stages from the cheapest layer, `principles.md` holding throughout: laws are 
 
 **Laws** are the same in every world:
 
-- **Conservation** of matter and energy through soil, air and water (e018-e035); water carries soil off the land with
-  the runoff (e072, set G).
-- **The sun**: a day (rotation) and a year (tilt), light by latitude. **Heat**: a cell's temperature from light,
-  height and nearby water, spreading to neighbours. **Water**: evaporation by temperature, humidity carried by one wind
-  that turns with the season, rain where air rises or cools, flow downhill (e061).
+- **Conservation** of matter and energy through soil, air and water (e018-e035); the runoff carries soil off the
+  land (e072, set G). **The sun**: a day (rotation) and a year (tilt), light by latitude. **Heat**: a cell's
+  temperature from light, height and nearby water, spreading to neighbours. **Water**: evaporation by temperature,
+  humidity carried by one wind that turns with the season, rain where air rises or cools, flow downhill (e061).
 - **Producers as materials**: grass, wood and algae, each growing by light, warmth and water on the climate's
   10-step clock; wood shades what grows under it; fire burns dry standing matter and spreads (e062).
 - **Bodies**: a genome of 512 bases develops blocks (hard, muscle, sensor, gut) on a grid of side 4-16 and a linear
@@ -107,17 +106,13 @@ three rejected laws back in and lost 1.8 kinds on every seed, so the world stays
 |---|---|---|
 | A | 1-8 minutes at 512 on one core (20 years, e061, e085) | 300 candidates in about an hour on 10 cores |
 | B | about 8 minutes at 512 (spin-up and 10 years of producers) | about 100 an hour |
-| C | about 28 ms a step with about 10,000 bodies (e081); 100,000 steps in about an hour | a handful of worlds, six seeds each (about two hours a batch on 6 cores) |
+| C | about 30 ms a step with about 10,000 bodies; 100,000 steps in about an hour (2.8-3.2x that in 3D, e098) | a handful of worlds, six seeds each (1.2-2.2 hours a batch on 6 cores) |
 
 Stage C cannot be searched widely: it takes the few worlds A and B pass, and a step is judged on six seeds.
 
-## 5. Search
+## 5. Search, and what this does not promise
 
 Search ratios, not raw constants; sample first (Latin hypercube), keep the passes, refine around them, no optimizer
 until sampling shows where the passing region is. Every candidate writes one row of measures, so the table of all
-candidates is the result.
-
-## What this does not promise
-
-No parameters may pass all three stages. If A passes and B fails, the producers' laws are wrong; if B passes and C
-fails, the materials of the bodies are. The staged search is chosen so that a failure says which.
+candidates is the result. No parameters may pass all three stages: if A passes and B fails the producers' laws are
+wrong, if B passes and C fails the materials of the bodies are. The staged search is chosen so a failure says which.
