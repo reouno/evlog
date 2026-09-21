@@ -11,6 +11,7 @@ each run's own censuses through `analysis`'s classifier (e068's birth form), as 
 them. What each reading used is written to `results/provenance.csv`.
 """
 import csv
+import glob
 import importlib.util
 import os
 import statistics as st
@@ -72,13 +73,21 @@ def read_log(path, upto=None):
 
 
 def plain(pre):
-    """The censuses of a run `tidy.py` has compressed are read from a copy beside them."""
+    """A run whose censuses `tidy.py` compressed is read through a temporary copy: the census
+    decompressed, every other file of the run linked beside it."""
     if os.path.exists(pre + "_agents.csv") or not os.path.exists(pre + "_agents.csv.zst"):
         return pre
-    out = os.path.join(tempfile.gettempdir(), os.path.basename(pre))
+    base = os.path.basename(pre)
+    d = os.path.join(tempfile.gettempdir(), "e097_plain", base)
+    os.makedirs(d, exist_ok=True)
+    out = os.path.join(d, base)
     if not os.path.exists(out + "_agents.csv"):
         with open(out + "_agents.csv", "wb") as f:
             subprocess.run(["zstd", "-dc", pre + "_agents.csv.zst"], stdout=f, check=True)
+    for path in glob.glob(pre + "_*"):
+        name = os.path.join(d, os.path.basename(path))
+        if not path.endswith(".zst") and not os.path.exists(name):
+            os.symlink(os.path.abspath(path), name)
     return out
 
 

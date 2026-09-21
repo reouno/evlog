@@ -222,6 +222,65 @@ two body lengths - `ring` 1, `reach` 2 - goes to the six-seed batch (100,000 ste
 from 36,000, the control ladder's own shape): 6 runs at once, about 1.5-2.5 hours on 6 of 12 cores. One
 seed cannot tell a fall of 2.6 kinds from the seed it was run on.
 
+## Result, the batch
+
+`ring` 1 with `reach` 2 on the six seeds of the control ladder, 100,000 steps, against the control
+ladder itself (e081's seeds 9-11, e092's 12-14). Both sides are read the same way: 51 censuses from
+50,000 to 100,000 and the log's second half (`results/provenance.csv`; the runs write a census every
+1,000 from 36,000 and the reader takes the second half by step, which is 51 of the 65).
+
+| measure | control | ring r2 | effect | control's spread |
+|---|---|---|---|---|
+| kinds at a census | 7.53 | 5.01 | **-2.52** | 1.02 |
+| kinds kept to a place | 4.35 | 2.96 | **-1.39** | 1.24 |
+| the largest kind's share | 14.8% | 32.9% | **+18.1%** | 3.8% |
+| the largest line's share | 54.9% | 60.6% | +5.7% | 35.5% |
+| lines over 5% | 1 | 2 | +1 | 2 |
+| kills' share of intake | 27.8% | 32.7% | +4.9% | 4.7% |
+| **births with no room** | 46.8% | 33.2% | **-13.6%** | 2.7% |
+| moves blocked | 50.5% | 60.7% | +10.2% | 7.6% |
+| sub-cells a child was placed at | - | 6.90 | - | - |
+| bodies | 8,809 | 10,734 | +1,925 | 1,611 |
+| travel of a grown body | 5.2 | 2.4 | -2.9 | 2.0 |
+
+Every effect that matters is far outside the control ladder's own spread, and in the same direction on
+every seed: the jam gives way on all six (32.0-34.1% against 46.5-49.2%), kinds at a census fall on all
+six (4.12-6.69 against 7.25-8.27), and the largest kind's share rises on five of six. The largest line's
+share does not move out of the control's band (35.5 points wide), so **what changes is not which line
+holds the world but how many ways of living it is parted into**.
+
 ## Conclusion
 
-(to be written)
+**Not kept.** Step 0 answered #109's question: the jam is the birth rule's, not the world's. Every spot
+the rule tries is held by another body, never by a wall; a spot with room is within the rule's own reach
+for 35% of the failures, within two body lengths for 75%, within four for 97%, and beyond eight for
+0.02%; and 98% of the spots with room at the nearest distance lie off the four rays the rule searches. A
+body stands on 10.8% of the world's cells. Half of all births fail in a world that is nine tenths empty
+because a rigid grid has to land on contiguous free sub-cells reached by 24 spots on four rays.
+
+Step 1 relieved it - 46.8% of births with no room to 33.2% over six seeds - and **the relief costs ways
+of living**: kinds at a census 7.53 -> 5.01 and kinds kept to a place 4.35 -> 2.96 against a control
+spread of 1.02 and 1.24, with the largest kind's share 14.8% -> 32.9%. The same fall showed on all four
+rungs of the ladder, at every shape and reach. So the crowd's jam was not a lid on the ways of living: it
+was part of what held them apart. A child that can only be laid within one body length on four rays
+leaves its lineage where its parent stood; a child that can be laid anywhere within two lengths spreads
+it, and the winner spreads fastest - dominance rises, travel falls (5.2 -> 2.4, the crowd is nearer), and
+the grass standing falls by a fifth to a half because the children that used to be laid down as carrion
+are now bodies that eat.
+
+**The conditions this holds under**: stage C's default world on c1225 at a body's scale of 1/16, bodies
+that are rigid rectangles on a 4-16 grid placed as a whole, and the measures of e094. It says nothing
+about a world whose bodies bend, grow into a space, or choose where their children go.
+
+What it changes in `vision.md`: section 2's crowding row (the jam is the birth rule's, measured, and
+relieving it lowers the ways of living), section 3 item 4 (the crowd is not a lid to be lifted - it is a
+dispersal limit that keeps lines apart, as e083 found places to be), and section 5 (#109 is answered;
+**room is not an axis of the 3D set (#5) but its background**, and the set is designed for the food at
+height alone). #104 (re-testing P2's foods in a thinner crowd) now has a knob that thins the crowd, but
+the world under it holds fewer ways of living, so a re-test would be read against a poorer control: it
+stays shut until something thins the crowd without costing kinds.
+
+Open question, for the 3D set to answer if it can: dispersal is now known to be one of the few things
+that moves the ways of living in this world at all (2.5 kinds), and it moved them the wrong way. Whether
+a body that **chooses** how far its children go - a trait, not a law of the world, so not this piece's
+business - would part the world instead of levelling it is untested.

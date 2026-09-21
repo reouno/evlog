@@ -5,7 +5,7 @@ What happened lives in the experiments' READMEs, the issues and git, never here.
 when a row wants a paragraph, the paragraph belongs in an experiment's README and the row keeps the one sentence
 that decides the next step.
 
-Last updated: 2026-09-21, after e096.
+Last updated: 2026-09-21, after e097.
 
 ## 1. The ideal
 
@@ -49,7 +49,7 @@ holds back.
 | F ways of living | many; the user asked for about 20 | 7.53 kinds at a census, 4.35 kept to a place, 8 ways at 5% in the mean (e092, e094) | **large** |
 | F dominance | no line above a fifth of the animals | the largest line holds 42-78% of the land's bodies (e092) | large |
 | F food web | three or more levels, hunters of several kinds | kills are 27% of what bodies eat; pure flesh kinds 2-4% (e075) | medium |
-| F crowding | numbers limited by food, hunters and seasons | limited by room: 46-49% of births find none, 44-51% of moves blocked; the cells bodies stand on carry 8.5-10.5 blocks of 16 at any population (e092, e096) | **large** |
+| F crowding | numbers limited by food, hunters and seasons | limited by the birth rule: 47% of births find no room though a spot that fits is within two body lengths for 75% of them and off the four rays it searches; widening it thins the jam to 33% and costs 2.5 kinds (e097) | **large**, and not to be lifted by giving room |
 | F cycles over time | predator and prey swing | the land's bodies swing twofold over a year; forms do not follow (e070) | medium |
 | G matter | closes between land and sea | conserved; the land gains 6.5-7.3% over 90,000 steps and nothing returns from the sea (e072, e090) | small, but it prices every law that moves matter |
 | G water, heat | a body drinks and gives back; places exchange heat | water free to the body (e081); a body holds heat but does not warm its cell (e072) | small |
@@ -64,9 +64,10 @@ holds back.
 3. **Parts whose worth does not depend on shape** (C). Forms differ by what they hold, not by how they are built.
    Three materials priced by shape have been tried and none made a way of living (e093, e095, e096).
 4. **The crowd absorbs what is added to it** (F, and through it B and C), and it is not an income: half of all
-   births fail for room in cells that are half empty, and the blocks over a cell are a constant of this world, so
-   the jam is the packing of rigid grids, not a density (e096). A law priced per outline or per density cannot
-   reach it. Whether it is the world's or the birth rule's is #109.
+   births fail for room in cells that are half empty, because a rigid grid must land on contiguous free sub-cells
+   reached by 24 spots on four rays (e096, e097). It is not a lid to be lifted: relieving it costs ways of living
+   (7.53 kinds to 5.01 over six seeds, e097), because the narrow rule is what keeps a lineage where its parent
+   stood. What is missing is not room but something that parts the world - a food, a place, a trade-off.
 
 ## 4. Lessons that hold across experiments
 
@@ -90,7 +91,8 @@ Each holds under the conditions it was found in.
 - What ends a grown life is the crowd's income, wherever it lives, not the season (e037, e038, e087). A body that
   can wait lives through a winter and then does not move; a winter is a third of its year at any year length (e086).
 - Heat is paid in water and water sets where land bodies live (e078); lines are kept apart by places a leader does
-  not cross (e083); a world's regions can be read from its climate alone (e084, e085).
+  not cross (e083), and by how far a child may be laid from its parent - give a child room and the winner spreads
+  fastest (e097); a world's regions can be read from its climate alone (e084, e085).
 - A law that carries matter one way over a world with a sea drains the land (e090).
 - A way that needs a part the population has lost is a question of reach, not ecology: test it by injection beside a
   control (e074, e076). The crowd makes hunters; without the hunter the grazers double (e076).
@@ -104,14 +106,12 @@ that meets its world), P2 (a food web) and P3 (bodies whose shape does something
 and all three ended at the crowd (section 3, item 4). What is left of P1 - what kills the young, what makes travel
 pay - waits.
 
-1. **#109, agreed 2026-09-21: measure the crowd at its cause.** Twelve laws were spent on a crowd whose mechanism
-   was measured only by the twelfth, so the order is reversed: one instrumented run says what a failed birth
-   actually hits, then one ladder over whatever that names, judged on ways of living and on the largest line's
-   share, never on the number of bodies (#67). Under half a core-day.
-2. **Then the 3D set (#5)**: 3D bodies with a food only a tall body reaches, as a set that replaces the world the
-   way e072's did. It is `principles.md`'s least-explored axis - the same cell being one environment to a large body
-   and another to a small one - and it needs 3D because in 2D the door to such a food is the body's mass, which
-   moves within a life (e091). #109 decides whether room is one of that set's axes or only its background.
+1. **The 3D set (#5)**: 3D bodies with a food only a tall body reaches, as a set that replaces the world the way
+   e072's did. It is `principles.md`'s least-explored axis - the same cell being one environment to a large body and
+   another to a small one - and it needs 3D because in 2D the door to such a food is the body's mass, which moves
+   within a life (e091). **Room is its background, not one of its axes**: #109 measured the jam at its cause and
+   relieved it, and the relief cost ways of living (e097).
 
 Two decisions to settle before that design, kept on #5: what 3D costs, and whether the largest line's share becomes
-a pass line beside the count of kinds. #104 (P2's foods in a thinner crowd) waits on a crowd nothing has thinned.
+a pass line beside the count of kinds. #104 (P2's foods in a thinner crowd) now has a knob that thins the crowd, but
+the world under it holds fewer ways, so it waits for a thinner crowd that costs no kinds.
