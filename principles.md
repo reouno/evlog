@@ -36,6 +36,8 @@ When unsure, ask in this order:
    cannot get there. Each law kept this way is one fixed value, never a knob to search (e099: five laws had been
    rejected for a difference smaller than the difference between two seeds of the same world, two of them thrown
    out together with a third that did the harm; e066's dry air had already been kept this way by e067).
+   **The spread is the six-seed ladder's**: a law read on one seed has not been read, and laws each
+   unreadable alone are not unreadable together - three of them cost 1.76 kinds as a set (e100).
 7. Does the world already meet the law's conditions? A law that needs a behavior pays only where that behavior pays, so name the conditions together ("Y pays when A and B") and test the minimal combination, not one law at a time (e040). And before writing a law about a flow, check which flow the bodies actually live on: e041 throttled the growth of the cells while 91% of what the bodies ate fell from the crowns above them.
 
 ## Where new laws come from

@@ -59,8 +59,57 @@ this world can be read.
 
 ## Result
 
-(pending: the ladder is running)
+Six seeds, 100,000 steps, every ledger at most 7e-14; the world stands (bodies 7,707-9,596 against the
+old ladder's 7,860-9,470). Read by `sweep.py` beside e092's ladder, the same reader on both:
+
+| seed | kinds at a census | kinds kept to a place | the largest line's share | travel |
+|---|---|---|---|---|
+| | old -> new | old -> new | old -> new | old -> new |
+| 9 | 7.45 -> 5.98 | 4.75 -> 2.31 | 58.0% -> 46.3% | |
+| 10 | 8.27 -> 5.57 | 4.65 -> 2.35 | 62.8% -> 61.4% | |
+| 11 | 7.25 -> 6.59 | 4.47 -> 3.33 | 42.3% -> 58.2% | |
+| 12 | 7.76 -> 5.45 | 4.24 -> 1.86 | 51.7% -> 62.5% | |
+| 13 | 7.27 -> **3.67** | 3.75 -> **0.43** | 77.7% -> **99.1%** | |
+| 14 | 7.61 -> 6.55 | 3.51 -> 3.00 | 44.9% -> 65.0% | |
+| **median (spread)** | **7.53 (1.02) -> 5.77 (2.92)** | **4.35 (1.24) -> 2.33 (2.90)** | 51.7% -> 62.0% | **5.25 (2.0) -> 9.5 (27.8)** |
+
+**The set costs 1.76 kinds at the median and every seed loses** (-0.66 to -3.60), so this is not one
+bad seed. Kinds kept to a place fall by nearly half. **The spread nearly triples on both measures**,
+which matters as much as the median: a ladder that spreads 2.92 kinds can read almost nothing.
+
+**The signature is travel.** A grown body went 5.25 cells in the old world and 9.5 here, and the spread
+goes from 2.0 to 27.8: on seed 13 a body travels 32.8 cells and **one line holds 99.1% of the land's
+bodies**. That is e082's mechanism exactly ("the more a body moves, the more one line spreads over
+every place") and e097's from the other side: whatever lets a lineage reach further levels the world.
+The jam eases with it (births with no room 47% -> 39%), which e097 already showed is paid for in kinds.
+
+A mechanism that would produce it: `shade_dry` and `crown_wet` together make a stand a place where a
+body loses less water and the ground under it stays wet, so stands become watering places scattered
+over the land and a body can cross the dry ground between them. `unit` is the other candidate - e099
+read it alone on three seeds at -0.12 / **-2.06** / -0.31 - but on its own it shortened travel (e081's
+tether), so it does not explain a doubling.
 
 ## Conclusion
 
-(pending)
+**The new world is worse than the one it replaces, and it is not adopted as the default.**
+`foundation.md` keeps e092's ladder as the control until a world beats it.
+
+**What the result says about the rule, not just the world.** Decision rule 6 (`principles.md`) stands -
+a law whose effect cannot be read should not be thrown away - but this run shows two things it did not
+say:
+
+1. **"Could not be read" has to mean "on the six-seed ladder".** e078's shade and e079's crown were
+   each run on **one seed for 60,000 steps**; e099 read them there and found nothing, and that was not
+   evidence of no harm. A law read on one seed has not been read.
+2. **Laws that are each unreadable are not unreadable together.** The project already knows the
+   converse ("a law added alone meets a world without its counterweights", e066-e072); this is the
+   same sentence running the other way, and the set is 1.76 kinds worse than any of its parts measured
+   alone.
+
+What it does not say: nothing here rescues `crown_cool`, `history` or the widened birth rule, which
+harm on their own; and nothing here says e093's light block or e095's spike and leg (both read on the
+full six-seed ladder, -0.51 and -0.24) are harmful. Those two remain the candidates the rule was
+written for.
+
+**Open, and the cheapest way to close it**: which of the two halves did this. One more ladder with
+`unit` 0 - the shade and the crown alone, six seeds - separates them in 1.2 hours.

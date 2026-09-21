@@ -43,6 +43,7 @@ a census, 1.24 kept to a place.
 
 | law | parameter today | kinds at a census, by seed | kept to a place | reading |
 |---|---|---|---|---|
+| *(seeds: e078, e079, e080 were run on seed 9 alone, 60,000 steps; e081, e082, e087 on three seeds; e093, e095, e096, e097 on the six-seed ladder)* | | | | |
 | e078 the crown's shade (2.5/2.5) | `shade_heat` `shade_dry` | +0.04 | -0.40 | **unreadable** |
 | e078 the same at 5/5 | | +0.20 | -0.04 | **unreadable** |
 | e079 the crown's ground, wood's rest (1, 0.5) | `crown_wet` `wood_rest` | -0.08 | -0.12 | **unreadable** |
@@ -72,7 +73,9 @@ kinds - which is the whole of the user's point.
 
 **Five laws were rejected for a difference smaller than the difference between two seeds of the same
 world**: e078's shade (both rates), e079's crown ground and wood rest, e093's light block, e095's
-spike and leg. Three harmed the measure and stay out: e069's life history, e080's crown cooling,
+spike and leg. **Two of those five were read on one seed**, which e100 then showed is not enough: put
+into the world together with e081's water they cost 1.76 kinds over six seeds. A law read on one seed
+has not been read. Three harmed the measure and stay out: e069's life history, e080's crown cooling,
 e097's widened birth rule. Four are borderline on one seed of three: e081's water, e082's fresh
 water, e087's torpor, e096's shade.
 
