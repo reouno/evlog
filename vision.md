@@ -24,7 +24,7 @@ and die out, none of it scripted (`principles.md`). As a picture, a savanna as a
 **The measure is ways of living, not shapes** - what a body eats, whether it can break another, whether it stays
 or roams, where it lives - counted by birth form (e068) at a census and as kinds kept to a place, judged on six
 seeds against the control ladder's distribution, **and beside it how much two replays of one world agree**
-(`analysis/replay.py`): the ways should converge less than they do, the bodies not at all. **The working
+(`analysis/replay.py`): read over the ways that hold the line, never over every way seen, which saturates. **The working
 hypothesis** (competitive exclusion): the ways that coexist are at most the independent things they live on,
 each with a trade-off no body escapes, laid out at scales the bodies feel. Untested: no world has had more than a few foods.
 
@@ -49,7 +49,7 @@ holds back.
 | F dominance | no line above a fifth of the animals | the largest line holds 42-78% of the land's bodies (e092) | large |
 | F food web | three or more levels, hunters of several kinds | kills are 27% of what bodies eat; pure flesh kinds 2-4% (e075) | medium |
 | F crowding | numbers limited by food, hunters and seasons | limited by the birth rule: 47% of births find no room though a spot that fits is within two body lengths for 75% of them and off the four rays it searches; widening it thins the jam to 33% and costs 2.5 kinds (e097) | **large**, and not to be lifted by giving room |
-| F history (a replay) | the same world run again fills other roles with other bodies | ways of living agree 0.91 between two seeds (38 of 46 in every seed), birth forms 0.035 (e092, read by `analysis/replay.py`) | **large**: the bodies are already contingent, the roles are not |
+| F history (a replay) | the same world run again fills other roles with other bodies | between two seeds the ways holding 5% agree 0.60 and their shares 0.77, the largest way is the same in 2 of 6 seeds, the birth forms agree 0.035 (e092, `analysis/replay.py`) | medium: contingent already; the measure's own 64 boxes cap what can be said |
 | F cycles over time | predator and prey swing | the land's bodies swing twofold over a year; forms do not follow (e070) | medium |
 | G matter, water, heat | matter closes between land and sea; a body drinks and gives back; places exchange heat | matter conserved, the land gaining 6.5-7.3% over 90,000 steps with nothing back from the sea (e072, e090); water free to the body (e081); a body holds heat but does not warm its cell (e072) | small, but matter prices every law that moves it |
 
@@ -58,10 +58,10 @@ holds back.
 1. **A life is too short and too local for the world we built** (E, and through it D and part of F). To a body the
    world is the same everywhere and always; places and seasons are felt only by lines over generations. Hence no
    eye bought, no refuge, no migrant.
-2. **Few kinds of food, and a space of ways small enough to exhaust** (B, and through it F). A gut eats any plant
-   and there are three producers; each food with the right mouthful added a way of living (e073, e075), three tried
-   since have not (e089-e091). 46 ways exist over the six control seeds and 38 turn up in every one, so a replay has
-   nothing left to choose differently: contingency needs more possible ways than one run can realize.
+2. **Few kinds of food, and a label with only 64 boxes to put a way of living in** (B, and through it F). A gut eats
+   any plant and there are three producers; each food with the right mouthful added a way of living (e073, e075),
+   three tried since have not (e089-e091). A way is a diet (4) x a tooth (2) x roaming (2) x a medium (4), and about
+   43 of those 64 are filled in every run, so the coarse reading of a replay saturates whatever the world does.
 3. **Parts whose worth does not depend on shape** (C). Forms differ by what they hold, not by how they are built.
    Three materials priced by shape have been tried and none made a way of living (e093, e095, e096).
 4. **The crowd absorbs what is added to it** (F, and through it B and C), and it is not an income: half of all

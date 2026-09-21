@@ -74,18 +74,19 @@ of 96 candidates pass, and no draw of the rates passes on more than two worlds. 
 wood 0.0017, algae 0.009112, ignite 1.613e-6) on c1225. A candidate costs about 8 minutes at 512.
 
 **Stage C, bodies.** Judged by kinds of living by birth form (e068) at a census and kept to a place, on **six seeds
-(9-14)**. A birth form counts a body's blocks of every kind, and a group that took half its life's matter from one
-food that is not a plant or flesh lives by that food (`census.LIGHT`, e093). Read as a distribution against the
-control ladder's - median and spread - never as "+1 kind on every seed": the ladder itself spreads 1.02 kinds (median 7.53) and 1.24 kinds kept to a place (median 4.35), so an effect
+(9-14)**. A birth form counts a body's blocks of every kind; a group that took half its life's matter from one food
+that is not a plant or flesh lives by that food (`census.LIGHT`, e093). Read as a distribution against the control
+ladder's - median and spread - never as "+1 kind on every seed": the ladder itself spreads 1.02 kinds (median 7.53) and 1.24 kinds kept to a place (median 4.35), so an effect
 of one kind is not readable at all (e092); a spread is read by what it is made of, since one collapsed seed is not a
 various world (e100). The categorical done-whens - a kind led by the new food, a form keeping to the new place - are
 not noise-limited and decide as before. A piece meant to replace the world (e072's shape) is judged on its own measures
 and becomes the new control if it passes. Stability: a kind left out or halved returns, tested by paired injection
 beside a control (#72, e074, e076).
 
-**How much a replay agrees** is read beside the count (`analysis/replay.py`, #112): over the six seeds, how far the
-set of ways of living agrees (e092: 0.91, 38 of 46 ways in every seed) and how far the birth forms do (0.035). The
-bodies are already contingent, the roles are not, and `vision.md` asks that they become so.
+**How much a replay agrees** is read beside the count (`analysis/replay.py`, #112). A way's label has 64 boxes and
+43 are filled in every run, so the agreement over every way seen saturates (0.91) and is not read; what is read is
+the ways **holding 5%** (e092: 0.60), their shares (0.77), whether the largest way is the same one (2 of 6 seeds)
+and the birth forms (0.035).
 
 **No measure may be a conjunction over the censuses** (e094): a way's share swings by 61% of its own size, so an AND
 over 51 censuses counts 1 where the world holds 8 ways in the mean and drives none out. `kinds_held` is dropped. A
