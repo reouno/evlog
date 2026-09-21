@@ -6,7 +6,7 @@ README and in git.
 
 Last updated: 2026-09-21 (after e096: the shade, P3 step 3, not kept and the track stopped at its ladder - the
 crowd's density is a constant of this world, so a law priced by it has nothing to bite on. P3 is spent; the next
-piece is 3D bodies with a food only a tall body reaches).
+piece is the 3D set (#5), and #109 measures the crowd at its cause before that set is designed).
 
 ## 1. The ideal
 
@@ -125,7 +125,11 @@ rest it holds back.
    The reason is the measurement it produced: the cells bodies stand on carry 8.5-10.5 blocks of the 16 a cell
    holds, in every run and at every population, because a body that cannot fit stands on the next cell instead of
    standing thicker. Mean density is a constant of this world; the jam is a packing problem. A law that thins this
-   crowd has to change what must fit - the body's own grid - or where it may be born.
+   crowd has to change what must fit - the body's own grid - or where it may be born. **What the birth rule
+   actually is** (never tested): a child is placed by picking one of the 4 axis directions and stepping 1..=`reach`
+   sub-cells along it, `reach` being the longer of the two bodies' sides - about 24 candidate spots, all on four
+   rays, all within one body length of the parent - and the bodies stand on roughly an eighth of the world's cells.
+   Whether the jam is the world's or that rule's is #109, and it is measured before the next set is designed.
 
 The dominant line may still follow from 1 and 2: the best eater of the one food spreads. **Judged how**: the ten
 laws rejected since e075 were read on three seeds against a line (+1 kind) no larger than the spread the seeds make
@@ -276,8 +280,20 @@ free sub-cells (section 3, item 4).
 3D bodies (#5) with a food only a tall body reaches - `principles.md`'s least-explored axis, the same cell being
 one environment to a large body and another to a small one. It needs 3D because in 2D the door to such a food is
 the body's mass, and mass moves within a life, which is how the crown failed (e091). It is also the one change
-that touches what e096 found binding: what must fit into the room there is. The set is to be designed before
-anything is built, and #104 (re-testing P2's foods in a thinner crowd) still waits on a crowd nothing has thinned.
+that touches what e096 found binding: what must fit into the room there is.
+
+**Before it, #109, agreed 2026-09-21: measure the crowd at its cause.** Twelve laws were spent on a crowd whose
+mechanism was measured only by the twelfth, so the order is reversed here: one instrumented run says what a failed
+birth actually hits (is there a fitting spot off the four rays, or further out, or none at all), then one ladder
+over whatever that names, judged on ways of living and on the largest line's share - **not on the number of
+bodies** (#67). Under half a core-day before the decision. Its answer sets the shape of the 3D set: room is one of
+that set's axes if it binds what wins, and only its background if it does not. #104 (re-testing P2's foods in a
+thinner crowd) becomes runnable only if a rung there thins the crowd.
+
+**Two things to settle while #109 runs, both on #5**: what 3D costs (the body grid 8x8 to 8x8x8, a cell 16 to 64
+sub-cells, and the third rewrite of how a body is classified in thirty experiments), and whether the largest
+line's share becomes a pass line of its own beside the count of kinds - for a world that is watched, dominance may
+say more than the count.
 
 | piece | fills | contains |
 |---|---|---|
