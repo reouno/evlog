@@ -363,7 +363,7 @@ TEXT = {
     "d2": "What binds is placement: a body is a rigid grid that needs contiguous free sub-cells, and it fails to be "
           "born in a cell that is half empty. No law that prices mean density can reach that. It is also why e093's "
           "light had no middle - and why sharing the flux did not give it one: at a sparse income of 0.032 the world "
-          "becomes the same mat of 11-block bodies, kinds down to 3.4-4.5.",
+          "becomes the same mat of 11-block bodies, kinds down to 3.0-5.0.",
     "d3": "What the runs do not show: whether a wider ladder or six seeds would find a rung where the crowd moves. "
           "The track's stopping rule was declared before the runs - world and plant falling together with the income "
           "pinned - and it fired at every rung, so the batch was not run.",

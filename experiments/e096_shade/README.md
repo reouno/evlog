@@ -153,16 +153,18 @@ so their step is given.
 | grass where they do not | 0.202 | 0.186 | 0.212 | 0.170 | 0.189 | 0.223 | 0.187 | 0.203 | 0.213 |
 
 The ways of living of the same runs, read off their own censuses (`sweep.py --ladder`; 21 censuses
-from 20,000 to 40,000, the stopped runs 2-10):
+from 20,000 to 40,000, the stopped runs 1-9; `analysis/audit.py` found the unfinished last census of each stopped
+run - the process was killed while writing it - and those three censuses were dropped before this was read):
 
 | | ctl | s1 g0 | s2 g0 | s1 g0.016 | s2 g0.008 | s4 g0.004 | s2 g0.016 | s4 g0.016 | s1 g0.032 |
 |---|---|---|---|---|---|---|---|---|---|
-| kinds at a census | 8.14 | 7.43 | 7.52 | 7.24 | 5.86 | 6.81 | 3.40 | 3.88 | 4.50 |
-| kinds kept to a place | 4.95 | 3.81 | 4.14 | 4.00 | 3.48 | 3.81 | 2.40 | 2.00 | 3.00 |
+| kinds at a census | 8.14 | 7.43 | 7.52 | 7.24 | 5.86 | 6.81 | 3.44 | 3.00 | 5.00 |
+| kinds kept to a place | 4.95 | 3.81 | 4.14 | 4.00 | 3.48 | 3.81 | 2.44 | 1.71 | 3.00 |
 | kinds led by the light | 0 | 0 | 0 | 1 | 1 | 0 | 2 | 3 | 3 |
-| grown bodies in them | 0% | 0% | 0% | 7.7% | 5.6% | 0% | 68.5% | 74.3% | 66.4% |
-| of those, in the water | - | - | - | 99.0% | 98.9% | - | 96.9% | 64.5% | 93.9% |
-| bodies a cell, where they stand | - | - | - | 1.64 | 1.85 | - | 3.68 | 1.56 | 2.27 |
+| grown bodies in them | 0% | 0% | 0% | 7.7% | 5.6% | 0% | 67.9% | 74.6% | 66.7% |
+| of those, in the water | - | - | - | 99.0% | 98.9% | - | 96.9% | 63.7% | 91.6% |
+| bodies a cell, where they stand | - | - | - | 1.64 | 1.85 | - | 3.30 | 1.54 | 1.52 |
+| censuses read | 21 | 21 | 21 | 21 | 21 | 21 | 9 | 7 | 1 |
 
 **The law engaged and the crowd did not move.** The bodies take 54-91% of the light of every cell
 they stand on, and the grass under them falls with it (0.116-0.134 against 0.170-0.223 where they do
@@ -190,7 +192,7 @@ this seed at any rung (5.86-7.24 against 8.14).
 
 **The mat is not held either.** At a sparse income of 0.032 - e093's breaking rate, reached at (1,
 0.032), (2, 0.016) and (4, 0.016) - the world becomes what e093 became: bodies of 11-14 blocks, three
-quarters of them led by the light, kinds down to 3.4-4.5 and the largest kind at 41-63%. Sharing does
+quarters of them led by the light, kinds down to 3.0-5.0 and the largest kind at 43-63%. Sharing does
 not stop it for the same reason: the mat's cells carry 8.5-10.5 blocks like everything else, so a
 block in the mat reads nearly the same light as a block alone.
 
