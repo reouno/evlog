@@ -107,10 +107,9 @@ are spent without a law kept; only a set has ever been kept (e072), and the ladd
 
 **The 3D set (#5)** is the piece: 3D bodies with a food only a tall body reaches, replacing the world as e072's set
 did. It is `principles.md`'s least-explored axis - the same cell being one environment to a large body and another
-to a small one - and it needs 3D because in 2D the door to such a food is the body's mass, which moves within a
-life (e091). **Room is its background, not an axis** (e097); but **where a child lands is the largest lever this
-world has shown** (-2.52 kinds when widened uniformly), so a dispersal differing by place and by body is a
-candidate component (#111), never a law run alone.
+to a small one - and it needs 3D because in 2D the door to such a food is the body's mass, which moves within a life
+(e091). **Room is its background, not an axis** (e097); but **where a child lands is the largest lever this world
+has shown**, so a dispersal differing by place and by body is a candidate component (#111), never run alone.
 
 **Its price is paid** (e098, #110): 8x8x8 costs 2.8-3.2x a step, a six-seed batch 1.6-2.2 h, and what the set must
 price is a body's **blocks** (4.9x today's at the same side), not its cells. **The order**: #113 reads the body's
