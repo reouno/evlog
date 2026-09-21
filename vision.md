@@ -5,7 +5,7 @@ update it after every experiment (`CLAUDE.md`, Documents). History is not kept h
 README and in git.
 
 Last updated: 2026-09-21 (after e095: the spike and the leg, P3 step 2, not kept - a material can build a body
-without building a way of living).
+without building a way of living; next is #108, the shade).
 
 ## 1. The ideal
 
@@ -237,11 +237,21 @@ kind: 3.0-4.98% of the grown bodies on three seeds of six, and by the pre-set ru
 not rise (7.29 against 7.53, inside the spread) and the world is unharmed. **P3 has one candidate left**: the
 shade below.
 
-**What P3 has left, still unsettled:** the law left out of e093 on purpose - bodies that shade
-each other and the cell under them, which turns the light from an income each face draws into a flux the bodies on
-a cell share, so that one body's income falls when another arrives. It is the only candidate that could thin the
-crowd, and the first law of this world in which a body is a place for another body. #104 (re-testing P2's foods in
-a thinner crowd) waits on a crowd that has moved, so it waits on that one.
+**The next step is filed as #108, designed and agreed 2026-09-21: the shade, with e093's leaf, as a set.** A
+cell's light stops being granted to everything standing over it and becomes one flux: every block of a body over a
+cell shades it, the ground grows at what is left, and the bodies divide what they took by their blocks, so a second
+body halves the first's income. It is the only candidate that could thin the crowd, and the first law of this world
+in which a body is a place for another body. Two things the sketch did not have: the unit is the block's footprint,
+not the body (a cell holds 1.04 bodies, so a per-body rule would not fire), and the light must be transferred and
+not only subtracted, or it is e057's fouling again (the crowd thinned 10%, the plant fell 12.5%, the intake per gut
+block did not move, no kind appeared). The crowd **is** a done-when there, unlike e093 and e095, because the law is
+density-dependent by construction; a track-level stopping rule kills it at the ladder if the world shrinks in
+proportion with the income pinned. #104 (re-testing P2's foods in a thinner crowd) waits on it.
+
+**If the shade fails, P3 is spent and the next piece is not another single law** but a set that replaces the world,
+as e072 was: 3D bodies (#5) with a food only a tall body reaches - `principles.md`'s least-explored axis, the same
+cell being one environment to a large body and another to a small one. It needs 3D because in 2D the door to such a
+food is the body's mass, and mass moves within a life, which is how the crown failed (e091).
 
 | piece | fills | contains |
 |---|---|---|
