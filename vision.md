@@ -5,7 +5,7 @@ What happened lives in the experiments' READMEs, the issues and git, never here.
 when a row wants a paragraph, the paragraph belongs in an experiment's README and the row keeps the one sentence
 that decides the next step.
 
-Last updated: 2026-09-21, after e097.
+Last updated: 2026-09-21, after e098.
 
 ## 1. The ideal
 
@@ -101,19 +101,18 @@ Each holds under the conditions it was found in.
 
 ## 5. Next
 
-A piece fills the largest gap of section 2 and is designed as cycles before it is built (`CLAUDE.md`). P1 (a life
-that meets its world), P2 (a food web) and P3 (bodies whose shape does something) are all spent without a law kept.
-Only a set has ever been kept (e072): thirteen single laws in a row were absorbed, and the ladder spreads 1.02
-kinds, so an effect under one kind cannot be read at all (e092).
+A piece fills the largest gap of section 2 and is designed as cycles before it is built (`CLAUDE.md`). P1, P2 and P3
+are spent without a law kept; only a set has ever been kept (e072), and the ladder spreads 1.02 kinds (e092).
 
-1. **#110, a spike**: what 3D costs per step, before the set can be priced. Half a day, no batch.
-2. **The 3D set (#5)**: 3D bodies with a food only a tall body reaches, replacing the world as e072's set did. It
-   is `principles.md`'s least-explored axis - the same cell being one environment to a large body and another to a
-   small one - and it needs 3D because in 2D the door to such a food is the body's mass, which moves within a life
-   (e091). **Room is its background, not an axis** (e097); but **where a child lands is the largest lever this
-   world has shown** (-2.52 kinds when widened everywhere at once), so a dispersal differing by place and by body
-   is a candidate component (#111), never a law run alone.
+**The 3D set (#5)** is the piece: 3D bodies with a food only a tall body reaches, replacing the world as e072's set
+did. It is `principles.md`'s least-explored axis - the same cell being one environment to a large body and another
+to a small one - and it needs 3D because in 2D the door to such a food is the body's mass, which moves within a
+life (e091). **Room is its background, not an axis** (e097); but **where a child lands is the largest lever this
+world has shown** (-2.52 kinds when widened uniformly), so a dispersal differing by place and by body is a
+candidate component (#111), never a law run alone.
 
-Kept on #5 to settle before the design: what 3D costs (#110), and whether the largest line's share becomes a pass
-line beside the count - e097 halved the ways of living while leaving that share inside the control's band. #104
-(P2's foods in a thinner crowd) waits for a crowd thinned without costing kinds.
+**Its price is paid** (e098, #110): 8x8x8 costs 2.8-3.2x a step at the same population and less than today at the
+same matter, so a six-seed batch of 100,000 steps is 1.6-2.2 h. The grid is not cut; what the set must price is a
+body's **blocks** (4.9x today's at the same side), not its cells. Kept on #5: whether the largest line's share
+becomes a pass line beside the count - e097 halved the ways of living while leaving that share inside the control's
+band. #104 (P2's foods in a thinner crowd) waits for a crowd thinned without costing kinds.

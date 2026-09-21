@@ -1,0 +1,36 @@
+== the arms at the control's population, three seeds, one run at a time ==
+2d         n=3 ms_step= 14.41 (13.6-15.6) us_body=1.488 blocks=  25.7 occ_mb=51.9 agent_b=1888
+3d 8x8x8   n=3 ms_step= 47.18 (41.4-51.7) us_body=4.738 blocks= 126.5 occ_mb=270.5 agent_b=5152
+3d 8x8x4   n=3 ms_step= 35.05 (28.7-38.3) us_body=3.521 blocks=  75.4 occ_mb=270.5 agent_b=5152
+  3d 8x8x8: 3.18x the 2D clock a body
+  3d 8x8x4: 2.37x the 2D clock a body
+
+== the same matter instead of the same population ==
+3d 8x8x8   n=3 bodies~1940 ms_step=  8.99 blocks= 125.6
+3d 8x8x4   n=3 bodies~3850 ms_step= 13.08 blocks=  73.8
+
+== what each part costs, by what leaving it out saves (seed 1, 10,000 bodies) ==
+part          2D ms   share    3D ms   share
+wear           0.88    5.6%   <noise       -
+eat          <noise       -   <noise       -
+faces        <noise       -   <noise       -
+sense          6.35   40.6%    15.85   32.7%
+move           2.78   17.8%     6.84   14.1%
+births         4.52   28.9%    18.96   39.1%
+develop        5.66   36.2%    17.56   36.3%
+the step      15.64  100.0%    48.45  100.0%
+
+== one development ==
+2d   cells=  68.9 us=   90.7 us_per_cell=1.316
+3d   cells= 458.6 us=  452.2 us_per_cell=0.986
+3d   cells= 354.8 us=  360.3 us_per_cell=1.016
+3d   cells= 236.6 us=  247.0 us_per_cell=1.044
+
+== six at once, the batch's own shape ==
+2d   n=6 ms_step= 17.32 (16.0-18.4)
+3d   n=6 ms_step= 48.96 (44.0-52.4)
+3D costs 2.83x 2D with six running at once
+
+== the projection onto the control ==
+the harness's 2D arm covers 54% of the control's cost a body
+3D at the control's population: 58-80 ms a step (control 30.5), a 100,000-step batch 5769-8041 s = 1.6-2.2 h; the line is 180 ms a step
