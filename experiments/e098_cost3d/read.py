@@ -41,7 +41,7 @@ def main():
     allr = seq + more
     with open(os.path.join(RES, "spike.csv"), "w", newline="\n") as fh:
         keys = sorted({k for r in allr for k in r})
-        w = csv.DictWriter(fh, fieldnames=keys)
+        w = csv.DictWriter(fh, fieldnames=keys, lineterminator="\n")
         w.writeheader()
         w.writerows(allr)
 
@@ -117,7 +117,7 @@ def main():
           f"(control {CONTROL['ms_step']:.1f}), a 100,000-step batch {lo * 100:.0f}-{hi * 100:.0f} s "
           f"= {lo * 100 / 3600:.1f}-{hi * 100 / 3600:.1f} h; the line is {LINE:.0f} ms a step")
     with open(os.path.join(RES, "provenance.csv"), "w", newline="\n") as fh:
-        w = csv.writer(fh)
+        w = csv.writer(fh, lineterminator="\n")
         w.writerow(["what", "value", "source"])
         for k, v in CONTROL.items():
             w.writerow([f"control {k}", v, CONTROL["source"] if k != "source" else ""])
