@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""e093's batch (#103) against the control ladder, a distribution against a distribution.
+"""e096's batch (#108) against the control ladder, a distribution against a distribution.
 
 Run from the repo root: `uv run python experiments/e093_leaf/sweep.py` (a few minutes).
 
@@ -44,11 +44,14 @@ PROV = []  # e094 (#106): what each reading actually used, written beside the re
 SEEDS = [9, 10, 11, 12, 13, 14]
 CTL = {s: os.path.join(ROOT, "experiments", "e081_drink" if s < 12 else "e092_yardstick", "results", "ladder",
                        f"c1225_life{s}_" + ("u0" if s < 12 else "ctl")) for s in SEEDS}
-RUN = {s: os.path.join(HERE, "results", "batch", f"c1225_life{s}_g0.016") for s in SEEDS}
+PAIR = os.environ.get("EVLOG_PAIR", "pair")  # the batch's name, set when the ladder has picked
+RUN = {s: os.path.join(HERE, "results", "batch", f"c1225_life{s}_{PAIR}") for s in SEEDS}
 COLS = [("kinds_at", "kinds at a census", "{:.2f}"), ("placed_at", "kinds kept to a place", "{:.2f}"),
         ("by_light", "kinds led by the light", "{:.0f}"), ("in_light", "grown bodies in them", "{:.1%}"),
         ("open_light", "open faces a block, in them", "{:.2f}"), ("open_all", "open faces a block, all", "{:.2f}"),
         ("per_cell", "bodies a cell held", "{:.2f}"), ("per_cell_light", "where the light-led stand", "{:.2f}"),
+        ("blocks_cell", "blocks over such a cell", "{:.1f}"), ("shaded", "of its light they take", "{:.1%}"),
+        ("grass_under", "grass where they stand", "{:.3f}"), ("grass_free", "grass where they do not", "{:.3f}"),
         ("top_kind", "the largest kind's share", "{:.1%}"), ("top_share", "the largest line's share", "{:.1%}"),
         ("kills", "kills' share of intake", "{:.1%}"), ("pop", "bodies", "{:.0f}"),
         ("travel", "travel of a grown body", "{:.1f}"), ("blocked", "moves blocked", "{:.1%}"),
@@ -61,6 +64,20 @@ def census(pre):
     text = open(path).read() if os.path.exists(path) else \
         subprocess.run(["zstd", "-dc", path + ".zst"], capture_output=True, text=True).stdout
     return list(csv.DictReader(text.splitlines()))
+
+
+def log_of(pre):
+    """e096 (#108): the shade's own columns, the mean over the run's second half - the blocks over a
+    cell that carries any, the share of its light they take, and the grass standing on the land they
+    stand on against the land they leave alone. The control ladder's runs predate the columns and
+    read 0; the grass is judged within a run, one ground against the other."""
+    with open(pre + "_log.csv") as f:
+        rows = list(csv.DictReader(f))
+    half = [r for r in rows if int(r["step"]) >= int(rows[-1]["step"]) / 2]
+    out = {}
+    for k in ("blocks_cell", "shaded", "grass_under", "grass_free"):
+        out[k] = st.mean(float(r[k]) for r in half) if k in half[0] else 0.0
+    return out
 
 
 def light_of(pre, run, unit, ways):
@@ -134,6 +151,7 @@ def read(seed, pre):
     row.update(e092.lines_of(pre))
     row.update(e092.jam(pre))
     row.update(light_of(pre, run, unit, ways))
+    row.update(log_of(pre))
     row["seed"] = seed
     return row, ks
 
@@ -146,9 +164,53 @@ def table(name, rows):
               + f"{f.format(st.median(v)):>10}{f.format(max(v) - min(v)):>10}")
 
 
+def ladder_kinds():
+    """The ways of living of the ladder's own runs (seed 9), read the same way the batch would read
+    them: kinds at a census and kinds kept to a place, over whatever censuses each run wrote. The
+    mat runs were stopped at their first censuses, so their window is shorter and is printed with
+    them (`results/ladder_kinds.csv`)."""
+    names = [f"s{sh}g{gain}" for sh, gain in
+             [("0", "0"), ("1", "0"), ("2", "0"), ("1", "0.016"), ("2", "0.008"), ("4", "0.004"),
+              ("2", "0.016"), ("4", "0.016"), ("1", "0.032")]]
+    rows = []
+    for name in names:
+        pre = os.path.join(HERE, "results", f"c1225_life9_{name}")
+        if not os.path.exists(pre + "_agents.csv") and not os.path.exists(pre + "_agents.csv.zst"):
+            continue
+        run = kinds.Run(name, pre)
+        prov = kinds.provenance(run)
+        unit = run.forms()
+        ways = kinds.by_group(run, unit, run.does())
+        # The mat runs were stopped when they had answered, so they have no `_row.csv` and
+        # `e075.read_run` cannot read them; the two counts are taken from the census itself.
+        per, _held = kinds.kinds(run.tally(unit, ways))
+        kinds_at = kinds.mean_count(per)
+        placed_at = st.mean(sum(w[3] != "shore" for w in ws) for ws in per.values())
+        top = Counter(ways[unit[i]] for i in range(len(run.grown))).most_common(1)[0][1] / len(run.grown)
+        rows.append({"run": name, "kinds_at": kinds_at, "placed_at": placed_at,
+                     "top_kind": top, "censuses": prov["censuses"],
+                     "from": prov["from"], "to": prov["to"],
+                     **{k: v for k, v in light_of(pre, run, unit, ways).items()
+                        if k in ("by_light", "in_light", "water_led", "per_cell", "per_cell_light")}})
+    print(f"{'run':<12}{'kinds':>8}{'placed':>8}{'top kind':>10}{'by light':>10}{'in them':>9}"
+          f"{'of those in water':>19}{'censuses':>10}{'from':>9}{'to':>9}")
+    for r in rows:
+        print(f"{r['run']:<12}{r['kinds_at']:>8.2f}{r['placed_at']:>8.2f}{r['top_kind']:>10.1%}"
+              f"{r['by_light']:>10.0f}{r['in_light']:>9.1%}{r['water_led']:>19.1%}"
+              f"{r['censuses']:>10}{r['from']:>9,}{r['to']:>9,}")
+    if rows:
+        with open(os.path.join(HERE, "results", "ladder_kinds.csv"), "w", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=list(rows[0]))
+            w.writeheader()
+            w.writerows(rows)
+
+
 def main():
+    if "--ladder" in sys.argv:
+        ladder_kinds()
+        return
     out, per_kind = {}, []
-    for label, pres in (("control", CTL), ("light", RUN)):
+    for label, pres in (("control", CTL), ("shade", RUN)):
         rows = []
         for seed in SEEDS:
             pre = pres[seed]
@@ -162,11 +224,11 @@ def main():
         out[label] = rows
         if rows:
             table(label, rows)
-    if len(out.get("control", [])) and len(out.get("light", [])):
-        print(f"\n{'measure':<32}{'control':>12}{'light':>12}{'effect':>12}{'ctl spread':>12}{'light spread':>14}")
+    if len(out.get("control", [])) and len(out.get("shade", [])):
+        print(f"\n{'measure':<32}{'control':>12}{'shade':>12}{'effect':>12}{'ctl spread':>12}{'shade spread':>14}")
         for k, label, f in COLS:
             c = [r[k] for r in out["control"]]
-            l = [r[k] for r in out["light"]]
+            l = [r[k] for r in out["shade"]]
             print(f"{label:<32}{f.format(st.median(c)):>12}{f.format(st.median(l)):>12}"
                   f"{f.format(st.median(l) - st.median(c)):>12}{f.format(max(c) - min(c)):>12}{f.format(max(l) - min(l)):>14}")
     bodies = [b for s in SEEDS if os.path.exists(RUN[s] + "_row.csv") for b in bodies_of(s, RUN[s])]
@@ -183,7 +245,7 @@ def main():
             w = csv.DictWriter(f, fieldnames=list(p))
             w.writeheader()
             w.writerows(PROV)
-    rows = out.get("control", []) + out.get("light", [])
+    rows = out.get("control", []) + out.get("shade", [])
     if not rows:
         return
     with open(os.path.join(HERE, "results", "batch.csv"), "w", newline="") as f:

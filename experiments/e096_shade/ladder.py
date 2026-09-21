@@ -17,9 +17,13 @@ import subprocess
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
 # (shade, light_gain), as the run names carry them: s<shade>g<light_gain>
+# `shade` sets where a block's income starts to fall with the crowd (past 16 / shade blocks on a
+# cell) and, because a block's shadow covers `shade` of its own footprint, what it earns where the
+# cell is empty (`shade` x `light_gain`). The second row holds that sparse income at e093's kept
+# rate, so that the sharing is read on its own; the pairs at 0.016 and 0.032 hold `light_gain`.
 RUNS = [("0", "0"), ("1", "0"), ("2", "0"),
-        ("1", "0.016"), ("2", "0.016"), ("4", "0.016"),
-        ("1", "0.032"), ("2", "0.032"), ("4", "0.032")]
+        ("1", "0.016"), ("2", "0.008"), ("4", "0.004"),
+        ("2", "0.016"), ("4", "0.016"), ("1", "0.032")]
 SCALE = 0.0625  # a body's matter in the world's (e064)
 CTL = os.path.join(ROOT, "experiments", "e081_drink", "results", "ladder", "c1225_life9_u0")
 COLS = [("pop", "bodies", "{:.0f}"), ("size_mean", "blocks a body", "{:.1f}"),
