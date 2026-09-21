@@ -5,15 +5,12 @@ searched in and how each is judged, and today's default world. Read it before de
 when a law or a measure is kept or removed, or the method changes (`CLAUDE.md`, Documents). What each experiment found
 is in its README.
 
-Agreed 2026-09-13 (#74-#76) with the stages below; the trade-offs were agreed as a set on 2026-09-16 (#87, e072).
-
 ## Why
 
-Sixty experiments added or removed one law at a time and every world held one to three ways of living (e060). A world
-with one or two limiting factors cannot show what a third does: a single new law is averaged away by the crowd or
-absorbed by the hunter/grazer lottery, and a law added alone meets a world without its counterweights (e066-e071). So
-the environment is built whole, split into laws, generated parts and emergent outcomes, and searched in stages from the
-cheapest layer. `principles.md` holds throughout: laws are about materials and the world, never traits.
+Sixty experiments added or removed one law at a time and every world held one to three ways of living (e060): a world
+with one or two limiting factors cannot show what a third does, and a law added alone meets a world without its
+counterweights (e066-e071). So the environment is built whole - laws, generated parts, emergent outcomes - and searched
+in stages from the cheapest layer, `principles.md` holding throughout: laws are about materials, never traits.
 
 ## 1. Laws, generation, emergence
 
@@ -79,22 +76,19 @@ wood 0.0017, algae 0.009112, ignite 1.613e-6) on c1225. A candidate costs about 
 **Stage C, bodies.** Judged by kinds of living by birth form (e068) at a census and kept to a place, on **six seeds
 (9-14)**. A birth form counts a body's blocks of every kind, and a group that took half its life's matter from one
 food that is not a plant or flesh lives by that food (`census.LIGHT`, e093). Read as a distribution against the
-control ladder's - median and spread - never as "+1 kind on every seed", and with the effect's spread across seeds
-recorded beside the effect. The ladder's own count spreads 1.02 kinds
-(median 7.53) and its kinds kept to a place 1.24 (median 4.35), so an effect of one kind is not readable at all
-(e092). The categorical done-whens - is there a kind led by the new food, does a form keep to the new place - are not
+control ladder's - median and spread, the effect's spread recorded beside the effect - never as "+1 kind on every
+seed": the ladder itself spreads 1.02 kinds (median 7.53) and 1.24 kinds kept to a place (median 4.35), so an effect
+of one kind is not readable at all (e092). The categorical done-whens - is there a kind led by the new food, does a form keep to the new place - are not
 noise-limited and decide as before. A piece meant to replace the world (e072's shape) is judged on its own measures
 and becomes the new control if it passes, instead of being scored against the old one. Stability: a kind left out or
 halved returns, tested by paired injection beside a control (#72, e074, e076).
 
-**No measure may be a conjunction over the censuses** (e094). A way's share of the grown bodies swings by 61% of its
-own size from census to census and the year explains a tenth of that, so asking a kind to hold 5% at every one of the
-51 censuses a run is read on counts 1 in a world that holds 8 ways in the mean and drives none of them out: four fifths of the failures
-are a dip with the forms still there and five sixths come back. `kinds_held` is therefore dropped. A step is judged
-on **kinds at a census** (median 7.26 over the twelve runs read) and on **ways at 5% of the grown bodies in the mean**
-(8.0); "held" survives only as "at the line in 90% of the censuses" (3.0). The first pass line (#76: 4 kinds on 4 of
-6 seeds, each at 5% for 5 years) is read the same way - on 90% of the censuses the world stands at 3 of the 4, not at
-1. The ideal and the gaps are in `vision.md`.
+**No measure may be a conjunction over the censuses** (e094): a way's share swings by 61% of its own size, so an AND
+over a run's 51 censuses counts 1 where the world holds 8 ways in the mean and drives none out. `kinds_held` is
+dropped. A step is judged on **kinds at a census** (median 7.26 over the twelve runs read) and on **ways at 5% of the
+grown bodies in the mean** (8.0); "held" survives only as "at the line in 90% of the censuses" (3.0), and #76's first
+pass line (4 kinds on 4 of 6 seeds, each at 5% for 5 years) is read the same way - the world stands at 3 of the 4, not
+at 1. The ideal and the gaps are in `vision.md`.
 
 **Today's default world** (stage C, c1225 with d11, s = 1/16): the trade-offs marked kept in section 2 at the rates
 #88 set, with `wood_food` 0, `wood_yield` 3e-5 and the flesh line; the command line is
