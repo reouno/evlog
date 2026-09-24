@@ -15,7 +15,7 @@ def write(here, reading, rows):
         with open(path) as f:
             old = [r for r in csv.DictReader(f) if r.get("reading") != reading]
     with open(path, "w", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=FIELDS)
+        w = csv.DictWriter(f, fieldnames=FIELDS, lineterminator="\n")
         w.writeheader()
         w.writerows([{**{k: r.get(k, "") for k in FIELDS}, "reading": r.get("reading", reading)} for r in old + list(rows)])
     return path

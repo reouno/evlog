@@ -112,7 +112,7 @@ def main():
         if per_kind:
             path = os.path.join(HERE, "results", f"kinds_{world}.csv")
             with open(path, "w", newline="") as f:
-                w = csv.DictWriter(f, fieldnames=list(per_kind[0]))
+                w = csv.DictWriter(f, fieldnames=list(per_kind[0]), lineterminator="\n")
                 w.writeheader()
                 w.writerows(per_kind)
             if len(rows) > 1:
@@ -135,13 +135,13 @@ def main():
     for k, lab, f in REPLAY:
         print(f"{lab:<30}" + "".join(f"{f.format(agree[w][k]):>18}" for w in agree))
     with open(os.path.join(HERE, "results", "batch.csv"), "w", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=["world", "seed"] + [k for k, _, _ in COLS])
+        w = csv.DictWriter(f, fieldnames=["world", "seed"] + [k for k, _, _ in COLS], lineterminator="\n")
         w.writeheader()
         for world, rs in out.items():
             for r in rs:
                 w.writerow({"world": world, "seed": r["seed"], **{k: r[k] for k, _, _ in COLS}})
     with open(os.path.join(HERE, "results", "replay.csv"), "w", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=["world"] + list(next(iter(agree.values()))))
+        w = csv.DictWriter(f, fieldnames=["world"] + list(next(iter(agree.values()))), lineterminator="\n")
         w.writeheader()
         w.writerows({"world": k, **v} for k, v in agree.items())
     print(f"\nprovenance: {prov_mod.write(HERE, 'batch', prov)}")
