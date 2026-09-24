@@ -5,7 +5,7 @@ What happened lives in the experiments' READMEs, the issues and git, never here.
 when a row wants a paragraph, the paragraph belongs in an experiment's README and the row keeps the one sentence
 that decides the next step.
 
-Last updated: 2026-09-22, after e100.
+Last updated: 2026-09-25, after e101.
 
 ## 1. The ideal
 
@@ -45,13 +45,13 @@ holds back.
 | D behaviour | look, chase, flee, go to water, go home; some stay, some travel far | a linear reflex, 16 readings to 4 actions, no memory (e050); eyes not bought (2-4% look out, e070); a grown body ends 3-28 cells from its birth | **large**; cause is E |
 | E life vs year, vs day | many animals live through several seasons, and many days | a grown life is 500-570 steps, 1/20 of a year and about 7 days; half the dead die by 75 steps; the day's swing is wider than the bands (e071, e087) | **large**: bound by the crowd |
 | E travel vs places | a migrant crosses places within a year | a few cells of 512; a place fed in a lean month is 9-15 cells away (e086) | **large** |
-| F ways of living | many; the user asked for about 20 | 7.53 kinds at a census, 4.35 kept to a place, 8 ways at 5% in the mean (e092, e094) | **large** |
-| F dominance | no line above a fifth of the animals | the largest line holds 42-78% of the land's bodies (e092) | large |
+| F ways of living | many; the user asked for about 20 | 7.14 kinds at a census, 4.34 kept to a place, 8 ways at 5% in the mean (e101) | **large** |
+| F dominance | no line above a fifth of the animals | the largest line holds 39-70% of the land's bodies (e101) | large |
 | F food web | three or more levels, hunters of several kinds | kills are 27% of what bodies eat; pure flesh kinds 2-4% (e075) | medium |
 | F crowding | numbers limited by food, hunters and seasons | limited by the birth rule: 47% of births find no room though a spot that fits is within two body lengths for 75% of them and off the four rays it searches; widening it thins the jam to 33% and costs 2.5 kinds (e097) | **large**, and not to be lifted by giving room |
-| F history (a replay) | the same world run again fills other roles with other bodies | between two seeds the ways holding 5% agree 0.60 and their shares 0.77, the largest way is the same in 2 of 6 seeds, the birth forms agree 0.035 (e092, `analysis/replay.py`) | medium: contingent already; the measure's own 64 boxes cap what can be said |
+| F history (a replay) | the same world run again fills other roles with other bodies | between two seeds the ways holding 5% agree 0.66 and their shares 0.77, the largest way is the same in 4 of 6 seeds, the birth forms agree 0.038 (e101, `analysis/replay.py`) | medium: contingent already; the measure's own 64 boxes cap what can be said |
 | F cycles over time | predator and prey swing | the land's bodies swing twofold over a year; forms do not follow (e070) | medium |
-| G matter, water, heat | matter closes between land and sea; a body drinks and gives back; places exchange heat | matter conserved, the land gaining 6.5-7.3% over 90,000 steps with nothing back from the sea (e072, e090); water free to the body (e081); a body holds heat but does not warm its cell (e072) | small, but matter prices every law that moves it |
+| G matter, water, heat | matter closes between land and sea; a body drinks and gives back; places exchange heat | matter conserved, the land gaining 6.5-7.3% over 90,000 steps with nothing back from the sea (e072, e090); a body's water is the land's and conserved, and ties it to where it drinks (e101); a body holds heat but does not warm its cell (e072) | small, but matter prices every law that moves it |
 
 ## 3. Where the bottlenecks are
 
@@ -93,17 +93,17 @@ Each holds under the conditions it was found in.
   can wait lives through a winter and then does not move; a winter is a third of its year at any year length (e086).
 - Heat is paid in water and water sets where land bodies live (e078); lines are kept apart by places a leader does
   not cross (e083), and by how far a child may be laid from its parent - give a child room and the winner spreads
-  fastest (e097); a world's regions can be read from its climate alone (e084, e085).
+  fastest (e097), tie a body to its water and nothing readable is lost (e101); regions show in a climate (e084, e085).
 - A law that carries matter one way over a world with a sea drains the land (e090). A way that needs a part the
   population has lost is a question of reach: test it by injection beside a control (e074, e076).
-- Measures: read a distribution against a distribution, six runs of one world spreading 1.02 kinds (e092); never judge
-  on a conjunction over censuses (e094); a measure of place breaks when bodies change place within a life (e091); a
-  spread is read by what it is made of - one collapsed seed is not a various world (e100).
+- Measures: a distribution against a distribution, six runs of one world spreading 1.02-1.63 kinds (e092, e101); never
+  judge on a conjunction over censuses (e094); a measure of place breaks when bodies change place within a life (e091);
+  a spread is read by what it is made of - one collapsed seed is not a various world (e100).
 
 ## 5. Next
 
 A piece fills the largest gap of section 2 and is designed as cycles before it is built (`CLAUDE.md`). P1, P2 and P3
-are spent without a law kept; only a set has ever been kept (e072), and the ladder spreads 1.02 kinds (e092).
+are spent without a law kept; only a set has ever been kept (e072), and the ladder spreads 1.63 kinds (e101).
 
 **The 3D set (#5)** is the piece: 3D bodies with a food only a tall body reaches, replacing the world as e072's set
 did. It is `principles.md`'s least-explored axis - the same cell being one environment to a large body and another
@@ -112,8 +112,8 @@ to a small one - and it needs 3D because in 2D the door to such a food is the bo
 has shown**, so a dispersal differing by place and by body is a candidate component (#111), never run alone.
 
 **Its price is paid** (e098, #110): 8x8x8 costs 2.8-3.2x a step, a six-seed batch 1.6-2.2 h, and what the set must
-price is a body's **blocks** (4.9x today's at the same side), not its cells. **The order**: #113 reads the body's
-water on six seeds, because the set's water axis is built on it (one batch, no code); #114 builds the crate and
+price is a body's **blocks** (4.9x today's at the same side), not its cells. **The ledger it needs is in** (e101, #113):
+the body's water is the land's, so H3's drink at the floor is a real distance. **The order**: #114 builds the crate and
 asks the one precondition - does anything live off the floor; the search of H1's yield against H3's thirst, and the
 ladder, are designed after #114 reads. #115 holds the rule that the way-label grows only when a law puts something
 in the world it cannot express; #104 (P2's foods in a thinner crowd) waits for a crowd thinned without costing kinds.

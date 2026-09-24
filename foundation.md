@@ -48,7 +48,7 @@ bodies can ride out is not an axis (e060). The rows are built and searched as a 
 | dry air | a soft block facing dry air loses water from the body; a hard block does not; nothing is lost in water | armored bodies, bodies near water | soft, spread bodies far from water | kept (e067) |
 | breath in water | a block over water uses breath, each open face of a soft block gives it back; a hard block breathes through nothing | open, small bodies in the water | solid or armored bodies in the water | kept (e067) |
 | heat | a body holds heat made by its upkeep and passed through its open soft faces; under its band it pays energy to warm, over it water to cool | closed, big, fat bodies in the cold; open, small ones in hot wet places | spread bodies in the cold, closed ones in the heat | kept (e072) |
-| fresh water | a body drinks from pools and wet ground, not from the sea | bodies that reach fresh water, bodies that never leave the sea | land bodies far from fresh water | kept (e072) |
+| fresh water | a body drinks from pools and wet ground, not from the sea; what it drinks is taken from its cell and what it loses goes back (`unit` 9.4) | bodies that reach fresh water, bodies that never leave the sea | land bodies far from fresh water, crowds on one water | kept (e072, e101) |
 | fat | fat has weight; the most a body holds per unit of mass is read from its genome | fat where shortfalls come | fat on a body that moves | kept (e072) |
 | light | a sensor block sees as far as the light allows | eyes by day | eyes at night and in deep water | kept (e072) |
 | wood | a stand drops browse by what it stands (`wood_yield` 3e-5); a gut takes it only with a hard tip and enough force behind it | bodies with a hard front and muscle | guts without a tooth | kept (e072, e073) |
@@ -75,8 +75,8 @@ wood 0.0017, algae 0.009112, ignite 1.613e-6) on c1225. A candidate costs about 
 **Stage C, bodies.** Judged by kinds of living by birth form (e068) at a census and kept to a place, on **six seeds
 (9-14)**. A birth form counts a body's blocks of every kind; a group that took half its life's matter from one food
 that is not a plant or flesh lives by that food (`census.LIGHT`, e093). Read as a distribution against the control
-ladder's - median and spread - never as "+1 kind on every seed": the ladder itself spreads 1.02 kinds (median 7.53) and 1.24 kinds kept to a place (median 4.35), so an effect
-of one kind is not readable at all (e092); a spread is read by what it is made of, since one collapsed seed is not a
+ladder's - median and spread - never as "+1 kind on every seed": the ladder itself spreads 1.63 kinds (median 7.14) and 1.63 kinds kept to a place (median 4.34), so an effect
+of one kind is not readable at all (e092, e101); a spread is read by what it is made of, since one collapsed seed is not a
 various world (e100). The categorical done-whens - a kind led by the new food, a form keeping to the new place - are
 not noise-limited and decide as before. A piece meant to replace the world (e072's shape) is judged on its own measures
 and becomes the new control if it passes. Stability: a kind left out or halved returns, tested by paired injection
@@ -84,8 +84,8 @@ beside a control (#72, e074, e076).
 
 **How much a replay agrees** is read beside the count (`analysis/replay.py`, #112). A way's label has 64 boxes and
 43 are filled in every run, so the agreement over every way seen saturates (0.91) and is not read; what is read is
-the ways **holding 5%** (e092: 0.60), their shares (0.77), whether the largest way is the same one (2 of 6 seeds)
-and the birth forms (0.035).
+the ways **holding 5%** (e101: 0.66), their shares (0.77), whether the largest way is the same one (4 of 6 seeds)
+and the birth forms (0.038).
 
 **No measure may be a conjunction over the censuses** (e094): a way's share swings by 61% of its own size, so an AND
 over 51 censuses counts 1 where the world holds 8 ways in the mean and drives none out. `kinds_held` is dropped. A
@@ -94,11 +94,11 @@ step is judged on **kinds at a census** (median 7.26) and on **ways at 5% of the
 each at 5% for 5 years) is read the same way - the world stands at 3 of the 4, not at 1. The gaps are in `vision.md`.
 
 **Today's default world** (stage C, c1225 with d11, s = 1/16): the trade-offs marked kept in section 2 at the rates
-#88 set, with `wood_food` 0, `wood_yield` 3e-5 and the flesh line; the command line is
-`experiments/e082_fresh/run.sh` with `unit` 0 and `fresh` 0.05. The controls are the six-seed ladder (e092):
-`e081_drink/results/ladder/c1225_life{9,10,11}_u0` and `e092_yardstick/results/ladder/c1225_life{12,13,14}_ctl`,
-100,000 steps, 52-73 minutes a run with four at once; `e092_yardstick` is the crate that reproduces them. e100 put
-three rejected laws back in and lost 1.8 kinds on every seed, so the world stays as it is (#112).
+#88 set, with `wood_food` 0, `wood_yield` 3e-5, the flesh line and the body's water in the land's (`unit` 9.4, e101).
+The command line is `experiments/e100_base/run.sh` with `shade_heat`, `shade_dry`, `crown_wet` and `wood_rest` at 0
+(`experiments/e101_unit/batch.sh`). The controls are its six-seed ladder (e101):
+`e101_unit/results/ladder/c1225_life{9..14}_unit`, 100,000 steps, 60-80 minutes a run with six at once. e100 put
+the crown's half back as well and lost 1.8 kinds on every seed, so it stays out (#112, #113).
 
 ## 4. Compute
 
