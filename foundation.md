@@ -75,12 +75,13 @@ wood 0.0017, algae 0.009112, ignite 1.613e-6) on c1225. A candidate costs about 
 **Stage C, bodies.** Judged by kinds of living by birth form (e068) at a census and kept to a place, on **six seeds
 (9-14)**. A birth form counts a body's blocks of every kind; a group that took half its life's matter from one food
 that is not a plant or flesh lives by that food (`census.LIGHT`, e093). Read as a distribution against the control
-ladder's - median and spread - never as "+1 kind on every seed": the ladder itself spreads 1.63 kinds (median 7.14) and 1.63 kinds kept to a place (median 4.34), so an effect
-of one kind is not readable at all (e092, e101); a spread is read by what it is made of, since one collapsed seed is not a
-various world (e100). The categorical done-whens - a kind led by the new food, a form keeping to the new place - are
-not noise-limited and decide as before. A piece meant to replace the world (e072's shape) is judged on its own measures
-and becomes the new control if it passes. Stability: a kind left out or halved returns, tested by paired injection
-beside a control (#72, e074, e076).
+ladder's - median and spread - never as "+1 kind on every seed": the control ladder (e101) sits at 7.14 kinds and
+4.34 kept to a place, and harm is a median 1.02 kinds below it (e092's spread, fixed by decision rule 6; e101's own is
+1.63, one seed wide); a spread is read by what it is made of, one collapsed seed is not a various world (e100). **The
+budget** of laws kept inside that line, summed against the same 1.02: `unit` -0.39 (e101). The categorical
+done-whens (a kind led by the new food, a form keeping to the new place) are not noise-limited and decide as before. A piece
+meant to replace the world (e072's shape) is judged on its own measures and becomes the new control if it passes.
+Stability: a kind left out or halved returns, tested by paired injection beside a control (#72, e074, e076).
 
 **How much a replay agrees** is read beside the count (`analysis/replay.py`, #112). A way's label has 64 boxes and
 43 are filled in every run, so the agreement over every way seen saturates (0.91) and is not read; what is read is

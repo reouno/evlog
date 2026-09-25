@@ -96,24 +96,24 @@ Each holds under the conditions it was found in.
   fastest (e097), tie a body to its water and nothing readable is lost (e101); regions show in a climate (e084, e085).
 - A law that carries matter one way over a world with a sea drains the land (e090). A way that needs a part the
   population has lost is a question of reach: test it by injection beside a control (e074, e076).
-- Measures: a distribution against a distribution, six runs of one world spreading 1.02-1.63 kinds (e092, e101); never
+- Measures: a distribution against a distribution, harm a fixed 1.02 kinds below the control (e092, e101); never
   judge on a conjunction over censuses (e094); a measure of place breaks when bodies change place within a life (e091);
   a spread is read by what it is made of - one collapsed seed is not a various world (e100).
 
 ## 5. Next
 
 A piece fills the largest gap of section 2 and is designed as cycles before it is built (`CLAUDE.md`). P1, P2 and P3
-are spent without a law kept; only a set has ever been kept (e072), and the ladder spreads 1.63 kinds (e101).
+are spent without a law kept; only a set has ever been kept (e072). Harm is a fixed 1.02 kinds, and what the laws
+kept inside it cost is summed against it (decision rule 6): `unit` has spent 0.39 (e101).
 
 **The 3D set (#5)** is the piece: 3D bodies with a food only a tall body reaches, replacing the world as e072's set
-did. It is `principles.md`'s least-explored axis - the same cell being one environment to a large body and another
-to a small one - and it needs 3D because in 2D the door to such a food is the body's mass, which moves within a life
-(e091). **Room is its background, not an axis** (e097); but **where a child lands is the largest lever this world
-has shown**, so a dispersal differing by place and by body is a candidate component (#111), never run alone.
+did - `principles.md`'s least-explored axis, the same cell one environment to a large body and another to a small
+one; in 2D the door to such a food is the body's mass, which moves within a life (e091). Room is its background
+(e097); dispersal by place and by body is a candidate component (#111), never run alone. It bets on bottlenecks 2
+and 3; **bottleneck 1 (a life too short and too local, D and E) is the next pillar after it**, whatever it shows.
 
-**Its price is paid** (e098, #110): 8x8x8 costs 2.8-3.2x a step, a six-seed batch 1.6-2.2 h, and what the set must
-price is a body's **blocks** (4.9x today's at the same side), not its cells. **The ledger it needs is in** (e101, #113):
-the body's water is the land's, so H3's drink at the floor is a real distance. **The order**: #114 builds the crate and
-asks the one precondition - does anything live off the floor; the search of H1's yield against H3's thirst, and the
-ladder, are designed after #114 reads. #115 holds the rule that the way-label grows only when a law puts something
-in the world it cannot express; #104 (P2's foods in a thinner crowd) waits for a crowd thinned without costing kinds.
+**Its price is paid** (e098): 8x8x8 costs 2.8-3.2x a step, a six-seed batch 1.6-2.2 h, and the set prices a body's
+**blocks** (4.9x today's at the same side). **Its ledger is in** (e101): the body's water is the land's, so H3's drink
+at the floor is a real distance. **The order**: #114 builds the crate and asks whether anything lives off the floor;
+**if two re-runs with H1's yield and H3's thirst changed still leave nothing there, the set is shelved** and the next
+piece is chosen here again. #115: the way-label grows only when a law puts in the world what it cannot express.
