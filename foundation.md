@@ -60,12 +60,12 @@ bodies can ride out is not an axis (e060). The rows are built and searched as a 
 
 Each stage is judged before the next is built on it, so a failure names its layer.
 
-**Stage A, the environment alone** (terrain, sun, heat, water). A cell's habitat is its medium x temperature band x
-moisture band, by quarter. Pass: 5 habitats of 2% of the cells; 3 of them in patches wider than three lives of travel;
-10-50% of the cells change habitat in a year; year 20's map agrees with year 10's on 90%. e061: 34 of 300 candidates
-pass, 30 of them at 512x512, the size from here; the tilt sets the change; a world is spun up about 20,000 climate
-updates before it is judged or lived on. A climate costs 1-8 minutes at 512 on one core. Its regions (pieces of land a
-line can hold against another) can be counted from its map alone (e084, e085).
+**Stage A, the environment alone** (terrain, sun, heat, water). e061's habitat is medium x temperature band x moisture
+band, by quarter; pass: 5 habitats of 2%, 3 of them wider than three lives of travel, 10-50% changing in a year, year
+20 agreeing with year 10 on 90%. e061: 34 of 300 candidates pass, at 512x512; a world is spun up about 20,000 climate
+updates; 1-8 minutes at 512 on one core; its regions can be counted from its map (e084, e085). **The redesign's
+ground** (#116, e102, `base/`): rock provinces, soils, a drainage network, groundwater, nutrients A and B, winds by
+band, years that differ; 30 years in 7 minutes; places read by medium, temperature, moisture, A:B and fertility.
 
 **Stage B, producers** (grass, wood, algae, fire). Pass: each producer holds 5% of the standing matter and is the
 larger part of a habitat; none dies out in 10 years; fire burns 1-20% of the land a year; matter is conserved. e062: 9
