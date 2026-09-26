@@ -5,7 +5,7 @@ What happened lives in the experiments' READMEs, the issues and git, never here.
 when a row wants a paragraph, the paragraph belongs in an experiment's README and the row keeps the one sentence
 that decides the next step.
 
-Last updated: 2026-09-25, after e101.
+Last updated: 2026-09-26, the redesign (#116).
 
 ## 1. The ideal
 
@@ -102,18 +102,16 @@ Each holds under the conditions it was found in.
 
 ## 5. Next
 
-A piece fills the largest gap of section 2 and is designed as cycles before it is built (`CLAUDE.md`). P1, P2 and P3
-are spent without a law kept; only a set has ever been kept (e072). Harm is a fixed 1.02 kinds, and what the laws
-kept inside it cost is summed against it (decision rule 6): `unit` has spent 0.39 (e101).
+**The redesign (#116)**, agreed 2026-09-26. About 25 experiments since e075 added laws one at a time and kept two;
+every bottleneck above has the same root: the world and its bodies can be too few things, so the optimum is simple
+and single and the world converges to it. The premise changes (`principles.md`): the freedom of the environment,
+the bodies, their behaviour and their interactions is raised together and by a jump, every form priced by the
+world's physics; producers evolve and the living make each other's niches; a small genome develops into a large
+space of forms; the world is judged whole, over long runs, by an open measure instead of the 64-box label.
 
-**The 3D set (#5)** is the piece: 3D bodies with a food only a tall body reaches, replacing the world as e072's set
-did - `principles.md`'s least-explored axis, the same cell one environment to a large body and another to a small
-one; in 2D the door to such a food is the body's mass, which moves within a life (e091). Room is its background
-(e097); dispersal by place and by body is a candidate component (#111), never run alone. It bets on bottlenecks 2
-and 3; **bottleneck 1 (a life too short and too local, D and E) is the next pillar after it**, whatever it shows.
-
-**Its price is paid** (e098): 8x8x8 costs 2.8-3.2x a step, a six-seed batch 1.6-2.2 h, and the set prices a body's
-**blocks** (4.9x today's at the same side). **Its ledger is in** (e101): the body's water is the land's, so H3's drink
-at the floor is a real distance. **The order**: #114 builds the crate and asks whether anything lives off the floor;
-**if two re-runs with H1's yield and H3's thirst changed still leave nothing there, the set is shelved** and the next
-piece is chosen here again. #115: the way-label grows only when a law puts in the world what it cannot express.
+**The order**: an inventory of today's freedom and what caps it, by side; the island - the target freedoms, each
+with the physics that prices it (first candidates: evolving producers, food by kinds of matter #34, materials with
+continuous properties, 3D bodies #5, behaviour with memory, terrain across scales); the open measure; the compute
+budget and the order of building. Nothing is coded before those are reviewed; then `base/` is built (`CLAUDE.md`).
+The 3D step (#114) is paused as one part of the island; e098's price (2.8-3.2x a step) and e101's water ledger
+carry over.

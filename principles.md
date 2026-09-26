@@ -12,12 +12,12 @@ The world exists and moves forward whether or not a user is present.
 1. **Watching is the main activity.** Users do not control the world. The world does not need user input to advance.
 2. **Do not script the fun.** Behavior and evolution emerge from simple rules and selection pressure. The author does not decide the outcome.
    - **Laws are about materials and the world, never about traits.** We write what a block is (what it costs, how hard it is, what it can push or digest) and what the world is (where food grows, what a cell holds). We do not write what a creature can do. A bite, armor, an eye, a chase are not rules; they are things a body may turn out to be able to do because of its shape, its materials, and the world. If a rule names a trait (attack, defense, flee, hunt), it is written at the wrong level.
-   - **Progress is more freedom, not more rules.** Each step forward should widen what the world and the bodies can be (more shapes, more sizes, more kinds of place) at a bounded compute cost, and then let selection find what is possible. Adding a rule to get a result we want is the failure mode: e008 and e009 hit a wall that was one of our own rules (attack capped at 24 by "the front three rows").
+   - **Progress is more freedom, given by physics with a price.** With few things a world and a body can be, the optimum is simple and single, and the world converges to it and stops. The real world's space of states is astronomical, built from simple parts (four bases), and its variety comes from freedom whose every form has a physical cost. So the freedom of the environment, the bodies, their behaviour and their interactions is raised **together and by a jump**, through laws about materials and the world, each with a trade-off no form escapes (#116). Adding a rule to get a result we want is the failure mode: e008 and e009 hit a wall that was one of our own rules (attack capped at 24 by "the front three rows").
 3. **Compute is finite.** The world runs on a device with limited resources. Each step has a bounded cost, and the user controls the load.
 4. **It must survive the long run.** Running for days or months must not lead to collapse, stagnation, or explosion. The world keeps changing instead of settling.
 5. **No individual belongs to anyone.** Selection happens. There is no user avatar. Attachment is to lineages and the world, not to individuals.
 6. **What happened stays.** Events in the world are recorded and can be observed later. The log is part of the world (evlog = evolution log).
-7. **Diversity is the measure, not a rule.** The richness of the world is counted as the number of different bodies that prosper at once and the number of different places they prosper in. Diversity stands in for "interesting to watch" (a world with one winner is not), but it is never written into the rules: a rule that favors the rare or the different is a rule about traits (principle 2). Diversity comes out of an environment that differs, and only from there.
+7. **Diversity is the measure, not a rule.** The richness of the world is counted as the number of different bodies that prosper at once and the number of different places they prosper in. Diversity stands in for "interesting to watch" (a world with one winner is not), but it is never written into the rules: a rule that favors the rare or the different is a rule about traits (principle 2). Diversity comes out of an environment that differs, and the living are part of it: producers evolve too, and bodies are each other's food and place.
 
 ## Decision rules
 
@@ -28,19 +28,11 @@ When unsure, ask in this order:
 3. Does it add compute cost?
 4. Is it a rule about a trait, or about a material or the world? Only the second kind is allowed.
 5. Does it let more kinds of body prosper at once, or make more kinds of place? A law that improves the world the same everywhere is eaten by more of the same body (e038).
-6. **Is what the result says "no" to the law, or only that we could not read it?** A law is removed when it
-   **harms** - the measure falls beyond the control ladder's spread over seeds of one world - or when it costs
-   compute it does not earn. A law whose effect is smaller than that spread is **kept**, because diversity
-   presupposes a world in which many optima exist and many combinations of traits reach a similar one: what such
-   a law adds is one more dimension the next law meets, and stacking only laws whose effect is already visible
-   cannot get there. Each law kept this way is one fixed value, never a knob to search (e099: five laws had been
-   rejected for a difference smaller than the difference between two seeds of the same world, two of them thrown
-   out together with a third that did the harm; e066's dry air had already been kept this way by e067).
-   **The line is fixed, and so is a budget**: harm is a median at least **1.02 kinds** below the control's (e092's
-   six-seed spread), read on six seeds - a law read on one seed has not been read - and a later, wider ladder
-   does not widen it (e101's is 1.63, one seed wide). Laws each unreadable alone are not unreadable together -
-   three cost 1.76 kinds as a set (e100) - so what the laws kept this way cost is **summed** against the same
-   1.02 (`foundation.md`); a law that would take the sum past it stops the step until the sum is re-read.
+6. **Is the world judged, or one law?** A freedom is judged with the world it belongs to, over long runs, not by
+   the kinds it adds alone: a wider space may first converge to one optimum, and a freedom that pays only with
+   others would be thrown out before they arrive (e100: laws unreadable one by one; e101: a law read at -0.39 on
+   six seeds). A law is removed when the world does not stand with it, or when it costs compute it does not earn.
+   Each law is one fixed value, never a knob to search, until the world's search says otherwise.
 7. Does the world already meet the law's conditions? A law that needs a behavior pays only where that behavior pays, so name the conditions together ("Y pays when A and B") and test the minimal combination, not one law at a time (e040). And before writing a law about a flow, check which flow the bodies actually live on: e041 throttled the growth of the cells while 91% of what the bodies ate fell from the crowns above them.
 
 ## Where new laws come from
@@ -56,10 +48,9 @@ When we look for one, we think in metaphors of the real world.
 - **Name the stage the world is at.** e010's five-cell grazers are a world of microbes, or a world
   of mice; the picture tells us what the real world had at that stage that ours does not, and
   which premise is missing.
-- **Pressures, not parts.** When one body wins every run, the space of bodies is not too small;
-  the world has one optimum. More kinds of parts or a wider genome make that optimum slower to
-  reach, not less alone. Add a pressure (a place, a season, matter that cycles) and count how many
-  different bodies prosper at once; that count is how a law is judged.
+- **Pressures and parts together.** A wider space of bodies alone reaches one optimum more slowly
+  (e029, e037); a pressure alone is answered by the few knobs a body has (e038-e101). Both are widened
+  together, and every new part has a price in the world's physics.
 - **An environment differs in three ways.** By place (region, height, under the ground, in the water,
   in the air; desert, marsh, grassland, forest, river, sea), by time (seasons, days, weather, drift),
   and by the size of the body that looks at it: the same cell is one environment to a large body and
@@ -69,11 +60,11 @@ When we look for one, we think in metaphors of the real world.
   (e038: twice the sun, twice the bodies, the same size). A new law is preferred when it makes the
   environment differ along one of the three, and the third is the least explored: today the world
   shows every body the same field at the same grain.
-- **The space of bodies comes after the environment.** Four block kinds on a grid of 8 to 16 is a
-  narrow space, and the real world's range (microbes to whales, grams to tons, a year to a century)
-  is wide. But a wider space with one optimum converges the same way (e029, e037); widen it when a
-  differing environment hits the grid as a wall (e011 saw the wall once), with 3D bodies (#5), kinds
-  of matter (#34), and a time that scales with size (untested).
+- **A large space from simple parts.** Four block kinds on a 2D grid is a narrow space, and the real
+  world's range (microbes to whales, grams to tons, a year to a century) is wide - yet it comes from a
+  few simple parts that develop into forms. Widen the space through a small genome that develops into
+  many forms and behaviours, not one hand-written law per feature: 3D bodies (#5), kinds of matter
+  (#34), materials with continuous properties, behaviour with memory, producers that evolve (#116).
 - **The metaphor is a source, not a target.** evlog is a virtual world. It does not have to follow
   the real one, and it should not only imitate it: what can exist here and nowhere else is part of
   what makes it worth watching. Take the premise, not the outcome, and let selection decide.

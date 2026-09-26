@@ -76,9 +76,9 @@ wood 0.0017, algae 0.009112, ignite 1.613e-6) on c1225. A candidate costs about 
 (9-14)**. A birth form counts a body's blocks of every kind; a group that took half its life's matter from one food
 that is not a plant or flesh lives by that food (`census.LIGHT`, e093). Read as a distribution against the control
 ladder's - median and spread - never as "+1 kind on every seed": the control ladder (e101) sits at 7.14 kinds and
-4.34 kept to a place, and harm is a median 1.02 kinds below it (e092's spread, fixed by decision rule 6; e101's own is
-1.63, one seed wide); a spread is read by what it is made of, one collapsed seed is not a various world (e100). **The
-budget** of laws kept inside that line, summed against the same 1.02: `unit` -0.39 (e101). The categorical
+4.34 kept to a place, six seeds of one world spreading 1.02-1.63 (e092, e101); a spread is read by what it is made
+of, one collapsed seed is not a various world (e100). A law is judged with its world over long runs, not alone
+(decision rule 6); the redesign (#116) replaces this measure with an open one. The categorical
 done-whens (a kind led by the new food, a form keeping to the new place) are not noise-limited and decide as before. A piece
 meant to replace the world (e072's shape) is judged on its own measures and becomes the new control if it passes.
 Stability: a kind left out or halved returns, tested by paired injection beside a control (#72, e074, e076).

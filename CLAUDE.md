@@ -16,6 +16,8 @@ App, web, and monetization (ads) are ideas only. Do not build them now.
   time in a world that lacks its conditions. Expect to rebuild often and to have assumptions overturned.
 - Choose the next step from `vision.md` (the ideal against today, by layer), not as a fix of the last result, and
   fill the largest gap as one piece of several laws designed as cycles. Every result updates `vision.md`.
+- Aim at an island, not the next stair: design top-down a world with far more freedom, build a ladder to it
+  bottom-up, and accept that it may not stand at first, rather than creep forward one law at a time (#116).
 - Run long. The goal is to see what happens over long runs.
 - Do not program the fun directly. Change rules and selection pressure, then observe what emerges.
 - When a change adds compute cost, state why.
@@ -90,10 +92,12 @@ What a particular law means stays in that experiment's `sweep.py` and is not bui
 
 ## Layout
 
-Cargo workspace. Each experiment is its own crate: `experiments/eNNN_<name>/` with a `README.md` based on the template.
-Experiments are disposable, but `analysis/`, `experiments/e060_census/census.py` and `experiments/e068_kinds/kinds.py`
-are not: every reading since e068 goes through them. Shared code moves out of an experiment only after it survives
-several of them.
+Cargo workspace. **`base/` is the world's code** (from #116 on; until it exists, the latest experiment's crate is
+the base). An experiment copies `base/` into `experiments/eNNN_<name>/` (package renamed), changes only what it
+tests there, and adds a `README.md` from the template - a copy, so an experiment may change anything, even the
+base's own parts. When it ends, what the world should keep goes back into `base/` in its own commit, which names
+the experiment. `analysis/`, `experiments/e060_census/census.py` and `experiments/e068_kinds/kinds.py` are shared:
+every reading since e068 goes through them.
 
 Run: `cargo run --release -p eNNN_<name>`
 
