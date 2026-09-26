@@ -1,9 +1,8 @@
 # Foundation
 
 How the world is built: its laws, what is generated and what must emerge, the material trade-offs, the stages it is
-searched in and how each is judged, and today's default world. Read it before designing or building a law; change it
-when a law or a measure is kept or removed, or the method changes (`CLAUDE.md`, Documents). What each experiment found
-is in its README.
+searched in and how each is judged, and today's default world. Read it before designing a law; change it when a law
+or a measure is kept or removed, or the method changes (`CLAUDE.md`). What each experiment found is in its README.
 
 ## Why
 
@@ -64,13 +63,14 @@ Each stage is judged before the next is built on it, so a failure names its laye
 band, by quarter; pass: 5 habitats of 2%, 3 of them wider than three lives of travel, 10-50% changing in a year, year
 20 agreeing with year 10 on 90%. e061: 34 of 300 candidates pass, at 512x512; a world is spun up about 20,000 climate
 updates; 1-8 minutes at 512 on one core; its regions can be counted from its map (e084, e085). **The redesign's
-ground** (#116, e102, `base/`): rock provinces, soils, a drainage network, groundwater, nutrients A and B, winds by
-band, years that differ; 30 years in 7 minutes; places read by medium, temperature, moisture, A:B and fertility.
+ground** (e102, `base/`): rock provinces, soils, drainage, groundwater, nutrients A and B, winds by band, varying
+years; places by medium, temperature, moisture, A:B, fertility. Producers (e104): cohorts dying at their wood's
+lifespan.
 
 **Stage B, producers** (grass, wood, algae, fire). Pass: each producer holds 5% of the standing matter and is the
 larger part of a habitat; none dies out in 10 years; fire burns 1-20% of the land a year; matter is conserved. e062: 9
 of 96 pass, no draw on more than two worlds; stage C takes d11 (grass 0.009983, wood 0.0017, algae 0.009112, ignite
-1.613e-6) on c1225, 8 minutes at 512. The redesign's producers (e103): grouped by traits, `analysis/groups.py`.
+1.613e-6) on c1225, 8 minutes at 512. They are grouped by traits, `analysis/groups.py`.
 
 **Stage C, bodies.** Judged by kinds of living by birth form (e068) at a census and kept to a place, on **six seeds
 (9-14)**. A birth form counts a body's blocks of every kind; a group that took half its life's matter from one food

@@ -44,7 +44,7 @@ SCALES = {
 
 # census columns read, and those carried but not grouped on
 READ = set(SCALES) - {"defence", "water"} | {"compound", "n_keys", "mass_land", "mass_sea"}
-CARRIED = {"year", "id", "parent", "born", "genes", "cells", "lead_cells", "height", "keys", "conditional"}
+CARRIED = {"year", "id", "parent", "born", "genes", "cells", "lead_cells", "height", "keys", "conditional", "age", "lifespan"}
 
 
 def check(columns):
