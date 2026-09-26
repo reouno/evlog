@@ -19,6 +19,7 @@ mod genome;
 mod hydro;
 mod life;
 mod noise;
+mod par;
 mod terrain;
 
 use climate::{Air, Flux, Sat, Weather};
@@ -107,7 +108,7 @@ params! {
     sow = 10.0, "the year the first producers are sown (the climate spun up before)";
     founders = 256.0, "random genomes sown (a quarter as many eaters)";
     sow_mass = 0.001, "kg of seed a genotype sown in a cell";
-    threads = 4.0, "threads for the cells' life step";
+    threads = 4.0, "threads for the cells (climate, water and life); the results do not depend on it";
     life_every = 8.0, "updates between two life steps (about a day)";
     gpp_max = 10.0, "kg a year a full crown fixes at the mean daylight, fully active, at its optimum";
     light_ref = 0.32, "the day's mean light at the equator (the sun's height, e061)";
@@ -204,19 +205,29 @@ impl Year {
         let z = vec![0.0; cells];
         Year { temp: z.clone(), quarter: [z.clone(), z.clone(), z.clone(), z.clone()], fill: z.clone(), rain: z.clone(), q: z.clone(), lake: z, updates: 0 }
     }
-    fn add(&mut self, t: &Terrain, air: &Air, hy: &Hydro, quarter: usize) {
-        for c in 0..self.temp.len() {
-            self.temp[c] += air.temp[c];
-            self.quarter[quarter][c] += air.temp[c];
-            self.rain[c] += air.rain_now[c];
-            if !t.sea[c] {
-                self.fill[c] += (air.ground[c] / t.cap[c]).min(1.0);
-                self.q[c] += hy.q[c];
-                if air.ground[c] - t.cap[c] >= POOL {
-                    self.lake[c] += 1.0;
+    fn add(&mut self, t: &Terrain, air: &Air, hy: &Hydro, quarter: usize, threads: usize) {
+        let (temp, qt, rain, fill, q, lake) = (
+            par::Shared::new(&mut self.temp),
+            par::Shared::new(&mut self.quarter[quarter]),
+            par::Shared::new(&mut self.rain),
+            par::Shared::new(&mut self.fill),
+            par::Shared::new(&mut self.q),
+            par::Shared::new(&mut self.lake),
+        );
+        par::pieces(threads, t.sea.len(), |lo, hi| {
+            for c in lo..hi {
+                *temp.at(c) += air.temp[c];
+                *qt.at(c) += air.temp[c];
+                *rain.at(c) += air.rain_now[c];
+                if !t.sea[c] {
+                    *fill.at(c) += (air.ground[c] / t.cap[c]).min(1.0);
+                    *q.at(c) += hy.q[c];
+                    if air.ground[c] - t.cap[c] >= POOL {
+                        *lake.at(c) += 1.0;
+                    }
                 }
             }
-        }
+        });
         self.updates += 1;
     }
     /// The year's maps, in the order of `FIELDS`.
@@ -415,21 +426,31 @@ fn main() {
         if yr == p.sow as usize {
             lf.add(&life.sow(&p, &mut hy.a, &mut hy.b, yr as u32));
         }
+        let mut secs = [0.0f64; 4]; // air, water, life, the year's sums
         for u in 0..upy {
             let step = (yr * upy + u) as f64 * p.tick;
+            let t0 = Instant::now();
             let f = air.update(&p, &ter, &sat, &mut wx, step, &life.cover);
+            let t1 = Instant::now();
             let h = hy.update(&p, &ter, &mut air.ground, &air.temp, &air.rain_now);
+            let t2 = Instant::now();
             fl.add(&f);
             hf.add(&h);
             if life.sown {
-                life.accumulate(&air.light, &air.temp, &wx.hit);
+                life.accumulate(&air.light, &air.temp, &wx.hit, p.threads as usize);
                 if life.due(&p) {
                     let l = life.step(&p, &ter, &sat, &mut air.ground, &mut air.vapor, &mut hy.deep, &mut hy.a, &mut hy.b, &hy.q, step);
                     lf.add(&l);
                 }
             }
-            year.add(&ter, &air, &hy, (u * 4 / upy).min(3));
+            let t3 = Instant::now();
+            year.add(&ter, &air, &hy, (u * 4 / upy).min(3), p.threads as usize);
+            secs[0] += (t1 - t0).as_secs_f64();
+            secs[1] += (t2 - t1).as_secs_f64();
+            secs[2] += (t3 - t2).as_secs_f64();
+            secs[3] += t3.elapsed().as_secs_f64();
         }
+        eprintln!("  secs: air {:.1}, water {:.1}, life {:.1}, sums {:.1}", secs[0], secs[1], secs[2], secs[3]);
         sea_net += fl.sea_evap - fl.sea_rain - hf.to_sea;
         na += hf.weathered_a - hf.buried_a;
         nb += hf.weathered_b - hf.buried_b;

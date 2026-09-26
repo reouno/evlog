@@ -7,6 +7,7 @@
 //! ground is `hydro`'s.
 
 use crate::noise::{noise, normalised, Rng};
+use crate::par::{self, Shared};
 use crate::terrain::Terrain;
 use crate::Params;
 use std::f64::consts::{PI, TAU};
@@ -105,11 +106,17 @@ impl Weather {
     fn update(&mut self, p: &Params) {
         let n = p.size as usize;
         let k = (p.tick / (p.year / 4.0)).min(1.0);
-        for c in 0..self.t_now.len() {
-            self.t_now[c] += k * (self.t_to[c] - self.t_now[c]);
-            self.r_now[c] += k * (self.r_to[c] - self.r_now[c]);
-            self.rain_f[c] = (p.var_rain * self.r_now[c]).exp();
-            self.hit[c] = false;
+        {
+            let (tn, rn, rf, hit) = (Shared::new(&mut self.t_now), Shared::new(&mut self.r_now), Shared::new(&mut self.rain_f), Shared::new(&mut self.hit));
+            let (tt, rt) = (&self.t_to, &self.r_to);
+            par::pieces(p.threads as usize, tt.len(), |lo, hi| {
+                for c in lo..hi {
+                    *tn.at(c) += k * (tt[c] - *tn.at(c));
+                    *rn.at(c) += k * (rt[c] - *rn.at(c));
+                    *rf.at(c) = (p.var_rain * *rn.at(c)).exp();
+                    *hit.at(c) = false;
+                }
+            });
         }
         for _ in 0..self.rng.poisson(p.storms * p.tick / p.year) {
             self.storms.push(Storm { x: self.rng.f64() * n as f64, y: self.rng.f64() * n as f64, left: p.storm_updates as u32 });
@@ -151,7 +158,6 @@ pub struct Air {
     sin_lo: Vec<f64>,
     sin_hi: Vec<f64>,
     theta: Vec<f64>,
-    dtemp: Vec<f64>,
     moved: Vec<f64>,
 }
 
@@ -167,6 +173,20 @@ pub fn zonal(p: &Params, lat: f64, decl: f64) -> f64 {
     // -1 below 25, +1 from 35 to 55, -1 beyond 65
     let g = -1.0 + 2.0 * s(step(25.0, 35.0, l)) - 2.0 * s(step(55.0, 65.0, l));
     p.wind * g
+}
+
+/// What a cell gains from its four edges: k x (the neighbour's value - its own), each edge's flow reckoned from
+/// the same two values in the same order as its neighbour reckons it, so the edges pass exact amounts.
+#[inline]
+fn exchange(n: usize, x: usize, y: usize, v: &[f64], k: f64) -> f64 {
+    let c = y * n + x;
+    let r = y * n + if x + 1 == n { 0 } else { x + 1 };
+    let l = y * n + if x == 0 { n - 1 } else { x - 1 };
+    let d = (if y + 1 == n { 0 } else { y + 1 }) * n + x;
+    let u = (if y == 0 { n - 1 } else { y - 1 }) * n + x;
+    // the flow into c across an edge (a, b) is k (v[b] - v[a]) with (a, b) = (c, r) or (c, d), and minus the
+    // flow into l or u across their own edge
+    k * (v[r] - v[c]) + k * (v[d] - v[c]) - k * (v[c] - v[l]) - k * (v[c] - v[u])
 }
 
 impl Air {
@@ -189,7 +209,6 @@ impl Air {
             sin_lo: vec![0.0; n],
             sin_hi: vec![0.0; n],
             theta: vec![0.0; cells],
-            dtemp: vec![0.0; cells],
             moved: vec![0.0; cells],
         }
     }
@@ -216,99 +235,120 @@ impl Air {
             self.sin_hi[x] = (h0 + span).sin();
         }
         let lapse = p.lapse / 1000.0;
-        for y in 0..n {
-            let (a, b) = (t.lat[y].sin() * sd, t.lat[y].cos() * cd);
-            let rise = if a >= b { f64::INFINITY } else if a <= -b { -1.0 } else { (-a / b).acos() };
-            let sin_rise = if rise.is_finite() && rise > 0.0 { rise.sin() } else { 0.0 };
-            for x in 0..n {
-                let c = y * n + x;
-                let (lo0, hi0) = (self.h0[x], self.h0[x] + span);
-                let q = if rise.is_infinite() {
-                    a + b * (self.sin_hi[x] - self.sin_lo[x]) / span
-                } else if rise < 0.0 {
-                    0.0
-                } else {
-                    let mut sum = 0.0;
-                    for noon in [0.0, TAU] {
-                        let (lo, s_lo) = if lo0 > noon - rise { (lo0, self.sin_lo[x]) } else { (noon - rise, -sin_rise) };
-                        let (hi, s_hi) = if hi0 < noon + rise { (hi0, self.sin_hi[x]) } else { (noon + rise, sin_rise) };
-                        if hi > lo {
-                            sum += a * (hi - lo) + b * (s_hi - s_lo);
-                        }
+        let threads = p.threads as usize;
+        let wxr = &*wx;
+        {
+            let (light, temp, theta) = (Shared::new(&mut self.light), Shared::new(&mut self.temp), Shared::new(&mut self.theta));
+            let (h0s, slo, shi, rate) = (&self.h0, &self.sin_lo, &self.sin_hi, &self.rate);
+            par::pieces(threads, n, |ylo, yhi| {
+                for y in ylo..yhi {
+                    let (a, b) = (t.lat[y].sin() * sd, t.lat[y].cos() * cd);
+                    let rise = if a >= b { f64::INFINITY } else if a <= -b { -1.0 } else { (-a / b).acos() };
+                    let sin_rise = if rise.is_finite() && rise > 0.0 { rise.sin() } else { 0.0 };
+                    for x in 0..n {
+                        let c = y * n + x;
+                        let (lo0, hi0) = (h0s[x], h0s[x] + span);
+                        let q = if rise.is_infinite() {
+                            a + b * (shi[x] - slo[x]) / span
+                        } else if rise < 0.0 {
+                            0.0
+                        } else {
+                            let mut sum = 0.0;
+                            for noon in [0.0, TAU] {
+                                let (lo, s_lo) = if lo0 > noon - rise { (lo0, slo[x]) } else { (noon - rise, -sin_rise) };
+                                let (hi, s_hi) = if hi0 < noon + rise { (hi0, shi[x]) } else { (noon + rise, sin_rise) };
+                                if hi > lo {
+                                    sum += a * (hi - lo) + b * (s_hi - s_lo);
+                                }
+                            }
+                            (sum / span).max(0.0)
+                        };
+                        *light.at(c) = q;
+                        let eq = p.night + p.gain * q - lapse * t.air[c] + wxr.temp(c, p);
+                        let v = *temp.at(c) + rate[c] * (eq - *temp.at(c));
+                        *temp.at(c) = v;
+                        *theta.at(c) = v + lapse * t.air[c];
                     }
-                    (sum / span).max(0.0)
-                };
-                self.light[c] = q;
-                let eq = p.night + p.gain * q - lapse * t.air[c] + wx.temp(c, p);
-                let v = self.temp[c] + self.rate[c] * (eq - self.temp[c]);
-                self.temp[c] = v;
-                self.theta[c] = v + lapse * t.air[c];
-            }
+                }
+            });
         }
-        // Heat crosses each edge by the difference of potential temperature.
-        self.dtemp.iter_mut().for_each(|d| *d = 0.0);
-        let k = 0.25 * p.spread;
-        for y in 0..n {
-            let yd = if y + 1 == n { 0 } else { y + 1 };
-            for x in 0..n {
-                let c = y * n + x;
-                let r = y * n + if x + 1 == n { 0 } else { x + 1 };
-                let d = yd * n + x;
-                let fr = k * (self.theta[r] - self.theta[c]);
-                let fd = k * (self.theta[d] - self.theta[c]);
-                self.dtemp[c] += fr + fd;
-                self.dtemp[r] -= fr;
-                self.dtemp[d] -= fd;
-            }
-        }
-        for c in 0..cells {
-            self.temp[c] += self.dtemp[c] * self.inv_cap[c];
+        // Heat crosses each edge by the difference of potential temperature (each edge's flow computed alike from
+        // both sides, so what one cell gives the other takes).
+        {
+            let k = 0.25 * p.spread;
+            let temp = Shared::new(&mut self.temp);
+            let (theta, inv_cap) = (&self.theta, &self.inv_cap);
+            par::pieces(threads, n, |ylo, yhi| {
+                for y in ylo..yhi {
+                    for x in 0..n {
+                        let c = y * n + x;
+                        let d = exchange(n, x, y, theta, k);
+                        *temp.at(c) += d * inv_cap[c];
+                    }
+                }
+            });
         }
 
         // The air takes up water where it can and rains what it cannot hold; this year's anomaly and the
         // storms change how much of the excess falls.
+        let parts = {
+            let (vapor, ground, rain_now) = (Shared::new(&mut self.vapor), Shared::new(&mut self.ground), Shared::new(&mut self.rain_now));
+            let temp = &self.temp;
+            par::pieces(threads, cells, |lo, hi| {
+                let mut f = Flux::default();
+                for c in lo..hi {
+                    let s = sat.at(temp[c]);
+                    let v = *vapor.at(c);
+                    let rk = (p.rain * wxr.rain_f[c]).min(1.0);
+                    if t.sea[c] {
+                        let e = p.evap * (s - v).max(0.0);
+                        let v1 = v + e;
+                        let r = rk * (v1 - RAIN_RH * s).max(0.0);
+                        *vapor.at(c) = v1 - r;
+                        *rain_now.at(c) = r;
+                        f.sea_evap += e;
+                        f.sea_rain += r;
+                    } else {
+                        // A soil gives up `soil_evap` of what open water would, by its fill; water standing on it all.
+                        let g = *ground.at(c);
+                        let open = if g > t.cap[c] { 1.0 } else { p.soil_evap * g / t.cap[c] * cover[c] };
+                        let e = (p.evap * (s - v).max(0.0) * open).min(g);
+                        let v1 = v + e;
+                        let r = rk * (v1 - RAIN_RH * s).max(0.0);
+                        *vapor.at(c) = v1 - r;
+                        *ground.at(c) = g - e + r;
+                        *rain_now.at(c) = r;
+                        f.land_evap += e;
+                        f.land_rain += r;
+                    }
+                }
+                f
+            })
+        };
         let mut f = Flux::default();
-        for c in 0..cells {
-            let s = sat.at(self.temp[c]);
-            let v = self.vapor[c];
-            let rk = (p.rain * wx.rain_f[c]).min(1.0);
-            if t.sea[c] {
-                let e = p.evap * (s - v).max(0.0);
-                let v1 = v + e;
-                let r = rk * (v1 - RAIN_RH * s).max(0.0);
-                self.vapor[c] = v1 - r;
-                self.rain_now[c] = r;
-                f.sea_evap += e;
-                f.sea_rain += r;
-            } else {
-                // A soil gives up `soil_evap` of what open water would, by its fill; water standing on it all.
-                let g = self.ground[c];
-                let open = if g > t.cap[c] { 1.0 } else { p.soil_evap * g / t.cap[c] * cover[c] };
-                let e = (p.evap * (s - v).max(0.0) * open).min(g);
-                let v1 = v + e;
-                let r = rk * (v1 - RAIN_RH * s).max(0.0);
-                self.vapor[c] = v1 - r;
-                self.ground[c] = g - e + r;
-                self.rain_now[c] = r;
-                f.land_evap += e;
-                f.land_rain += r;
-            }
+        for x in &parts {
+            f.add(x);
         }
 
         // The winds: each row's air shifts along the row by its band's wind (linear, so nothing is lost).
-        for y in (0..n).filter(|_| p.wind_bands != 0.0) {
-            let u = zonal(p, t.lat[y], decl);
-            let sx = -u; // the air here now is the air that was upwind
-            let f0 = sx.floor();
-            let fx = sx - f0;
-            let ix = (f0 as i64).rem_euclid(n as i64) as usize;
-            for x in 0..n {
-                let x0 = (x + ix) % n;
-                let x1 = (x0 + 1) % n;
-                self.moved[y * n + x] = (1.0 - fx) * self.vapor[y * n + x0] + fx * self.vapor[y * n + x1];
-            }
-        }
-        if p.wind_bands == 0.0 {
+        if p.wind_bands != 0.0 {
+            let moved = Shared::new(&mut self.moved);
+            let vapor = &self.vapor;
+            par::pieces(threads, n, |ylo, yhi| {
+                for y in ylo..yhi {
+                    let u = zonal(p, t.lat[y], decl);
+                    let sx = -u; // the air here now is the air that was upwind
+                    let f0 = sx.floor();
+                    let fx = sx - f0;
+                    let ix = (f0 as i64).rem_euclid(n as i64) as usize;
+                    for x in 0..n {
+                        let x0 = (x + ix) % n;
+                        let x1 = (x0 + 1) % n;
+                        *moved.at(y * n + x) = (1.0 - fx) * vapor[y * n + x0] + fx * vapor[y * n + x1];
+                    }
+                }
+            });
+        } else {
             // e061's one wind turning with the season, along both axes
             let ang = (p.wind_dir + p.wind_turn * season).to_radians();
             let (sx, sy) = (-p.wind * ang.cos(), -p.wind * ang.sin());
@@ -327,27 +367,20 @@ impl Air {
                 }
             }
         }
-        std::mem::swap(&mut self.vapor, &mut self.moved);
-        // The air's own mixing across each edge (what carries water across the bands).
-        if p.mix > 0.0 {
-            self.dtemp.iter_mut().for_each(|d| *d = 0.0);
+        // The air's own mixing across each edge (what carries water across the bands), from the moved air into
+        // the vapor.
+        {
             let m = 0.25 * p.mix;
-            for y in 0..n {
-                let yd = if y + 1 == n { 0 } else { y + 1 };
-                for x in 0..n {
-                    let c = y * n + x;
-                    let r = y * n + if x + 1 == n { 0 } else { x + 1 };
-                    let d = yd * n + x;
-                    let fr = m * (self.vapor[r] - self.vapor[c]);
-                    let fd = m * (self.vapor[d] - self.vapor[c]);
-                    self.dtemp[c] += fr + fd;
-                    self.dtemp[r] -= fr;
-                    self.dtemp[d] -= fd;
+            let vapor = Shared::new(&mut self.vapor);
+            let moved = &self.moved;
+            par::pieces(threads, n, |ylo, yhi| {
+                for y in ylo..yhi {
+                    for x in 0..n {
+                        let c = y * n + x;
+                        *vapor.at(c) = moved[c] + if m > 0.0 { exchange(n, x, y, moved, m) } else { 0.0 };
+                    }
                 }
-            }
-            for c in 0..cells {
-                self.vapor[c] += self.dtemp[c];
-            }
+            });
         }
         f
     }

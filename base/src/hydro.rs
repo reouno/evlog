@@ -8,7 +8,8 @@
 //! each by its mobility; the rivers drop part where the land is flat and most in lakes, and the rest
 //! enters the sea at the mouth, where it spreads and is slowly buried.
 
-use crate::terrain::{nbrs, Terrain, NONE, ROCKS};
+use crate::par::{self, Shared};
+use crate::terrain::{Terrain, NONE, ROCKS};
 use crate::Params;
 
 #[derive(Default, Clone, Copy)]
@@ -74,110 +75,164 @@ impl Hydro {
     /// One update, after the air's. `ground` is the air's (the soil's water and what stands on it),
     /// `temp` the cells' temperature.
     pub fn update(&mut self, p: &Params, t: &Terrain, ground: &mut [f64], temp: &[f64], rain: &[f64]) -> HFlux {
-        let mut f = HFlux::default();
-        let per = p.weather * p.tick / p.year; // a mean rock's nutrient an update
-        // Standing water sinks; the rock weathers.
-        for &c in &t.order {
-            let c = c as usize;
-            let standing = ground[c] - t.cap[c];
-            if standing > 0.0 {
-                let s = p.recharge * standing;
-                ground[c] -= s;
-                self.deep[c] += s;
-            }
-            let warm = (1.0 + (temp[c] - 15.0) / 15.0).clamp(0.0, 2.0);
-            let wet = (ground[c] / t.cap[c]).min(1.0);
-            let r = &ROCKS[t.rock[c] as usize];
-            let (wa, wb) = (per * r.a * warm * wet, per * r.b * warm * wet);
-            self.a[c] += wa;
-            self.b[c] += wb;
-            f.weathered_a += wa;
-            f.weathered_b += wb;
-        }
-        // Down the network, upstream first: what is over a cell's holding runs on, with the groundwater's seep.
-        for &c in &t.order {
-            let c = c as usize;
-            let hold = t.cap[c] + t.lake_cap[c];
-            // Of this update's rain, the share that falls where the ground is already wet runs straight off
-            // (a cell is not one bucket: its wet parts spill first), fill^beta.
-            let quick = (rain[c] * (ground[c] / t.cap[c]).min(1.0).powf(p.beta)).min(ground[c]);
-            ground[c] -= quick;
-            let own = (ground[c] - hold).max(0.0) + quick; // what this cell's own water gives, not the river's
-            let mut g = ground[c] + self.inflow[c];
-            let mut out = (g - hold).max(0.0);
-            g -= out;
-            out += quick;
-            let seep = p.base_flow * self.deep[c];
-            self.deep[c] -= seep;
-            out += seep;
-            ground[c] = g;
-            self.q[c] = out;
-            // What the water brings, part of it dropped here: most in a lake, some where the land is flat.
-            let drop = if t.lake_cap[c] > 1.0 { p.trap } else { p.deposit / (1.0 + t.slope[c] / p.depth_slope) };
-            let (mut ca, mut cb) = (self.in_a[c], self.in_b[c]);
-            self.a[c] += ca * drop;
-            self.b[c] += cb * drop;
-            ca *= 1.0 - drop;
-            cb *= 1.0 - drop;
-            // What it takes from this soil, by the share of the soil's own water that leaves and the mobility
-            // (the river passing through a cell does not wash its soil).
-            let lw = (own + seep) / (t.cap[c] + own + seep);
-            let (la, lb) = (self.a[c] * (p.mob_a * lw).min(1.0), self.b[c] * (p.mob_b * lw).min(1.0));
-            self.a[c] -= la;
-            self.b[c] -= lb;
-            ca += la;
-            cb += lb;
-            let d = t.down[c];
-            debug_assert!(d != NONE);
-            let d = d as usize;
-            if t.sea[d] {
-                f.to_sea += out;
-                self.a[d] += ca;
-                self.b[d] += cb;
-                f.river_a += ca;
-                f.river_b += cb;
-            } else {
-                self.inflow[d] += out;
-                self.in_a[d] += ca;
-                self.in_b[d] += cb;
-            }
-            self.inflow[c] = 0.0;
-            self.in_a[c] = 0.0;
-            self.in_b[c] = 0.0;
-        }
-        // The sea: what the rivers bring spreads, and a share is buried.
+        let threads = p.threads as usize;
         let n = t.n;
-        let m = 0.25 * p.sea_mix;
-        self.scratch_a.iter_mut().for_each(|v| *v = 0.0);
-        self.scratch_b.iter_mut().for_each(|v| *v = 0.0);
-        for c in 0..n * n {
-            if !t.sea[c] {
-                continue;
-            }
-            let nb = nbrs(n, c);
-            for &o in &nb[1..3] {
-                // down and right: each edge once
-                if t.sea[o] {
-                    let da = m * (self.a[o] - self.a[c]);
-                    let db = m * (self.b[o] - self.b[c]);
-                    self.scratch_a[c] += da;
-                    self.scratch_a[o] -= da;
-                    self.scratch_b[c] += db;
-                    self.scratch_b[o] -= db;
+        let cells = n * n;
+        let per = p.weather * p.tick / p.year; // a mean rock's nutrient an update
+        let mut f = HFlux::default();
+        // Standing water sinks; the rock weathers.
+        {
+            let (g, deep, a, b) = (Shared::new(ground), Shared::new(&mut self.deep), Shared::new(&mut self.a), Shared::new(&mut self.b));
+            for x in par::pieces(threads, cells, |lo, hi| {
+                let mut f = HFlux::default();
+                for c in (lo..hi).filter(|&c| !t.sea[c]) {
+                    let standing = *g.at(c) - t.cap[c];
+                    if standing > 0.0 {
+                        let s = p.recharge * standing;
+                        *g.at(c) -= s;
+                        *deep.at(c) += s;
+                    }
+                    let warm = (1.0 + (temp[c] - 15.0) / 15.0).clamp(0.0, 2.0);
+                    let wet = (*g.at(c) / t.cap[c]).min(1.0);
+                    let r = &ROCKS[t.rock[c] as usize];
+                    let (wa, wb) = (per * r.a * warm * wet, per * r.b * warm * wet);
+                    *a.at(c) += wa;
+                    *b.at(c) += wb;
+                    f.weathered_a += wa;
+                    f.weathered_b += wb;
                 }
+                f
+            }) {
+                f.add(&x);
             }
         }
-        for c in 0..n * n {
-            if t.sea[c] {
-                self.a[c] += self.scratch_a[c];
-                self.b[c] += self.scratch_b[c];
-                let (ba, bb) = (self.a[c] * p.bury, self.b[c] * p.bury);
-                self.a[c] -= ba;
-                self.b[c] -= bb;
-                f.buried_a += ba;
-                f.buried_b += bb;
+        // Down the network, upstream first, each group of basins on its own: what is over a cell's holding runs on,
+        // with the groundwater's seep. What reaches the sea is added after, in the groups' order.
+        let mouths = {
+            let (g, deep, q, a, b) = (Shared::new(ground), Shared::new(&mut self.deep), Shared::new(&mut self.q), Shared::new(&mut self.a), Shared::new(&mut self.b));
+            let (inflow, in_a, in_b) = (Shared::new(&mut self.inflow), Shared::new(&mut self.in_a), Shared::new(&mut self.in_b));
+            par::over(threads, &t.groups, |group| {
+                let mut out_sea: Vec<(u32, f64, f64)> = Vec::new();
+                let mut f = HFlux::default();
+                for &c in group {
+                    let c = c as usize;
+                    let hold = t.cap[c] + t.lake_cap[c];
+                    // Of this update's rain, the share that falls where the ground is already wet runs straight off
+                    // (a cell is not one bucket: its wet parts spill first), fill^beta.
+                    let fill = (*g.at(c) / t.cap[c]).min(1.0);
+                    let fb = if p.beta == 2.0 { fill * fill } else { fill.powf(p.beta) };
+                    let quick = (rain[c] * fb).min(*g.at(c));
+                    *g.at(c) -= quick;
+                    let own = (*g.at(c) - hold).max(0.0) + quick; // what this cell's own water gives, not the river's
+                    let mut gg = *g.at(c) + *inflow.at(c);
+                    let mut out = (gg - hold).max(0.0);
+                    gg -= out;
+                    out += quick;
+                    let seep = p.base_flow * *deep.at(c);
+                    *deep.at(c) -= seep;
+                    out += seep;
+                    *g.at(c) = gg;
+                    *q.at(c) = out;
+                    // What the water brings, part of it dropped here: most in a lake, some where the land is flat.
+                    let drop = if t.lake_cap[c] > 1.0 { p.trap } else { p.deposit / (1.0 + t.slope[c] / p.depth_slope) };
+                    let (mut ca, mut cb) = (*in_a.at(c), *in_b.at(c));
+                    *a.at(c) += ca * drop;
+                    *b.at(c) += cb * drop;
+                    ca *= 1.0 - drop;
+                    cb *= 1.0 - drop;
+                    // What it takes from this soil, by the share of the soil's own water that leaves and the mobility
+                    // (the river passing through a cell does not wash its soil).
+                    let lw = (own + seep) / (t.cap[c] + own + seep);
+                    let (la, lb) = (*a.at(c) * (p.mob_a * lw).min(1.0), *b.at(c) * (p.mob_b * lw).min(1.0));
+                    *a.at(c) -= la;
+                    *b.at(c) -= lb;
+                    ca += la;
+                    cb += lb;
+                    let d = t.down[c];
+                    debug_assert!(d != NONE);
+                    let d = d as usize;
+                    if t.sea[d] {
+                        f.to_sea += out;
+                        f.river_a += ca;
+                        f.river_b += cb;
+                        out_sea.push((d as u32, ca, cb));
+                    } else {
+                        *inflow.at(d) += out;
+                        *in_a.at(d) += ca;
+                        *in_b.at(d) += cb;
+                    }
+                    *inflow.at(c) = 0.0;
+                    *in_a.at(c) = 0.0;
+                    *in_b.at(c) = 0.0;
+                }
+                (f, out_sea)
+            })
+        };
+        for (x, out_sea) in &mouths {
+            f.add(x);
+            for &(d, ca, cb) in out_sea {
+                self.a[d as usize] += ca;
+                self.b[d as usize] += cb;
+            }
+        }
+        // The sea: what the rivers bring spreads across the edges between sea cells, and a share is buried.
+        {
+            let m = 0.25 * p.sea_mix;
+            let (sa, sb) = (Shared::new(&mut self.scratch_a), Shared::new(&mut self.scratch_b));
+            let (a, b) = (&self.a, &self.b);
+            par::pieces(threads, n, |ylo, yhi| {
+                for y in ylo..yhi {
+                    for x in 0..n {
+                        let c = y * n + x;
+                        if t.sea[c] {
+                            *sa.at(c) = a[c] + sea_exchange(t, n, x, y, a, m);
+                            *sb.at(c) = b[c] + sea_exchange(t, n, x, y, b, m);
+                        }
+                    }
+                }
+            });
+        }
+        {
+            let (a, b) = (Shared::new(&mut self.a), Shared::new(&mut self.b));
+            let (sa, sb) = (&self.scratch_a, &self.scratch_b);
+            for x in par::pieces(threads, cells, |lo, hi| {
+                let mut f = HFlux::default();
+                for c in (lo..hi).filter(|&c| t.sea[c]) {
+                    let (ba, bb) = (sa[c] * p.bury, sb[c] * p.bury);
+                    *a.at(c) = sa[c] - ba;
+                    *b.at(c) = sb[c] - bb;
+                    f.buried_a += ba;
+                    f.buried_b += bb;
+                }
+                f
+            }) {
+                f.add(&x);
             }
         }
         f
     }
+}
+
+/// What a sea cell gains across its edges with other sea cells, each edge's flow reckoned alike from both sides.
+#[inline]
+fn sea_exchange(t: &Terrain, n: usize, x: usize, y: usize, v: &[f64], m: f64) -> f64 {
+    let c = y * n + x;
+    let r = y * n + if x + 1 == n { 0 } else { x + 1 };
+    let l = y * n + if x == 0 { n - 1 } else { x - 1 };
+    let d = (if y + 1 == n { 0 } else { y + 1 }) * n + x;
+    let u = (if y == 0 { n - 1 } else { y - 1 }) * n + x;
+    let mut s = 0.0;
+    if t.sea[r] {
+        s += m * (v[r] - v[c]);
+    }
+    if t.sea[d] {
+        s += m * (v[d] - v[c]);
+    }
+    if t.sea[l] {
+        s -= m * (v[c] - v[l]);
+    }
+    if t.sea[u] {
+        s -= m * (v[c] - v[u]);
+    }
+    s
 }

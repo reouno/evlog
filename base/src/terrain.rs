@@ -2,6 +2,7 @@
 //! drainage network every land cell's water follows to the sea.
 
 use crate::noise::{noise, Rng};
+use crate::par::CHUNKS;
 use crate::Params;
 use std::cmp::Reverse;
 use std::collections::BinaryHeap;
@@ -39,6 +40,9 @@ pub struct Terrain {
     pub rock: Vec<u8>,
     pub cap: Vec<f64>,      // mm: the water the soil holds
     pub lake_cap: Vec<f64>, // mm: the water a basin holds above the soil before it spills
+    /// The land's drainage basins dealt into `par::CHUNKS` groups of about equal size, each group's cells
+    /// upstream first: a group's water never reaches another's, so the groups are routed on separate threads.
+    pub groups: Vec<Vec<u32>>,
 }
 
 impl Terrain {
@@ -73,7 +77,8 @@ impl Terrain {
             .map(|c| if sea[c] { 0.0 } else { p.soil * ROCKS[rock[c] as usize].hold * (0.4 + 1.2 / (1.0 + slope[c] / p.depth_slope)) })
             .collect();
         let lake_cap: Vec<f64> = (0..cells).map(|c| if sea[c] { 0.0 } else { ((filled[c] - elev[c]) * 1000.0).max(0.0) }).collect();
-        Terrain { n, elev, sea, air, lat, filled, down, order, slope, rock, cap, lake_cap }
+        let groups = basin_groups(&sea, &down, &order);
+        Terrain { n, elev, sea, air, lat, filled, down, order, slope, rock, cap, lake_cap, groups }
     }
 }
 
@@ -119,6 +124,35 @@ fn drainage(n: usize, elev: &[f64], sea: &[bool]) -> (Vec<f64>, Vec<u32>, Vec<u3
     }
     popped.reverse(); // the last reached is the furthest upstream
     (filled, down, popped)
+}
+
+/// Each land cell's basin (the cell whose water enters the sea), the basins dealt largest first to the group
+/// with the fewest cells so far; within a group, cells keep the network's upstream-first order.
+fn basin_groups(sea: &[bool], down: &[u32], order: &[u32]) -> Vec<Vec<u32>> {
+    let mut basin = vec![NONE; sea.len()];
+    for &c in order.iter().rev() {
+        let c = c as usize;
+        let d = down[c] as usize;
+        basin[c] = if sea[d] { c as u32 } else { basin[d] };
+    }
+    let mut size: std::collections::HashMap<u32, usize> = std::collections::HashMap::new();
+    for &c in order {
+        *size.entry(basin[c as usize]).or_insert(0) += 1;
+    }
+    let mut basins: Vec<(u32, usize)> = size.into_iter().collect();
+    basins.sort_by(|a, b| b.1.cmp(&a.1).then(a.0.cmp(&b.0)));
+    let mut load = vec![0usize; CHUNKS];
+    let mut group_of: std::collections::HashMap<u32, usize> = std::collections::HashMap::new();
+    for (b, s) in basins {
+        let g = (0..CHUNKS).min_by_key(|&g| (load[g], g)).unwrap();
+        load[g] += s;
+        group_of.insert(b, g);
+    }
+    let mut groups = vec![Vec::new(); CHUNKS];
+    for &c in order {
+        groups[group_of[&basin[c as usize]]].push(c);
+    }
+    groups
 }
 
 /// Rock provinces: the nearest of `provinces` seeds, with borders that wander by `warp` cells.

@@ -263,13 +263,16 @@ impl Life {
     }
 
     /// Every update: the light, heat and storms the next life step reads.
-    pub fn accumulate(&mut self, light: &[f64], temp: &[f64], hit: &[bool]) {
+    pub fn accumulate(&mut self, light: &[f64], temp: &[f64], hit: &[bool], threads: usize) {
         let t0 = std::time::Instant::now();
-        for c in 0..self.light.len() {
-            self.light[c] += light[c];
-            self.temp[c] += temp[c];
-            self.stormy[c] |= hit[c];
-        }
+        let (l, t, s) = (crate::par::Shared::new(&mut self.light), crate::par::Shared::new(&mut self.temp), crate::par::Shared::new(&mut self.stormy));
+        crate::par::pieces(threads, light.len(), |lo, hi| {
+            for c in lo..hi {
+                *l.at(c) += light[c];
+                *t.at(c) += temp[c];
+                *s.at(c) |= hit[c];
+            }
+        });
         self.acc += 1;
         self.secs[0] += t0.elapsed().as_secs_f64();
     }
