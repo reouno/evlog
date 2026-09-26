@@ -68,6 +68,7 @@ pub struct Weather {
     r_to: Vec<f64>,
     storms: Vec<Storm>,
     pub rain_f: Vec<f64>, // this update's multiplier of the rain
+    pub hit: Vec<bool>,   // under a storm this update (e103: storms fell tall stands)
     pub storms_seen: u64,
 }
 
@@ -81,6 +82,7 @@ impl Weather {
             r_to: vec![0.0; cells],
             storms: Vec::new(),
             rain_f: vec![1.0; cells],
+            hit: vec![false; cells],
             storms_seen: 0,
         };
         w.new_year(p);
@@ -107,6 +109,7 @@ impl Weather {
             self.t_now[c] += k * (self.t_to[c] - self.t_now[c]);
             self.r_now[c] += k * (self.r_to[c] - self.r_now[c]);
             self.rain_f[c] = (p.var_rain * self.r_now[c]).exp();
+            self.hit[c] = false;
         }
         for _ in 0..self.rng.poisson(p.storms * p.tick / p.year) {
             self.storms.push(Storm { x: self.rng.f64() * n as f64, y: self.rng.f64() * n as f64, left: p.storm_updates as u32 });
@@ -121,6 +124,7 @@ impl Weather {
                         let x = (s.x as i64 + dx).rem_euclid(n as i64) as usize;
                         let y = (s.y as i64 + dy).rem_euclid(n as i64) as usize;
                         self.rain_f[y * n + x] *= p.storm_rain;
+                        self.hit[y * n + x] = true;
                     }
                 }
             }
@@ -195,7 +199,8 @@ impl Air {
     }
 
     /// One update of the climate over the steps [step, step + tick).
-    pub fn update(&mut self, p: &Params, t: &Terrain, sat: &Sat, wx: &mut Weather, step: f64) -> Flux {
+    /// `cover`: the share of the sun that reaches the soil under the leaves (e103), which scales its evaporation.
+    pub fn update(&mut self, p: &Params, t: &Terrain, sat: &Sat, wx: &mut Weather, step: f64, cover: &[f64]) -> Flux {
         wx.update(p);
         let n = t.n;
         let cells = n * n;
@@ -278,7 +283,7 @@ impl Air {
             } else {
                 // A soil gives up `soil_evap` of what open water would, by its fill; water standing on it all.
                 let g = self.ground[c];
-                let open = if g > t.cap[c] { 1.0 } else { p.soil_evap * g / t.cap[c] };
+                let open = if g > t.cap[c] { 1.0 } else { p.soil_evap * g / t.cap[c] * cover[c] };
                 let e = (p.evap * (s - v).max(0.0) * open).min(g);
                 let v1 = v + e;
                 let r = rk * (v1 - RAIN_RH * s).max(0.0);
