@@ -5,7 +5,7 @@ What happened lives in the experiments' READMEs, the issues and git, never here.
 when a row wants a paragraph, the paragraph belongs in an experiment's README and the row keeps the one sentence
 that decides the next step.
 
-Last updated: 2026-09-26, the redesign (#116).
+Last updated: 2026-09-26, e103 (#116 rung 2).
 
 ## 1. The ideal
 
@@ -36,8 +36,8 @@ holds back.
 | layer | ideal | today | gap |
 |---|---|---|---|
 | A places, time, water, heat | many wide places, a day, a year, weather, rivers and rain shadows, cold and hot | new ground (`base/`, e102): 5 rocks in 48 provinces, nutrients A and B (A:B spans x14, A + B x19), a drainage network, winds by band, years that differ by place (12% of rain, half kept the next year); 15.4 places on the land against 6.4 by the old bands | small; rivers thin (10% of rain runs off), years milder than Earth's |
-| B plant foods | several, each needing its own mouth and gut | grass (any gut), algae (a surface gut), browse at 3e-5 (a hard tip), carrion, litter | **large**: few ways to eat |
-| B response to eating | regrowth, defence, fruit offered | every producer grows by its stand, grazed to a few percent of it (e065) | medium |
+| B plant foods | several, each needing its own mouth and gut | old world: grass, algae, browse, carrion, litter; new world (e103): producers with a genome and tissue chemistry sort into 3-6 groups held by place (NMI 0.27), but do not evolve - a stand never dies of age, so no mutant finds room | **large**: no producer evolution yet |
+| B response to eating | regrowth, defence, fruit offered | new world: compounds with keys; small eaters evolve and come within 1 bit of the producers' keys, or live on the undefended (e103) | medium |
 | B plants as places | a forest is home, cover and food | a stand is a home only through its wet ground (e078) | medium |
 | C parts | worth depending on where they sit and how they move | 4 block kinds, 2D grid of side 4-16; every block pays best packed, so bodies fill their grids (e047) | **large** |
 | C size | a thousandfold range, each size with its place | 21-35 blocks; winners differ 1.3-2.2x (e055, e075) | large |
@@ -110,7 +110,7 @@ world's physics; producers evolve and the living make each other's niches; a sma
 space of forms; the world is judged whole, over long runs, by an open measure instead of the 64-box label.
 
 **The order**: the design is agreed in #116 (inventory, the island with the physics that prices each freedom, the
-open measure, the ladder). Rung 1, the ground, stands and is `base/` (e102). **Next is rung 2: producers as evolving
-cohorts** in the shared genome language (height and canopy, composition in A and B, defence keys, seeds carried by
-wind and water) on that ground; the land's water is read again there before any rate of the climate is changed.
-Then rung 3, the bodies. The 3D step (#114) is folded into rung 3; e098's price and e101's water ledger carry over.
+open measure, the ladder). Rung 1, the ground, stands and is `base/` (e102). Rung 2, producers as evolving cohorts,
+stands but does not evolve (e103): the founders sort by place and the soil becomes the living's, while the water
+cycle hardly moves (runoff still 10%). **Next is generations inside a stand** (e104): plants die at a lifespan the
+genome sets and the seed bank recruits into their room, so that mutants enter. Then rung 3, the bodies. The 3D step (#114) is folded into rung 3; e098's price and e101's water ledger carry over.

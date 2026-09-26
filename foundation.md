@@ -69,8 +69,8 @@ band, years that differ; 30 years in 7 minutes; places read by medium, temperatu
 
 **Stage B, producers** (grass, wood, algae, fire). Pass: each producer holds 5% of the standing matter and is the
 larger part of a habitat; none dies out in 10 years; fire burns 1-20% of the land a year; matter is conserved. e062: 9
-of 96 candidates pass, and no draw of the rates passes on more than two worlds. Stage C takes draw d11 (grass 0.009983,
-wood 0.0017, algae 0.009112, ignite 1.613e-6) on c1225. A candidate costs about 8 minutes at 512.
+of 96 pass, no draw on more than two worlds; stage C takes d11 (grass 0.009983, wood 0.0017, algae 0.009112, ignite
+1.613e-6) on c1225, 8 minutes at 512. The redesign's producers (e103): grouped by traits, `analysis/groups.py`.
 
 **Stage C, bodies.** Judged by kinds of living by birth form (e068) at a census and kept to a place, on **six seeds
 (9-14)**. A birth form counts a body's blocks of every kind; a group that took half its life's matter from one food
