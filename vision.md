@@ -112,6 +112,7 @@ space of forms; the world is judged whole, over long runs, by an open measure in
 **The order**: the design is agreed in #116 (inventory, the island with the physics that prices each freedom, the
 open measure, the ladder). Rung 1, the ground (e102), and rung 2, producers that evolve (e103-e105), stand and are
 `base/`; a year costs ~12 s. Over a millennium the producers diversify but do not turn over (e105): the best form of
-a place keeps it, and the run whose eaters take 12% of the fixed carbon changes most. **Next is rung 3, the bodies**:
-consumers that strip stands, choose what they eat and cross places within a life - the moving pressure rung 2 lacks.
+a place keeps it, and the run whose eaters take 12% of the fixed carbon changes most. **Next is rung 3, the bodies**
+(#117): consumers that strip stands, choose what they eat and cross places within a life - the moving pressure rung 2
+lacks - with the ground's water (#118) and the open measure for bodies (#119) before its long runs.
 The 3D step (#114) is folded into rung 3; e098's price and e101's water ledger carry over.
