@@ -79,7 +79,31 @@ bodies follows the matter the food holds, over S, whatever the start.
 
 ## Result
 
-Step 1 pilot: to come.
+### Step 1 (#122): the pilot
+
+`results/pilot3/c1225_life1`, Ubuntu, 6 threads, 80 years (bodies sown in year 50), 2,203 s; read by `pilot.py`.
+The first two pilots (above) are kept as logs.
+
+| | year 55 | year 65 | year 71 | year 80 |
+|---|---|---|---|---|
+| bodies | 15,631 | 53,087 | 142,050 | 94,644 |
+| land cells with a body | 1.3% | 8.1% | 14.0% | 17.5% |
+| eaten by bodies / producers' fixing | 0.7% | 7.6% | 17.9% | 10.7% |
+| the land's producers, kg a m2 | 0.81 | 0.75 | 0.59 | 0.46 |
+| first cause of death | thirst | hunger | hunger | hunger |
+| a year, s (bodies' share) | 32 (13) | 42 (22) | 68 (48) | 54 (34) |
+
+- **The world stands** for 30 years with every ledger closed (worst 3e-13). The bodies grow from 16,000 to a peak
+  of 142,000 in year 71 and fall back to ~90,000; after year 60 they die mostly of hunger - their number is set by
+  food.
+- **They move the producers**: the land's biomass falls from 0.84 kg a m2 (year 58) to 0.46 and its fixing from
+  1.16e5 to 7.4e4, flattening in the last two years; producers born after the sowing rise from 0.4% to 0.65%.
+- **What they are at year 80** (by matter): all descend from one founder (adult mass 406 kg, egg 2.2 kg), so the
+  size spread is none yet; 99.5% of the matter is in genotypes born after the sowing, 11,292 genotypes; forms of
+  144-464 voxels; they eat litter 74%, leaves 15%, wood 9%, seed 2.5%; they travel 12-76 cells a year (p10-p90), on
+  land (1% at sea).
+- **Cost**: 2 us a body an update on one thread; ~90,000 bodies add ~34 s a year on 6 Ubuntu threads, a year 54 s.
+  300 years would take ~4.5 hours a run there.
 
 ## Conclusion
 
