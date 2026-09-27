@@ -58,11 +58,18 @@ body's heat has inertia (the land's noon reaches 55-62 C and small bodies cooked
 update a degree under -2 C; the first bodies' A and B come from the whole world's soil. Results are the same on 1 and
 2 threads.
 
+**Set by the first 512 pilot** (Ubuntu, years 50-60, stopped at 1,430 s a year): at `big_s` 3e7 kg the bodies grew
+from 22,000 to 9.3 million in seven years and stripped the land - its biomass fell from 0.80 to 0.31 kg a m2 and the
+producers' fixing halved - before they fell back (3.4 million at year 60). A body then stood for S/11 on average (most
+were young), and the land fed ~0.02 kg a m2 of them. For 3-5 x 10^4 bodies, `big_s` 3e9 and `bodies0` 2,000
+(20,000 would start above what the land feeds). What it cost: 2 us a body an update on one thread.
+
 **Stop early if:**
 
 - `water_err` > 1e-6 at 23760
 - `c_err` > 1e-6 at 23760
 - `bodies` < 100 at 712800
+- `ms_step` > 10 at 712800
 
 ## Result
 
