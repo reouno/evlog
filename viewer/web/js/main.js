@@ -9,8 +9,23 @@ import { RECORD } from './wire.js';
 const $ = (id) => document.getElementById(id);
 const $i = (id) => document.getElementById(id);
 const $c = (id) => document.getElementById(id);
-const KIND_COLORS = { hard: '#2a2622', muscle: '#a8553c', sensor: '#1b1b20', digestive: '#b09760', empty: '#00000000' };
+const KIND_COLORS = { hard: '#2a2622', muscle: '#a8553c', sensor: '#1b1b20', digestive: '#b09760', leaf: '#6f9e4a', leg: '#7a6bb5', fat: '#e6d49a', glue: '#8e8a9c', empty: '#00000000' };
 const DIET = ['植物', 'まぜ', '肉', 'まだ'];
+// A world that names its own diets (`Header.diets`) is told in these words.
+const DIET_NAME = { leaf: '葉', wood: '木', seed: '種', litter: '落葉', 'nothing yet': 'まだ' };
+// How close a picked body is brought: e106's are a few hundredths of a cell per voxel.
+const followDist = (id = null) => {
+    if (!world.voxels)
+        return 24;
+    const [a] = world.around(step);
+    const i = a && id !== null ? a.index.get(id) : undefined;
+    return i === undefined ? 3 : Math.max(0.02, 6 * world.drawnSide(a, i));
+};
+const kg = (m) => (m >= 1 ? `${m.toPrecision(3)} kg` : m >= 1e-3 ? `${(m * 1e3).toPrecision(3)} g` : `${(m * 1e6).toPrecision(3)} mg`);
+const dietName = (k) => {
+    const d = world.h.diets;
+    return d ? DIET_NAME[d[k]] ?? d[k] : DIET[k];
+};
 // What a layer is called on the cell panel. A world sends whatever layers it has and the panel
 // shows them in the header's own order; one it has no name for is shown under the world's.
 const CELL_LABEL = {
@@ -172,7 +187,8 @@ function loop(now) {
         plantAt = { x: rig.target.x, z: rig.target.z };
         plantsDue = false;
     }
-    life.markScale = Math.max(1, rig.dist / 32); // the pin stays about 20 pixels high however far the eye is
+    life.markScale = Math.max(world.voxels ? 0.1 : 1, rig.dist / 32); // the pin stays about 20 pixels high however far the eye is
+    life.viewDist = rig.dist;
     life.bodies(world, a, b, t, rig.target, ground, picked, before, after);
     if (rig.follow !== null && a) {
         const i = a.index.get(rig.follow);
@@ -181,8 +197,7 @@ function loop(now) {
             // every frame of the recording, which is the one place a jump is impossible to miss.
             const cell = 1 / world.sub, p = [0, 0];
             Life.track(p, a, i, b, b ? b.index.get(rig.follow) : undefined, t, before, after, cell, world.w, world.d);
-            const shape = world.blocks(a.a.body[i], a.a.facing[i]);
-            const half = shape ? (shape.side * cell) / 2 : 0.5; // p is the body's corner; the eye goes to its middle
+            const half = world.half(a.a.body[i], a.a.facing[i]); // p is a flat body's corner; the eye goes to its middle
             rig.goTo(p[0] + half, p[1] + half);
         }
     }
@@ -239,7 +254,7 @@ function kinds(a) {
         const l = a.a.lineage[i];
         let e = by.get(l);
         if (e === undefined)
-            by.set(l, (e = { n: 0, shapes: new Map(), diets: [0, 0, 0, 0] }));
+            by.set(l, (e = { n: 0, shapes: new Map(), diets: [0, 0, 0, 0, 0, 0, 0, 0] }));
         e.n++;
         const sh = a.a.body[i];
         e.shapes.set(sh, (e.shapes.get(sh) ?? 0) + 1);
@@ -279,7 +294,7 @@ function kinds(a) {
         const mix = [...count.entries()].sort((x, y) => y[1] - x[1])
             .map(([c, n]) => `<b style="flex:${n};background:${KIND_COLORS[names[c]]}" title="${names[c]} ${n}"></b>`).join('');
         return `<div class="kind">${pic}<div>` +
-            `<div class="top"><span><span class="n">${k.n.toLocaleString()} 体</span><span class="muted"> · ${DIET[k.diet]}</span></span>` +
+            `<div class="top"><span><span class="n">${k.n.toLocaleString()} 体</span><span class="muted"> · ${dietName(k.diet)}</span></span>` +
             `<button class="${k.lin === on ? 'on' : ''}" data-lin="${k.lin}">追う</button></div>` +
             `<div class="muted">系統 ${k.lin || '—'}・${shape ? `${shape.side}×${shape.side}・${shape.n}個` : '—'}</div>` +
             `<div class="mix">${mix}</div></div></div>`;
@@ -324,7 +339,7 @@ function watchKind(lin) {
     rig.follow = best;
     lookAt(null);
     rig.send();
-    rig.want = Math.min(rig.dist, 24);
+    rig.want = Math.min(rig.dist, followDist(picked));
     kindsKey = '';
 }
 /** The lines a recording offers: a body alive in its last frame walked back to the first of its
@@ -362,7 +377,7 @@ function watchLine(l) {
     rig.follow = picked;
     lookAt(null);
     rig.send();
-    rig.want = Math.min(rig.dist, 24);
+    rig.want = Math.min(rig.dist, followDist(picked));
 }
 /** Go on with a child of the body being watched, at random, for as long as the line lasts. */
 function setWalk(on) {
@@ -541,15 +556,28 @@ function selection(a, b = null, t = 0) {
     const n = body ? body.n : 0, maxAge = world.params.max_age;
     const rows = [];
     const gauge = (label, share, colour, text, tip) => rows.push(`<div class="gauge" title="${tip}"><span>${label}</span><b><i style="width:${(Math.max(0, Math.min(1, share)) * 100).toFixed(0)}%;background:${colour}"></i></b><span>${text}</span></div>`);
-    if (ripe)
+    const mass = val('mass');
+    if (mass !== undefined) {
+        // e106: one animal of a mass, which grows from its egg, breeds once grown past its maturity with
+        // half its fat store, and dies of hunger when it has burnt half of the tissue it once had.
+        const life = val('lifespan'), water = val('fill');
+        gauge('育ち', ripe ? energy / ripe : 0, GAUGE.energy, `${Math.round((energy / 16) * 100)}% / ${Math.round((ripe / 16) * 100)}%`, '卵から成体までの育ち (体重の対数)。右端 (成熟) を越え、蓄えが半分を越えると卵を産む');
+        if (fat !== undefined)
+            gauge('蓄え', fat, GAUGE.fat, `${Math.round(fat * 100)}%`, '脂肪。食べた余りが貯まり、足りない分はここから払う。尽きると体そのものを燃やし、半分になると餓死');
+        if (water !== undefined)
+            gauge('水', water, GAUGE.fill, `${Math.round(water * 100)}%`, '体の水。皮膚と息から失い、土の水を飲む。尽きると渇きで死ぬ');
+        if (age !== undefined)
+            gauge('齢', life ? age / life : 0, GAUGE.age, life ? `${Math.round(age)} / ${Math.round(life)} 日` : `${Math.round(age)} 日`, '寿命は硬い骨格の量で決まる');
+    }
+    else if (ripe)
         gauge('力', energy / ripe, GAUGE.energy, `${energy.toFixed(1)} / ${ripe.toFixed(1)}`, '食べると増え、毎歩の維持費で減る。右端 (子を産む量) に届くと子を産み、半分を渡す');
     else
         gauge('力', energy / world.maxOf('energy'), GAUGE.energy, energy.toFixed(2), '食べると増え、毎歩の維持費で減る');
-    if (fat !== undefined)
+    if (mass === undefined && fat !== undefined)
         gauge('蓄え', fat, GAUGE.fat, `${Math.round(fat * 100)}%`, '維持費を払うたびに体に貯まる。力が尽きるとここから払い、これも尽きると餓死');
-    if (born)
+    if (mass === undefined && born)
         gauge('体', n / born, GAUGE.body, `${n} / ${born}`, 'ブロックの数。ほかの体に押されると一つずつ壊され (相手に胃があれば食べられ、なければ地面に落ちる)、0 で死ぬ。育つことはない');
-    if (age !== undefined)
+    if (mass === undefined && age !== undefined)
         gauge('齢', maxAge ? age / maxAge : 0, GAUGE.age, maxAge ? `${Math.round(age)} / ${maxAge}` : `${Math.round(age)}`, maxAge ? `${maxAge} 歩で寿命。それまで衰えはない` : (world.params.wear ?? 0) > 0 ? `齢とともにブロックが壊れやすくなる (${world.params.wear} 歩で半分)` : '');
     if ((world.params.thirst ?? 0) > 0)
         gauge('水', val('fill'), GAUGE.fill, `${Math.round(val('fill') * 100)}%`, '毎歩乾き、水たまりで飲む。0 で死ぬ');
@@ -559,6 +587,17 @@ function selection(a, b = null, t = 0) {
     const now = [];
     if (!alive)
         now.push(seen.died ? `死んだ: ${CAUSES[seen.died.cause] || seen.died.cause}` : 'いなくなった');
+    else if (mass !== undefined) {
+        if (fat !== undefined && fat < 0.03)
+            now.push('蓄えが尽き、体を燃やしている');
+        else if (ripe && energy >= ripe && fat !== undefined && fat > 0.5)
+            now.push('卵を産める');
+        else if (ripe && energy < ripe)
+            now.push('育っている');
+        const w = val('fill');
+        if (w !== undefined && w < 0.7)
+            now.push('乾いている');
+    }
     else {
         // Nothing left is not a death sentence: a body dies only in a step it eats nothing, and about
         // half of them live at zero, some for thousands of steps.
@@ -572,11 +611,12 @@ function selection(a, b = null, t = 0) {
     $('fate').textContent = now.join('・');
     const counts = {};
     if (body)
-        for (const k of body.cells)
+        for (const k of body.vox ?? body.cells)
             if (k)
                 counts[names[k]] = (counts[names[k]] || 0) + 1;
     $('selrows').innerHTML =
-        `<div>系統 ${f.a.lineage[i] || '—'}・食 ${DIET[f.a.diet[i]]}</div>` +
+        `<div>系統 ${f.a.lineage[i] || '—'}・食 ${dietName(f.a.diet[i])}</div>` +
+            (mass !== undefined ? `<div>${kg(mass)}・${world.value(f, 'animals', i).toExponential(1)} 頭ぶん・${n} ボクセル</div>` : '') +
             Object.entries(counts).map(([k, c]) => `<div><i class="k" style="background:${KIND_COLORS[k]}"></i>${k} ${c}</div>`).join('');
     lifeChart(picked, f.step);
 }
@@ -654,8 +694,7 @@ function bodyCell(a, id) {
         return null;
     const f = seen.f, i = seen.i;
     const cell = 1 / world.sub;
-    const shape = world.blocks(f.a.body[i], f.a.facing[i]);
-    const half = shape ? (shape.side * cell) / 2 : 0.5;
+    const half = world.half(f.a.body[i], f.a.facing[i]);
     const x = Math.floor(f.a.x[i] * cell + half), z = Math.floor(f.a.y[i] * cell + half);
     const c = (((z % world.d) + world.d) % world.d) * world.w + (((x % world.w) + world.w) % world.w);
     return { c, gone: seen.died !== null };
@@ -998,7 +1037,7 @@ function bindUI(header) {
         if (picked !== null) {
             lookAt(null); // a body of the watcher's own choosing: the panel follows it, and comes back
             rig.send();
-            rig.want = Math.min(rig.dist, 24); // brought close enough to see what it is
+            rig.want = Math.min(rig.dist, followDist(picked)); // brought close enough to see what it is
             return;
         }
         const focal = r.height / 2 / Math.tan((camera.fov * Math.PI) / 360); // pixels per unit at distance 1
@@ -1022,7 +1061,7 @@ function bindUI(header) {
         if (picked !== null) {
             lookAt(null);
             rig.send();
-            rig.want = Math.min(rig.dist, 24);
+            rig.want = Math.min(rig.dist, followDist(picked));
             return;
         }
         // Nothing alive under the pointer: the click is about the ground, so it says what that cell

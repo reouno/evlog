@@ -4,7 +4,7 @@
 // Nothing here knows about the experiment: the header says what the layers, the globals and the
 // agent record are, and everything below reads them by name.
 
-import type { AgentColumns, AgentField, AgentFieldSpec, Header, Layers, LayerSpec, NumType, Params } from './wire.js';
+import type { AgentColumns, AgentField, AgentFieldSpec, ExtField, Header, Layers, LayerSpec, NumType, Params } from './wire.js';
 
 const TYPES: Record<NumType, number> = { u8: 1, u16: 2, u32: 4, f32: 4 };
 
@@ -12,14 +12,17 @@ const TYPES: Record<NumType, number> = { u8: 1, u16: 2, u32: 4, f32: 4 };
 export interface BodyShape {
   id: number;
   side: number;
-  cells: Uint8Array;
-  n: number; // how many of its cells hold a block
+  cells: Uint8Array; // a voxel body's profile seen from its left side (rows from the top, back to front), for the panels
+  n: number; // how many of its cells hold a block (of a voxel body, its voxels)
+  vox: Uint8Array | null; // a voxel body's side^3 voxels, x back to front, then y left to right, then z up
 }
 
-/** One block of a body, turned the way the body faces: `r` south, `c` east. */
+/** One block of a body, turned the way the body faces: `r` south, `c` east, `z` up from the
+ * body's lowest layer (0 for a flat body). */
 export interface Block {
   r: number;
   c: number;
+  z: number;
   kind: number;
 }
 
@@ -100,7 +103,9 @@ export class World {
   unpacked: Float32Array[];
   plan: FieldPlan[];
   stride: number;
-  fields: Record<AgentField, FieldPlan | undefined>;
+  fields: Record<AgentField | ExtField, FieldPlan | undefined>;
+  voxels: boolean;
+  sizeK: number; // cells a voxel body is drawn wide, a kg^(1/3) of its mass
   relief: number;
   wet: number;
   depth: number;
@@ -136,7 +141,9 @@ export class World {
       return p;
     });
     this.stride = off;
-    this.fields = Object.fromEntries(this.plan.map((p) => [p.name, p])) as Record<AgentField, FieldPlan | undefined>;
+    this.fields = Object.fromEntries(this.plan.map((p) => [p.name, p])) as Record<AgentField | ExtField, FieldPlan | undefined>;
+    this.voxels = !!header.voxels;
+    this.sizeK = Number(this.params.view_size ?? 0.05);
     this.relief = this.params.relief || 1;
     this.wet = (this.params.water_rain || 1) / (this.params.water_evap || 1); // a cell's own water
     this.depth = this.params.depth || 0; // height per unit of water
@@ -230,10 +237,27 @@ export class World {
     const dv = new DataView(p.buffer, p.byteOffset, p.byteLength);
     const id = dv.getUint32(0, true);
     const side = p[4];
-    const cells = p.slice(5, 5 + side * side);
+    if (!this.voxels) {
+      const cells = p.slice(5, 5 + side * side);
+      let n = 0;
+      for (const k of cells) if (k) n++;
+      this.bodies.set(id, { id, side, cells, n, vox: null });
+      return;
+    }
+    // A voxel body: the panels draw it as its profile, the voxel nearest the eye from its left side.
+    const vox = p.slice(5, 5 + side * side * side);
+    const cells = new Uint8Array(side * side);
     let n = 0;
-    for (const k of cells) if (k) n++;
-    this.bodies.set(id, { id, side, cells, n });
+    for (let z = 0; z < side; z++) {
+      for (let x = 0; x < side; x++) {
+        for (let y = 0; y < side; y++) {
+          const k = vox[(z * side + y) * side + x];
+          if (k) { cells[(side - 1 - z) * side + x] = k; break; }
+        }
+      }
+    }
+    for (const k of vox) if (k) n++;
+    this.bodies.set(id, { id, side, cells, n, vox });
   }
 
   addFrame(p: Uint8Array): number {
@@ -258,13 +282,13 @@ export class World {
     const n = dv.getUint32(o, true); o += 4;
     const a = {} as AgentColumns;
     for (const f of this.plan) {
-      a[f.name] = f.type === 'u8' ? new Uint8Array(n) : f.type === 'u16' ? new Uint16Array(n) : new Uint32Array(n);
+      a[f.name] = f.type === 'u8' ? new Uint8Array(n) : f.type === 'u16' ? new Uint16Array(n) : f.type === 'f32' ? new Float32Array(n) : new Uint32Array(n);
     }
     for (let i = 0; i < n; i++) {
       const base = o + i * this.stride;
       for (const f of this.plan) {
         const at = base + f.off;
-        a[f.name][i] = f.type === 'u8' ? p[at] : f.type === 'u16' ? dv.getUint16(at, true) : dv.getUint32(at, true);
+        a[f.name]![i] = f.type === 'u8' ? p[at] : f.type === 'u16' ? dv.getUint16(at, true) : f.type === 'f32' ? dv.getFloat32(at, true) : dv.getUint32(at, true);
       }
     }
     o += n * this.stride;
@@ -297,15 +321,15 @@ export class World {
   }
 
   /** What a field's byte stands for at its fullest, or 1 where the field is a plain number. */
-  maxOf(name: AgentField): number {
+  maxOf(name: AgentField | ExtField): number {
     return this.fields[name]?.max ?? 1;
   }
 
   /** A body's field in a frame as the world meant it: a byte with a `max` is that share of it. */
-  value(f: Frame, name: AgentField, i: number | undefined): number | undefined {
+  value(f: Frame, name: AgentField | ExtField, i: number | undefined): number | undefined {
     const p = this.fields[name];
     if (!p || i === undefined) return undefined;
-    const v = f.a[name][i];
+    const v = f.a[name]![i];
     return p.max !== undefined ? (v / 255) * p.max : v;
   }
 
@@ -477,18 +501,49 @@ export class World {
     const b = this.bodies.get(bodyId);
     if (!b) return null;
     const s = b.side, m = s - 1, out: Block[] = [];
-    for (let i = 0; i < s * s; i++) {
-      const k = b.cells[i];
-      if (k === 0) continue;
-      const r = (i / s) | 0, c = i % s;
+    const put = (r: number, c: number, z: number, k: number) => {
       let r2: number, c2: number;
       if (facing === 0) { r2 = r; c2 = c; }            // north: the front row points north
       else if (facing === 1) { r2 = m - r; c2 = m - c; } // south
       else if (facing === 2) { r2 = c; c2 = m - r; }     // east
       else { r2 = m - c; c2 = r; }                       // west
-      out.push({ r: r2, c: c2, kind: k });
+      out.push({ r: r2, c: c2, z, kind: k });
+    };
+    const v = b.vox;
+    if (v === null) {
+      for (let i = 0; i < s * s; i++) if (b.cells[i]) put((i / s) | 0, i % s, 0, b.cells[i]);
+      return { side: s, blocks: out };
+    }
+    // Only the voxels that can be seen: one with every face against another is inside the body.
+    // Its front (x at the top) is its first row, as a flat body's is; it stands on its lowest layer.
+    const at = (x: number, y: number, z: number) => (x < 0 || y < 0 || z < 0 || x > m || y > m || z > m ? 0 : v[(z * s + y) * s + x]);
+    let low = s;
+    for (let i = 0; i < v.length; i++) if (v[i]) low = Math.min(low, (i / (s * s)) | 0);
+    for (let z = 0; z < s; z++) {
+      for (let y = 0; y < s; y++) {
+        for (let x = 0; x < s; x++) {
+          const k = at(x, y, z);
+          if (!k) continue;
+          if (at(x - 1, y, z) && at(x + 1, y, z) && at(x, y - 1, z) && at(x, y + 1, z) && at(x, y, z - 1) && at(x, y, z + 1)) continue;
+          put(m - x, y, z - low, k);
+        }
+      }
     }
     return { side: s, blocks: out };
+  }
+
+  /** How far a body's middle is from the place its record gives: a flat body's record is its
+   * grid's corner, a voxel body's is its middle. */
+  half(bodyId: number, facing: number): number {
+    if (this.voxels) return 0;
+    const shape = this.blocks(bodyId, facing);
+    return shape ? (shape.side / this.sub) / 2 : 0.5;
+  }
+
+  /** Cells wide a voxel body is drawn: as its mass, one animal's, to the third. */
+  drawnSide(f: Frame, i: number): number {
+    const m = f.a.mass;
+    return m ? this.sizeK * Math.cbrt(Math.max(0, m[i])) : 0;
   }
 }
 

@@ -18,9 +18,15 @@ const CAR0 = new THREE.Color(0x6d3a2c), CAR1 = new THREE.Color(0x4e2b23);
 const LEAF = new THREE.Color(), DARK = new THREE.Color(), BARK = new THREE.Color();
 // The bodies: a colour per kind of block, the socket an eye sits in, and the flat slab a body
 // too far off to make out is drawn as, by what it eats.
-const KIND = [null, new THREE.Color(0x2a2622), new THREE.Color(0xa8553c), new THREE.Color(0x1b1b20), new THREE.Color(0xb09760)];
+const KIND = [null, new THREE.Color(0x2a2622), new THREE.Color(0xa8553c), new THREE.Color(0x1b1b20), new THREE.Color(0xb09760),
+    new THREE.Color(0xe6d49a), new THREE.Color(0x8e8a9c)]; // e106's voxels add fat and glue
 const SOCKET = new THREE.Color(0x8f7f5e);
 const FAR = [0x9ecf6a, 0xd9a441, 0xc4553f, 0x9aa0a6].map((h) => new THREE.Color(h).multiplyScalar(0.5));
+// A world that names its own diets (`Header.diets`) is coloured by those names.
+const DIET_COLOR = { leaf: 0x8fd35a, wood: 0xa0673a, seed: 0xf0c83c, litter: 0xd0733c, 'nothing yet': 0x9aa0a6 };
+export function farColours(diets) {
+    return diets ? diets.map((d) => new THREE.Color(DIET_COLOR[d] ?? 0x9aa0a6).multiplyScalar(0.8)) : FAR;
+}
 const TINT = new THREE.Color(), SPOT = new THREE.Color();
 /** The light a followed body stands in, as a gradient drawn once here rather than a picture to
  * fetch: bright in the middle and gone at the rim, so it reads as a haze and not as a bubble. */
@@ -238,7 +244,11 @@ export class Life {
         this.standing = [this.grass, this.grass2, this.trunk, this.limb, this.crown, this.spire, this.fruit, this.carrion];
         // The bodies: one pool per kind of block, and one flat box for the ones far away.
         this.blockPools = [null, new Pool(scene, box, shell, 40000).own(), new Pool(scene, box, flesh, 60000).own(), new Pool(scene, ball, eye, 20000).own(), new Pool(scene, box, flesh, 60000).own()];
-        this.far = new Pool(scene, box, flesh, 8000).own();
+        if (world.voxels)
+            this.blockPools.push(new Pool(scene, box, flesh, 60000).own(), new Pool(scene, box, flesh, 60000).own());
+        this.far = new Pool(scene, box, flesh, world.voxels ? 160000 : 8000).own();
+        this.farCol = farColours(world.h.diets);
+        this.viewDist = 60;
         this.bodyPools = this.blockPools.filter(Boolean);
         this.pools = [...this.standing, this.far, ...this.bodyPools];
         this.owned = [...this.bodyPools, this.far]; // where a click looks for a body
@@ -268,11 +278,12 @@ export class Life {
         // The bodies drawn this frame, so a click can find the one under it: the middle of each and
         // its side, in flat arrays rather than an object each, because there are thousands of them.
         this.drawnN = 0;
-        this.drawnId = new Uint32Array(20000);
-        this.drawnX = new Float32Array(20000);
-        this.drawnY = new Float32Array(20000);
-        this.drawnZ = new Float32Array(20000);
-        this.drawnS = new Float32Array(20000);
+        const drawn = world.voxels ? 160000 : 20000;
+        this.drawnId = new Uint32Array(drawn);
+        this.drawnX = new Float32Array(drawn);
+        this.drawnY = new Float32Array(drawn);
+        this.drawnZ = new Float32Array(drawn);
+        this.drawnS = new Float32Array(drawn);
         this.scratch = [0, 0]; // where one body is, while it is being worked out
         this.setDetail(1);
     }
@@ -647,11 +658,18 @@ export class Life {
         const px = at.x + Life.wrap(x - at.x, this.w), pz = at.z + Life.wrap(z - at.z, this.d);
         const dx = px - at.x, dz = pz - at.z;
         const r2 = dx * dx + dz * dz;
-        if (r2 > this.mid * this.mid)
+        // A voxel world's bodies are far smaller than a cell and far fewer than its cells: each is kept
+        // on the screen as far as the eye sees, as a dot, so that a world seen whole still shows them.
+        const reach = world.voxels ? Math.max(this.mid, this.viewDist * 1.6) : this.mid;
+        if (r2 > reach * reach)
             return;
         const shape = world.blocks(fr.a.body[i], 0); // its own frame; `turn` puts it the way it faces
         if (!shape)
             return;
+        if (world.voxels) {
+            this.voxelBody(world, fr, i, px, pz, r2, fade, x, z, ground, picked, turn, shape);
+            return;
+        }
         const cos = Math.cos(turn), sin = Math.sin(turn);
         const losing = next !== null && next.length === shape.side * shape.side ? next : null;
         for (const p of this.owned)
@@ -682,7 +700,7 @@ export class Life {
             // Too far to make out its blocks: one low body, the colour of what it eats. It is seen
             // from above, so it goes out by its footprint and not by its height.
             const s = side * 0.45 * fade;
-            this.far.putY(mx, y, mz, s, 0.1, s, cos, sin, FAR[fr.a.diet[i]]);
+            this.far.putY(mx, y, mz, s, 0.1, s, cos, sin, this.farCol[fr.a.diet[i]]);
             return;
         }
         // The world is flat, so a body would be a pallet if every block were the same height.
@@ -717,6 +735,50 @@ export class Life {
             else {
                 pool.putY(bx, y, bz, w, hgt, w, cos, sin, col);
             }
+        }
+    }
+    /** One body of a voxel world (e106 on): its seen voxels, as tall as they are, at a width set by
+     * its mass. A body is one animal, a metre or so in a cell of 63 km, so it is drawn far larger than
+     * it is (`World.drawnSide`) - but smaller bodies are drawn smaller, by the same rule. Too far to
+     * make out, it is a slab the colour of what it eats, never smaller than a few pixels. */
+    voxelBody(world, fr, i, mx, mz, r2, fade, x, z, ground, picked, turn, shape) {
+        const cos = Math.cos(turn), sin = Math.sin(turn);
+        for (const p of this.owned)
+            p.tag = fr.a.id[i];
+        const y = ground.heightAt(x, z);
+        const side = world.drawnSide(fr, i);
+        if (picked === fr.a.id[i]) {
+            const k = this.markScale, bob = 0.09 * k * Math.sin(performance.now() / 320);
+            this.mark.put(mx, y + side + 0.3 * k + bob, mz, k, k, k, WARM);
+            const g = Math.max(side * 3.4, 0.6);
+            this.glow.visible = this.bodiesOn;
+            this.glow.position.set(mx, y + side * 0.5, mz);
+            this.glow.scale.set(g, g, 1);
+        }
+        const dot = Math.max(side, 0.004 * this.viewDist);
+        if (fade > 0.5 && this.drawnN < this.drawnId.length) {
+            this.drawnId[this.drawnN] = fr.a.id[i];
+            this.drawnX[this.drawnN] = mx;
+            this.drawnY[this.drawnN] = y + dot * 0.3;
+            this.drawnZ[this.drawnN] = mz;
+            this.drawnS[this.drawnN] = dot;
+            this.drawnN++;
+        }
+        // Its voxels only where they would be a few pixels each: a body is 8 voxels across.
+        const near = Math.max(2, this.viewDist * 0.4);
+        if (r2 > near * near || side < 0.0008 * this.viewDist * 8) {
+            const s = dot * fade;
+            this.far.putY(mx, y, mz, s, s * 0.6, s, cos, sin, this.farCol[fr.a.diet[i]]);
+            return;
+        }
+        const v = side / shape.side, wide = v * 0.97 * fade;
+        const drawn = this.blockPools;
+        for (const bl of shape.blocks) {
+            const ox = (bl.c + 0.5) * v - side / 2, oz = (bl.r + 0.5) * v - side / 2;
+            const bx = mx + (ox * cos + oz * sin) * fade;
+            const bz = mz + (oz * cos - ox * sin) * fade;
+            const k = bl.kind === 3 ? 4 : bl.kind; // a nerve voxel is a box like the rest, in its own colour
+            pools_of(drawn, k).putY(bx, y + bl.z * v * fade, bz, wide, wide, wide, cos, sin, (KIND[bl.kind] || KIND[4]));
         }
     }
 }

@@ -19,7 +19,7 @@ pub mod http;
 pub mod live;
 pub mod wire;
 
-pub use wire::{AgentIn, Init, LayerSpec, Scale};
+pub use wire::{AgentIn, Ext, Init, LayerSpec, Scale};
 
 use std::collections::HashMap;
 use std::io::Write;
@@ -37,6 +37,7 @@ pub struct View {
     keyed: bool, // whether a frame with the cell layers has gone out yet
     causes: bool, // whether the world names what its bodies die of
     dead: Vec<(u32, u8)>, // who died since the last frame, and of what
+    extra: usize, // bytes of the fields an `Ext` adds to a body's record
     parents: bool, // whether the world says who a body came from
     born: Vec<(u32, u32)>, // who was born since the last frame, and from whom
     out: Out,
@@ -54,6 +55,12 @@ fn opts(s: &str) -> HashMap<&str, &str> {
 impl View {
     /// The viewer asked for by EVLOG_VIEW, or None. `prefix` is the run's results prefix.
     pub fn from_env(prefix: &str, init: Init) -> Option<View> {
+        Self::from_env_ext(prefix, init, Ext::default())
+    }
+
+    /// The same, for a world that says more than `Init` does (`wire::Ext`): its bodies are voxels, or
+    /// its record carries fields of its own, written by `frame_ext`.
+    pub fn from_env_ext(prefix: &str, init: Init, ext: Ext) -> Option<View> {
         let spec = std::env::var("EVLOG_VIEW").ok()?;
         let spec = spec.trim();
         if spec.is_empty() {
@@ -70,7 +77,7 @@ impl View {
             Some(v) => from + v.parse::<u64>().unwrap_or(0),
             None => u64::MAX,
         };
-        let json = wire::header_json(&init, stride, layer_stride, live_mode);
+        let json = wire::header_json(&init, &ext, stride, layer_stride, live_mode);
         let header = wire::record(wire::KIND_HEADER, json.as_bytes());
         let out = match kind {
             "rec" => {
@@ -91,7 +98,7 @@ impl View {
         };
         let causes = !init.deaths.is_empty();
         let parents = init.births;
-        Some(View { layers: init.layers, from, until, stride, layer_stride, bodies: wire::Bodies::default(), buf: Vec::new(), keyed: false, causes, dead: Vec::new(), parents, born: Vec::new(), out })
+        Some(View { layers: init.layers, from, until, stride, layer_stride, bodies: wire::Bodies::default(), buf: Vec::new(), keyed: false, causes, dead: Vec::new(), extra: ext.bytes(), parents, born: Vec::new(), out })
     }
 
     /// A body died of `cause` (the number of its name in `Init::deaths`). It goes out with the
@@ -127,6 +134,16 @@ impl View {
     where
         F: FnMut(&mut dyn FnMut(AgentIn)),
     {
+        self.frame_ext(step, layers, globals, |push| fill(&mut |a| push(a, &[])));
+    }
+
+    /// A frame of a world whose record carries the fields of its `Ext`: each body comes with those
+    /// fields packed, in the order the `Ext` names them.
+    pub fn frame_ext<F>(&mut self, step: u64, layers: &[&[f64]], globals: &[f32], mut fill: F)
+    where
+        F: FnMut(&mut dyn FnMut(AgentIn, &[u8])),
+    {
+        let extra = self.extra;
         let key = self.is_key(step);
         self.keyed |= key;
         let View { layers: specs, bodies, buf, causes, dead, parents, born, out, .. } = self;
@@ -142,7 +159,8 @@ impl View {
             let fw = wire::FrameWriter::start(buf, step, globals);
             let fw = if key { fw.layers(specs, layers) } else { fw.no_layers() };
             let mut fw = fw.agents_start();
-            fill(&mut |a: AgentIn| {
+            fill(&mut |a: AgentIn, more: &[u8]| {
+                assert_eq!(more.len(), extra, "a body's extra fields are not what the Ext says");
                 let (id, rec) = bodies.id(a.side, a.cells);
                 if let Some(r) = rec {
                     new_bodies.push(r);
@@ -150,6 +168,7 @@ impl View {
                     new_bodies.push(wire::body_record(id, a.side, a.cells));
                 }
                 fw.agent(&a, id);
+                fw.extra(more);
             });
             let fw = if *causes { fw.deaths(dead) } else { fw };
             let fw = if *parents { fw.births(born) } else { fw };

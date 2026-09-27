@@ -26,6 +26,7 @@ struct Replay {
     cells: usize,
     deaths: bool, // whether the frames carry what a body died of
     births: bool, // whether they carry who a body came from
+    rec: usize,   // bytes a body's record
     ancestry: OnceLock<Ancestry>,
 }
 
@@ -76,7 +77,8 @@ impl Replay {
         let cells = num_field(&header, "w") * num_field(&header, "h");
         let deaths = !header.contains("\"deaths\":[]");
         let births = header.contains("\"births\":true");
-        Replay { data, frames, bodies, header, cells, deaths, births, ancestry: OnceLock::new() }
+        let rec = wire::agent_bytes(&header);
+        Replay { data, frames, bodies, header, cells, deaths, births, rec, ancestry: OnceLock::new() }
     }
 
     /// One pass over every frame: who each body came from, and the frames it is in.
@@ -86,11 +88,11 @@ impl Replay {
             let mut of: HashMap<u32, (u32, u32, u32)> = HashMap::new();
             let mut end = Vec::new();
             for (k, f) in self.frames.iter().enumerate() {
-                let parts = wire::frame_parts(&self.data[f.at + 5..f.end], self.cells, self.deaths, self.births);
+                let parts = wire::frame_parts(&self.data[f.at + 5..f.end], self.cells, self.deaths, self.births, self.rec);
                 let step = parts.step as u32;
                 let last = k + 1 == self.frames.len();
                 for i in 0..parts.n_agents {
-                    let r = &parts.agents[i * wire::AGENT_BYTES..];
+                    let r = &parts.agents[i * self.rec..];
                     let id = u32::from_le_bytes(r[0..4].try_into().unwrap());
                     let e = of.entry(id).or_insert((NONE, NONE, NONE));
                     if e.1 == NONE {

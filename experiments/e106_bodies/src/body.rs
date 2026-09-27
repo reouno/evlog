@@ -88,6 +88,7 @@ pub struct Form {
 pub struct BodyType {
     pub genes: Vec<u32>,
     pub parent: u32,
+    pub root: u32, // the founder it descends from (for the viewer's lineage)
     pub born: u32,
     pub tr: [f64; S_TRAITS],
     pub keys: Vec<u8>,
@@ -102,7 +103,6 @@ impl BodyType {
         let mut keys = Vec::new();
         let mut eval = [0.0; NE];
         let mut w = [[0.0; NI]; NO];
-        let mut fg: Vec<(usize, Option<(usize, bool, f64)>, f64)> = Vec::new();
         for &g in &genes {
             let t = genome::target(g);
             let v = genome::value(g);
@@ -110,8 +110,6 @@ impl BodyType {
                 raw[t - SCALAR] += v;
             } else if t == DETOX {
                 keys.push(genome::key(g));
-            } else if (FIELD..FIELD + FIELDS).contains(&t) {
-                fg.push((t - FIELD, genome::condition(g), v));
             } else if (EVAL..EVAL + NE).contains(&t) {
                 eval[t - EVAL] += v;
             } else if (WEIGHT..WEIGHT + NO).contains(&t) {
@@ -122,8 +120,9 @@ impl BodyType {
         for i in 0..S_TRAITS {
             tr[i] = squash(raw[i], S_RANGE[i].1, S_RANGE[i].2, S_RANGE[i].3);
         }
+        let fg = field_genes(&genes);
         let forms = (0..STAGES).map(|s| develop(&fg, (s as f64 + 0.5) / STAGES as f64)).collect();
-        BodyType { genes, parent, born, tr, keys, eval, w, forms }
+        BodyType { genes, parent, root: parent, born, tr, keys, eval, w, forms }
     }
     pub fn adult(&self) -> f64 {
         self.tr[0]
@@ -133,9 +132,36 @@ impl BodyType {
     }
 }
 
-/// The form at a stage: every voxel's fields from the genes whose condition holds there, the largest connected
-/// part kept, and the summary physics reads.
-fn develop(fg: &[(usize, Option<(usize, bool, f64)>, f64)], stage: f64) -> Form {
+type FieldGene = (usize, Option<(usize, bool, f64)>, f64);
+
+/// The genes of the voxel fields, in the genome's order: the field, the condition, the value.
+fn field_genes(genes: &[u32]) -> Vec<FieldGene> {
+    genes
+        .iter()
+        .filter(|&&g| (FIELD..FIELD + FIELDS).contains(&genome::target(g)))
+        .map(|&g| (genome::target(g) - FIELD, genome::condition(g), genome::value(g)))
+        .collect()
+}
+
+/// The voxels of a genotype's form at a stage, for the viewer: 0 empty, else 1 + the function most of the
+/// voxel's tissue serves, in the order the viewer's header names them (frame, muscle, nerve, gut, fat, glue).
+pub fn voxels(bt: &BodyType, stage: u8) -> Vec<u8> {
+    let (on, mix, _, _) = lay(&field_genes(&bt.genes), (stage as f64 + 0.5) / STAGES as f64);
+    const KIND: [u8; 6] = [1, 2, 4, 3, 5, 6]; // FRAME MUSCLE GUT NERVE FAT GLUE -> hard muscle digestive sensor fat glue
+    (0..VOX)
+        .map(|i| {
+            if !on[i] {
+                return 0;
+            }
+            let top = (0..6).max_by(|&a, &b| mix[i][a].partial_cmp(&mix[i][b]).unwrap()).unwrap();
+            KIND[top]
+        })
+        .collect()
+}
+
+/// Every voxel's fields at a stage, with only the largest face-connected part kept: whether it is on, its
+/// mix of functions, its A share and its B share.
+fn lay(fg: &[FieldGene], stage: f64) -> ([bool; VOX], Vec<[f64; 6]>, [f64; VOX], [f64; VOX]) {
     let mut on = [false; VOX];
     let mut mix = vec![[0.0f64; 6]; VOX];
     let mut sa = [0.0f64; VOX];
@@ -200,12 +226,21 @@ fn develop(fg: &[(usize, Option<(usize, bool, f64)>, f64)], stage: f64) -> Form 
             best_n = cnt;
         }
     }
-    let mut f = Form::default();
-    if best_n == 0 {
-        return f;
+    if best_n > 0 {
+        for i in 0..VOX {
+            on[i] = on[i] && label[i] == best;
+        }
     }
-    for i in 0..VOX {
-        on[i] = on[i] && label[i] == best;
+    (on, mix, sa, sb)
+}
+
+/// The form at a stage: every voxel's fields from the genes whose condition holds there, the largest connected
+/// part kept, and the summary physics reads.
+fn develop(fg: &[FieldGene], stage: f64) -> Form {
+    let (on, mix, sa, sb) = lay(fg, stage);
+    let mut f = Form::default();
+    if !on.iter().any(|&o| o) {
+        return f;
     }
     let (mut lo, mut hi) = ([SIDE; 3], [0usize; 3]);
     let mut frame_w = 0.0;
@@ -361,6 +396,7 @@ pub struct Body {
     pub dead: Death,
     pub eggs: u32, // eggs laid this update, set in the parallel pass and hatched in the serial one
     pub egg_s: f64,
+    pub facing: u8, // the way it last set out: 0 north, 1 south, 2 east, 3 west (the viewer's)
 }
 
 impl Body {
@@ -375,7 +411,7 @@ impl Body {
     fn wet(&self) -> f64 {
         self.m * WET + self.fat * FAT_WET
     }
-    fn target_water(&self) -> f64 {
+    pub fn target_water(&self) -> f64 {
         self.m * (WET - 1.0)
     }
 }
@@ -423,6 +459,9 @@ pub struct Bodies {
     food: Vec<f64>, // what a body senses of each cell: kg a m2 of leaf, seed and litter within a short body's reach
     water: Vec<f64>,
     pub secs: f64,
+    pub watched: bool,           // whether the viewer is told who died and who was born (`died`, `born`)
+    pub died: Vec<(u32, u8)>,    // since the viewer last took them: a body, what it died of (`DEATHS`)
+    pub born: Vec<(u32, u32)>,   // a body, the body it came from (a hatchling's parent, a split's other half)
 }
 
 /// What the bodies read and write of the world in an update.
@@ -462,6 +501,9 @@ impl Bodies {
             food: vec![0.0; n * n],
             water: vec![0.0; n * n],
             secs: 0.0,
+            watched: false,
+            died: Vec::new(),
+            born: Vec::new(),
         }
     }
 
@@ -476,7 +518,9 @@ impl Bodies {
         let mut f = BFlux::default();
         for _ in 0..p.body_founders as usize {
             let g = random(&mut self.rng);
-            self.types.push(Some(Box::new(BodyType::new(g, NONE, year))));
+            let mut bt = BodyType::new(g, NONE, year);
+            bt.root = self.types.len() as u32;
+            self.types.push(Some(Box::new(bt)));
         }
         let n = ter.n;
         let mut skip = [0usize; 3];
@@ -539,6 +583,7 @@ impl Bodies {
                 dead: Death::None,
                 eggs: 0,
                 egg_s: 0.0,
+                facing: 0,
             });
         }
         let (qa, qb) = (1.0 - need_a / tot_a, 1.0 - need_b / tot_b);
@@ -638,6 +683,9 @@ impl Bodies {
                 l.b += (b.tb + b.pb) * k;
                 wd.vapor[c] += b.w * k;
                 f.deaths[b.dead as usize - 1] += 1.0;
+                if self.watched {
+                    self.died.push((b.id as u32, b.dead as u8 - 1));
+                }
                 continue;
             }
             let bt = self.types[b.g as usize].as_ref().unwrap();
@@ -651,6 +699,9 @@ impl Bodies {
                 twin.x = (twin.x.floor() + self.rng.f64()).rem_euclid(n as f64);
                 twin.y = (twin.y.floor() + self.rng.f64()).rem_euclid(n as f64);
                 f.splits += 1.0;
+                if self.watched {
+                    self.born.push((twin.id as u32, b.id as u32));
+                }
                 out.push(b);
                 out.push(twin);
                 continue;
@@ -675,8 +726,11 @@ impl Bodies {
         for _ in 0..nb as usize {
             let mut g = b.g;
             if self.rng.f64() < p.body_mut {
-                let genes = genome::mutate(&self.types[b.g as usize].as_ref().unwrap().genes, &mut self.rng);
-                self.types.push(Some(Box::new(BodyType::new(genes, b.g, year))));
+                let parent = self.types[b.g as usize].as_ref().unwrap();
+                let (genes, root) = (genome::mutate(&parent.genes, &mut self.rng), parent.root);
+                let mut bt = BodyType::new(genes, b.g, year);
+                bt.root = root;
+                self.types.push(Some(Box::new(bt)));
                 g = (self.types.len() - 1) as u32;
             }
             let id = self.next_id;
@@ -708,8 +762,12 @@ impl Bodies {
                 dead: Death::None,
                 eggs: 0,
                 egg_s: 0.0,
+                facing: b.facing,
             });
             f.births += 1.0;
+            if self.watched {
+                self.born.push((id as u32, b.id as u32));
+            }
         }
     }
 
@@ -1229,6 +1287,7 @@ fn live(x: &Ctx, sh: &Sh, i: usize, f: &mut BFlux) {
     let dist = path / (p.cell_km * 1000.0); // cells
     if dist > 0.0 {
         if dir < 4 {
+            b.facing = dir as u8;
             let (dx, dy) = [(0.0, -1.0), (0.0, 1.0), (1.0, 0.0), (-1.0, 0.0)][dir];
             let (nx, ny) = ((b.x + dx * dist).rem_euclid(n as f64), (b.y + dy * dist).rem_euclid(n as f64));
             let nc = (ny as usize).min(n - 1) * n + (nx as usize).min(n - 1);

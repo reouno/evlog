@@ -40,10 +40,17 @@ export type AgentField =
   | 'age'
   | 'born';
 
+/** Fields a world adds after the record's own (`wire::Ext` in wire.rs), and only such a world
+ * sends: e106's bodies are one animal each, of a mass, standing for many in the ledger. */
+export type ExtField =
+  | 'mass'     // kg of dry matter, one animal
+  | 'animals'  // how many animals its matter counts for
+  | 'lifespan'; // days it lives at most
+
 /** One field of the agent record: where it is is worked out from the order, and a byte with a
  * `max` is that share of it. */
 export interface AgentFieldSpec {
-  name: AgentField;
+  name: AgentField | ExtField;
   type: NumType;
   max?: number;
 }
@@ -86,6 +93,11 @@ export interface Header {
   deaths: string[]; // what a body dies of, by the number a frame carries (empty: none are sent)
   births: boolean; // whether a frame says who each body born since the frame before came from
   agent_record: AgentFieldSpec[];
+  /** A body is side^3 voxels (x back to front, y left to right, z up) and its x, y is its middle:
+   * how big it is drawn comes from its `mass` (e106 on). */
+  voxels?: boolean;
+  /** What a body's `diet` means by number, when not plants / mixed / meat / nothing yet. */
+  diets?: string[];
   params: Params;
   height: number[];
   band: number[];
@@ -118,7 +130,8 @@ export interface State {
 
 /** A body's numbers in one frame, a flat array per field: there are thousands of bodies a frame
  * and an object each would be an allocation each. */
-export type AgentColumns = Record<AgentField, Uint8Array | Uint16Array | Uint32Array>;
+export type Column = Uint8Array | Uint16Array | Uint32Array | Float32Array;
+export type AgentColumns = Record<AgentField, Column> & Partial<Record<ExtField, Column>>;
 
 /** The cell layers at one moment, by the header's names, as physical values. `wood` is not a
  * layer of the world: the browser remembers it (`World.woodAt`). */

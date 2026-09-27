@@ -22,6 +22,7 @@ mod life;
 mod noise;
 mod par;
 mod terrain;
+mod view;
 
 use climate::{Air, Flux, Sat, Weather};
 use hydro::{HFlux, Hydro};
@@ -435,6 +436,9 @@ fn main() {
     let mut hy = Hydro::new(&ter);
     let mut life = Life::new(&ter, &p);
     let mut bodies = body::Bodies::new(&ter, &p);
+    // The viewer (#124): nothing unless EVLOG_VIEW is set. Its clock is the world's step.
+    let mut watch = view::Watch::open(&prefix, &p, &ter);
+    bodies.watched = watch.is_some();
     let w0 = air.water() + hy.water();
     let (mut sea_net, mut na, mut nb) = (0.0f64, 0.0f64, 0.0f64); // what the open edges added
     let mut cm = 0.0f64; // the living's matter: fixed less returned
@@ -501,6 +505,9 @@ fn main() {
                     year: yr as u32,
                 };
                 bf.add(&bodies.update(&mut wd));
+            }
+            if let Some(w) = watch.as_mut() {
+                w.update(step as u64, &p, &ter, &air, &life, &mut bodies);
             }
             let t3 = Instant::now();
             year.add(&ter, &air, &hy, (u * 4 / upy).min(3), p.threads as usize);

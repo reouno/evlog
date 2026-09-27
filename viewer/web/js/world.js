@@ -44,6 +44,8 @@ export class World {
         });
         this.stride = off;
         this.fields = Object.fromEntries(this.plan.map((p) => [p.name, p]));
+        this.voxels = !!header.voxels;
+        this.sizeK = Number(this.params.view_size ?? 0.05);
         this.relief = this.params.relief || 1;
         this.wet = (this.params.water_rain || 1) / (this.params.water_evap || 1); // a cell's own water
         this.depth = this.params.depth || 0; // height per unit of water
@@ -132,12 +134,34 @@ export class World {
         const dv = new DataView(p.buffer, p.byteOffset, p.byteLength);
         const id = dv.getUint32(0, true);
         const side = p[4];
-        const cells = p.slice(5, 5 + side * side);
+        if (!this.voxels) {
+            const cells = p.slice(5, 5 + side * side);
+            let n = 0;
+            for (const k of cells)
+                if (k)
+                    n++;
+            this.bodies.set(id, { id, side, cells, n, vox: null });
+            return;
+        }
+        // A voxel body: the panels draw it as its profile, the voxel nearest the eye from its left side.
+        const vox = p.slice(5, 5 + side * side * side);
+        const cells = new Uint8Array(side * side);
         let n = 0;
-        for (const k of cells)
+        for (let z = 0; z < side; z++) {
+            for (let x = 0; x < side; x++) {
+                for (let y = 0; y < side; y++) {
+                    const k = vox[(z * side + y) * side + x];
+                    if (k) {
+                        cells[(side - 1 - z) * side + x] = k;
+                        break;
+                    }
+                }
+            }
+        }
+        for (const k of vox)
             if (k)
                 n++;
-        this.bodies.set(id, { id, side, cells, n });
+        this.bodies.set(id, { id, side, cells, n, vox });
     }
     addFrame(p) {
         const dv = new DataView(p.buffer, p.byteOffset, p.byteLength);
@@ -166,13 +190,13 @@ export class World {
         o += 4;
         const a = {};
         for (const f of this.plan) {
-            a[f.name] = f.type === 'u8' ? new Uint8Array(n) : f.type === 'u16' ? new Uint16Array(n) : new Uint32Array(n);
+            a[f.name] = f.type === 'u8' ? new Uint8Array(n) : f.type === 'u16' ? new Uint16Array(n) : f.type === 'f32' ? new Float32Array(n) : new Uint32Array(n);
         }
         for (let i = 0; i < n; i++) {
             const base = o + i * this.stride;
             for (const f of this.plan) {
                 const at = base + f.off;
-                a[f.name][i] = f.type === 'u8' ? p[at] : f.type === 'u16' ? dv.getUint16(at, true) : dv.getUint32(at, true);
+                a[f.name][i] = f.type === 'u8' ? p[at] : f.type === 'u16' ? dv.getUint16(at, true) : f.type === 'f32' ? dv.getFloat32(at, true) : dv.getUint32(at, true);
             }
         }
         o += n * this.stride;
@@ -402,11 +426,7 @@ export class World {
         if (!b)
             return null;
         const s = b.side, m = s - 1, out = [];
-        for (let i = 0; i < s * s; i++) {
-            const k = b.cells[i];
-            if (k === 0)
-                continue;
-            const r = (i / s) | 0, c = i % s;
+        const put = (r, c, z, k) => {
             let r2, c2;
             if (facing === 0) {
                 r2 = r;
@@ -424,9 +444,48 @@ export class World {
                 r2 = m - c;
                 c2 = r;
             } // west
-            out.push({ r: r2, c: c2, kind: k });
+            out.push({ r: r2, c: c2, z, kind: k });
+        };
+        const v = b.vox;
+        if (v === null) {
+            for (let i = 0; i < s * s; i++)
+                if (b.cells[i])
+                    put((i / s) | 0, i % s, 0, b.cells[i]);
+            return { side: s, blocks: out };
+        }
+        // Only the voxels that can be seen: one with every face against another is inside the body.
+        // Its front (x at the top) is its first row, as a flat body's is; it stands on its lowest layer.
+        const at = (x, y, z) => (x < 0 || y < 0 || z < 0 || x > m || y > m || z > m ? 0 : v[(z * s + y) * s + x]);
+        let low = s;
+        for (let i = 0; i < v.length; i++)
+            if (v[i])
+                low = Math.min(low, (i / (s * s)) | 0);
+        for (let z = 0; z < s; z++) {
+            for (let y = 0; y < s; y++) {
+                for (let x = 0; x < s; x++) {
+                    const k = at(x, y, z);
+                    if (!k)
+                        continue;
+                    if (at(x - 1, y, z) && at(x + 1, y, z) && at(x, y - 1, z) && at(x, y + 1, z) && at(x, y, z - 1) && at(x, y, z + 1))
+                        continue;
+                    put(m - x, y, z - low, k);
+                }
+            }
         }
         return { side: s, blocks: out };
+    }
+    /** How far a body's middle is from the place its record gives: a flat body's record is its
+     * grid's corner, a voxel body's is its middle. */
+    half(bodyId, facing) {
+        if (this.voxels)
+            return 0;
+        const shape = this.blocks(bodyId, facing);
+        return shape ? (shape.side / this.sub) / 2 : 0.5;
+    }
+    /** Cells wide a voxel body is drawn: as its mass, one animal's, to the third. */
+    drawnSide(f, i) {
+        const m = f.a.mass;
+        return m ? this.sizeK * Math.cbrt(Math.max(0, m[i])) : 0;
     }
 }
 /** The wood after `du` steps in which the matter standing on the cell went from `was` to `now`:

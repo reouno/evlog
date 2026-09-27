@@ -8,6 +8,7 @@
 //!
 //! kind 0  header, a JSON object (once, first)
 //! kind 1  a body shape: [u32 id][u8 side][u8; side*side] block kinds, row by row
+//!         (a world whose header says `voxels`: [u8; side*side*side], x fastest, then y, then z up)
 //! kind 2  a frame (below)
 //!
 //! A frame:
@@ -109,6 +110,43 @@ pub struct AgentIn<'a> {
 }
 
 pub const AGENT_BYTES: usize = 26;
+
+/// What a world adds to the wire beyond `Init` (`View::from_env_ext`). `Init` and `AgentIn` stay as
+/// they were, so the worlds written before these are untouched: their header and records are the same.
+#[derive(Default)]
+pub struct Ext {
+    /// A body is a grid of side^3 voxels in its own frame (x back to front, y left to right, z up)
+    /// rather than a side^2 grid of blocks, and a body's x, y is its middle rather than its grid's
+    /// corner: how big a body is drawn is then the world's to say (a field), not its grid's.
+    pub voxels: bool,
+    /// Fields after the record's own, each written by the world in this order (`View::frame_ext`):
+    /// a name, a type (`u8`, `u16`, `u32` or `f32`) and, for a `u8`, the value that reaches 255.
+    pub fields: Vec<(&'static str, &'static str, Option<f32>)>,
+    /// What `AgentIn::diet` means by number, when it is not plants / mixed / meat / nothing yet.
+    pub diets: Vec<&'static str>,
+}
+
+fn type_bytes(t: &str) -> usize {
+    match t {
+        "u8" => 1,
+        "u16" => 2,
+        _ => 4,
+    }
+}
+
+impl Ext {
+    pub fn bytes(&self) -> usize {
+        self.fields.iter().map(|f| type_bytes(f.1)).sum()
+    }
+}
+
+/// How many bytes a body's record is, read off a header's `agent_record` (the replay's index walks
+/// the records of worlds whose record is longer than `AGENT_BYTES`).
+pub fn agent_bytes(header: &str) -> usize {
+    let Some(at) = header.find("\"agent_record\":[") else { return AGENT_BYTES };
+    let rec = &header[at..at + header[at..].find(']').unwrap_or(0)];
+    rec.split("\"type\":\"").skip(1).map(|p| type_bytes(&p[..p.find('"').unwrap_or(0)])).sum()
+}
 pub const ENERGY_MAX: f32 = 16.0; // a big body breeds at 14
 
 pub const KIND_HEADER: u8 = 0;
@@ -132,7 +170,7 @@ fn strings(v: &[&str]) -> String {
 }
 
 /// The header record's JSON. `extra` is added to the object (replay adds the seek index).
-pub fn header_json(init: &Init, stride: u64, layer_stride: u64, live: bool) -> String {
+pub fn header_json(init: &Init, ext: &Ext, stride: u64, layer_stride: u64, live: bool) -> String {
     let layers = init
         .layers
         .iter()
@@ -144,11 +182,28 @@ pub fn header_json(init: &Init, stride: u64, layer_stride: u64, live: bool) -> S
                  {\"name\":\"x\",\"type\":\"u16\"},{\"name\":\"y\",\"type\":\"u16\"},{\"name\":\"facing\",\"type\":\"u8\"},\
                  {\"name\":\"diet\",\"type\":\"u8\"},{\"name\":\"fill\",\"type\":\"u8\",\"max\":1},\
                  {\"name\":\"energy\",\"type\":\"u8\",\"max\":16},{\"name\":\"ripe\",\"type\":\"u8\",\"max\":16},\
-                 {\"name\":\"fat\",\"type\":\"u8\",\"max\":1},{\"name\":\"age\",\"type\":\"u16\"},{\"name\":\"born\",\"type\":\"u16\"}]";
+                 {\"name\":\"fat\",\"type\":\"u8\",\"max\":1},{\"name\":\"age\",\"type\":\"u16\"},{\"name\":\"born\",\"type\":\"u16\"}";
+    let extra: String = ext
+        .fields
+        .iter()
+        .map(|(name, t, max)| match max {
+            Some(m) => format!(",{{\"name\":\"{name}\",\"type\":\"{t}\",\"max\":{m}}}"),
+            None => format!(",{{\"name\":\"{name}\",\"type\":\"{t}\"}}"),
+        })
+        .collect();
+    let agent = format!("{agent}{extra}]");
+    // Said only by a world that has them, so an old world's header is what it was.
+    let mut more = String::new();
+    if ext.voxels {
+        more.push_str(",\"voxels\":true");
+    }
+    if !ext.diets.is_empty() {
+        more.push_str(&format!(",\"diets\":[{}]", strings(&ext.diets)));
+    }
     let bands = init.band.iter().map(|b| b.to_string()).collect::<Vec<_>>().join(",");
     format!(
         "{{\"version\":1,\"experiment\":\"{}\",\"live\":{live},\"w\":{},\"h\":{},\"sub\":{},\"stride\":{stride},\"layer_stride\":{layer_stride},\
-         \"layers\":[{layers}],\"globals\":[{}],\"blocks\":[{}],\"deaths\":[{}],\"births\":{},\"agent_record\":{agent},\"params\":{},\"height\":[{}],\"band\":[{bands}]}}",
+         \"layers\":[{layers}],\"globals\":[{}],\"blocks\":[{}],\"deaths\":[{}],\"births\":{},\"agent_record\":{agent}{more},\"params\":{},\"height\":[{}],\"band\":[{bands}]}}",
         init.experiment,
         init.w,
         init.h,
@@ -254,6 +309,10 @@ impl<'a> FrameWriter<'a> {
         b.extend_from_slice(&a.born.to_le_bytes());
         self.n_agents += 1;
     }
+    /// The fields an `Ext` adds, packed by the world, right after the body's own record.
+    pub fn extra(&mut self, bytes: &[u8]) {
+        self.buf.extend_from_slice(bytes);
+    }
     /// The bodies that died since the frame before, after the living ones.
     pub fn deaths(self, dead: &[(u32, u8)]) -> Self {
         self.buf.extend_from_slice(&(dead.len() as u32).to_le_bytes());
@@ -283,7 +342,7 @@ impl<'a> FrameWriter<'a> {
 }
 
 /// Where the parts of a frame are, for a reader that walks a whole recording (the replay's
-/// index of who came from whom). `agents` is `n_agents` records of `AGENT_BYTES`; `born` is
+/// index of who came from whom). `agents` is `n_agents` records of `agent_bytes`; `born` is
 /// `n_born` pairs of (child, parent).
 pub struct FrameParts<'a> {
     pub step: u64,
@@ -293,9 +352,10 @@ pub struct FrameParts<'a> {
     pub born: &'a [u8],
 }
 
-/// Walk a frame record's payload. `cells` is how many cells the world has and `deaths`/`births`
-/// what the header says it sends; a record cut short gives what could be read of it.
-pub fn frame_parts(p: &[u8], cells: usize, deaths: bool, births: bool) -> FrameParts<'_> {
+/// Walk a frame record's payload. `cells` is how many cells the world has, `deaths`/`births`
+/// what the header says it sends and `rec` how long a body's record is (`agent_bytes`); a record
+/// cut short gives what could be read of it.
+pub fn frame_parts(p: &[u8], cells: usize, deaths: bool, births: bool, rec: usize) -> FrameParts<'_> {
     let u32_at = |o: usize| u32::from_le_bytes(p[o..o + 4].try_into().unwrap()) as usize;
     let nothing = FrameParts { step: 0, n_agents: 0, agents: &[], n_born: 0, born: &[] };
     if p.len() < 9 {
@@ -313,8 +373,8 @@ pub fn frame_parts(p: &[u8], cells: usize, deaths: bool, births: bool) -> FrameP
     }
     let n_agents = u32_at(o);
     o += 4;
-    let agents = &p[o..(o + n_agents * AGENT_BYTES).min(p.len())];
-    o += n_agents * AGENT_BYTES;
+    let agents = &p[o..(o + n_agents * rec).min(p.len())];
+    o += n_agents * rec;
     let none = FrameParts { step, n_agents, agents, n_born: 0, born: &[] };
     if deaths {
         if o + 4 > p.len() {
@@ -369,7 +429,35 @@ mod tests {
             births: true,
             params: "{\"weather\":\"season\"}".to_string(),
         };
-        header_json(&init, 1, 30, false)
+        header_json(&init, &Ext::default(), 1, 30, false)
+    }
+
+    /// A world with voxels and fields of its own says so, and its record is as long as it says.
+    #[test]
+    fn an_extended_header_counts_its_record() {
+        let init = Init {
+            experiment: "test",
+            w: 1,
+            h: 1,
+            sub: 1,
+            height: &[0.0],
+            band: &[0],
+            layers: vec![],
+            globals: vec![],
+            blocks: vec!["empty"],
+            deaths: vec![],
+            births: false,
+            params: "{}".to_string(),
+        };
+        let ext = Ext { voxels: true, fields: vec![("mass", "f32", None), ("grown", "u8", Some(1.0))], diets: vec!["leaf", "wood"] };
+        let json = header_json(&init, &ext, 1, 30, false);
+        assert_eq!(agent_bytes(&json), AGENT_BYTES + 5);
+        assert_eq!(agent_bytes(&sample_header()), AGENT_BYTES);
+        let keys = json_keys(&json);
+        let (all, _) = interface_fields(&browser_wire(), "Header");
+        for k in ["voxels", "diets"] {
+            assert!(keys.contains(&k.to_string()) && all.contains(&k.to_string()), "`{k}` is not both sent and declared");
+        }
     }
 
     /// The keys of a JSON object, the top level of it only.

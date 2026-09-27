@@ -521,6 +521,7 @@ export class Rig {
         this.sending = false;
         this.dist = 60;
         this.far = Math.max(420, 1.3 * Math.max(world.w, world.d));
+        this.near = world.voxels ? 0.01 : 1.2;
         this.yaw = Math.PI * 0.25;
         this.pitch = 0.55;
         this.follow = null;
@@ -563,7 +564,7 @@ export class Rig {
             // that reports lines moved the eye a fortieth of what a trackpad did until this was read.
             const dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaMode === 2 ? e.deltaY * 400 : e.deltaY;
             const k = this.zoomAway ? -dy : dy;
-            this.dist = Math.max(1.2, Math.min(this.far, this.dist * Math.exp(k * 0.0012)));
+            this.dist = Math.max(this.near, Math.min(this.far, this.dist * Math.exp(k * 0.0012)));
         }, { passive: false });
         addEventListener('keydown', (e) => {
             if (e.target.tagName === 'INPUT')
@@ -618,12 +619,12 @@ export class Rig {
         if (k.has('q') || k.has('e'))
             this.want = null;
         if (k.has('q'))
-            this.dist = Math.max(1.2, this.dist * (1 - dt));
+            this.dist = Math.max(this.near, this.dist * (1 - dt));
         if (k.has('e'))
             this.dist = Math.min(this.far, this.dist * (1 + dt));
         if (this.want !== null) {
             this.dist += (this.want - this.dist) * Math.min(1, dt * 3);
-            if (Math.abs(this.want - this.dist) < 0.05)
+            if (Math.abs(this.want - this.dist) < 0.02 * this.want)
                 this.want = null;
         }
         if (this.slid < 1) {
@@ -643,6 +644,12 @@ export class Rig {
         const cp = Math.cos(this.pitch);
         this.cam.position.set(this.target.x - Math.sin(this.yaw) * cp * this.dist, this.target.y + Math.sin(this.pitch) * this.dist, this.target.z - Math.cos(this.yaw) * cp * this.dist);
         this.cam.lookAt(this.target);
+        // The near plane comes in with the eye, so a body a hundredth of a cell across can be looked at.
+        const near = Math.min(0.1, Math.max(0.0005, this.dist * 0.02));
+        if (Math.abs(near - this.cam.near) > 1e-4 * near) {
+            this.cam.near = near;
+            this.cam.updateProjectionMatrix();
+        }
     }
 }
 //# sourceMappingURL=render.js.map
