@@ -5,7 +5,7 @@ What happened lives in the experiments' READMEs, the issues and git, never here.
 when a row wants a paragraph, the paragraph belongs in an experiment's README and the row keeps the one sentence
 that decides the next step.
 
-Last updated: 2026-09-27, e105 (#116 rung 2).
+Last updated: 2026-09-27, e106 step 1 (#116 rung 3).
 
 ## 1. The ideal
 
@@ -112,7 +112,9 @@ space of forms; the world is judged whole, over long runs, by an open measure in
 **The order**: the design is agreed in #116 (inventory, the island with the physics that prices each freedom, the
 open measure, the ladder). Rung 1, the ground (e102), and rung 2, producers that evolve (e103-e105), stand and are
 `base/`; a year costs ~12 s. Over a millennium the producers diversify but do not turn over (e105): the best form of
-a place keeps it, and the run whose eaters take 12% of the fixed carbon changes most. **Next is rung 3, the bodies**
-(#117): consumers that strip stands, choose what they eat and cross places within a life - the moving pressure rung 2
-lacks - with the ground's water (#118) and the open measure for bodies (#119) before its long runs.
-The 3D step (#114) is folded into rung 3; e098's price and e101's water ledger carry over.
+a place keeps it. **Rung 3, the bodies** (#117, e106), is built in three steps and judged whole after a 300-year run:
+bodies are individuals at real distances (a cell ~63 km) whose matter counts for many animals (S = 3e9 kg). Step 1
+stands: they eat the land from 0.84 to 0.46 kg a m2 in 30 years - the first pressure that moves the producers - but
+one founder's line holds them all. **Next: watch the world (#124)** - nobody has since e102, and the scale decides
+what watching can be - then step 2 (#123, bodies meet), step 3 (#125), the ground's water (#118), the open measure
+(#119), and the run. Order kept in #116.
