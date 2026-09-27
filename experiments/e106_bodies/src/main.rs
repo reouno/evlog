@@ -164,10 +164,11 @@ params! {
     // e106: bodies (#116 rung 3, #117 v2, #122). One body is one animal; its matter counts for s animals.
     // Masses kg of dry matter an animal, times in days.
     body_sow = 50.0, "the year the first bodies are sown (0: none)";
-    bodies0 = 2000.0, "bodies sown";
+    bodies0 = 20000.0, "bodies sown";
+    sow_s = 3e7, "kg of animals a sown body stands for";
     body_founders = 256.0, "random body genomes sown";
     cell_km = 63.0, "km: a cell's side (e102: one cell an update is a 5.5 m/s wind)";
-    big_s = 3e9, "kg of animals a body stands for when sown; one standing for twice this splits in two (S)";
+    big_s = 3e9, "kg of animals a grown body stands for (S): a clutch makes as many bodies as would each weigh this grown, and one standing for twice this splits in two";
     clutch_max = 4.0, "bodies a clutch makes at most; each stands for its share of the clutch's animals";
     body_resp = 0.3, "kg respired a day a kg of B in a body's tissue at 20 C (Q10 2)";
     muscle_power = 20.0, "W a kg of wet muscle gives, fully active, at its best temperature";

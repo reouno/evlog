@@ -64,6 +64,12 @@ producers' fixing halved - before they fell back (3.4 million at year 60). A bod
 were young), and the land fed ~0.02 kg a m2 of them. For 3-5 x 10^4 bodies, `big_s` 3e9 and `bodies0` 2,000
 (20,000 would start above what the land feeds). What it cost: 2 us a body an update on one thread.
 
+**The second 512 pilot** (years 50-67) sowed only 350 bodies (the rest would have taken more than a tenth of the
+world's A), one a genotype, and they died out by year 64; it also found a ledger fault (A and B taken for bodies
+that were then not sown, 3e-4). So what a sown body stands for is its own number (`sow_s` 3e7 kg, 20,000 bodies), and
+a clutch makes as many bodies as would each weigh `big_s` grown (at least one, at most `clutch_max`): the number of
+bodies follows the matter the food holds, over S, whatever the start.
+
 **Stop early if:**
 
 - `water_err` > 1e-6 at 23760

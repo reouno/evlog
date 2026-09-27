@@ -492,7 +492,7 @@ impl Bodies {
             }
             let c = self.rng.below(n * n);
             let m = bt.adult();
-            let s = p.big_s / m;
+            let s = p.sow_s / m;
             let k = s / self.area;
             let fat = 0.3 * m * (0.05 + p.fat_hold * fm.frac[FAT]);
             let (ta, tb) = (m * 1000.0 * fm.a, m * 1000.0 * fm.b);
@@ -500,14 +500,14 @@ impl Bodies {
                 skip[1] += 1;
                 continue;
             }
-            need_a += ta * k;
-            need_b += tb * k;
             let w = m * (WET - 1.0);
             let wk = w * k;
             if wk > 0.5 * vapor[c] {
                 skip[2] += 1;
                 continue;
             }
+            need_a += ta * k;
+            need_b += tb * k;
             vapor[c] -= wk;
             f.fixed += (m + fat) * k;
             let (x, y) = ((c % n) as f64 + self.rng.f64(), (c / n) as f64 + self.rng.f64());
@@ -662,14 +662,15 @@ impl Bodies {
         f
     }
 
-    /// Eggs become bodies beside their parent: at most `clutch_max` of them, each standing for its share of the
-    /// clutch's animals; each carries a mutation with chance `body_mut`.
+    /// Eggs become bodies beside their parent, each standing for its share of the clutch's animals: as many as
+    /// would each weigh `big_s` grown (so the number of bodies follows the matter the food holds), at least one
+    /// and at most `clutch_max`; each carries a mutation with chance `body_mut`.
     fn hatch(&mut self, p: &Params, b: &mut Body, out: &mut Vec<Body>, year: u32, f: &mut BFlux) {
         let eggs = b.eggs as f64;
         b.eggs = 0;
         let bt = self.types[b.g as usize].as_ref().unwrap();
         let (fa, fb, e) = (bt.forms[0].a, bt.forms[0].b, bt.egg());
-        let nb = eggs.min(p.clutch_max).max(1.0);
+        let nb = (b.egg_s * eggs * bt.adult() / p.big_s).round().clamp(1.0, eggs.min(p.clutch_max).max(1.0));
         let per = eggs / nb; // eggs of the parent's animals that each new body stands for
         for _ in 0..nb as usize {
             let mut g = b.g;
