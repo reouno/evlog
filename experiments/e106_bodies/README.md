@@ -105,6 +105,40 @@ The first two pilots (above) are kept as logs.
 - **Cost**: 2 us a body an update on one thread; ~90,000 bodies add ~34 s a year on 6 Ubuntu threads, a year 54 s.
   300 years would take ~4.5 hours a run there.
 
+### Watching the world (#124)
+
+Nobody had watched the world since e102. `src/view.rs` writes the viewer's recording (`EVLOG_VIEW`, `viewer/`):
+the terrain and sea, the producers (on land, under 2 m, 2 m and over, in the sea), litter, the ground's water,
+temperature, rain and light, and every body at its middle as its 8x8x8 voxels (each the function most of its tissue
+serves), its heading, founder line, diet (what it has eaten most), growth against maturity, fat, water, age, mass,
+the animals it stands for and its lifespan. A body is drawn 0.05 cells wide a kg^(1/3) of its mass - 400 kg is a
+third of a cell of 63 km, some 50,000 times its size; smaller bodies smaller by the same rule. The results are
+byte-identical with and without the recording.
+
+Two recordings of pilot 3's world (Ubuntu, 6 threads each, side by side; not committed):
+
+    EVLOG_VIEW=rec:from=582120,len=368280,stride=1190,layers=5 ... results/watch/lapse  years=80 body_sow=50   # year 49-80, a frame every 16 days
+    EVLOG_VIEW=rec:from=891000,len=1120,stride=10,layers=30  ... results/watch/close  years=76 body_sow=50   # year 75, 15 days, every update
+
+Both are the same world as pilot 3 (its log to the digit but the timing columns); the lapse is 310 frames and 847 MB,
+the close window 113 frames and 385 MB.
+
+**What it shows, from above** (the lapse, a frame every 16 days): the sown bodies spread over every land and sea
+(year 50), die back to a few thin lines within a year (8,779 bodies, most of thirst), march as streaks across the
+wet forest of the eastern continent (years 53-58; 10,622 -> 25,861), fill it (65; 53,087), cross to the south-western
+continent (71; 142,050, the peak) and hold both, while the green under the eastern one is eaten to straw (land
+producers 0.84 -> 0.46 kg a m2). The rest of the world stays empty: at year 80 bodies stand on 17.5% of the land's
+cells. The spread, the crossing and the land eaten down read at a glance, which the numbers alone did not give.
+
+**What it shows up close** (the close window, every 3.2 h for 15 days of year 75): a body is its form, and there are
+few forms - 67 shapes among 90,000 bodies; the leading line (86,000 bodies) is a lump of 32 voxels that is nearly all
+gut, a 305 kg body is a lump of 56 voxels all of frame. A body moves a few hundredths of a cell an update; about five
+share a cell where they stand. At 12 cells away a watcher sees scattered dark lumps in the grass.
+
+**What it cannot show**: everything is drawn far larger than it is - a body 50,000 times, a tree as tall as a cell -
+so two bodies in one cell are 63 km apart or side by side, and the picture does not say which. A meeting in step 2
+(#123), resolved as a chance inside a cell, would show as a body vanishing near another, not as a chase.
+
 ## Conclusion
 
 To come.

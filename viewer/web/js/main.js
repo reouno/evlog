@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { LiveSource, ReplaySource } from './net.js';
 import { World } from './world.js';
 import { Ground, Sky, Rig, UP, shortest, paint, GROUND_MODES } from './render.js';
-import { Life } from './life.js';
+import { Life, VOXEL_HEX } from './life.js';
 import { alongLine, onLine, Walk } from './line.js';
 import { RECORD } from './wire.js';
 const $ = (id) => document.getElementById(id);
@@ -11,6 +11,10 @@ const $i = (id) => document.getElementById(id);
 const $c = (id) => document.getElementById(id);
 const KIND_COLORS = { hard: '#2a2622', muscle: '#a8553c', sensor: '#1b1b20', digestive: '#b09760', leaf: '#6f9e4a', leg: '#7a6bb5', fat: '#e6d49a', glue: '#8e8a9c', empty: '#00000000' };
 const DIET = ['植物', 'まぜ', '肉', 'まだ'];
+// A voxel world's tissues are shown in their own colours (`VOXEL_HEX`), and named for what they are.
+const VOXEL_NAME = { hard: '骨格', muscle: '筋肉', sensor: '神経', digestive: '腸', fat: '脂肪', glue: '結合' };
+const kindColour = (name) => (world.voxels ? '#' + (VOXEL_HEX[name] ?? 0x9a8f80).toString(16).padStart(6, '0') : KIND_COLORS[name]);
+const kindName = (name) => (world.voxels ? VOXEL_NAME[name] ?? name : name);
 // A world that names its own diets (`Header.diets`) is told in these words.
 const DIET_NAME = { leaf: '葉', wood: '木', seed: '種', litter: '落葉', 'nothing yet': 'まだ' };
 // How close a picked body is brought: e106's are a few hundredths of a cell per voxel.
@@ -285,14 +289,14 @@ function kinds(a) {
         const shape = world.bodies.get(k.shape);
         const cells = shape ? [...shape.cells] : [];
         const pic = `<div class="pic" style="grid-template-columns:repeat(${shape ? shape.side : 1},1fr)">` +
-            cells.map((c) => `<i style="background:${c ? KIND_COLORS[names[c]] : '#ffffff10'}"></i>`).join('') + '</div>';
+            cells.map((c) => `<i style="background:${c ? kindColour(names[c]) : '#ffffff10'}"></i>`).join('') + '</div>';
         // What it is made of, as one bar: the shares of the kinds of block in that shape.
         const count = new Map();
         for (const c of cells)
             if (c)
                 count.set(c, (count.get(c) ?? 0) + 1);
         const mix = [...count.entries()].sort((x, y) => y[1] - x[1])
-            .map(([c, n]) => `<b style="flex:${n};background:${KIND_COLORS[names[c]]}" title="${names[c]} ${n}"></b>`).join('');
+            .map(([c, n]) => `<b style="flex:${n};background:${kindColour(names[c])}" title="${names[c]} ${n}"></b>`).join('');
         return `<div class="kind">${pic}<div>` +
             `<div class="top"><span><span class="n">${k.n.toLocaleString()} 体</span><span class="muted"> · ${dietName(k.diet)}</span></span>` +
             `<button class="${k.lin === on ? 'on' : ''}" data-lin="${k.lin}">追う</button></div>` +
@@ -550,7 +554,7 @@ function selection(a, b = null, t = 0) {
         shapeOf = f.a.body[i];
         $('shape').style.gridTemplateColumns = `repeat(${body.side},1fr)`;
         $('shape').style.width = body.side * 9 + 'px';
-        $('shape').innerHTML = [...body.cells].map((k) => `<i style="background:${k ? KIND_COLORS[names[k]] : '#ffffff10'}"></i>`).join('');
+        $('shape').innerHTML = [...body.cells].map((k) => `<i style="background:${k ? kindColour(names[k]) : '#ffffff10'}"></i>`).join('');
     }
     const energy = val('energy'), ripe = val('ripe'), fat = val('fat'), age = val('age'), born = val('born');
     const n = body ? body.n : 0, maxAge = world.params.max_age;
@@ -617,7 +621,7 @@ function selection(a, b = null, t = 0) {
     $('selrows').innerHTML =
         `<div>系統 ${f.a.lineage[i] || '—'}・食 ${dietName(f.a.diet[i])}</div>` +
             (mass !== undefined ? `<div>${kg(mass)}・${world.value(f, 'animals', i).toExponential(1)} 頭ぶん・${n} ボクセル</div>` : '') +
-            Object.entries(counts).map(([k, c]) => `<div><i class="k" style="background:${KIND_COLORS[k]}"></i>${k} ${c}</div>`).join('');
+            Object.entries(counts).map(([k, c]) => `<div><i class="k" style="background:${kindColour(k)}"></i>${kindName(k)} ${c}</div>`).join('');
     lifeChart(picked, f.step);
 }
 /** The followed body's gauges over the frames the browser holds, up to `upto`: whether one is
@@ -914,7 +918,7 @@ function bindUI(header) {
         }
         catch (err) { }
     };
-    $('legend').innerHTML = header.blocks.slice(1).map((b) => `<span><i style="background:${KIND_COLORS[b]}"></i>${b}</span>`).join('');
+    $('legend').innerHTML = header.blocks.slice(1).map((b) => `<span><i style="background:${kindColour(b)}"></i>${kindName(b)}</span>`).join('');
     $('play').onclick = () => {
         playing = !playing;
         $('play').textContent = playing ? '⏸' : '▶';

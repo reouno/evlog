@@ -22,6 +22,9 @@ const KIND = [null, new THREE.Color(0x2a2622), new THREE.Color(0xa8553c), new TH
     new THREE.Color(0xe6d49a), new THREE.Color(0x8e8a9c)]; // e106's voxels add fat and glue
 const SOCKET = new THREE.Color(0x8f7f5e);
 const FAR = [0x9ecf6a, 0xd9a441, 0xc4553f, 0x9aa0a6].map((h) => new THREE.Color(h).multiplyScalar(0.5));
+// A voxel body's tissues (e106 on), by the header's block names: bone, flesh, nerve, gut, fat and glue
+// must be told apart at a glance, which the older bodies' dark shell and eye cannot give.
+export const VOXEL_HEX = { hard: 0xd8ccae, muscle: 0xb0503a, sensor: 0x4f6fc0, digestive: 0x7c8f36, fat: 0xf3de96, glue: 0xa08cc0 };
 // A world that names its own diets (`Header.diets`) is coloured by those names.
 const DIET_COLOR = { leaf: 0x8fd35a, wood: 0xa0673a, seed: 0xf0c83c, litter: 0xd0733c, 'nothing yet': 0x9aa0a6 };
 export function farColours(diets) {
@@ -248,6 +251,7 @@ export class Life {
             this.blockPools.push(new Pool(scene, box, flesh, 60000).own(), new Pool(scene, box, flesh, 60000).own());
         this.far = new Pool(scene, box, flesh, world.voxels ? 160000 : 8000).own();
         this.farCol = farColours(world.h.diets);
+        this.voxCol = world.h.blocks.map((b) => new THREE.Color(VOXEL_HEX[b] ?? 0x9a8f80));
         this.viewDist = 60;
         this.bodyPools = this.blockPools.filter(Boolean);
         this.pools = [...this.standing, this.far, ...this.bodyPools];
@@ -778,7 +782,7 @@ export class Life {
             const bx = mx + (ox * cos + oz * sin) * fade;
             const bz = mz + (oz * cos - ox * sin) * fade;
             const k = bl.kind === 3 ? 4 : bl.kind; // a nerve voxel is a box like the rest, in its own colour
-            pools_of(drawn, k).putY(bx, y + bl.z * v * fade, bz, wide, wide, wide, cos, sin, (KIND[bl.kind] || KIND[4]));
+            pools_of(drawn, k).putY(bx, y + bl.z * v * fade, bz, wide, wide, wide, cos, sin, this.voxCol[bl.kind]);
         }
     }
 }
