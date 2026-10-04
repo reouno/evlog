@@ -100,8 +100,8 @@ ladder (`e101_unit/results/ladder/`). The world now is `base/` (#116), on its wa
 
 ## 4. Scale and compute
 
-**The scale** (#126, chosen 2026-10-05; `base/` is the planet c1225 until rungs 1-2 stand on it, #127, #128): 64 km
-on a side, 512 x 512 cells of 125 m, a tenth of it land (400-500 km2) in 3-5 islands up to 2 km high; climate from
+**The scale** (`base/` is still the planet c1225, 63 km a cell, and moves to this scale rung by rung): 64 km on a
+side, 512 x 512 cells of 125 m, a tenth of it land (400-500 km2) in 3-5 islands up to 2 km high; climate from
 height, the windward and lee sides and the season, not latitude. A body's laws are in metres and seconds - the cell
 is the ground's grain, the update the step of integration (19 minutes, lengthened while the readings hold). A body
 holds about S kg of animals at any age, S near a large adult's mass (300-1,000 kg, set for ~3 x 10^4 bodies): a grown

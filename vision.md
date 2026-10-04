@@ -1,11 +1,12 @@
 # Vision
 
-The ideal, today against it, the bottlenecks and the next piece. Read it before choosing or designing a step.
-What happened lives in the experiments' READMEs, the issues and git, never here. **Keep this under 120 lines**:
+The ideal, today against it, the bottlenecks, the lessons and the direction. Read it before choosing or designing a
+step. What happened lives in the experiments' READMEs and git, and what is to be done and in what order in the
+issues (#116), never here. **Keep this under 120 lines**:
 when a row wants a paragraph, the paragraph belongs in an experiment's README and the row keeps the one sentence
 that decides the next step.
 
-Last updated: 2026-10-05, the scale chosen (#126).
+Last updated: 2026-10-05.
 
 ## 1. The ideal
 
@@ -30,8 +31,8 @@ each with a trade-off no body escapes, laid out at scales the bodies feel. Untes
 
 ## 2. Today against the ideal
 
-Today is stage C's default world on c1225 (`foundation.md`). One line a row; the gap is how much of the rest it
-holds back.
+Today is the last whole world (stage C on c1225, e101) and, where a row says so, the new one being built (`base/`,
+#116). One line a row; the gap is how much of the rest it holds back.
 
 | layer | ideal | today | gap |
 |---|---|---|---|
@@ -46,8 +47,8 @@ holds back.
 | E life vs year, vs day | many animals live through several seasons, and many days | a grown life is 500-570 steps, 1/20 of a year and about 7 days; half the dead die by 75 steps; the day's swing is wider than the bands (e071, e087) | **large**: bound by the crowd |
 | E travel vs places | a migrant crosses places within a year | a few cells of 512; a place fed in a lean month is 9-15 cells away (e086) | **large** |
 | F ways of living | many; the user asked for about 20 | 7.14 kinds at a census, 4.34 kept to a place, 8 ways at 5% in the mean (e101) | **large** |
-| F dominance | no line above a fifth of the animals | the largest line holds 39-70% of the land's bodies (e101) | large |
-| F food web | three or more levels, hunters of several kinds | kills are 27% of what bodies eat; pure flesh kinds 2-4% (e075) | medium |
+| F dominance | no line above a fifth of the animals | the largest line holds 39-70% of the land's bodies (e101); new world: one founder's line holds all (e106) | large |
+| F food web | three or more levels, hunters of several kinds | kills are 27% of what bodies eat; pure flesh kinds 2-4% (e075); new world: nothing eats a body yet, and bodies eat the land down by half, or bare once all of it is within reach (e106, e107) | medium |
 | F crowding | numbers limited by food, hunters and seasons | limited by the birth rule: 47% of births find no room though a spot that fits is within two body lengths for 75% of them and off the four rays it searches; widening it thins the jam to 33% and costs 2.5 kinds (e097) | **large**, and not to be lifted by giving room |
 | F history (a replay) | the same world run again fills other roles with other bodies | between two seeds the ways holding 5% agree 0.66 and their shares 0.77, the largest way is the same in 4 of 6 seeds, the birth forms agree 0.038 (e101, `analysis/replay.py`) | medium: contingent already; the measure's own 64 boxes cap what can be said |
 | F cycles over time | predator and prey swing | the land's bodies swing twofold over a year; forms do not follow (e070) | medium |
@@ -99,22 +100,18 @@ Each holds under the conditions it was found in.
 - Measures: a distribution against a distribution, harm a fixed 1.02 kinds below the control (e092, e101); never
   judge on a conjunction over censuses (e094); a measure of place breaks when bodies change place within a life (e091);
   a spread is read by what it is made of - one collapsed seed is not a various world (e100).
+- A law written in cells and updates holds at one scale only: the same bodies in a smaller world walk off the land or
+  never leave their cell, and the distance that rationed the eaters is gone (e107). A scale is chosen, not inherited.
 
-## 5. Next
+## 5. The direction
 
 **The redesign (#116)**, agreed 2026-09-26. About 25 experiments since e075 added laws one at a time and kept two;
 every bottleneck above has the same root: the world and its bodies can be too few things, so the optimum is simple
-and single and the world converges to it. The premise changes (`principles.md`): the freedom of the environment,
+and single and the world converges to it. The premise changed (`principles.md`): the freedom of the environment,
 the bodies, their behaviour and their interactions is raised together and by a jump, every form priced by the
 world's physics; producers evolve and the living make each other's niches; a small genome develops into a large
 space of forms; the world is judged whole, over long runs, by an open measure instead of the 64-box label.
 
-**The order**: the design is agreed in #116 (inventory, the island with the physics that prices each freedom, the
-open measure, the ladder). Rung 1, the ground (e102), and rung 2, producers that evolve (e103-e105), stand and are
-`base/`; a year costs ~12 s. Over a millennium the producers diversify but do not turn over (e105): the best form of
-a place keeps it. **Rung 3, the bodies** (#117, e106), is built in three steps and judged whole after a 300-year run:
-bodies are individuals at real distances. Step 1 stands (the land eaten from 0.84 to 0.46 kg a m2 in 30 years, one
-founder's line), but watched (#124) the planet is the wrong size: a body stands for millions of animals in a 63 km
-cell, and declared smaller as it is (e107) the one line that moves strips the land - distance was the eaters' brake.
-**The scale is chosen** (#126, `foundation.md` 4): 64 km, cells of 125 m, islands, a grown body one animal. **Next:
-rung 1 on it (#127)**, then rung 2 (#128), then bodies in metres and seconds with their meetings (#123). Order: #116.
+**The gap being filled** is the bodies' (rows C to F): individuals built of tissues, at real sizes and distances, on
+a ground and producers that already differ by place and evolve, in a world small enough that a grown body is one
+animal (`foundation.md` 4). What is built next, and in what order, is #116's to say, not this document's.

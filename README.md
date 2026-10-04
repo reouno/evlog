@@ -3,7 +3,7 @@
 A world that evolves on its own, for people to watch. Research and development stage.
 
 - `principles.md` - purpose and rules that do not change. Read this first.
-- `vision.md` - the ideal, today's world against it, and the next piece of work.
+- `vision.md` - the ideal, today's world against it, and the direction.
 - `foundation.md` - how the world is built and searched, and today's default world.
 - `CLAUDE.md` - how we work, and when each document is read and changed.
 - `experiments/` - one folder per experiment: code, `README.md` from purpose to conclusion, `results/`, and
@@ -48,4 +48,4 @@ It compresses only what a run writes and a reader rebuilds (`zstd -12`, lossless
 anything git tracks, never the settled worlds, never a run with a live process. `--stale` lists what is
 kept only so that an old report could be rebuilt; deleting that is a person's decision.
 
-Work is tracked in GitHub issues.
+Work is tracked in GitHub issues; the order of the work is in the body of #116.
