@@ -5,7 +5,7 @@ What happened lives in the experiments' READMEs, the issues and git, never here.
 when a row wants a paragraph, the paragraph belongs in an experiment's README and the row keeps the one sentence
 that decides the next step.
 
-Last updated: 2026-09-27, e106 step 1 (#116 rung 3).
+Last updated: 2026-10-05, the scale chosen (#126).
 
 ## 1. The ideal
 
@@ -115,6 +115,6 @@ open measure, the ladder). Rung 1, the ground (e102), and rung 2, producers that
 a place keeps it. **Rung 3, the bodies** (#117, e106), is built in three steps and judged whole after a 300-year run:
 bodies are individuals at real distances. Step 1 stands (the land eaten from 0.84 to 0.46 kg a m2 in 30 years, one
 founder's line), but watched (#124) the planet is the wrong size: a body stands for millions of animals in a 63 km
-cell. **Next: the world's scale (#126)** - a small world of land masses, height and season where a body is nearly
-one animal. Declared smaller as it is (e107), walkers die, sitters never spread and the one line that moves strips
-the land (0.88 -> 0.075): distance was the eaters' brake, so the scale and step 2 (#123) are one design. Order: #116.
+cell, and declared smaller as it is (e107) the one line that moves strips the land - distance was the eaters' brake.
+**The scale is chosen** (#126, `foundation.md` 4): 64 km, cells of 125 m, islands, a grown body one animal. **Next:
+rung 1 on it (#127)**, then rung 2 (#128), then bodies in metres and seconds with their meetings (#123). Order: #116.

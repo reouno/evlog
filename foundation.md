@@ -1,8 +1,8 @@
 # Foundation
 
 How the world is built: its laws, what is generated and what must emerge, the material trade-offs, the stages it is
-searched in and how each is judged, and today's default world. Read it before designing a law; change it when a law
-or a measure is kept or removed, or the method changes (`CLAUDE.md`). What each experiment found is in its README.
+searched in and how each is judged, the scale, and today's default world. Read it before designing a law; change it
+when a law or a measure is kept or removed, or the method changes (`CLAUDE.md`). What an experiment found is its README's.
 
 ## Why
 
@@ -94,22 +94,23 @@ step is judged on **kinds at a census** (median 7.26) and on **ways at 5% of the
 "held" survives only as "at the line in 90% of the censuses" (3.0), and #76's pass line (4 kinds on 4 of 6 seeds,
 each at 5% for 5 years) is read the same way - the world stands at 3 of the 4, not at 1. The gaps are in `vision.md`.
 
-**Today's default world** (stage C, c1225 with d11, s = 1/16): the trade-offs marked kept in section 2 at the rates
-#88 set, with `wood_food` 0, `wood_yield` 3e-5, the flesh line and the body's water in the land's (`unit` 9.4, e101).
-The command line is `experiments/e100_base/run.sh` with `shade_heat`, `shade_dry`, `crown_wet` and `wood_rest` at 0
-(`experiments/e101_unit/batch.sh`). The controls are its six-seed ladder (e101):
-`e101_unit/results/ladder/c1225_life{9..14}_unit`, 100,000 steps, 60-80 minutes a run with six at once. e100 put
-the crown's half back as well and lost 1.8 kinds on every seed, so it stays out (#112, #113).
+**The old default world** (stage C, c1225 with d11, s = 1/16): section 2's kept trade-offs at #88's rates, run by
+`experiments/e100_base/run.sh` with `shade_heat`, `shade_dry`, `crown_wet`, `wood_rest` at 0; controls: e101's six-seed
+ladder (`e101_unit/results/ladder/`). The world now is `base/` (#116), on its way to section 4's scale.
 
-## 4. Compute
+## 4. Scale and compute
 
-| stage | one candidate | what it buys |
-|---|---|---|
-| A | 1-8 minutes at 512 on one core (20 years, e061, e085) | 300 candidates in about an hour on 10 cores |
-| B | about 8 minutes at 512 (spin-up and 10 years of producers) | about 100 an hour |
-| C | about 30 ms a step with about 10,000 bodies; 100,000 steps in about an hour (2.8-3.2x that in 3D, e098) | a handful of worlds, six seeds each (1.2-2.2 hours a batch on 6 cores) |
+**The scale** (#126, chosen 2026-10-05; `base/` is the planet c1225 until rungs 1-2 stand on it, #127, #128): 64 km
+on a side, 512 x 512 cells of 125 m, a tenth of it land (400-500 km2) in 3-5 islands up to 2 km high; climate from
+height, the windward and lee sides and the season, not latitude. A body's laws are in metres and seconds - the cell
+is the ground's grain, the update the step of integration (19 minutes, lengthened while the readings hold). A body
+holds about S kg of animals at any age, S near a large adult's mass (300-1,000 kg, set for ~3 x 10^4 bodies): a grown
+large body is one animal, a small kind a flock, a clutch one brood that splits as it grows. The watcher sees a place,
+later at real size through a window that plays what the world decided.
 
-Stage C cannot be searched widely: it takes the few worlds A and B pass, and a step is judged on six seeds.
+**Compute**: the ground costs by its cells, 12-20 s a year at 512 with producers (e105, e106); bodies 2 us a body an
+update on a thread, so 3 x 10^4 at 19 minutes are ~110 s a year on six threads. The old stages (A 1-8 minutes a
+candidate, B 8, C an hour for 100,000 steps of 10,000 bodies) took the few worlds A and B passed, six seeds a step.
 
 ## 5. Search, and what this does not promise
 
