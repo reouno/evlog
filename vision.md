@@ -113,8 +113,8 @@ space of forms; the world is judged whole, over long runs, by an open measure in
 open measure, the ladder). Rung 1, the ground (e102), and rung 2, producers that evolve (e103-e105), stand and are
 `base/`; a year costs ~12 s. Over a millennium the producers diversify but do not turn over (e105): the best form of
 a place keeps it. **Rung 3, the bodies** (#117, e106), is built in three steps and judged whole after a 300-year run:
-bodies are individuals at real distances (a cell ~63 km) whose matter counts for many animals (S = 3e9 kg). Step 1
-stands: they eat the land from 0.84 to 0.46 kg a m2 in 30 years - the first pressure that moves the producers - but
-one founder's line holds them all. **Next: watch the world (#124)** - nobody has since e102, and the scale decides
-what watching can be - then step 2 (#123, bodies meet), step 3 (#125), the ground's water (#118), the open measure
-(#119), and the run. Order kept in #116.
+bodies are individuals at real distances. Step 1 stands (the land eaten from 0.84 to 0.46 kg a m2 in 30 years, one
+founder's line), but watched (#124) the planet is the wrong size: a body stands for millions of animals in a 63 km
+cell. **Next: the world's scale (#126)** - a small world of land masses, height and season where a body is nearly
+one animal. Declared smaller as it is (e107), walkers die, sitters never spread and the one line that moves strips
+the land (0.88 -> 0.075): distance was the eaters' brake, so the scale and step 2 (#123) are one design. Order: #116.
