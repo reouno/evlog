@@ -259,9 +259,9 @@ sowing itself - every genome everywhere at once - made the mosaic. One group lea
 in run 1 and all five in run 2: the sea has not parted the producers.</p>""",
     "conclusion": """Producers stand on the small world with their distances in metres, and those laws go into
 <code>base/</code>. They sort and evolve at a seed's pace, far slower than on the planet, and 300 years reads a
-transient. The plan's turn to the climate is not taken on this evidence. Before bodies the plan is read again: a
-millennium on this ground would say where the sorting ends, and bodies that carry seed are the carrier this world
-lacks.""",
+transient. The plan's turn to the climate is not taken on this evidence, nor a longer run of producers alone:
+whether the living sort by place is read at rung 3's run, with bodies on the land and these two runs as its
+control. Next is rung 3, the bodies.""",
 }
 
 

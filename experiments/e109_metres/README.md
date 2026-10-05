@@ -183,9 +183,11 @@ Holds for this one world (isles1), two seeds of the living, 300 years after a so
 - **What a small world cannot hold, so far**: a carrier. Nothing takes a seed a kilometre but a rare gust; the sea
   between islands is crossed by none that shows (one group leads nearly every island because all were sown alike,
   not because it arrived). In the island's design the carriers are bodies (fruit, seed eaten and dropped) - not built.
-- **Open for the plan (#116), before bodies**: where the sorting ends. One run of a millennium on this ground (7-8
-  hours on Ubuntu) would say whether the NMI passes the line and whether the groups level; the climate's remedy
-  (the sea air's share of a cell's temperature, the latitude) is judged after that, not on this transient.
+- **For the plan** (#116, plan check of 2026-10-06): where the sorting ends is not read by a longer run of
+  producers alone - that is a world that will not exist. What limits places for producers here is a level already:
+  under stands 90-93% of the soil stays full, so the rain is no gradient to a plant outside the lee lowlands.
+  Whether the living sort by place is read at rung 3's run, with bodies on the land and this experiment as its
+  control; the remedies (bodies that carry seed, then the climate) wait for that reading.
 - **Cost**: 26 s a year alone (the air's pass 8.5 s on one thread, the cells 8 s, the eaters' flight 2.5 s).
 
 `vision.md`: rows A and B, a lesson (a law's distance against the cell). `foundation.md`: the producers' and small
