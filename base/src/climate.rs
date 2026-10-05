@@ -203,6 +203,21 @@ impl Weather {
     pub fn wind_dev(&self, p: &Params) -> f64 {
         p.var_wind * self.w_now + p.wind_sd * self.wobble
     }
+
+    /// The wind over a row in m/s, along x and along y (e109): the sweep's one wind or its storm's, or the planet's
+    /// band. What the living send on the wind goes this way.
+    pub fn wind(&self, p: &Params, lat: f64, season: f64) -> (f64, f64) {
+        if p.sweep != 0.0 {
+            let a = self.storm_dir.unwrap_or(p.wind_dir + p.wind_turn * season + self.wind_dev(p)).to_radians();
+            return (p.wind_ms * a.cos(), p.wind_ms * a.sin());
+        }
+        let per = p.cell_km * 1000.0 / (p.tick / p.day * 86400.0); // a cell an update, in m/s
+        if p.wind_bands != 0.0 {
+            return (zonal(p, lat, p.tilt.to_radians() * season) * per, 0.0);
+        }
+        let a = (p.wind_dir + p.wind_turn * season).to_radians();
+        (p.wind * per * a.cos(), p.wind * per * a.sin())
+    }
 }
 
 pub struct Air {
@@ -504,8 +519,7 @@ impl Air {
         let n = t.n;
         let secs = p.tick / p.day * 86400.0;
         let dx = p.cell_km * 1000.0;
-        let deg = wx.storm_dir.unwrap_or(p.wind_dir + p.wind_turn * season + wx.wind_dev(p));
-        let (a, b) = (p.wind_ms * deg.to_radians().cos(), p.wind_ms * deg.to_radians().sin());
+        let (a, b) = wx.wind(p, 0.0, season);
         let (east, north) = (a >= 0.0, b >= 0.0);
         let (a, b) = (a.abs(), b.abs());
         let (pa, pb) = (a / (a + b), b / (a + b));

@@ -8,15 +8,21 @@
 //! soil and (deep roots) the groundwater, roots take A and B, growth follows the organs' shares, tissue is
 //! lost to turnover, shedding, frost, wilting and storms; eaters eat leaves by their quality and are harmed by
 //! compounds whose key they do not carry; litter decays. Fire runs on the dry land. Every `seed_every` steps
-//! seeds are released and carried (locally, by the wind band, down the rivers) into seed banks, and a free
+//! seeds are released and carried (locally, by the wind, down the rivers) into seed banks, and a free
 //! slot is taken by the bank's best.
+//!
+//! Every distance the living cross is in metres (e109): a seed falls from its stand's height while the wind
+//! carries it, floats a length of river, or is scattered by the sea's mixing; a fire runs a length of dry fuel;
+//! an eater flies a length. A cell is only where a thing lands (`Life::land`), so the same laws hold on a world
+//! of any grain.
 
-use crate::climate::{zonal, Sat};
+use crate::climate::{Sat, Weather};
 use crate::genome::{self, hamming, Genotype, Pheno, SIGNALS};
 use crate::noise::Rng;
 use crate::terrain::{nbrs, Terrain, NONE};
 use crate::Params;
-use std::f64::consts::TAU;
+use std::collections::VecDeque;
+use std::f64::consts::{PI, TAU};
 
 pub const K: usize = 4; // producer cohorts a cell
 pub const E: usize = 2; // eater cohorts a cell
@@ -321,7 +327,7 @@ impl Life {
 
     /// One life step, after `life_every` updates of the climate.
     #[allow(clippy::too_many_arguments)]
-    pub fn step(&mut self, p: &Params, ter: &Terrain, sat: &Sat, ground: &mut [f64], vapor: &mut [f64], deep: &mut [f64], sa: &mut [f64], sb: &mut [f64], q: &[f64], step: f64) -> LFlux {
+    pub fn step(&mut self, p: &Params, ter: &Terrain, sat: &Sat, wx: &Weather, ground: &mut [f64], vapor: &mut [f64], deep: &mut [f64], sa: &mut [f64], sb: &mut [f64], q: &[f64], step: f64) -> LFlux {
         let n = self.n;
         let cells = n * n;
         let k = self.acc as f64;
@@ -406,18 +412,17 @@ impl Life {
         for (_, o) in &out {
             f.add(o);
         }
-        let decl = p.tilt.to_radians() * phase.sin();
         let t1 = std::time::Instant::now();
         self.secs[1] += (t1 - t0).as_secs_f64();
         self.fire(p, ter, ground, sa, sb, &mut f);
         let t2 = std::time::Instant::now();
         self.secs[2] += (t2 - t1).as_secs_f64();
-        self.eaters_move(p, ter, decl);
+        self.eaters_move(p, ter, wx, phase.sin());
         let t3 = std::time::Instant::now();
         self.secs[3] += (t3 - t2).as_secs_f64();
         self.steps += 1;
         if self.steps % (p.seed_every as u64) == 0 {
-            self.seeds(p, ter, q, decl);
+            self.seeds(p, ter, q, wx, phase.sin());
             let fill: Vec<f64> = (0..cells).map(|c| if ter.sea[c] { 1.0 } else { (ground[c] / ter.cap[c]).min(1.0) }).collect();
             self.establish(p, &fill);
         }
@@ -431,11 +436,13 @@ impl Life {
         f
     }
 
-    /// Lightning, and fire spreading over dry land with fuel.
+    /// Lightning, and fire running over dry land with fuel: `fire_run` m (a draw about it) through dry, ample
+    /// fuel before the weather ends it, and less far through damp or thin fuel.
     fn fire(&mut self, p: &Params, ter: &Terrain, ground: &[f64], sa: &mut [f64], sb: &mut [f64], f: &mut LFlux) {
         let n = self.n;
         let dt = p.life_every * p.tick / p.year;
-        let strikes = self.rng.poisson(p.lightning * self.land.len() as f64 * dt);
+        let cell_m = p.cell_km * 1000.0;
+        let strikes = self.rng.poisson(p.lightning * self.land.len() as f64 * p.cell_km * p.cell_km * dt);
         let fuel = |life: &Life, c: usize| life.lit[c].m + (0..K).map(|i| &life.co[c * K + i]).filter(|x| x.live() && x.h < 2.0).map(|x| x.o[LEAF].m).sum::<f64>();
         let dry = |c: usize| 1.0 - (ground[c] / ter.cap[c]).min(1.0);
         let mut burned = Vec::new();
@@ -444,9 +451,9 @@ impl Life {
             if self.burning[c0] || self.rng.f64() > dry(c0) || fuel(self, c0) < p.fuel_min {
                 continue;
             }
-            let mut front = vec![c0];
+            let mut front = VecDeque::from([(c0, p.fire_run * -(1.0 - self.rng.f64()).ln())]);
             self.burning[c0] = true;
-            while let Some(c) = front.pop() {
+            while let Some((c, left)) = front.pop_front() {
                 burned.push(c);
                 for m in nbrs(n, c) {
                     if ter.sea[m] || self.burning[m] {
@@ -456,9 +463,10 @@ impl Life {
                     if fu < p.fuel_min {
                         continue;
                     }
-                    if self.rng.f64() < p.fire_spread * dry(m) * fu / (fu + p.fuel_half) {
+                    let cost = cell_m / (dry(m) * fu / (fu + p.fuel_half)).max(1e-9);
+                    if cost <= left {
                         self.burning[m] = true;
-                        front.push(m);
+                        front.push_back((m, left - cost));
                     }
                 }
             }
@@ -501,8 +509,9 @@ impl Life {
         }
     }
 
-    /// Eaters spread on the wind; a share of what leaves may carry a mutation.
-    fn eaters_move(&mut self, p: &Params, ter: &Terrain, decl: f64) {
+    /// Eaters leave on the wing: `eater_fly` m (a draw about it) any way, and the wind carries them as far again.
+    /// A share of what leaves may carry a mutation.
+    fn eaters_move(&mut self, p: &Params, ter: &Terrain, wx: &Weather, season: f64) {
         let n = self.n;
         let dt = p.life_every * p.tick / p.year;
         for c in 0..n * n {
@@ -524,17 +533,25 @@ impl Life {
                     self.egen.push(Some(Box::new(Genotype::new(genes, g, year, true))));
                     g = (self.egen.len() - 1) as u32;
                 }
-                let d = if self.rng.f64() < 0.5 {
-                    nbrs(n, c)[self.rng.below(4)]
-                } else {
-                    let y = c / n;
-                    let s = if zonal(p, ter.lat[y], decl) >= 0.0 { 1i64 } else { -1 };
-                    let dx = s * (1 + self.rng.below(5) as i64);
-                    y * n + ((c % n) as i64 + dx).rem_euclid(n as i64) as usize
-                };
+                let (u, v) = wx.wind(p, ter.lat[c / n], season);
+                let w = u.hypot(v).max(1e-12);
+                let l = p.eater_fly * -(1.0 - self.rng.f64()).ln();
+                let a = TAU * self.rng.f64();
+                let d = self.land(p, c, l * (a.cos() + u / w), l * (a.sin() + v / w));
                 self.eater_arrive(p, d, g, out);
             }
         }
+    }
+
+    /// The cell a thing lands in when it leaves cell `c` from anywhere in it and goes (dx, dy) m. A world with a
+    /// border keeps what reaches the border there; a planet wraps.
+    fn land(&mut self, p: &Params, c: usize, dx: f64, dy: f64) -> usize {
+        let n = self.n as i64;
+        let s = p.cell_km * 1000.0;
+        let x = ((c % self.n) as f64 + self.rng.f64() + dx / s).floor() as i64;
+        let y = ((c / self.n) as f64 + self.rng.f64() + dy / s).floor() as i64;
+        let (x, y) = if p.edge > 0.0 { (x.clamp(0, n - 1), y.clamp(0, n - 1)) } else { (x.rem_euclid(n), y.rem_euclid(n)) };
+        (y * n + x) as usize
     }
 
     fn eater_arrive(&mut self, p: &Params, c: usize, g: u32, m: f64) {
@@ -559,11 +576,17 @@ impl Life {
         (self.steps as f64 * p.life_every * p.tick / p.year) as u32 + p.sow as u32
     }
 
-    /// Seeds leave their parents: some stay, some go with the wind, some down the rivers.
-    fn seeds(&mut self, p: &Params, ter: &Terrain, q: &[f64], decl: f64) {
+    /// Seeds leave their parents: some fall near, some go with the wind, some down the rivers; in the sea the
+    /// water's mixing scatters them.
+    fn seeds(&mut self, p: &Params, ter: &Terrain, q: &[f64], wx: &Weather, season: f64) {
         let n = self.n;
         let year = self.year(p);
+        let cell_m = p.cell_km * 1000.0;
+        // The sea mixes what floats in it as it mixes its nutrients (`sea_mix` of a difference crosses an edge an
+        // update): between two releases that scatters a seed this far along each axis.
+        let sea_sd = cell_m * (0.5 * p.sea_mix * p.seed_every * p.life_every).sqrt();
         for c in 0..n * n {
+            let (u, v) = wx.wind(p, ter.lat[c / n], season);
             for i in 0..K {
                 let x = self.co[c * K + i];
                 if !x.live() || x.o[SEED].m < 1e-12 {
@@ -579,25 +602,35 @@ impl Life {
                     self.gen.push(Some(Box::new(Genotype::new(genes, x.g, year, false))));
                     rg = (self.gen.len() - 1) as u32;
                 }
+                if ter.sea[c] {
+                    for j in 0..4 {
+                        let part = if j == 3 { std::mem::take(&mut rest) } else { scale(&mut rest, 1.0 / (4 - j) as f64) };
+                        let (dx, dy) = (sea_sd * self.rng.normal(), sea_sd * self.rng.normal());
+                        let at = self.land(p, c, dx, dy);
+                        self.deposit(at, rg, part);
+                    }
+                    continue;
+                }
                 let pw = ph.wing / (ph.wing + 0.1);
-                let pf = if !ter.sea[c] && q[c] >= p.river_q { ph.float / (ph.float + 0.1) } else { 0.0 };
+                let pf = if q[c] >= p.river_q { ph.float / (ph.float + 0.1) } else { 0.0 };
                 let mut wind = scale(&mut rest, pw);
                 let flt = scale(&mut rest, pf);
-                // the wind: three packets along the band's wind, spread across it
-                let d = (1.0 + p.wind_seed * ph.wing * (1e-5 / ph.seed_mass).cbrt()).min(100.0);
-                let y = c / n;
-                let sgn = if zonal(p, ter.lat[y], decl) >= 0.0 { 1.0 } else { -1.0 };
+                // the wind: a seed falls from its stand's height and the wind carries it all the while. A bare seed
+                // falls as a ball does (by its mass to the 1/6); a wing's drag is added to the ball's. Three
+                // packets, each in a gust of its own.
+                let ball = p.fall_seed * (ph.seed_mass / 1e-5).powf(1.0 / 6.0);
+                let fall = (1.0 / (ball * ball) + ph.wing / (p.fall_wing * p.fall_wing)).powf(-0.5);
+                let secs = x.h / fall;
                 for j in 0..3 {
                     let part = if j == 2 { std::mem::take(&mut wind) } else { scale(&mut wind, 1.0 / (3 - j) as f64) };
-                    let dx = sgn * d * (0.5 + self.rng.f64());
-                    let dy = d * (self.rng.f64() - 0.5);
-                    let tx = ((c % n) as i64 + dx.round() as i64).rem_euclid(n as i64) as usize;
-                    let ty = (y as i64 + dy.round() as i64).rem_euclid(n as i64) as usize;
-                    self.deposit(ty * n + tx, rg, part);
+                    let along = secs * -(1.0 - self.rng.f64()).ln();
+                    let across = along * (self.rng.f64() - 0.5);
+                    let at = self.land(p, c, along * u - across * v, along * v + across * u);
+                    self.deposit(at, rg, part);
                 }
                 // the river: down the network, until the river drops it or the sea takes it
                 if flt.m > 0.0 {
-                    let steps = (p.float_seed * ph.float * -(1.0 - self.rng.f64()).ln()) as usize + 1;
+                    let steps = (p.float_seed * ph.float * -(1.0 - self.rng.f64()).ln() / cell_m + self.rng.f64()) as usize;
                     let mut at = c;
                     for _ in 0..steps {
                         let d = ter.down[at];
@@ -611,10 +644,11 @@ impl Life {
                     }
                     self.deposit(at, rg, flt);
                 }
-                // what falls near: most in the cell, some over its edges
+                // what falls near lands within about the stand's height of it: that share crosses each edge
+                let near = (x.h / (PI * cell_m)).min(0.2);
                 let nb = nbrs(n, c);
                 for (j, &m) in nb.iter().enumerate() {
-                    let part = scale(&mut rest, 0.075 / (1.0 - 0.075 * j as f64));
+                    let part = scale(&mut rest, near / (1.0 - near * j as f64));
                     self.deposit(m, rg, part);
                 }
                 self.deposit(c, rg, rest);

@@ -13,6 +13,9 @@
 //! and river, the same producers in the sea, small eaters with detox keys; a cohort is an age class that dies
 //! at the lifespan its wood sets, and a free slot is won by lottery from the seed bank. Sown in year `sow`.
 //!
+//! e109 (#128): every distance the living cross is in metres (`life.rs`), so the same laws hold on the islands.
+//! On the planet those metres never cross a cell of 63 km: its rung 2 is read from e104's and e105's crates.
+//!
 //! Run: cargo run --release -p base -- <prefix> [key=value ...] [file.params ...]
 //! Writes `<prefix>_log.csv` (a row a year), `_census.csv` (a row a producer genotype a year), `_eaters.csv`,
 //! `_maps.bin` + `_maps.json` (the last `maps_years` years' annual maps, and the static ones), `_lead.bin` +
@@ -154,13 +157,14 @@ params! {
     m_min = 1e-6, "kg: a stand below it dies";
     seed_every = 15.0, "life steps between two seed releases";
     seed_decay = 1.0, "seed bank lost a year";
-    wind_seed = 20.0, "cells a winged seed of 0.01 g goes at full wing";
-    float_seed = 50.0, "cells of river a floating seed goes at full float (mean)";
+    fall_seed = 7.9, "m/s: the fall of a bare seed of 0.01 g, a ball of water's density (by its mass to the 1/6)";
+    fall_wing = 0.35, "m/s: the fall of a seed that is all wing (a membrane of 30 g a m2; a maple's key falls at ~1)";
+    float_seed = 2000.0, "m of river a floating seed goes a unit of float before it strands (mean; a stream runs 1 km in an hour)";
     river_q = 20.0, "mm an update out of a cell: a river that carries seeds";
     m_need = 1e-5, "kg of seed reserve at which half the seedlings establish in open wet ground";
     p_mut = 0.01, "chance a seed release carries a mutant genome, the whole release (e104: 1 seed in 100)";
-    lightning = 0.05, "strikes a year a land cell";
-    fire_spread = 0.8, "chance fire crosses to a dry neighbour with ample fuel";
+    lightning = 0.1, "strikes a year a km2 of land that would light dry fuel (of ~3 flashes, most come with rain)";
+    fire_run = 2000.0, "m a fire runs through dry, ample fuel before the weather ends it (mean: 0.1 m/s for an afternoon)";
     fuel_half = 0.5, "kg of fuel at which fire spreads at half its chance";
     fuel_min = 0.05, "kg of fuel below which nothing burns";
     flame = 2.0, "m of flame a kg of fuel";
@@ -174,6 +178,7 @@ params! {
     eater_cold = 5.0, "eaters dying a year per 10 C of frost";
     harm = 1.0, "kg of eater killed a kg of fully foreign compound-leaf eaten, per 1% compound";
     eater_disp = 5.0, "share of eaters leaving a year at full wing";
+    eater_fly = 300.0, "m a leaving eater flies (mean), and the wind carries it as far again";
     eater_mut = 0.001, "chance a leaving eater packet carries a mutant";
     lead_every = 10.0, "years between maps of each cell's leading genotype";
     life_max = 300.0, "years a stand of all-wood, fully tough wood lives (e104; 1 year with no wood)";
@@ -460,7 +465,7 @@ fn main() {
             if life.sown {
                 life.accumulate(&air.light, &air.temp, &wx.hit, p.threads as usize);
                 if life.due(&p) {
-                    let l = life.step(&p, &ter, &sat, &mut air.ground, &mut air.vapor, &mut hy.deep, &mut hy.a, &mut hy.b, &hy.q, step);
+                    let l = life.step(&p, &ter, &sat, &wx, &mut air.ground, &mut air.vapor, &mut hy.deep, &mut hy.a, &mut hy.b, &hy.q, step);
                     lf.add(&l);
                 }
             }
