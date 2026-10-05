@@ -82,8 +82,80 @@ the last 10 read by `measure.py`. All runs on Ubuntu (`ssh leo`).
 
 ## Result
 
-To come.
+### The terrain
+
+Sixteen seeds were drawn three ways (`terrain.py`, seconds each on Ubuntu; `results/terrain/`, not committed). With
+the border sunk over 6 km, as first written, the islands lay against it and were cut straight; over 16 km the land
+drew into one island of 300-400 km2; over 12 km (`edge` 96) three of sixteen seeds hold three or more islands of 20
+km2. Seed 1 is taken (`worlds/small.params seed=1`): 410 km2 of land in eight islands, five of them over 20 km2 -
+149 km2 (1,197 m high), 71 (1,524 m), 64 (1,142 m), 63 (2,002 m) and 24 (964 m) - and the sea between those five
+2.3 to 32.5 km wide. (The line written before - "3-5 islands of 1 km2 or more" - fits almost no seed: the noise
+always leaves a few islets. It is read as islands of 20 km2.) The ground is steep, as a high island is: the median
+slope is 0.41 and a tenth of the land is steeper than 0.78. No rate was changed after the first trial (3 years).
+
+### The run
+
+`results/isles1`, Ubuntu, 4 threads, 30 years in 411 s (13.6 s a year: the air's pass 9.2 s on one thread, the water
+3.1 s); the last 10 read by `measure.py` (`results/measure.csv`, thresholds in `results/provenance.csv`). A year is
+159 days, so a year's rain is 0.44 of what the same weather gives in 365.
+
+| | reading | line | verdict |
+|---|---|---|---|
+| H1 ledgers | water 3e-13, A 4e-14, B 4e-14, the air's pass 1e-13 (worst year) | 1e-9 | **yes** |
+| H2 rivers | 6.8% of the land carries 0.1 m3/s (0.39% carries 1 m3/s, the largest 1.7); the land's water drifts -0.6% a year | 1%; 1% a year | **yes** |
+| H3 chemistry | A:B spans x9 (p10 0.03, p90 0.32), A + B x68 | x4, x4 | **yes** |
+| H4 years | consecutive years' rain maps correlate 0.99; the land's temperature trends +0.18 C a year over the ten | 0.2-0.95; 0.1 | **no** as written |
+| H5 places | 4.5 effective places on the land by e102's bands | 15.4 | **no** |
+
+**The water (#118).** 1,741 mm a year rains on the land and 1,670 mm reaches the sea: 96% runs off, against 10% on
+the planet. The land no longer rains its own water back - what it gives the air leaves with the wind - but it gives
+little: 73 mm a year, because the air over a small island is the sea's, mild and humid, where the planet's noon
+ground stood at 55-62 C. So streams are everywhere (500 lake cells, a stream on 6.8% of the land) and the bare soil
+is full: 98% of the land is in e102's wet band and 0.5% in its dry one.
+
+**Rain is where the land is high.** It correlates 0.91 with height: 53-607 mm a year under 100 m (p10-p90), 2,892-
+5,304 mm over 1,000 m, against 293 mm on the open sea. Across the land the year's rain spans x15 (251 to 3,776 mm).
+Height is not all of it: land of one height differs x11 under 100 m and x5 from 100 to 300 m, and on the five large
+islands the windward half of the lowland gets 2.1 times the lee half's rain (the median; 1.7 to 3.5). The wet side
+is weaker than was written before the run: the excess falls 5.5 km downwind, about an island's half-width, so the
+rain sits on the crest and just beyond it, and the wind wanders 45 degrees.
+
+**Heat and light.** The sea settles at 20.8 C. The land's year means run from 10.7 to 21.1 C (p5-p95; 4.0 C on the
+highest ground), by height, and a cell's quarters differ by 6.6 C. A slope's light spans x2.3 (0.13 to 0.30) by the
+way it faces.
+
+**The years.** H4 again read the fixed pattern (e102 did): a year's rain map is mostly the map. Read as departures,
+a cell's rain varies 17% between years (the planet's 12%), a year keeps 0.33 of the last one's departure, and 10% of
+cell-years get under 80% of their mean. The trend is not a drift: a year's anomaly is now the whole world's, so the
+land's mean temperature moves between 15.1 and 17.9 C from year to year and ten years of it have a slope. No storm
+came in 30 years (one is due in 70).
+
+**The chemistry holds.** A:B and fertility span more than on the planet (x9 and x68 against x14 and x19); the islands
+differ by their rock (the median A:B is 0.04 on three of them, 0.15 on three, 0.32 on two).
+
+**Why 4.5 places and not 15.4.** e102's bands were cut for a planet. Its temperature bands part at 5 and 20 C: this
+land has no ground under 5 C (0.02%) and 86% of it between the two. Its moisture bands part the soil's fill in
+thirds: the bare soil is full almost everywhere. What is left is the chemistry and the streams. What the land does
+differ by is continuous and the count does not see it: 10 C by height, the rain x15, the light x2.3.
 
 ## Conclusion
 
-To come.
+Holds for this one world (seed 1) with nothing living on it.
+
+- **The ground stands on the small world** (H1-H3): every ledger closes, the pass of the air carries out exactly
+  what it took up less what it rained, streams reach the sea from every island, and the chemistry parts the land as
+  on the planet. It goes into `base/` with its world file.
+- **#118 is answered by the scale**: the land rains none of its water back, and the years vary 17%. Runoff is now
+  96% and not Earth's 35%, on bare ground; what plants transpire is rung 2's to read.
+- **It does not make places by e102's count** (H5: 4.5 against 15.4), and the plan's turn (more land or more
+  height, #116) is **not taken**: neither would add what is missing. A cold band needs ground over 2.4 km at this
+  latitude, a few per cent of any island; the moisture bands need something that draws the soil down, and on this
+  ground only plants can (the drier half of the land under 100 m gets 53-250 mm a year). So whether rain x15, 10 C
+  and light x2.3 are places is read at rung 2 (#128), by whether producers sort by them and whether the soil's fill
+  then differs; if they do not, the remedies are the climate's (the sea air's share of a cell's temperature, the
+  latitude), not the land's size.
+- **What could part the lines** (#117's objection): five islands with 2.3 to 32.5 km of sea between them, each with
+  its own height (964 to 2,002 m), rain (1,360 to 2,770 mm a year) and rock.
+- **Cost**: 13.6 s a year, the air's pass 9.2 s of it on one thread.
+
+`vision.md`: row A. `foundation.md`: the laws of sun, heat and air, rung 1's reading, today's world.
