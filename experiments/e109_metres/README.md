@@ -89,6 +89,14 @@ m/s for the living) and `src/main.rs` (the parameters) changed.
 A pilot first (one run to year 40, not kept): the ledgers close, the land fills, seeds cross cells, fires stay
 fires. Then two runs, `life` 1 and 2. All runs on Ubuntu (`ssh leo`).
 
+**The pilot** (`results/pilot/`, not kept; 922 s): the first ten years are e108's to the digit, the ledgers close
+(4e-12), the land is 93% covered at year 40, the leading genotypes gain cells (one from 1,657 to 5,349 leading cells
+in 30 years), mutants hold 0.3% of the biomass, and 0.4% of the land burns a year (1.1% of the driest third, none of
+the wettest). No rate was changed after it. **Seen before the batch, and left as it is**: the sea's producers hold
+the islands' waters only - 98% of the sea within 0.5 km of land, 26% of it 2-8 km out, none beyond 8 km, where the
+water holds a fiftieth of the nutrients - so the sea's cover falls (0.45 to 0.25 in 30 years) and H2's 20% of the
+sea may fail. That is the ground's, not a distance: this sea is nine times the land and fed by its rivers alone.
+
 **Stop early if:**
 
 - `water_err` > 1e-6 at 23760
