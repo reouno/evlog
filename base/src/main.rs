@@ -4,6 +4,10 @@
 //! Rung 1 (e102): the ground with nothing living on it - terrain and sea (e061), rock provinces, soils,
 //! a drainage network with lakes and groundwater, nutrients A and B that the rock gives and the water
 //! carries, winds by latitude band, years that differ, storms.
+//! The same ground on the small world (e108, #126): with `worlds/isles1.params` the world is 64 km of sea with
+//! islands in it - a border of sea, one hour for the whole world, a slope's light by its tilt, the air followed
+//! across the world in one pass (`climate.rs`), a year's anomaly and a storm that are the whole world's. With those
+//! parameters at their defaults (`worlds/c1225.params`) it is the planet, to the digit.
 //! Rung 2 (e103, e104): producers that evolve as cohorts in the genome language (`genome.rs`, `life.rs`):
 //! organs with their own A and B, light by height, carbon paid in water, roots, litter, fire, seeds by wind
 //! and river, the same producers in the sea, small eaters with detox keys; a cohort is an age class that dies
@@ -30,7 +34,6 @@ use std::time::Instant;
 use terrain::Terrain;
 
 const POOL: f64 = 500.0; // mm standing that makes a land cell a lake (e061)
-const RIVER: f64 = 20.0; // mm an update run out of a cell: a river, for the log only
 
 macro_rules! params {
     ($($name:ident = $default:expr, $doc:literal;)*) => {
@@ -101,6 +104,20 @@ params! {
     storm_radius = 10.0, "cells: a storm's radius";
     storm_updates = 3.0, "updates a storm lasts";
     storm_rain = 4.0, "times the rain inside a storm";
+    // e108: the small world (#126, #127). The defaults leave the planet as it was.
+    cell_km = 63.0, "km: a cell's side";
+    edge = 0.0, "cells from the border over which the ground sinks under the sea (0: the world wraps as a planet)";
+    span_lon = 1.0, "share of a day the world's width spans (1: a planet's longitudes; 0: one hour everywhere)";
+    aspect = 0.0, "1: a slope's light follows its tilt against the sun";
+    sweep = 0.0, "1: the air crosses the world within an update and is followed across it (e108); 0: the planet's air";
+    wind_ms = 5.5, "m/s: the wind of the sweep";
+    wind_sd = 45.0, "degrees: how far the wind's direction wanders about its season's (the sweep)";
+    wind_hold = 3.0, "days a wandering of the wind lasts (the sweep)";
+    var_wind = 10.0, "degrees: the spread of a year's turn of the wind (the sweep)";
+    air_couple = 1.0, "m/s: the wind at which the sea air sets half of a land cell's equilibrium (the sweep)";
+    rain_tau = 1000.0, "s: the time in which the air's excess water falls (cloud to rain; the sweep)";
+    evap_tau = 2.0e5, "s: the time in which the air takes up its deficit from open water (the sweep)";
+    lifted = 0.05, "share of the air's water in the layer a land lifts to its dew (the sweep)";
     years = 30.0, "years to run";
     maps_years = 10.0, "the last years whose annual maps are written";
     // e103: the living (#116 rung 2). Masses kg of dry matter a m2, nutrients g a m2, rates a year.
@@ -193,32 +210,35 @@ struct Year {
     rain: Vec<f64>,
     q: Vec<f64>,
     lake: Vec<f64>,
+    light: Vec<f64>,
     updates: usize,
 }
 
-const FIELDS: [&str; 16] = [
-    "temp", "swing", "fill", "rain", "discharge", "lake", "a", "b", "biomass", "height", "lai", "litter", "eaters", "burnt", "transp", "lead",
+const FIELDS: [&str; 17] = [
+    "temp", "swing", "fill", "rain", "discharge", "lake", "a", "b", "biomass", "height", "lai", "litter", "eaters", "burnt", "transp", "lead", "light",
 ];
 
 impl Year {
     fn new(cells: usize) -> Self {
         let z = vec![0.0; cells];
-        Year { temp: z.clone(), quarter: [z.clone(), z.clone(), z.clone(), z.clone()], fill: z.clone(), rain: z.clone(), q: z.clone(), lake: z, updates: 0 }
+        Year { temp: z.clone(), quarter: [z.clone(), z.clone(), z.clone(), z.clone()], fill: z.clone(), rain: z.clone(), q: z.clone(), lake: z.clone(), light: z, updates: 0 }
     }
     fn add(&mut self, t: &Terrain, air: &Air, hy: &Hydro, quarter: usize, threads: usize) {
-        let (temp, qt, rain, fill, q, lake) = (
+        let (temp, qt, rain, fill, q, lake, light) = (
             par::Shared::new(&mut self.temp),
             par::Shared::new(&mut self.quarter[quarter]),
             par::Shared::new(&mut self.rain),
             par::Shared::new(&mut self.fill),
             par::Shared::new(&mut self.q),
             par::Shared::new(&mut self.lake),
+            par::Shared::new(&mut self.light),
         );
         par::pieces(threads, t.sea.len(), |lo, hi| {
             for c in lo..hi {
                 *temp.at(c) += air.temp[c];
                 *qt.at(c) += air.temp[c];
                 *rain.at(c) += air.rain_now[c];
+                *light.at(c) += air.light[c];
                 if !t.sea[c] {
                     *fill.at(c) += (air.ground[c] / t.cap[c]).min(1.0);
                     *q.at(c) += hy.q[c];
@@ -259,6 +279,7 @@ impl Year {
             f(&life.burnt),
             f(&life.transp),
             st.lead.iter().map(|&g| if g == terrain::NONE { -1.0 } else { g as f32 }).collect(),
+            self.light.iter().map(|v| (v / u) as f32).collect(),
         ]
     }
 }
@@ -405,7 +426,7 @@ fn main() {
     let mut cm = 0.0f64; // the living's matter: fixed less returned
     let upy = (p.year / p.tick).round() as usize;
     let mut log = std::fs::File::create(format!("{prefix}_log.csv")).unwrap();
-    writeln!(log, "step,year,land_temp,land_rain,land_evap,sea_evap,sea_rain,to_sea,water,water_err,a,b,a_err,b_err,weathered_a,weathered_b,river_a,river_b,buried_a,buried_b,rivers,lakes,storms,land_water,land_biomass,sea_biomass,land_cover,sea_cover,land_height,litter,eaters,eater_cells,gpp,resp,transp,eaten,decayed,burnt,burnt_cells,genotypes,eater_genotypes,leading,mutant_share,matter,c_err,ms_step").unwrap();
+    writeln!(log, "step,year,land_temp,land_rain,land_evap,sea_evap,sea_rain,to_sea,water,water_err,a,b,a_err,b_err,weathered_a,weathered_b,river_a,river_b,buried_a,buried_b,rivers,lakes,storms,land_water,land_biomass,sea_biomass,land_cover,sea_cover,land_height,litter,eaters,eater_cells,gpp,resp,transp,eaten,decayed,burnt,burnt_cells,genotypes,eater_genotypes,leading,mutant_share,matter,c_err,ms_step,wind_net,air_err").unwrap();
     let mut cen = std::io::BufWriter::new(std::fs::File::create(format!("{prefix}_census.csv")).unwrap());
     writeln!(cen, "year,id,parent,born,genes,mass_land,mass_sea,cells,lead_cells,h_real,age,lifespan,alloc_leaf,alloc_wood,alloc_root,alloc_store,alloc_seed,leaf_b,leaf_a,wood_b,wood_a,root_b,root_a,height,deep,seed_mass,wing,float,compound,t_opt,breadth,shed,n_keys,keys,conditional").unwrap();
     let mut ecen = std::io::BufWriter::new(std::fs::File::create(format!("{prefix}_eaters.csv")).unwrap());
@@ -451,7 +472,7 @@ fn main() {
             secs[3] += t3.elapsed().as_secs_f64();
         }
         eprintln!("  secs: air {:.1}, water {:.1}, life {:.1}, sums {:.1}", secs[0], secs[1], secs[2], secs[3]);
-        sea_net += fl.sea_evap - fl.sea_rain - hf.to_sea;
+        sea_net += fl.sea_evap - fl.sea_rain - fl.wind - hf.to_sea;
         na += hf.weathered_a - hf.buried_a;
         nb += hf.weathered_b - hf.buried_b;
         cm += lf.fixed - lf.returned;
@@ -467,7 +488,7 @@ fn main() {
         let sfn = (cells - land) as f64;
         let u = year.updates as f64;
         let land_temp = (0..cells).filter(|&c| !ter.sea[c]).map(|c| year.temp[c]).sum::<f64>() / u / lfn;
-        let rivers = (0..cells).filter(|&c| !ter.sea[c] && year.q[c] / u >= RIVER).count();
+        let rivers = (0..cells).filter(|&c| !ter.sea[c] && year.q[c] / u >= p.river_q).count();
         let lakes = (0..cells).filter(|&c| !ter.sea[c] && year.lake[c] / u >= 0.5).count();
         let st = state(&life, cells);
         let (mut lbio, mut sbio, mut lcov, mut scov, mut lh) = (0.0, 0.0, 0usize, 0usize, 0.0);
@@ -492,12 +513,12 @@ fn main() {
         let ms = ty.elapsed().as_secs_f64() * 1000.0 / (upy as f64 * p.tick);
         writeln!(
             log,
-            "{},{},{:.3},{:.1},{:.1},{:.6e},{:.6e},{:.1},{:.6e},{:.3e},{:.6e},{:.6e},{:.3e},{:.3e},{:.6e},{:.6e},{:.6e},{:.6e},{:.6e},{:.6e},{},{},{},{:.6e},{:.5},{:.5},{:.4},{:.4},{:.3},{:.5},{:.4e},{},{:.6e},{:.6e},{:.1},{:.6e},{:.6e},{:.6e},{},{},{},{},{:.6e},{:.6e},{:.3e},{:.3}",
+            "{},{},{:.3},{:.1},{:.1},{:.6e},{:.6e},{:.1},{:.6e},{:.3e},{:.6e},{:.6e},{:.3e},{:.3e},{:.6e},{:.6e},{:.6e},{:.6e},{:.6e},{:.6e},{},{},{},{:.6e},{:.5},{:.5},{:.4},{:.4},{:.3},{:.5},{:.4e},{},{:.6e},{:.6e},{:.1},{:.6e},{:.6e},{:.6e},{},{},{},{},{:.6e},{:.6e},{:.3e},{:.3},{:.6e},{:.3e}",
             (yr + 1) * upy * p.tick as usize, yr + 1, land_temp, fl.land_rain / lfn, fl.land_evap / lfn, fl.sea_evap, fl.sea_rain, hf.to_sea / lfn,
             w, werr, a, b, aerr, berr, hf.weathered_a, hf.weathered_b, hf.river_a, hf.river_b, hf.buried_a, hf.buried_b,
             rivers, lakes, wx.storms_seen, air.ground.iter().sum::<f64>() + hy.water(),
             lbio / lfn, sbio / sfn, lcov as f64 / lfn, scov as f64 / sfn, lh / lbio.max(1e-30), life.lit.iter().map(|l| l.m).sum::<f64>() / cells as f64,
-            emass / cells as f64, ecells, lf.gpp, lf.resp, lf.transp / lfn, lf.eaten, lf.decayed, lf.burnt, lf.burnt_cells, ng, neg, leads.len(), mutant_share, lm, cerr, ms
+            emass / cells as f64, ecells, lf.gpp, lf.resp, lf.transp / lfn, lf.eaten, lf.decayed, lf.burnt, lf.burnt_cells, ng, neg, leads.len(), mutant_share, lm, cerr, ms, fl.wind, fl.air_err
         )
         .unwrap();
         log.flush().unwrap();

@@ -5,6 +5,14 @@
 //! - storms, which multiply the rain where they pass.
 //! The ground's water lives here (the air takes it up and rains on it); where it goes once it is on the
 //! ground is `hydro`'s.
+//!
+//! The small world (e108, #127; `sweep`): at 125 m a cell the wind crosses the whole world within an update, so
+//! the air is not a store that shifts a cell. It enters at the windward border as sea air and is followed across
+//! the world in one pass, cell after cell downwind, by the same two laws - it takes up water by its deficit and
+//! rains what it cannot hold - with what it can hold lowered by the height the land lifts it. The wet side and
+//! the dry side are that pass's result. The sea air also sets most of a land cell's temperature; the wind's
+//! direction turns with the season, wanders from day to day and differs by year; a year's anomaly is one number
+//! for the whole world, and a storm is the whole world's.
 
 use crate::noise::{noise, normalised, Rng};
 use crate::par::{self, Shared};
@@ -43,6 +51,10 @@ pub struct Flux {
     pub sea_rain: f64,
     pub land_evap: f64,
     pub land_rain: f64,
+    /// The sweep: what the wind carried out of the world's air, net (the open edge of the air).
+    pub wind: f64,
+    /// The sweep: how far the pass is from carrying out exactly what it took up less what it rained.
+    pub air_err: f64,
 }
 
 impl Flux {
@@ -51,11 +63,13 @@ impl Flux {
         self.sea_rain += o.sea_rain;
         self.land_evap += o.land_evap;
         self.land_rain += o.land_rain;
+        self.wind += o.wind;
+        self.air_err = self.air_err.max(o.air_err);
     }
 }
 
 struct Storm {
-    x: f64,
+    x: f64, // in the sweep: the direction its wind blows to, in degrees
     y: f64,
     left: u32,
 }
@@ -67,6 +81,11 @@ pub struct Weather {
     t_to: Vec<f64>,
     r_now: Vec<f64>,
     r_to: Vec<f64>,
+    // the sweep: this year's turn of the wind, its wandering now, and a storm's own direction
+    w_now: f64,
+    w_to: f64,
+    wobble: f64,
+    pub storm_dir: Option<f64>,
     storms: Vec<Storm>,
     pub rain_f: Vec<f64>, // this update's multiplier of the rain
     pub hit: Vec<bool>,   // under a storm this update (e103: storms fell tall stands)
@@ -81,6 +100,10 @@ impl Weather {
             t_to: vec![0.0; cells],
             r_now: vec![0.0; cells],
             r_to: vec![0.0; cells],
+            w_now: 0.0,
+            w_to: 0.0,
+            wobble: 0.0,
+            storm_dir: None,
             storms: Vec::new(),
             rain_f: vec![1.0; cells],
             hit: vec![false; cells],
@@ -94,6 +117,14 @@ impl Weather {
     pub fn new_year(&mut self, p: &Params) {
         let n = p.size as usize;
         let fresh = (1.0 - p.var_rho * p.var_rho).max(0.0).sqrt();
+        if p.sweep != 0.0 {
+            // A small world lies inside one anomaly: one number for its warmth, one for its rain, one for its wind.
+            let (zt, zr, zw) = (self.rng.normal(), self.rng.normal(), self.rng.normal());
+            self.t_to.iter_mut().for_each(|v| *v = p.var_rho * *v + fresh * zt);
+            self.r_to.iter_mut().for_each(|v| *v = p.var_rho * *v + fresh * zr);
+            self.w_to = p.var_rho * self.w_to + fresh * zw;
+            return;
+        }
         let ft = normalised(noise(n, self.rng.next_u64(), p.var_grain, 0.5, p.var_grain / 4.0));
         let fr = normalised(noise(n, self.rng.next_u64(), p.var_grain, 0.5, p.var_grain / 4.0));
         for c in 0..self.t_to.len() {
@@ -106,6 +137,23 @@ impl Weather {
     fn update(&mut self, p: &Params) {
         let n = p.size as usize;
         let k = (p.tick / (p.year / 4.0)).min(1.0);
+        let whole = p.sweep != 0.0;
+        let mut stormy = 1.0;
+        if whole {
+            // The wind: the year's turn comes in over a quarter, the wandering keeps `wind_hold` days; a storm is
+            // the whole world's, with a wind of its own.
+            self.w_now += k * (self.w_to - self.w_now);
+            let rho = (-(p.tick / p.day) / p.wind_hold).exp();
+            self.wobble = rho * self.wobble + (1.0 - rho * rho).sqrt() * self.rng.normal();
+            for _ in 0..self.rng.poisson(p.storms * p.tick / p.year) {
+                self.storms.push(Storm { x: self.rng.f64() * 360.0, y: 0.0, left: p.storm_updates as u32 });
+                self.storms_seen += 1;
+            }
+            self.storm_dir = self.storms.first().map(|s| s.x);
+            if self.storm_dir.is_some() {
+                stormy = p.storm_rain;
+            }
+        }
         {
             let (tn, rn, rf, hit) = (Shared::new(&mut self.t_now), Shared::new(&mut self.r_now), Shared::new(&mut self.rain_f), Shared::new(&mut self.hit));
             let (tt, rt) = (&self.t_to, &self.r_to);
@@ -113,10 +161,17 @@ impl Weather {
                 for c in lo..hi {
                     *tn.at(c) += k * (tt[c] - *tn.at(c));
                     *rn.at(c) += k * (rt[c] - *rn.at(c));
-                    *rf.at(c) = (p.var_rain * *rn.at(c)).exp();
-                    *hit.at(c) = false;
+                    *rf.at(c) = (p.var_rain * *rn.at(c)).exp() * stormy;
+                    *hit.at(c) = stormy != 1.0;
                 }
             });
+        }
+        if whole {
+            for s in &mut self.storms {
+                s.left -= 1;
+            }
+            self.storms.retain(|s| s.left > 0);
+            return;
         }
         for _ in 0..self.rng.poisson(p.storms * p.tick / p.year) {
             self.storms.push(Storm { x: self.rng.f64() * n as f64, y: self.rng.f64() * n as f64, left: p.storm_updates as u32 });
@@ -143,6 +198,11 @@ impl Weather {
     pub fn temp(&self, c: usize, p: &Params) -> f64 {
         p.var_temp * self.t_now[c]
     }
+
+    /// The sweep: degrees the wind is turned from its season's direction, by the year and by its wandering.
+    pub fn wind_dev(&self, p: &Params) -> f64 {
+        p.var_wind * self.w_now + p.wind_sd * self.wobble
+    }
 }
 
 pub struct Air {
@@ -153,10 +213,16 @@ pub struct Air {
     pub rain_now: Vec<f64>, // mm fallen in the last update
     rate: Vec<f64>,
     inv_cap: Vec<f64>,
+    // the sweep: the air's water over each cell as the last pass left it (what `vapor` has over it since was
+    // added by the living), and the share of its lifted layer a cell's height wrings out
+    col: Vec<f64>,
+    lift: Vec<f64>,
     // scratch
     h0: Vec<f64>,
     sin_lo: Vec<f64>,
     sin_hi: Vec<f64>,
+    cos_lo: Vec<f64>,
+    cos_hi: Vec<f64>,
     theta: Vec<f64>,
     moved: Vec<f64>,
 }
@@ -199,6 +265,8 @@ impl Air {
         let ground: Vec<f64> = (0..cells).map(|c| if t.sea[c] { 0.0 } else { 0.5 * t.cap[c] }).collect();
         Air {
             temp,
+            col: vapor.clone(),
+            lift: t.air.iter().map(|&h| 1.0 - (-SAT_K * p.lapse / 1000.0 * h).exp()).collect(),
             vapor,
             ground,
             light: vec![0.0; cells],
@@ -208,6 +276,8 @@ impl Air {
             h0: vec![0.0; n],
             sin_lo: vec![0.0; n],
             sin_hi: vec![0.0; n],
+            cos_lo: vec![0.0; n],
+            cos_hi: vec![0.0; n],
             theta: vec![0.0; cells],
             moved: vec![0.0; cells],
         }
@@ -229,17 +299,25 @@ impl Air {
         // The light: the sun's height averaged over the update, worked out exactly (e061).
         let span = TAU * p.tick / p.day;
         for x in 0..n {
-            let h0 = (TAU * (step / p.day + x as f64 / n as f64) + PI).rem_euclid(TAU) - PI;
+            let h0 = (TAU * (step / p.day + p.span_lon * x as f64 / n as f64) + PI).rem_euclid(TAU) - PI;
             self.h0[x] = h0;
             self.sin_lo[x] = h0.sin();
             self.sin_hi[x] = (h0 + span).sin();
+            self.cos_lo[x] = h0.cos();
+            self.cos_hi[x] = (h0 + span).cos();
         }
+        // The sweep: the sea air's temperature (the sea's mean), and how much of a land cell's equilibrium it sets.
+        let aspect = p.aspect != 0.0;
+        let (sea_sum, sea_n) = (0..cells).filter(|&c| t.sea[c]).fold((0.0, 0usize), |(s, k), c| (s + self.temp[c], k + 1));
+        let t_air = sea_sum / sea_n.max(1) as f64;
+        let couple = if p.sweep != 0.0 { p.wind_ms / (p.wind_ms + p.air_couple) } else { 0.0 };
         let lapse = p.lapse / 1000.0;
         let threads = p.threads as usize;
         let wxr = &*wx;
         {
             let (light, temp, theta) = (Shared::new(&mut self.light), Shared::new(&mut self.temp), Shared::new(&mut self.theta));
             let (h0s, slo, shi, rate) = (&self.h0, &self.sin_lo, &self.sin_hi, &self.rate);
+            let (clo, chi) = (&self.cos_lo, &self.cos_hi);
             par::pieces(threads, n, |ylo, yhi| {
                 for y in ylo..yhi {
                     let (a, b) = (t.lat[y].sin() * sd, t.lat[y].cos() * cd);
@@ -248,7 +326,29 @@ impl Air {
                     for x in 0..n {
                         let c = y * n + x;
                         let (lo0, hi0) = (h0s[x], h0s[x] + span);
-                        let q = if rise.is_infinite() {
+                        let q = if aspect {
+                            // The lit part of the update - its length and the sums of the hour's sine and cosine
+                            // over it - gives the sun's mean direction (up, east, north); the light is what of it
+                            // falls along the ground's normal.
+                            let (mut dl, mut ss, mut cc) = (0.0, 0.0, 0.0);
+                            if rise.is_infinite() {
+                                (dl, ss, cc) = (span, shi[x] - slo[x], chi[x] - clo[x]);
+                            } else if rise >= 0.0 {
+                                let cos_rise = rise.cos();
+                                for noon in [0.0, TAU] {
+                                    let (lo, s_lo, c_lo) = if lo0 > noon - rise { (lo0, slo[x], clo[x]) } else { (noon - rise, -sin_rise, cos_rise) };
+                                    let (hi, s_hi, c_hi) = if hi0 < noon + rise { (hi0, shi[x], chi[x]) } else { (noon + rise, sin_rise, cos_rise) };
+                                    if hi > lo {
+                                        dl += hi - lo;
+                                        ss += s_hi - s_lo;
+                                        cc += c_hi - c_lo;
+                                    }
+                                }
+                            }
+                            let (sphi, cphi) = (t.lat[y].sin(), t.lat[y].cos());
+                            let (up, east, north) = (a * dl + b * ss, cd * cc, cphi * sd * dl - sphi * cd * ss);
+                            ((up * t.nz[c] + east * t.nx[c] + north * t.ny[c]) / span).max(0.0)
+                        } else if rise.is_infinite() {
                             a + b * (shi[x] - slo[x]) / span
                         } else if rise < 0.0 {
                             0.0
@@ -264,7 +364,11 @@ impl Air {
                             (sum / span).max(0.0)
                         };
                         *light.at(c) = q;
-                        let eq = p.night + p.gain * q - lapse * t.air[c] + wxr.temp(c, p);
+                        let eq = if couple > 0.0 && !t.sea[c] {
+                            (1.0 - couple) * (p.night + p.gain * q) + couple * t_air - lapse * t.air[c] + wxr.temp(c, p)
+                        } else {
+                            p.night + p.gain * q - lapse * t.air[c] + wxr.temp(c, p)
+                        };
                         let v = *temp.at(c) + rate[c] * (eq - *temp.at(c));
                         *temp.at(c) = v;
                         *theta.at(c) = v + lapse * t.air[c];
@@ -289,6 +393,9 @@ impl Air {
             });
         }
 
+        if p.sweep != 0.0 {
+            return self.sweep(p, t, sat, wx, season, t_air, cover);
+        }
         // The air takes up water where it can and rains what it cannot hold; this year's anomaly and the
         // storms change how much of the excess falls.
         let parts = {
@@ -382,6 +489,93 @@ impl Air {
                 }
             });
         }
+        f
+    }
+
+    /// The small world's air (e108): followed across the world in one pass, upwind cells first.
+    ///
+    /// A cell's air is what its two upwind neighbours send it, by the wind's share along each axis (at the
+    /// windward border: sea air, as wet as the open sea keeps it). Over the cell it gains what the living gave
+    /// the air since the last pass, takes up water by its deficit against the ground's own temperature, and rains
+    /// its excess over what it can hold: the sea air's holding, less the share of its lifted layer that the
+    /// cell's height wrings out. A column's gain or loss over one crossing is the ground's `per` times over,
+    /// the crossings in an update. The pass is one after another, so it does not depend on the threads.
+    fn sweep(&mut self, p: &Params, t: &Terrain, sat: &Sat, wx: &Weather, season: f64, t_air: f64, cover: &[f64]) -> Flux {
+        let n = t.n;
+        let secs = p.tick / p.day * 86400.0;
+        let dx = p.cell_km * 1000.0;
+        let deg = wx.storm_dir.unwrap_or(p.wind_dir + p.wind_turn * season + wx.wind_dev(p));
+        let (a, b) = (p.wind_ms * deg.to_radians().cos(), p.wind_ms * deg.to_radians().sin());
+        let (east, north) = (a >= 0.0, b >= 0.0);
+        let (a, b) = (a.abs(), b.abs());
+        let (pa, pb) = (a / (a + b), b / (a + b));
+        let tc = dx / (a + b); // s the air spends over a cell
+        let per = secs / tc; // crossings an update
+        let ke = 1.0 - (-tc / p.evap_tau).exp();
+        let kr = 1.0 - (-tc / p.rain_tau).exp();
+        let s0 = sat.at(t_air + wx.temp(0, p));
+        let c0 = RAIN_RH * s0;
+        let v_in = c0 + (s0 - c0) * ke / (ke + kr); // where the open sea's taking up and raining balance
+        let mut f = Flux::default();
+        let (mut gained, mut inflow, mut outflow, mut dv) = (0.0, 0.0, 0.0, 0.0);
+        for j in 0..n {
+            let y = if north { j } else { n - 1 - j };
+            let below = if j == 0 { None } else { Some(if north { y - 1 } else { y + 1 }) };
+            for i in 0..n {
+                let x = if east { i } else { n - 1 - i };
+                let c = y * n + x;
+                let vw = if i == 0 { v_in } else { self.col[y * n + if east { x - 1 } else { x + 1 }] };
+                let vs = match below {
+                    None => v_in,
+                    Some(yb) => self.col[yb * n + x],
+                };
+                let added = self.vapor[c] - self.col[c];
+                let mut v = pa * vw + pb * vs + added / per;
+                let hold = c0 * (1.0 - (p.lifted * wx.rain_f[c]).min(1.0) * self.lift[c]);
+                let r = (v - hold).max(0.0) * kr;
+                let d = (sat.at(self.temp[c]) - v).max(0.0) * ke;
+                let e = if t.sea[c] {
+                    d
+                } else {
+                    // A soil gives up `soil_evap` of what open water would, by its fill; water standing on it all.
+                    let g = self.ground[c];
+                    let open = if g > t.cap[c] { 1.0 } else { p.soil_evap * g / t.cap[c] * cover[c] };
+                    (d * open).min(g / per)
+                };
+                v += e - r;
+                let (eg, rg) = (e * per, r * per);
+                if t.sea[c] {
+                    f.sea_evap += eg;
+                    f.sea_rain += rg;
+                } else {
+                    self.ground[c] += rg - eg;
+                    f.land_evap += eg;
+                    f.land_rain += rg;
+                }
+                self.rain_now[c] = rg;
+                gained += eg - rg + added;
+                dv += v - self.vapor[c];
+                self.col[c] = v;
+                self.vapor[c] = v;
+                if i == 0 {
+                    inflow += a * v_in;
+                }
+                if j == 0 {
+                    inflow += b * v_in;
+                }
+                if i == n - 1 {
+                    outflow += a * v;
+                }
+                if j == n - 1 {
+                    outflow += b * v;
+                }
+            }
+        }
+        // What crossed the borders, as the ground's mm: it is what the pass took up less what it rained.
+        let (inflow, outflow) = (inflow * secs / dx, outflow * secs / dx);
+        f.air_err = (gained - (outflow - inflow)).abs() / inflow.max(1.0);
+        // The ledger holds the water over the cells as `vapor`: the wind's net take is what closes it.
+        f.wind = f.sea_evap - f.sea_rain + f.land_evap - f.land_rain - dv;
         f
     }
 }

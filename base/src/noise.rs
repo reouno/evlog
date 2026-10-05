@@ -20,6 +20,11 @@ impl Rng {
     pub fn below(&mut self, n: usize) -> usize {
         (self.next_u64() % n as u64) as usize
     }
+    /// A draw from the normal distribution of mean 0 and spread 1 (Box and Muller).
+    pub fn normal(&mut self) -> f64 {
+        let (u, v) = (self.f64().max(1e-300), self.f64());
+        (-2.0 * u.ln()).sqrt() * (std::f64::consts::TAU * v).cos()
+    }
     /// A Poisson count with mean `m` (by multiplication; `m` is small here).
     pub fn poisson(&mut self, m: f64) -> usize {
         let l = (-m).exp();

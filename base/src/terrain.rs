@@ -38,6 +38,10 @@ pub struct Terrain {
     pub order: Vec<u32>,  // land cells, every cell before the one it runs to
     pub slope: Vec<f64>,  // m a cell: the drop to the lowest neighbour
     pub rock: Vec<u8>,
+    /// The ground's unit normal (x east, y north, z up), with `aspect`; empty without it.
+    pub nx: Vec<f64>,
+    pub ny: Vec<f64>,
+    pub nz: Vec<f64>,
     pub cap: Vec<f64>,      // mm: the water the soil holds
     pub lake_cap: Vec<f64>, // mm: the water a basin holds above the soil before it spills
     /// The land's drainage basins dealt into `par::CHUNKS` groups of about equal size, each group's cells
@@ -49,7 +53,20 @@ impl Terrain {
     pub fn new(p: &Params) -> Self {
         let n = p.size as usize;
         let cells = n * n;
-        let h = noise(n, p.seed as u64, p.grain, p.rough, 2.0);
+        let mut h = noise(n, p.seed as u64, p.grain, p.rough, 2.0);
+        if p.edge > 0.0 {
+            // e108: a small world is land in a sea, not a planet that wraps - the ground sinks towards the border
+            // by the whole range of the heights, so the border is sea whatever the noise put there.
+            let (lo, hi) = h.iter().fold((f64::MAX, f64::MIN), |(a, b), &v| (a.min(v), b.max(v)));
+            for c in 0..cells {
+                let (x, y) = (c % n, c / n);
+                let d = x.min(n - 1 - x).min(y).min(n - 1 - y) as f64 + 0.5;
+                if d < p.edge {
+                    let w = 1.0 - d / p.edge;
+                    h[c] -= (hi - lo) * w * w * (3.0 - 2.0 * w);
+                }
+            }
+        }
         let mut sorted = h.clone();
         sorted.sort_by(|a, b| a.partial_cmp(b).unwrap());
         let level = sorted[(((1.0 - p.land) * cells as f64) as usize).min(cells - 1)];
@@ -72,13 +89,26 @@ impl Terrain {
         let slope: Vec<f64> = (0..cells)
             .map(|c| if sea[c] { 0.0 } else { nbrs(n, c).iter().map(|&m| (elev[c] - elev[m]).max(0.0)).fold(0.0, f64::max) })
             .collect();
+        // e108: the ground's tilt, from the surface the air lies on (the sea is flat).
+        let (mut nx, mut ny, mut nz) = (Vec::new(), Vec::new(), Vec::new());
+        if p.aspect != 0.0 {
+            let d2 = 2.0 * p.cell_km * 1000.0;
+            for c in 0..cells {
+                let [yu, yd, xr, xl] = nbrs(n, c);
+                let (gx, gy) = ((air[xr] - air[xl]) / d2, (air[yd] - air[yu]) / d2);
+                let l = (1.0 + gx * gx + gy * gy).sqrt();
+                nx.push(-gx / l);
+                ny.push(-gy / l);
+                nz.push(1.0 / l);
+            }
+        }
         let rock = provinces(n, p);
         let cap: Vec<f64> = (0..cells)
             .map(|c| if sea[c] { 0.0 } else { p.soil * ROCKS[rock[c] as usize].hold * (0.4 + 1.2 / (1.0 + slope[c] / p.depth_slope)) })
             .collect();
         let lake_cap: Vec<f64> = (0..cells).map(|c| if sea[c] { 0.0 } else { ((filled[c] - elev[c]) * 1000.0).max(0.0) }).collect();
         let groups = basin_groups(&sea, &down, &order);
-        Terrain { n, elev, sea, air, lat, filled, down, order, slope, rock, cap, lake_cap, groups }
+        Terrain { n, elev, sea, air, lat, filled, down, order, slope, rock, nx, ny, nz, cap, lake_cap, groups }
     }
 }
 
