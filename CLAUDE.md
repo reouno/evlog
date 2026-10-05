@@ -11,8 +11,8 @@ App, web, and monetization (ads) are ideas only. Do not build them now.
 
 ## How we work
 
-- Build the world whole, then search it (`foundation.md`): keep laws, generated terrain and emergent
-  outcomes apart, and search parameters in stages from the cheapest layer. Do not test one law at a
+- Build the world whole, layer by layer from the cheapest (`foundation.md`): keep laws, generated terrain and
+  emergent outcomes apart, and judge each layer before the next stands on it. Do not test one law at a
   time in a world that lacks its conditions. Expect to rebuild often and to have assumptions overturned.
 - Choose the next step from `vision.md` (the ideal against today, by layer), not as a fix of the last result, and
   fill the largest gap as one piece of several laws designed as cycles. Every result updates `vision.md`.
