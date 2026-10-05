@@ -6,11 +6,10 @@ a measure is kept or removed, or the method changes (`CLAUDE.md`). What an exper
 
 ## Why
 
-A hundred experiments added laws to a world of hand-written categories - three producers, five kinds of block, a
-linear reflex - and it held one to seven ways of living: with few things a world and a body can be, the optimum is
-single and the world converges to it (e060, e101). So the world was redesigned (#116): the freedom of every side
-raised together, each form priced by physics, built as a ladder of rungs with each judged before the next stands on
-it. The older world, its trade-offs and its stages A-C are e001-e101 and this file's history in git.
+A hundred experiments added laws to a world of hand-written categories and it held one to seven ways of living: with
+few things a world and a body can be, the optimum is single and the world converges to it (e060, e101). So the world
+was redesigned (#116): the freedom of every side raised together, each form priced by physics, built as a ladder of
+rungs, each judged before the next stands on it. The older world is e001-e101 and this file's history in git.
 
 ## 1. Laws, generation, emergence
 
@@ -19,7 +18,9 @@ it. The older world, its trade-offs and its stages A-C are e001-e101 and this fi
 - **Sun, heat, air** (e061, e102): a day and a year (the axis's tilt); a cell's temperature goes towards what its
   light and height (6.5 C a km) give, the sea slowly, and spreads to its neighbours; the air takes up water by its
   deficit, is carried by the wind and rains what it cannot hold. A year draws its own anomaly of warmth and rain and
-  keeps half of the last one's; storms multiply the rain where they pass.
+  keeps half of the last one's; storms multiply the rain where they pass. On the small world (e108) the air enters at
+  the windward border as sea air and is followed across the cells in one pass, raining where the land lifts it; it
+  sets most of a land cell's temperature; a slope's light follows its tilt; the wind turns by season, year and day.
 - **Ground** (e102): five rocks in provinces set what a soil holds and gives. Water over a soil's holding runs down
   a drainage network to the sea, fills basins as lakes, and sinks to groundwater that seeps back into the rivers.
   Rock weathers into nutrients **A** (mobile; structure) and **B** (bound; activity); water leaving a cell takes
@@ -82,7 +83,9 @@ is not searched to hit a result. If a rung fails on a ground that passed, the fa
 
 - **Rung 1, the ground** (e102): ledgers; rivers reach the sea and the land's water is steady; the soil's A:B and
   A + B each span x4; years differ without drifting; more places than climate alone makes. On the planet: A:B x14,
-  A + B x19, 15.4 places against 6.4, but rivers thin (runoff 10% of the rain) and years mild (12%).
+  A + B x19, 15.4 places against 6.4, but rivers thin (runoff 10% of the rain) and years mild (12%). On the islands
+  (e108): A:B x9, A + B x68, years 17%, but 96% of the rain runs off and the bare soil is full, so those bands count
+  4.5 places; what differs is rain x15 by height and side, 10 C by height and a slope's light x2.3 - rung 2's to read.
 - **Rung 2, producers** (e103-e105): ledgers; producers on >= 50% of the land and >= 20% of the sea; >= 5 effective
   groups held by place (NMI >= 0.2); they keep changing; the living change the ground. On the planet: 7.6-11.9
   groups, mutants 41-51% of the biomass after a millennium, and no form ever replaced.
@@ -100,17 +103,18 @@ way, the six-seed control ladder at 7.14 kinds (e068, e094, e101) - judge that w
 
 ## 4. Scale and compute
 
-**Today's world** is `base/` on the planet c1225 (`cargo run --release -p base -- <prefix> base/worlds/c1225.params`):
-512 x 512 cells of 63 km, climate by latitude, an update 3.2 hours, a year 159 days; e106's bodies stand for
-millions of animals each there. It moves, rung by rung, to **the scale chosen**: 64 km on a side, 512 x 512 cells of
-125 m, a tenth of it land (400-500 km2) in 3-5 islands up to 2 km high; climate from height, the windward and lee
-sides and the season, not latitude. A body's laws are in metres and seconds - the cell is the ground's grain, the
-update the step of integration (19 minutes, lengthened while the readings hold). A body holds about S kg of animals
-at any age, S near a large adult's mass (300-1,000 kg, set for ~3 x 10^4 bodies): a grown large body is one animal, a
-small kind a flock, a clutch one brood that splits as it grows. The watcher sees a place, later at real size through
-a window that plays what the world decided. **Open on this scale**: what parts the lines. On the planet places a
-leading line did not cross did (e083), and a small cell was once set aside because a grazer would cross every
-climate in days (#117); here the sea between islands and what height asks of a body must do it - read with bodies.
+**Today's world** is `base/`, on two worlds (`cargo run --release -p base -- <prefix> base/worlds/<world>.params`):
+the planet `c1225` (512 x 512 cells of 63 km, climate by latitude; the living and e106's bodies stand on it, a body
+for millions of animals) and the islands `isles1` (e108: the ground alone so far), both with an update of 3.2 hours
+and a year of 159 days. **The scale chosen** is the islands': 64 km on a side, 512 x 512 cells of 125 m, a tenth of
+it land (410 km2) in eight islands up to 2 km high; climate from height, the wind's side and the season. A body's
+laws are in metres and seconds - the cell is the ground's grain, the update the step of integration (19 minutes,
+lengthened while the readings hold). A body holds about S kg of animals at any age, S near a large adult's mass
+(300-1,000 kg, set for ~3 x 10^4 bodies): a grown large body is one animal, a small kind a flock, a clutch one brood
+that splits as it grows. The watcher sees a place, later at real size through a window that plays what the world
+decided. **Open on this scale**: what parts the lines. On the planet places a leading line did not cross did (e083),
+and a small cell was once set aside because a grazer would cross every climate in days (#117); here the sea between
+islands (2-33 km) and what height asks of a body must do it - read with bodies.
 
 **Compute**: the ground costs by its cells, 12-20 s a year at 512 with producers (e105, e106); bodies 2 us a body an
-update on a thread, so 3 x 10^4 at 19 minutes are ~110 s a year on six threads.
+update on a thread, so 3 x 10^4 at 19 minutes are ~110 s a year on six threads; the islands' air takes 9 s a year.
