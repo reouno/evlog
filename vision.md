@@ -36,8 +36,8 @@ Today is the last whole world (stage C on c1225, e101) and, where a row says so,
 
 | layer | ideal | today | gap |
 |---|---|---|---|
-| A places, time, water, heat | many wide places, a day, a year, weather, rivers and rain shadows, cold and hot | the small world's ground (`base/`, e108): 410 km2 in eight islands, five over 20 km2 with 2.3-32.5 km of sea between; rain x15 by height and side (the windward lowland twice the lee), 10 C by height, a slope's light x2.3, A:B x9 and fertility x68, streams on 6.8% of the land, a cell's rain 17% between years | medium: nothing is under 5 C and the bare soil is full everywhere (96% of the rain runs off), so the planet's bands count 4.5 places against its 15.4; whether rain, height and light part the living is unread |
-| B plant foods | several, each needing its own mouth and gut | old world: grass, algae, browse, carrion, litter; new world (`base/`, e105): producers evolve for a millennium - 41-51% of biomass new, 9-12 groups held by place - but no form is replaced: nothing moves enough to overturn the best of a place | **large** for bodies |
+| A places, time, water, heat | many wide places, a day, a year, weather, rivers and rain shadows, cold and hot | the small world's ground (`base/`, e108): 410 km2 in eight islands, five over 20 km2 with 2.3-32.5 km of sea between; rain x15 by height and side (the windward lowland twice the lee), 10 C by height, a slope's light x2.3, A:B x9 and fertility x68, streams on 6.8% of the land, a cell's rain 17% between years; under stands 7-10% of the soil leaves the full band and fire burns the driest third only (e109) | medium: nothing is under 5 C; with producers the planet's bands count 8-10 places against its 15.4, and whether rain, height and light part the living is not settled - 300 years after the sowing they are still sorting (e109) |
+| B plant foods | several, each needing its own mouth and gut | old world: grass, algae, browse, carrion, litter; the planet (e105): producers evolve for a millennium - 41-51% of biomass new, 9-12 groups held by place - but no form is replaced; the islands (`base/`, e109): 7-8 groups and falling, a mosaic of what was sown that sorts by place at a seed's pace (NMI 0.12-0.13 at year 310, rising), mutants 1.4-5.8% | **large** for bodies; nothing carries a seed far |
 | B response to eating | regrowth, defence, fruit offered | new world: compounds with keys; small eaters evolve and come within 1 bit of the producers' keys, or live on the undefended (e103) | medium |
 | B plants as places | a forest is home, cover and food | a stand is a home only through its wet ground (e078) | medium |
 | C parts | worth depending on where they sit and how they move | 4 block kinds, 2D grid of side 4-16; every block pays best packed, so bodies fill their grids (e047) | **large** |
@@ -101,7 +101,9 @@ Each holds under the conditions it was found in.
   judge on a conjunction over censuses (e094); a measure of place breaks when bodies change place within a life (e091);
   a spread is read by what it is made of - one collapsed seed is not a various world (e100).
 - A law written in cells and updates holds at one scale only: the same bodies in a smaller world walk off the land or
-  never leave their cell, and the distance that rationed the eaters is gone (e107). A scale is chosen, not inherited.
+  never leave their cell, and the distance that rationed the eaters is gone (e107). A scale is chosen, not inherited -
+  and it sets the clock: with seeds that cross metres, 300 years after a sowing is a transient, where cells of 63 km
+  mixed every form into every place within years (e109). Read a trend before a level.
 
 ## 5. The direction
 

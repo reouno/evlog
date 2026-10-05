@@ -32,10 +32,11 @@ rungs, each judged before the next stands on it. The older world is e001-e101 an
   seed with their A and B, a height and an age. Light falls through the leaves by height; carbon fixed is paid in
   water drawn from the soil and the groundwater; roots take A and B; tissue is lost to turnover, frost, wilting,
   storms and fire, and returns as litter. A stand dies at the lifespan its wood sets, and a free slot is won by
-  lottery from the cell's seed bank (seeds come from the cell, on the wind and down the rivers). In the sea the
-  same genome floats and takes A and B from the water.
+  lottery from the cell's seed bank. In the sea the same genome floats and takes A and B from the water.
 - **Small eaters** (e103), life below a body's scale: up to 2 cohorts a cell eat leaves by their mass and B, less by
   their toughness, and are harmed by a compound whose 8-bit key is far from every detox key they carry.
+- **The living cross metres** (e109), a cell only where a thing lands: a seed goes its stand's height x the wind /
+  its fall speed, a length of river, or as the sea mixes; a fire runs a length of dry fuel; a small eater flies one.
 - **Bodies** (e106: step 1 of three stands, in its crate and not yet in `base/`) are individuals at continuous
   positions. A form is an 8x8x8 grid of tissue developed from the genome by a voxel's place and the body's stage,
   each voxel a mix of frame, muscle, gut, nerve, fat and glue with its A and B; size is separate. Physics reads a
@@ -60,7 +61,7 @@ Every freedom is a law about a material with a price no form escapes. They are b
 |---|---|---|---|---|
 | a tissue's B | activity (fixing, uptake, digesting) follows its B share | fast growth | respiration; it is the best food; B is scarce where the rock gives little | `base/` |
 | a tissue's A | toughness follows its A share | long life; less lost to drought, frost, storms and mouths | less room for B; A washes out of wet soils | `base/` |
-| height | light is taken from the top down | the light | wood by height, water lifted, storms | `base/` |
+| height | light is taken from the top down | the light; its seed's reach | wood by height, water lifted, storms | `base/` |
 | roots | water and nutrients by root mass and activity; deep roots reach the groundwater | dry seasons, poor soils | roots are C, A and B | `base/` |
 | temperature | enzymes work on a curve around an optimum, the area under it fixed | a broad curve: many places and seasons | a lower peak | `base/` |
 | seed | mass against number; a wing and a float carry it | a start in shade and drought, or reach | fewer seeds; wing and float are mass | `base/` |
@@ -83,12 +84,12 @@ is not searched to hit a result. If a rung fails on a ground that passed, the fa
 
 - **Rung 1, the ground** (e102): ledgers; rivers reach the sea and the land's water is steady; the soil's A:B and
   A + B each span x4; years differ without drifting; more places than climate alone makes. On the planet: A:B x14,
-  A + B x19, 15.4 places against 6.4, but rivers thin (runoff 10% of the rain) and years mild (12%). On the islands
-  (e108): A:B x9, A + B x68, years 17%, but 96% of the rain runs off and the bare soil is full, so those bands count
-  4.5 places; what differs is rain x15 by height and side, 10 C by height and a slope's light x2.3 - rung 2's to read.
+  A + B x19, 15.4 places, runoff 10% of the rain. On the islands (e108): A:B x9, A + B x68, 96% of the rain runs off
+  and those bands count 4.5 places bare; what differs is rain x15, 10 C by height and a slope's light x2.3.
 - **Rung 2, producers** (e103-e105): ledgers; producers on >= 50% of the land and >= 20% of the sea; >= 5 effective
   groups held by place (NMI >= 0.2); they keep changing; the living change the ground. On the planet: 7.6-11.9
-  groups, mutants 41-51% of the biomass after a millennium, and no form ever replaced.
+  groups, mutants 41-51% after a millennium, no form ever replaced. On the islands (e109, 300 years): 7-8 groups and
+  falling, NMI 0.12-0.13 and rising, mutants 1.4-5.8% - the sown mosaic sorts a few cells a decade, a transient.
 - **Rung 3, bodies** (e106): ledgers; bodies on >= 10% of the land's cells and producers on >= 50% for 50 years;
   bodies eat >= 10% of what producers fix and producers turn over; the freedoms are used (adult masses x100, two
   strata, flesh 10% of the diet, plastic weights, a group that travels); >= 5 effective groups of bodies by place.
@@ -103,11 +104,10 @@ way, the six-seed control ladder at 7.14 kinds (e068, e094, e101) - judge that w
 
 ## 4. Scale and compute
 
-**Today's world** is `base/`, on two worlds (`cargo run --release -p base -- <prefix> base/worlds/<world>.params`):
-the planet `c1225` (512 x 512 cells of 63 km, climate by latitude; the living and e106's bodies stand on it, a body
-for millions of animals) and the islands `isles1` (e108: the ground alone so far), both with an update of 3.2 hours
-and a year of 159 days. **The scale chosen** is the islands': 64 km on a side, 512 x 512 cells of 125 m, a tenth of
-it land (410 km2) in eight islands up to 2 km high; climate from height, the wind's side and the season. A body's
+**Today's world** is `base/` on the islands (`cargo run --release -p base -- <prefix> base/worlds/isles1.params`;
+the ground e108, producers e109): 64 km on a side, 512 x 512 cells of 125 m, a tenth of it land (410 km2) in eight
+islands up to 2 km high; climate from height, the wind's side and the season; an update of 3.2 hours, a year of 159
+days. The planet `c1225` (cells of 63 km, climate by latitude) is e102-e106's world, read from their crates. A body's
 laws are in metres and seconds - the cell is the ground's grain, the update the step of integration (19 minutes,
 lengthened while the readings hold). A body holds about S kg of animals at any age, S near a large adult's mass
 (300-1,000 kg, set for ~3 x 10^4 bodies): a grown large body is one animal, a small kind a flock, a clutch one brood
@@ -116,5 +116,5 @@ decided. **Open on this scale**: what parts the lines. On the planet places a le
 and a small cell was once set aside because a grazer would cross every climate in days (#117); here the sea between
 islands (2-33 km) and what height asks of a body must do it - read with bodies.
 
-**Compute**: the ground costs by its cells, 12-20 s a year at 512 with producers (e105, e106); bodies 2 us a body an
-update on a thread, so 3 x 10^4 at 19 minutes are ~110 s a year on six threads; the islands' air takes 9 s a year.
+**Compute**: the islands with producers take 26 s a year on six threads (e109: the air's pass 8.5 s on one thread,
+the cells 8 s); bodies 2 us a body an update on a thread, so 3 x 10^4 at 19 minutes are ~110 s a year on six threads.
