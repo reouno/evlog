@@ -113,8 +113,80 @@ designed on this ground.
 
 ## Result
 
-(to be written)
+Two runs, 310 years each, 10,703 and 10,587 s on 5 threads on Ubuntu (34 s a year with both running; alone, 26 s).
+Read by `measure.py` (`results/measure.csv`, a row a census year in `results/years.csv`, a row a large island in
+`results/islands.csv`; thresholds in `results/provenance.csv`). The censuses live on disk as `.zst`, the maps are
+rebuilt by the runs.
+
+| | run 1 | run 2 | line | verdict |
+|---|---|---|---|---|
+| H1 ledgers (worst year: water, A, B, matter) | 7e-13, 1e-12, 8e-13, 5e-12 | 5e-13, 7e-13, 7e-13, 6e-12 | 1e-9 | **yes** |
+| H2 land / sea held (least of the last 50 years); biomass drift | 96% / 46%; +0.05% a year | 98% / 47%; -0.17% | 50% / 20%; 1% | **yes** |
+| H3 effective groups (last 50 years); leading group against place (NMI): the planet's bands, the islands' own | 8.1; 0.12, 0.09 | 7.4; 0.13, 0.09 | 5; 0.2 | **no** |
+| H4 changes of the leading genotype (last 100 years); late groups at 1% | 0; 0 | 1; 0 | 3; 1 | **no** |
+| H5 land evaporation with transpiration against bare ground; soil A:B map against e108's | +170% (198 against 73 mm); 0.35 | +126% (166 mm); 0.44 | 10%; < 0.8 | **yes** |
+
+**The world stands.** The land fills in forty years (2.5 and 1.4 kg a m2 at the end, stands to 21 m at the 99th
+percentile). The sea did not fail as the pilot suggested: its cover falls to 23% and 25% in years 54 and 53 and climbs to
+50% and 53% at year 310 (the sea's biomass is 11 and 8 times year 60's).
+
+**It is not settled.** The groups are still falling at year 310 - 17.8 and 27.8 at year 20, 11.8 and 7.7 at year
+140, 7.7 and 6.8 at the end - where the planet's fell to 6 by year 110 and climbed again. The same count as the
+planet's (7.8 and 7.6 at year 310, e104) is a world on its way down, not at rest.
+
+**The land is a mosaic of what was sown.** 384 and 166 genotypes still lead a land cell at year 310, the twenty
+largest holding 90% and 96% of the land. Read every 30 years (`sorting.py`, added after the batch was read;
+`results/trend.csv`): neighbouring cells share a leader in 19% of pairs at year 20 and 66-69% at year 310, and the
+leading group's NMI against the planet's bands rises without a pause, 0.06 to 0.12 and 0.07 to 0.13 - half of the
+planet's 0.28 and 0.23. Against the islands' own label it is 0.09 in both; alone, rain gives 0.06, temperature 0.06-
+0.07, light 0.02-0.03, the soil's A:B 0.08-0.13, fertility 0.08-0.13, and the island a cell lies on 0.16 and 0.12.
+The leader's temperature optimum follows the cell's temperature at r 0.13 and 0.17, its height the rain at 0.19 and
+0.21. One group leads four of the five large islands in run 1 and all five in run 2.
+
+**Do places exist for these producers?** (`results/leaders.csv`, read after the batch.) Among the twenty leaders,
+over the nine places of rain x temperature, the median leader has 36% and 40% of its ground in one place. Of the
+difference in standing biomass between (leader, place) pairs, the leader alone gives 31% and 58%, the place alone
+40% and 10%, and 35% and 20% is neither's alone; the better of two leaders changes with the place for 24 of 122
+pairs in run 1 and 6 of 85 in run 2.
+
+**They evolve, slowly.** Genotypes born after the sowing hold 1.4% of the biomass in run 1 (1.5% at year 110 and
+flat since) and 5.8% in run 2 (rising 0.9% every 30 years), against the planet's 12%. The heaviest genotype is a
+founder throughout; it changes once in run 2's last century. The two runs share 41% of their biomass in matching
+groups (the planet: 32%), and differ by x1.8 in the land's biomass.
+
+**The ground under the living.** 5% and 4% of the land's soil is under a third full and as much between one and two
+thirds (bare: 0.5% and 1.5%), and the planet's bands count 9.9 and 8.1 places on the land (bare: 4.5; the planet:
+15.4). Fire follows the dry ground: 1.3% and 0.5% of the land burns a year, 3.7% and 1.4% of its driest third and
+0.006% and 0.003% of its wettest; the largest island burns 3.3% a year in run 1. Transpiration is 153 and 115 mm a
+year; 88% and 90% of the rain still runs off (bare: 96%). The small eaters take 13% and 11% of what is fixed at the
+end (5-6% at year 60) and are 89-92% new genotypes.
 
 ## Conclusion
 
-(to be written)
+Holds for this one world (isles1), two seeds of the living, 300 years after a sowing that put two random genomes of
+256 in every cell.
+
+- **Producers stand on the small world with their distances in metres** (H1, H2, H5): every ledger closes, the land
+  and half the sea are held, and the living remake the ground more than on the planet - the soil dries where stands
+  draw on it and fire lives on that ground only. The rewritten distances go into `base/`.
+- **They have not sorted by place in 300 years** (H3 no): NMI 0.12-0.13 against the line's 0.2 and the planet's
+  0.23-0.28. By the letter of the plan (#116) that is the islands not making places, and its remedy the climate's.
+  **The runs do not support that reading, and the turn is not taken on them**: the sorting rises through all 300
+  years, the mosaic coarsens, the groups still fall - the world is read in its transient. On the planet a seed
+  crossed 20 cells of 63 km in one release, so every form reached every place within years; here a form reaches its
+  place a few cells a decade, and what grows where is still mostly what was sown there.
+- **Places exist for producers, weakly**: leaders concentrate in a place and the better form changes with the
+  place for a fifth of pairs in one run and a fourteenth in the other. Whether that carries the NMI past 0.2 is not
+  known; nor is how much of the sorting on the planet was its climate and how much its seeds' reach.
+- **They evolve at a seed's pace** (H4 no): a mutant's seeds stay near, and 1.4-5.8% of the biomass is new after
+  300 years.
+- **What a small world cannot hold, so far**: a carrier. Nothing takes a seed a kilometre but a rare gust; the sea
+  between islands is crossed by none that shows (one group leads nearly every island because all were sown alike,
+  not because it arrived). In the island's design the carriers are bodies (fruit, seed eaten and dropped) - not built.
+- **Open for the plan (#116), before bodies**: where the sorting ends. One run of a millennium on this ground (7-8
+  hours on Ubuntu) would say whether the NMI passes the line and whether the groups level; the climate's remedy
+  (the sea air's share of a cell's temperature, the latitude) is judged after that, not on this transient.
+- **Cost**: 26 s a year alone (the air's pass 8.5 s on one thread, the cells 8 s, the eaters' flight 2.5 s).
+
+`vision.md`: rows A and B, a lesson (a law's distance against the cell). `foundation.md`: the producers' and small
+eaters' laws, rung 2's reading, today's world, compute.

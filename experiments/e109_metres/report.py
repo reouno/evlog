@@ -213,7 +213,56 @@ within a stand's height. On the planet the same rules were counted in cells of 6
 </figure>
 """
 
-TEXT = {}  # filled from the readings in main()
+TEXT = {
+    "tldr": """Every distance the living cross is now in metres, and producers stand on the islands: 96-98% of the
+land, half the sea, 7-8 groups, as on the planet. But a seed goes metres, not cells of 63 km, so the land sown in
+year 10 is still sorting itself after 300 years: the leading group follows place at NMI 0.12-0.13 against a line of
+0.2, rising throughout. The laws go into <code>base/</code>; whether the islands make places is not settled by this
+run.""",
+    "question": """On the planet a seed went 20 cells of 63 km and a fire crossed to a neighbour by chance. On the
+small world a cell is 125 m. With every distance set from its units, do producers still stand, sort by place and
+keep changing - and are the islands' rain, height and light places to them? e104's lines, set before the runs:""",
+    "world": """<code>base/</code> on the ground of e108, with five rules rewritten: seed on the wind, seed that
+falls near, seed down a river and in the sea, fire, and the small eaters' flight. A cell is only where a thing
+lands. No rate was searched.""",
+    "runs": """<code>isles1</code> (410 km2 in eight islands), 256 producer and 64 eater genomes sown in every cell
+in year 10, run to year 310, two seeds of the living; 3 hours each on Ubuntu. A 40-year pilot changed no rate. Read
+as e104, plus the islands' own places; the trend of the sorting was added after the batch.""",
+    "v1": "Water, both nutrients and the living's matter close to 6e-12 at worst.",
+    "v2": "96% and 98% of the land and 46% and 47% of the sea at the least; biomass drifts under 0.2% a year.",
+    "v3": "8.1 and 7.4 groups, but the leading group against place is 0.12 and 0.13 by the planet's bands, 0.09 by the islands' own.",
+    "v4": "The leader changes 0 and 1 times; no group founded after year 160 holds 1%. Mutants hold 1.4% and 5.8% of the biomass (planet: 12%).",
+    "v5": "Evaporation with transpiration is 198 and 166 mm against the bare ground's 73; the soil's A:B map correlates 0.35 and 0.44.",
+    "h31": "3.1 The world stands, and is not yet settled",
+    "p31": """The land fills in forty years and holds. The sea's cover falls to 23-25% by year 54, then climbs to 50%.
+The groups are still falling at year 310 (17.8 and 27.8 at year 20): the count that matches the planet's is a world
+on its way, not at rest.""",
+    "h32": "3.2 The land is a mosaic that sorts slowly",
+    "p32": """Each cell was sown with two of 256 genomes, and a low stand sends 0.1% of its seed over an edge. So
+what grows where is still mostly what was sown there: 166 to 384 genotypes lead cells, in patches that coarsen
+(neighbours sharing a leader: 19% to 67%). The leading group follows place a little more every decade, and no
+gradient alone. Mutants spread at the same pace.""",
+    "h33": "3.3 Stands dry the lee lowlands, and fire lives there",
+    "p33": """With stands drawing on it, 7-10% of the soil leaves the full band (bare: 2%), and the planet's bands
+count 8-10 places where the bare ground had 4.5. Fire follows the dry ground: 1.4-3.7% of the driest third burns a
+year, the wettest third almost never. Transpiration is 115-153 mm of some 2,000 mm of rain; 88-90% still runs off.""",
+    "discussion": """<p>The line for places failed, and the plan said a failure means the islands' climate is too
+mild. The runs do not show that. They show a world that has not finished: the sorting rises through all 300 years,
+the patches coarsen, the groups fall. On the planet a seed crossed 1,260 km in one release, so every form reached
+every place within years; here a form reaches its place a few cells a decade.</p>
+<p>Do places exist for these producers? Read after the batch: among the twenty leaders that hold over 90% of the
+land, the median one has 36-40% of its ground in one of nine places of rain and temperature, and in run 1 the
+better of two leaders changes with the place for 24 of 122 pairs (6 of 85 in run 2). That is a yes, and a weak
+one.</p>
+<p>What this does not show: where the sorting ends. 300 years cannot say whether it passes the line, and the
+sowing itself - every genome everywhere at once - made the mosaic. One group leads four of the five large islands
+in run 1 and all five in run 2: the sea has not parted the producers.</p>""",
+    "conclusion": """Producers stand on the small world with their distances in metres, and those laws go into
+<code>base/</code>. They sort and evolve at a seed's pace, far slower than on the planet, and 300 years reads a
+transient. The plan's turn to the climate is not taken on this evidence. Before bodies the plan is read again: a
+millennium on this ground would say where the sorting ends, and bodies that carry seed are the carrier this world
+lacks.""",
+}
 
 
 def main():
@@ -260,10 +309,6 @@ def main():
         f"Run 1: the leading group on each land cell, year {lyears[-1]}",
         "The five groups leading the most cells (the height they stand at, their temperature optimum); grey: all others.",
         np.ma.masked_array(gmap, mask=gmap < 0)[box], group_colors, norm=BoundaryNorm(np.arange(-0.5, 6.5), 6), ticks=range(6), ticklabels=names + ["others"])
-    charts["bio_map"] = map_fig(
-        "Run 1: producers' biomass, the last ten years",
-        "kg of dry matter a m2 (log scale), land and sea. The sea's producers keep to the islands' waters.",
-        np.maximum(mean["biomass"], 1e-4)[box], "viridis", norm=LogNorm(1e-3, 30), label="kg a m2")
     charts["fill_map"] = map_fig(
         "Run 1: how full the soil stands, the last ten years",
         "The soil's water as a share of what it holds, land only. Bare, 98% of the land stood over two thirds.",
@@ -277,6 +322,12 @@ def main():
 
     yr = lambda log: [int(r["year"]) for r in log]
     by = [[r for r in ys if r["run"] == run] for run in runs]
+    tr = [[r for r in rows("trend.csv") if r["run"] == run] for run in runs]
+    charts["trend"] = line_chart(
+        "The sorting rises for 300 years and has not arrived",
+        "NMI of a land cell's leading group against the planet's bands, every 30 years. The line is 0.2, the top of the chart.",
+        [(RUN_LABELS[i], [int(r["year"]) for r in tr[i]], [f(r["nmi_group_place"]) for r in tr[i]], i, False) for i in range(2)], "year",
+        fmt=lambda v, _p: f"{v:g}", ymax=0.2)
     charts["groups"] = line_chart(
         "Groups of producers over time",
         "Effective number of producer groups (Hill 1 over biomass). The line is 5.",
@@ -288,8 +339,8 @@ def main():
         [(RUN_LABELS[i], [int(r["year"]) for r in by[i]], [f(r["mutant_share"]) for r in by[i]], i, False) for i in range(2)], "year",
         fmt=lambda v, _p: f"{v:.1%}")
     charts["cover"] = line_chart(
-        "The land is held, the sea only near the islands",
-        "Share of cells holding producers: land (solid) and sea (dashed). The sea's line is 20%.",
+        "The land is held; the sea's cover dips and climbs back",
+        "Share of cells holding producers: land (solid) and sea (dashed). The lines are 50% and 20%.",
         [(f"{RUN_LABELS[i]}: land", yr(logs[i]), [f(r["land_cover"]) for r in logs[i]], i, False) for i in range(2)]
         + [(f"{RUN_LABELS[i]}: sea", yr(logs[i]), [f(r["sea_cover"]) for r in logs[i]], i, True) for i in range(2)], "year",
         fmt=lambda v, _p: f"{v:.0%}")
@@ -389,7 +440,7 @@ def main():
 <h3>{T.get('h31', '3.1')}</h3>
 <div class="grid2">
 {charts['cover']}
-{charts['bio_map']}
+{charts['groups']}
 </div>
 <p>{T.get('p31', '')}</p>
 
@@ -397,7 +448,7 @@ def main():
 <div class="grid2">
 {charts['groups_map']}
 {charts['nmi']}
-{charts['groups']}
+{charts['trend']}
 {charts['mutants']}
 </div>
 <p>{T.get('p32', '')}</p>
@@ -417,7 +468,8 @@ def main():
 
 <h2>Appendix: data</h2>
 <p>Readings in <code>results/measure.csv</code>, <code>results/years.csv</code> and <code>results/islands.csv</code>,
-thresholds in <code>results/provenance.csv</code>. The censuses live on disk as <code>.zst</code> and the maps are
+thresholds in <code>results/provenance.csv</code>; the trend and the leaders' reading in <code>results/trend.csv</code> and
+<code>results/leaders.csv</code> (<code>sorting.py</code>). The censuses live on disk as <code>.zst</code> and the maps are
 rebuilt by the runs. Build: <code>uv run python experiments/e109_metres/report.py</code>.</p>
 <div class="tw"><table><thead><tr><th>reading</th><th>run</th><th>census years</th><th>thresholds</th></tr></thead><tbody>
 {"".join(f"<tr><td>{r['reading']}</td><td>{r['run']}</td><td>{r['census_years']}</td><td style='text-align:left'>{html.escape(r['thresholds'])}</td></tr>" for r in rows("provenance.csv"))}
