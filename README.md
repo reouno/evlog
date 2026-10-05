@@ -4,7 +4,7 @@ A world that evolves on its own, for people to watch. Research and development s
 
 - `principles.md` - purpose and rules that do not change. Read this first.
 - `vision.md` - the ideal, today's world against it, and the direction.
-- `foundation.md` - how the world is built and searched, and today's default world.
+- `foundation.md` - how the world is built and judged, its scale, and today's world.
 - `CLAUDE.md` - how we work, and when each document is read and changed.
 - `experiments/` - one folder per experiment: code, `README.md` from purpose to conclusion, `results/`, and
   `report.html` with charts and a plain-English write-up.

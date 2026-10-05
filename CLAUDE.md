@@ -35,7 +35,7 @@ experiment's README and keeps the one sentence that decides the next step (`visi
 |---|---|---|---|---|
 | `principles.md` | purpose, principles, decision rules | when unsure what is allowed or what matters | the user agrees to a change of direction | an experiment's result |
 | `vision.md` | the ideal, today against it by layer, lessons that hold across experiments, the direction | before choosing or designing a step | after every experiment: the rows its result changes (today, gap, ranking; the ideal or the direction when the result says so) | a record of what happened, a task or an order of tasks |
-| `foundation.md` | how the world is built: laws, generated and emergent parts, material trade-offs, stages and measures, the scale, today's default world | before designing or building a law | a law or measure is kept or removed, or the method changes | a result that kept nothing |
+| `foundation.md` | how the world is built: laws, generated and emergent parts, trade-offs, rungs and measures, the scale, today's world | before designing or building a law | a law or measure is kept or removed, or the method changes | a result that kept nothing |
 | `CLAUDE.md` | how we work | every session | the way of working changes | project facts |
 | GitHub issues | tasks, their order (the body of #116, the one place it is written) and a piece's design while it runs | when starting or resuming work | the work is planned, changes or ends | - |
 | `experiments/eNNN_*/README.md` | one experiment, from purpose to conclusion | when its result is needed | while it runs; afterwards only to correct it | - |
