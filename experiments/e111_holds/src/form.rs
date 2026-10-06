@@ -392,8 +392,9 @@ pub fn random(rng: &mut Rng) -> Vec<u32> {
 /// smaller than itself that is not its kin and presses it, runs when no flesh lies where it stands and rests
 /// when some does; without, it is the same body with no pull towards another (the twin the hunter is read
 /// against). With `sated` the pull falls with its fat (none once its fat is half full) and so does its running: it
-/// hunts when it is hungry. A design in the genome's own language: nothing in the world knows it.
-pub fn designed(hunts: bool, sated: bool) -> Vec<u32> {
+/// hunts when it is hungry. With `mouth` its front is all mouth, soft, with no frame in it. A design in the genome's
+/// own language: nothing in the world knows it.
+pub fn designed(hunts: bool, sated: bool, mouth: bool) -> Vec<u32> {
     let gene = |t: usize, c: u32, v: f64| ((t as u32) << 24) | (c << 16) | (((v / 2.0 * 32768.0) as i32).clamp(-32768, 32767) as i16 as u16 as u32);
     let when = |signal: u32, above: bool, level: u32| 128 | (signal << 4) | ((above as u32) << 3) | level; // level in sevenths
     let (fore, front, back) = (when(0, true, 3), when(0, true, 4), when(0, false, 3));
@@ -429,6 +430,11 @@ pub fn designed(hunts: bool, sated: bool) -> Vec<u32> {
             // and it goes where flesh lies thicker
             gene(WEIGHT + 1, 0, 1.99),
         ]);
+    }
+    if mouth {
+        // the front is gut and nothing else: the two frame genes of the front are taken out, four of gut put in
+        g.retain(|&x| genome::target(x) != FIELD + 1 + FRAME);
+        g.extend([gene(FIELD + 1 + GUT, front, 1.99), gene(FIELD + 1 + GUT, front, 1.99), gene(FIELD + 1 + GUT, front, 1.99), gene(FIELD + 1 + GUT, front, 1.99)]);
     }
     if sated {
         g.extend([

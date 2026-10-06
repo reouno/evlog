@@ -557,7 +557,7 @@ impl Bodies {
     /// own chance is not drawn, so a run with an injection is its control until that year.
     pub fn inject(&mut self, p: &Params, ter: &Terrain, sa: &mut [f64], sb: &mut [f64], vapor: &mut [f64], year: u32) -> BFlux {
         let mut f = BFlux::default();
-        let mut bt = BodyType::new(crate::form::designed(p.inject_kind != 2.0, p.inject_kind == 3.0), NONE, year, p.b_comp);
+        let mut bt = BodyType::new(crate::form::designed(p.inject_kind != 2.0, p.inject_kind >= 3.0, p.inject_kind == 4.0), NONE, year, p.b_comp);
         let g = self.types.len() as u32;
         bt.root = g;
         let fm = bt.forms[STAGES - 1].clone();
@@ -1860,7 +1860,7 @@ pub fn bench(p: &Params) {
     let dt = p.body_tick / p.day;
     let dts = dt * 86400.0;
     let none = BodyType::new(Vec::new(), NONE, 0, p.b_comp);
-    let made = BodyType::new(crate::form::designed(true, false), NONE, 0, p.b_comp);
+    let made = BodyType::new(crate::form::designed(true, false, false), NONE, 0, p.b_comp);
     let act0 = 1.0 / (1.0 + (-ACT0).exp());
     println!("body,act,adult_kg,height_m,v_top,km_day,mouth_m,sweep_m2_day,sweep_m2_day_kg,gut_kg_day_kg,upkeep_kg_day_kg,work_kg_day_kg,thinnest_kg_m2,days_to_fill_at_0.1");
     for (name, bt, act) in [("no genes", &none, act0), ("no genes", &none, 1.0), ("designed", &made, 1.0)] {
