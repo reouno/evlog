@@ -68,8 +68,22 @@ def main():
             f"{o['run']:18s} {o['land_biomass']:8.3f} {100 * o['land_of_control']:7.0f}% {100 * o['land_cover']:4.0f}% {o['litter']:6.3f} {o['gpp_t']:7.0f} {o['bodies']:7.0f} {o['matter_t']:8.1f} ({o['peak_t']:6.0f}, {o['peak_year']}) "
             f"{100 * o['sea_share']:4.0f} {100 * o['eaten_of_gpp']:8.1f}% {o['ate_leaf_t']:5.0f} {o['ate_wood_t']:5.0f} {o['ate_seed_t']:5.0f} {o['ate_litter_t']:6.0f} {100 * o['flesh_share']:6.2f} {o['breaks']:7.1f} {o['err']:.0e}"
         )
+    # Where the land's B is (g a m2 of land), for the runs whose log has it.
+    pools = ["soil", "plants", "litter", "bodies"]
+    print("\nthe land's B, g a m2 of land (the same years); the litter's B share from its mass on the whole world")
+    print(f"{'run':18s}   soil plants litter bodies   land  at_sea")
+    for o, r in zip(out, runs):
+        w = [x for x in logs[r] if int(x["year"]) in window]
+        if "land_b_soil" not in w[0]:
+            continue
+        for k in pools:
+            o["land_b_" + k] = mean([float(x["land_b_" + k]) for x in w])
+        o["sea_b_bodies"] = mean([float(x["sea_b_bodies"]) for x in w])
+        o["land_b"] = sum(o["land_b_" + k] for k in pools)
+        print(f"{r:18s} " + " ".join(f"{o['land_b_' + k]:6.3f}" for k in pools) + f" {o['land_b']:6.3f} {o['sea_b_bodies']:7.3f}")
+    keys = list(dict.fromkeys(k for o in out for k in o))
     with open(os.path.join(HERE, "results", "read.csv"), "w", newline="") as f:
-        wr = csv.DictWriter(f, fieldnames=list(out[0].keys()))
+        wr = csv.DictWriter(f, fieldnames=keys, restval="")
         wr.writeheader()
         for o in out:
             wr.writerow({k: (f"{v:.6g}" if isinstance(v, float) else v) for k, v in o.items()})
@@ -119,6 +133,7 @@ def main():
         wr.writerow(["window: the last years of the shortest run (means)", f"{window[0]}-{window[-1]}"])
         wr.writerow(["the line a run is set against", f"{CONTROL}: land_biomass over the same years"])
         wr.writerow(["cell, m2 (log sums are kg a m2 summed over cells)", CELL_M2])
+        wr.writerow(["the land's B by pool", "land_b_soil, _plants (stands, seed bank, small eaters), _litter, _bodies (with carrion): g a m2 of land; sea_b_bodies: the bodies at sea, over the land's area"])
         wr.writerow(["flesh in the diet", "(ate_carrion + ate_kill) / all eaten, from the log"])
         wr.writerow(["a designed line", "census rows whose root is the founder born in inject_year with no parent"])
         wr.writerow(["a designed line's diet", "its genotypes' lifetime diet shares of the bodies alive, weighted by matter"])
