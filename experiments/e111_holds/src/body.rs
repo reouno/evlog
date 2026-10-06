@@ -104,6 +104,8 @@ pub struct Body {
     pub c_b: f64,
     pub c_w: f64,
     pub lay: bool, // the clutch is laid this update, and hatches in the last pass
+    // what its front took from another body in this update's meeting (e111, `bite`): kg, g of A, g of B an animal
+    pub meal: [f64; 3],
     // the update's: set as it chooses, moves and meets, used as it lives
     pub path: f64,    // m walked
     pub work: f64,    // kg burnt moving, climbing and pressing
@@ -152,6 +154,7 @@ impl Body {
             c_b: 0.0,
             c_w: 0.0,
             lay: false,
+            meal: [0.0; 3],
             path: 0.0,
             work: 0.0,
             smother: 0.0,
@@ -290,6 +293,8 @@ pub struct World<'a> {
     pub co: &'a mut [Cohort],
     pub lit: &'a mut [Litter],
     pub bank: &'a mut [Seeds],
+    pub sa: &'a mut [f64], // the soil's A and B (the water's, at sea)
+    pub sb: &'a mut [f64],
     pub gen: &'a [Option<Box<genome::Genotype>>],
     pub step: f64,
     pub year: u32,
@@ -328,6 +333,11 @@ fn speed(p: &Params, fm: &Form, m: f64, sz: &Size, sea: bool, ft: f64) -> (f64, 
     (v, power)
 }
 
+/// What a gut passes in `dt` days, kg an animal.
+fn gut_cap(p: &Params, fm: &Form, m: f64, dt: f64, ft: f64) -> f64 {
+    p.gut_rate * fm.frac[GUT] * activity(fm.b_act) * m * dt * ft.min(1.5)
+}
+
 /// What a meeting reads of a body.
 struct Phys {
     s: f64,
@@ -347,13 +357,17 @@ struct Phys {
     drag: f64, // N to drag it over the ground
     soft_area: f64,
     key: u8,
+    room: f64,  // kg its animals' guts take in this update
+    mouth: f64, // share of its front that is mouth
 }
 
-fn phys(p: &Params, b: &Body, bt: &BodyType, sea: bool, v_top: f64) -> Phys {
+fn phys(p: &Params, b: &Body, bt: &BodyType, sea: bool, v_top: f64, dt: f64) -> Phys {
     let fm = &bt.forms[b.stage as usize];
     let sz = size(b, fm);
     let d3 = sz.d2 * sz.d;
     Phys {
+        room: gut_cap(p, fm, b.m, dt, heat_factor(b.t, bt.tr[4], bt.tr[5])) * b.s,
+        mouth: (fm.mouth / fm.face_n[FRONT].max(1.0)).min(1.0),
         s: b.s,
         len: sz.len,
         v_top,
@@ -615,7 +629,7 @@ impl Bodies {
                         fsum += y.o[LEAF].m + y.o[SEED].m;
                     }
                 }
-                if p.eat_bank > 0.0 {
+                if p.eat_bank > 0.0 && p.reach == 0.0 {
                     for j in 0..BANK {
                         fsum += bank[c * BANK + j].m;
                     }
@@ -692,6 +706,8 @@ impl Bodies {
             co: Shared::new(&mut *wd.co),
             lit: Shared::new(&mut *wd.lit),
             bank: Shared::new(&mut *wd.bank),
+            sa: Shared::new(&mut *wd.sa),
+            sb: Shared::new(&mut *wd.sb),
             vapor: Shared::new(&mut *wd.vapor),
             ground: Shared::new(&mut *wd.ground),
             car: Shared::new(&mut self.carrion),
@@ -725,6 +741,10 @@ impl Bodies {
                 if b.dead == Death::Broken {
                     x.kill += (b.m + b.fat + b.c_m) * k;
                 }
+                x.m += b.meal[0] * k;
+                x.a += b.meal[1] * k;
+                x.b += b.meal[2] * k;
+                x.kill += b.meal[0] * k;
                 wd.vapor[c] += (b.w + b.c_w) * k;
                 f.deaths[b.dead as usize - 1] += 1.0;
                 if self.watched {
@@ -826,8 +846,8 @@ impl Bodies {
             let away = pj.hx * ux + pj.hy * uy;
             let face = if (pj.chase && pj.tgt == i as u32) || away < -0.5 { FRONT } else if away > 0.5 { BACK } else { FLANK };
             let (sea_i, sea_j) = (wd.ter.sea[self.list[i].cell as usize], wd.ter.sea[self.list[j].cell as usize]);
-            let a = phys(p, &self.list[i], self.types[self.list[i].g as usize].as_ref().unwrap(), sea_i, pi.v_top);
-            let b = phys(p, &self.list[j], self.types[self.list[j].g as usize].as_ref().unwrap(), sea_j, pj.v_top);
+            let a = phys(p, &self.list[i], self.types[self.list[i].g as usize].as_ref().unwrap(), sea_i, pi.v_top, dts / 86400.0);
+            let b = phys(p, &self.list[j], self.types[self.list[j].g as usize].as_ref().unwrap(), sea_j, pj.v_top, dts / 86400.0);
             let breaks = a.pressure > b.need[face];
             // a tip harder than the catcher's front returns the same force over its own area
             let hurt = b.hard[face] > a.hard[FRONT] && a.force * (0.1 + 0.9 * b.hard[face]) / b.tip_area[face].max(1e-30) > a.need[FRONT];
@@ -848,8 +868,28 @@ impl Bodies {
             if breaks {
                 f.breaks += 1.0;
                 let total = (self.list[j].m + self.list[j].fat) * b.s;
-                let d = (a.power / b.need[face] * tau * 1000.0 / WET).min(total);
-                let (animals, kg) = fail(&mut self.list[j], car, &mut wd.vapor[c], area, d);
+                let mut d = (a.power / b.need[face] * tau * 1000.0 / WET).min(total);
+                // e111, a press is a bite: the front breaks only what its gut takes in, and swallows it; the part
+                // of it that is no mouth breaks its own tip's mass in a pass, which falls as carrion
+                let mut swallow = 0.0;
+                if p.bite > 0.0 {
+                    swallow = (a.mouth * d).min(a.room);
+                    d = swallow + ((1.0 - a.mouth) * d).min((1.0 - a.mouth) * a.tip_mass[FRONT] * a.s);
+                }
+                let mut fell = Carrion::default();
+                let (animals, kg) = fail(&mut self.list[j], &mut fell, &mut wd.vapor[c], area, d);
+                let q = if kg > 0.0 { (swallow / kg).min(1.0) } else { 0.0 };
+                if q > 0.0 {
+                    let each = q * area / a.s; // an animal's share of what was swallowed
+                    let me = &mut self.list[i];
+                    me.meal[0] += fell.m * each;
+                    me.meal[1] += fell.a * each;
+                    me.meal[2] += fell.b * each;
+                }
+                car.m += fell.m * (1.0 - q);
+                car.a += fell.a * (1.0 - q);
+                car.b += fell.b * (1.0 - q);
+                car.kill += fell.kill * (1.0 - q);
                 f.killed += animals;
                 f.torn += kg / area;
                 self.list[i].kills += animals;
@@ -1020,6 +1060,7 @@ impl Bodies {
             c_b: 0.0,
             c_w: 0.0,
             lay: false,
+            meal: [0.0; 3],
             path: 0.0,
             work: 0.0,
             smother: 0.0,
@@ -1163,9 +1204,9 @@ impl Bodies {
         let (mut m, mut a, mut b, mut w) = (0.0, 0.0, 0.0, 0.0);
         for x in &self.list {
             let k = self.k(x);
-            m += (x.m + x.fat + x.c_m) * k;
-            a += (x.ta + x.pa + x.c_a) * k;
-            b += (x.tb + x.pb + x.c_b) * k;
+            m += (x.m + x.fat + x.c_m + x.meal[0]) * k;
+            a += (x.ta + x.pa + x.c_a + x.meal[1]) * k;
+            b += (x.tb + x.pb + x.c_b + x.meal[2]) * k;
             w += (x.w + x.c_w) * k;
         }
         for x in &self.carrion {
@@ -1373,6 +1414,8 @@ struct Sh {
     co: Shared<Cohort>,
     lit: Shared<Litter>,
     bank: Shared<Seeds>,
+    sa: Shared<f64>,
+    sb: Shared<f64>,
     vapor: Shared<f64>,
     ground: Shared<f64>,
     car: Shared<Carrion>,
@@ -1481,9 +1524,11 @@ fn live(x: &Ctx, sh: &Sh, i: usize, f: &mut BFlux) {
                 foods[nf] = Food { kind: 2, src: j, dens: o.m * reach, full: o.m, a: o.share_a(), b: o.share_b(), need: need_of(o.share_a()), tox: 0.0 };
                 nf += 1;
             }
-            if !sea && p.eat_wood > 0.0 && y.o[WOOD].m > 1e-12 {
+            // e111, reach: wood stands from the ground to the stand's height, as its leaves hang
+            let wood_reach = if p.reach > 0.0 { reach } else { 1.0 };
+            if !sea && p.eat_wood > 0.0 && wood_reach > 0.0 && y.o[WOOD].m > 1e-12 {
                 let o = y.o[WOOD];
-                foods[nf] = Food { kind: 1, src: j, dens: o.m, full: o.m, a: o.share_a(), b: o.share_b(), need: p.wood_hard * need_of(o.share_a()), tox: 0.0 };
+                foods[nf] = Food { kind: 1, src: j, dens: o.m * wood_reach, full: o.m, a: o.share_a(), b: o.share_b(), need: p.wood_hard * need_of(o.share_a()), tox: 0.0 };
                 nf += 1;
             }
         }
@@ -1501,7 +1546,8 @@ fn live(x: &Ctx, sh: &Sh, i: usize, f: &mut BFlux) {
                 nf += 1;
             }
         }
-        if !sea && p.eat_bank > 0.0 {
+        // e111, reach: fallen seed lies in the ground, where a body on it does not reach
+        if !sea && p.eat_bank > 0.0 && p.reach == 0.0 {
             for j in 0..BANK {
                 let e = sh.bank.at(c * BANK + j);
                 if e.g != NONE && e.m > 1e-12 {
@@ -1513,7 +1559,7 @@ fn live(x: &Ctx, sh: &Sh, i: usize, f: &mut BFlux) {
         }
     }
     let mouth_w = fm.mouth.sqrt() * d; // m
-    let gut_cap = p.gut_rate * fm.frac[GUT] * activity(fm.b_act) * b.m * dt * ft.min(1.5); // kg this update
+    let gut_cap = gut_cap(p, fm, b.m, dt, ft); // kg this update
     let retention = fm.frac[GUT] / (fm.frac[GUT] + p.retain);
     let eff = p.assim / (1.0 + 0.1 * bt.keys.len() as f64);
     let fill_share = (b.fat / fat_cap.max(1e-30)).min(2.0);
@@ -1531,9 +1577,22 @@ fn live(x: &Ctx, sh: &Sh, i: usize, f: &mut BFlux) {
         want[j] = fo.dens * bite * sweep;
         total += want[j];
     }
-    if total > 0.0 && gut_cap > 0.0 {
-        let scale = (gut_cap / total).min(1.0);
-        let (mut gm, mut ga, mut gb, mut dung, mut harm) = (0.0, 0.0, 0.0, 0.0, 0.0);
+    // What it takes in: first the meal its front took from another body in this update's meeting (e111), then
+    // what its mouth swept, as far as its gut has room. Each mouthful: kg, g of A, g of B, its kind, its harm.
+    let mut got = [(0.0f64, 0.0f64, 0.0f64, 0usize, 0.0f64); MAX_FOODS + 1];
+    let mut ng = 0;
+    let mut intake = 0.0;
+    if b.meal[0] > 0.0 {
+        got[ng] = (b.meal[0], b.meal[1], b.meal[2], 5, 0.0);
+        ng += 1;
+        intake += b.meal[0];
+        f.eaten[5] += b.meal[0] * k;
+        b.eaten[5] += b.meal[0];
+        b.meal = [0.0; 3];
+    }
+    let room = (gut_cap - intake).max(0.0);
+    if total > 0.0 && room > 0.0 {
+        let scale = (room / total).min(1.0);
         for (j, fo) in foods[..nf].iter().enumerate() {
             if want[j] <= 0.0 {
                 continue;
@@ -1587,19 +1646,42 @@ fn live(x: &Ctx, sh: &Sh, i: usize, f: &mut BFlux) {
             };
             f.eaten[kind] += m;
             b.eaten[kind] += m / k;
-            harm += m / k * fo.tox * p.body_harm;
-            // digested: the soft part, and the tough part as far as the gut holds it
-            let tough = toughness(fo.a);
-            let dig = (1.0 - tough) + tough * retention;
-            gm += m / k * dig;
-            ga += a / k;
-            gb += bb / k;
-            dung += m / k * (1.0 - dig);
+            got[ng] = (m / k, a / k, bb / k, kind, fo.tox);
+            ng += 1;
+            intake += m / k;
+        }
+    }
+    if ng > 0 && intake > 0.0 {
+        // e111, worth: of a plant food the working part (in proportion to its B) is digested at once, and of the
+        // bulk what the rot would take in the time the gut holds it - its fill over what passes
+        let held = p.gut_hold * fm.frac[GUT] * b.m / (intake / dt) / (p.year / p.day); // years
+        let bulk = 1.0 - (-p.decay * q10(tb) * held).exp();
+        let (mut gm, mut ga, mut gb, mut dung, mut da, mut db, mut harm) = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+        for &(m, a, bb, kind, tox) in &got[..ng] {
+            harm += m * tox * p.body_harm;
+            let dig = if p.worth > 0.0 && kind < 4 {
+                let work = (bb / (m * 1000.0) / p.b_work).min(1.0);
+                work + (1.0 - work) * bulk
+            } else {
+                // flesh, and every food in e110's world: the soft part, and the tough part as far as the gut holds it
+                let tough = toughness(a / (m * 1000.0));
+                (1.0 - tough) + tough * retention
+            };
+            // with the worth law a food's A and B go with its matter; without, the gut frees all of them
+            let free = if p.worth > 0.0 { dig } else { 1.0 };
+            gm += m * dig;
+            ga += a * free;
+            gb += bb * free;
+            dung += m * (1.0 - dig);
+            da += a * (1.0 - free);
+            db += bb * (1.0 - free);
         }
         let kept = gm * eff;
         b.fat += kept;
         f.returned += (gm - kept) * k;
-        // A and B held up to what a tenth of its tissue holds; the rest, and what was not digested, to the litter
+        // A and B held up to what a tenth of its tissue holds. What is digested and not kept: into the litter
+        // (e110), or to the soil where it stands (e111, road: a body's waste is mineral). What is not digested is
+        // dung, litter with its A and B.
         let cap_a = 0.1 * b.ta.max(1e-6) + 1.0 * b.m;
         let cap_b = 0.1 * b.tb.max(1e-6) + 1.0 * b.m;
         let ka = ga.min((cap_a - b.pa).max(0.0));
@@ -1608,11 +1690,18 @@ fn live(x: &Ctx, sh: &Sh, i: usize, f: &mut BFlux) {
         b.pb += kb;
         let l = sh.lit.at(c);
         l.m += dung * k;
-        l.a += (ga - ka) * k;
-        l.b += (gb - kb) * k;
+        l.a += da * k;
+        l.b += db * k;
+        if p.road > 0.0 {
+            *sh.sa.at(c) += (ga - ka) * k;
+            *sh.sb.at(c) += (gb - kb) * k;
+        } else {
+            l.a += (ga - ka) * k;
+            l.b += (gb - kb) * k;
+        }
         if harm > 0.0 {
             b.harm += harm / b.m;
-            let lost = shrink(b, harm.min(0.5 * b.m), sh, c, k);
+            let lost = shrink(b, harm.min(0.5 * b.m), sh, c, k, false);
             sh.lit.at(c).m += lost * k;
         }
     }
@@ -1661,7 +1750,7 @@ fn live(x: &Ctx, sh: &Sh, i: usize, f: &mut BFlux) {
         let lack = -b.fat;
         b.fat = 0.0;
         f.returned -= lack * k;
-        f.returned += shrink(b, lack, sh, c, k) * k;
+        f.returned += shrink(b, lack, sh, c, k, p.road > 0.0) * k;
     }
     if b.fat > fat_cap {
         // more than it can hold is burnt
@@ -1720,7 +1809,7 @@ fn live(x: &Ctx, sh: &Sh, i: usize, f: &mut BFlux) {
     b.age += dt;
     let lifespan = p.body_life + p.body_life_frame * fm.frac[FRAME] * fm.frame_tough;
     if tb < -2.0 {
-        let lost = shrink(b, FROST * dt * (-2.0 - tb) * b.m, sh, c, k);
+        let lost = shrink(b, FROST * dt * (-2.0 - tb) * b.m, sh, c, k, false);
         sh.lit.at(c).m += lost * k;
         if b.m < 0.5 * b.peak {
             b.dead = Death::Cold;
@@ -1742,17 +1831,23 @@ fn live(x: &Ctx, sh: &Sh, i: usize, f: &mut BFlux) {
     }
 }
 
-/// Tissue lost (burnt for energy, or harmed away): its A and B go to the litter of the cell; the mass lost is
-/// returned for the caller to send to the air or the litter.
-fn shrink(b: &mut Body, lost: f64, sh: &Sh, c: usize, k: f64) -> f64 {
+/// Tissue lost (burnt for energy, or harmed away): its A and B go to the litter of the cell, or to its soil
+/// (`soil`: e111's road, tissue a body burns is digested); the mass lost is returned for the caller to send to
+/// the air or the litter.
+fn shrink(b: &mut Body, lost: f64, sh: &Sh, c: usize, k: f64, soil: bool) -> f64 {
     let q = (lost / b.m.max(1e-30)).clamp(0.0, 1.0);
     let (dm, da, db) = (b.m * q, b.ta * q, b.tb * q);
     b.m -= dm;
     b.ta -= da;
     b.tb -= db;
-    let l = sh.lit.at(c);
-    l.a += da * k;
-    l.b += db * k;
+    if soil {
+        *sh.sa.at(c) += da * k;
+        *sh.sb.at(c) += db * k;
+    } else {
+        let l = sh.lit.at(c);
+        l.a += da * k;
+        l.b += db * k;
+    }
     dm
 }
 

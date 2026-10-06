@@ -4,10 +4,12 @@
 #
 #     experiments/e111_holds/read.sh <name> [key=value ...]
 #
-# Writes experiments/e111_holds/results/read/<name>_*.
+# Writes experiments/e111_holds/results/$OUT/<name>_* (OUT: `read`, the readings, unless it is set - `set` for the
+# design's runs).
 set -e
 cd "$(dirname "$0")/../.."
-mkdir -p experiments/e111_holds/results/read
-exec ./target/release/e111_holds "experiments/e111_holds/results/read/$1" base/worlds/isles1.params \
+OUT="experiments/e111_holds/results/${OUT:-read}"
+mkdir -p "$OUT"
+exec ./target/release/e111_holds "$OUT/$1" base/worlds/isles1.params \
     size=128 edge=24 grain=40 sow=2 years=30 maps_years=1 threads=3 \
-    body_sow=15 bodies0=300 big_s=1000 "${@:2}" 2> "experiments/e111_holds/results/read/$1.err"
+    body_sow=15 bodies0=300 big_s=1000 "${@:2}" 2> "$OUT/$1.err"

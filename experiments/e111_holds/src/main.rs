@@ -22,7 +22,8 @@
 //!
 //! e111 (#130): readings of what holds the eaters, no law added - `eat_litter`, `eat_wood` and `eat_bank` take a
 //! food out of every body's reach, `inject_year` puts a designed body in (`form::designed`), and the prefix `bench`
-//! prints what a body earns and pays at each size without running a world.
+//! prints what a body earns and pays at each size without running a world. The design from those readings is four
+//! cycles, each behind a switch (`road`, `worth`, `reach`, `bite`; `body.rs`).
 //!
 //! Run: cargo run --release -p e111_holds -- <prefix> [key=value ...] [file.params ...]
 //! Writes `<prefix>_log.csv` (a row a year), `_census.csv` (a row a producer genotype a year), `_eaters.csv`,
@@ -238,6 +239,13 @@ params! {
     inject_year = 0.0, "the year designed bodies are put among the others (0: none; a reading)";
     inject_kind = 1.0, "1: the designed hunter; 2: its twin, the same body with no pull towards another";
     inject_bodies = 50.0, "designed bodies put in, each where a body stands on land";
+    // e111's design (#130, agreed 2026-10-07): four cycles, each behind a switch (0: e110's law).
+    road = 0.0, "1: the A and B a gut digests and does not keep go to the soil where the body stands, and what it does not digest is dung with its A and B (0: all of it into the litter)";
+    worth = 0.0, "1: of a plant food a gut digests the working part at once and the bulk as the rot does for the time it holds it (0: by toughness, as flesh is)";
+    b_work = 0.03, "B share at which a plant tissue is all working part (the food evaluator's unit)";
+    gut_hold = 1.0, "kg of food a kg of gut holds";
+    reach = 0.0, "1: wood is reached by height as leaves are, and fallen seed lies in the ground, out of reach (0: all of both)";
+    bite = 0.0, "1: a front breaks another body's tissue only as fast as its own gut takes it in, and swallows it; what is no mouth of it breaks its own tip's mass in a pass (0: power over strength for the time together, all of it carrion)";
 }
 
 fn parse(args: &[String]) -> Params {
@@ -596,6 +604,8 @@ fn main() {
                         co: &mut life.co,
                         lit: &mut life.lit,
                         bank: &mut life.bank,
+                        sa: &mut hy.a,
+                        sb: &mut hy.b,
                         gen: &life.gen,
                         step: step + k as f64 * sub,
                         year: yr as u32,

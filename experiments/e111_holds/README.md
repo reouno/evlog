@@ -7,8 +7,8 @@ Date: 2026-10-07
 e110 put bodies on the islands in metres and seconds and let them meet. The machinery runs; the world does not
 stand: the land is eaten bare in ten years, flesh is under 1% of the diet, every body ends at the default 0.1 kg and
 two founders' lines hold every island. #130 asks what holds eaters in a world that stands, in three parts: readings
-with no new law, one design as cycles agreed before code, a pilot. **This file is the readings so far**; the design
-is #130's, and the pilot is added here when the design is agreed.
+with no new law, one design as cycles agreed before code, a pilot. All three are here: the readings (part 1), the
+design as it was agreed (part 2), and its runs on the trial world and on `isles1` (part 3).
 
 ## Readings (part 1)
 
@@ -77,9 +77,9 @@ digit). Read by `read.py` (`results/read.csv`, `designed.csv`, `provenance.csv`)
 - `c_err` > 1e-6 at 23760
 - `ms_step` > 60 at 201960
 
-## Result
+### Result
 
-### `bench`: a body's day (`results/bench.csv`)
+#### `bench`: a body's day (`results/bench.csv`)
 
 A grown animal of the form with no genes, on land at its best heat, moving at the tenth of its speed it has with no
 genes:
@@ -96,7 +96,7 @@ genes:
 - **Nothing but distance gets cheaper with size.** Upkeep, work and the gut's rate are the same share of the body at
   every mass; the ground swept a kg falls by 2.2-2.5 a decade of mass. On one food the smallest body wins (hypothesis 1).
 
-### The readings (`results/read.csv`: means of years 26-30; t on the whole trial world, 25.6 km2 of land)
+#### The readings (`results/read.csv`: means of years 26-30; t on the whole trial world, 25.6 km2 of land)
 
 | run | land's producers, kg a m2 | of `nobody` | land covered | bodies' matter | they eat: leaf / wood / seed / litter, t a year |
 |---|---|---|---|---|---|
@@ -127,7 +127,7 @@ Ubuntu's; `twin` against `base`, the same world once the twin's line is gone).
    2,690 bodies in a year - 285 million animals, 1,840 t - ate 64 t of it, and the last one starved in the next. The
    twin's line was gone by the first census; with every body dead the land grows back (79% and rising).
 
-### Why the land falls when only litter is eaten (`land_b_*` in the logs; g of B a m2 of land, year 30)
+#### Why the land falls when only litter is eaten (`land_b_*` in the logs; g of B a m2 of land, year 30)
 
 | run | soil | producers | litter | bodies on land | litter decayed, t a year |
 |---|---|---|---|---|---|
@@ -141,7 +141,7 @@ litter, while the litter's matter is eaten: in `noreach` the litter is 13 g a m2
 the producers' B stops growing (8.0 against 16.5). The land also ends with 6-7 g less B than without bodies (not
 separated: bodies that feed on land and die at sea, and a land that takes less from its rock).
 
-## Conclusion
+#### What the readings say
 
 Holds for the trial world (16 km, one land of 26 km2, one seed, 15 years with bodies, `big_s` 1,000 kg) and e110's
 laws; one run a reading, so each says which way a lever moves the land, not by how much.
@@ -161,5 +161,79 @@ laws; one run a reading, so each says which way a lever moves the land, not by h
 - **Not changed by these readings**: one line on land and sea (a fifth to a half of the bodies are at sea), and the
   scale (the bodies weigh 60-90 t a km2 of land).
 
-The design from these readings is #130's comment of 2026-10-07 (to be agreed before code); its pilot is added here.
-`vision.md`: rows C size, F food web, and the lesson on what holds eaters.
+## The design (part 2)
+
+#130's comment of 2026-10-07, agreed the same day. Read from the top: the real land is not eaten bare because most
+of what a plant makes is where an eater is not, or is not worth the mouthful. Here everything in a cell lies before
+every mouth, the dead are the richest free food, what a gut passes is lost to the plants, and a kill has no size.
+Four cycles as one set, each behind a switch (0: e110's law), in `src/body.rs`:
+
+| cycle | the law | takes from | refilled by | limited by | should settle into |
+|---|---|---|---|---|---|
+| `road`: the dead's road back | what a gut digests and does not keep of a food's A and B goes to the soil where the body stands (so does the A and B of tissue it burns); what it does not digest is dung, litter with its matter and its A and B | the litter, the carrion | every death, every fall, dung | the rot and the eaters share one litter | the producers' B within a fifth of the world without bodies |
+| `worth`: what a mouthful is worth | of a plant food (leaf, wood, seed, litter) the working part - in proportion to its B, all of it at `b_work` 3% - is digested at once; of the bulk, what the rot would take (`decay`, at the body's heat) in the time the gut holds it: its fill (`gut_hold`, its own mass) over what passes. A sets the bite only. Flesh has no bulk: its soft part, and its tough part by the gut's share, as before | - | - | a gut that holds bulk is a body that is mostly gut | flesh and seed rich, leaf half, litter half, wood nearly all bulk; litter eaters keep about half of what they keep now |
+| `reach`: what lies in reach | wood is reached by height, as leaves and hanging seed are; fallen seed lies in the ground, out of reach of a body on it (the first half of #125's layers) | short stands, low wood | growth, the seed rain, the bank | a body's height | the cover stays |
+| `bite`: a press is a bite | a front breaks another body's tissue only as fast as its own gut takes it in, and swallows it at the contact (it is eaten first, as `kill`); the share of the front that is no mouth breaks its own tip's mass in a pass, which falls as carrion | the animals a front catches | births | the catcher's appetite, the prey's speed, faces, tips and compounds, the hunters' hunger | hunters a tenth of their prey, both swinging |
+
+A size's place: no law; read as the share of the matter in bodies over 1 kg. Named and not built: bodies at home on
+land and sea alike, upkeep that falls with size, the scale S.
+
+New rates, each from its units and none searched: `b_work` 0.03 (the food evaluator's own unit of B), `gut_hold` 1
+(a gut holds its own mass of food). At a full gut that is half a day held, 0.4% of the bulk; a body eating 2% of
+its mass a day with a fifth of it gut holds a meal ten days, 6% of the bulk.
+
+## The set on the trial world, and the pilot (part 3)
+
+### Hypothesis
+
+Written before the runs. The trial world, years 26-30, against `nobody` (0.801 kg a m2):
+
+1. **The set holds the land**: with all four on (`all`) the land's producers are at half of `nobody`'s or more, and
+   the last year is not under the five years' mean.
+2. **Each cycle carries part of it**: with the road left out (`no_road`) or the reach left out (`no_reach`) the land
+   is lower than `all` by more than two realisations differ (0.07 kg a m2); with the worth left out (`no_worth`) the
+   bodies weigh about twice `all`'s.
+3. **A hunter's line lives with its prey** (`all_hunter`): bodies of both the designed line and the others are alive
+   in year 30, and flesh is a tenth or more of the designed line's diet; without the bite (`no_bite_hunter`) the
+   world is emptied as in the reading.
+4. With no switch on (`e110`) the world is `base`'s to the digit: the code that carries the switches changed nothing.
+
+The pilot (`isles1`, bodies sown in year 40, years 61-70, against e109 without bodies, 1.76 kg a m2, and e110's
+`tick1`, 0.013): ledgers close to 1e-9; **the land's producers are at half of e109's or more with bodies alive in
+year 70** (#130's line). Read and reported: flesh in the diet, the matter in bodies over 1 kg, founders' lines, the
+land's B, the bodies' weight a km2, the cost.
+
+### Method
+
+`OUT=set experiments/e111_holds/read.sh <name> ...` (the trial world of part 1) and `experiments/e111_holds/pilot.sh
+<name>` (e110's `tick1` with the four on), all on Ubuntu, read by `read.py` (`results/set.csv`, `results/pilot.csv`).
+
+| run | arguments | asks |
+|---|---|---|
+| `e110` | - | hypothesis 4 |
+| `all` | `road=1 worth=1 reach=1 bite=1` | hypothesis 1 |
+| `no_road`, `no_worth`, `no_reach` | `all` with that one 0 | hypothesis 2 |
+| `all_hunter`, `all_twin` | `all` with `inject_year=20 inject_kind=1`, `2` | hypothesis 3 |
+| `no_bite_hunter` | `all_hunter` with `bite=0` | hypothesis 3 |
+| pilot `all` | `pilot.sh all` | the pilot's line |
+
+No line of the sown bodies presses by year 20 in this world, so the bite is left out only where a hunter is put in.
+
+**Cost**: the eight trial runs two threads each, six at once, about an hour (8 core-hours); the pilot six threads,
+about two hours (e110's `tick1` took 80-90 minutes), started only if `all` holds the trial land.
+
+**Stop early if:**
+
+- `water_err` > 1e-6 at 23760
+- `c_err` > 1e-6 at 23760
+- `ms_step` > 60 at 487080
+- `bodies` > 200000 at 487080
+- `bodies` < 100 at 594000
+
+### Result
+
+(to be written)
+
+## Conclusion
+
+(to be written)
