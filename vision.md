@@ -41,14 +41,14 @@ Today is the last whole world (stage C on c1225, e101) and, where a row says so,
 | B response to eating | regrowth, defence, fruit offered | new world: compounds with keys; small eaters evolve and come within 1 bit of the producers' keys, or live on the undefended (e103) | medium |
 | B plants as places | a forest is home, cover and food | a stand is a home only through its wet ground (e078) | medium |
 | C parts | worth depending on where they sit and how they move | 4 block kinds, 2D grid of side 4-16; every block pays best packed, so bodies fill their grids (e047) | **large** |
-| C size | a thousandfold range, each size with its place | 21-35 blocks; winners differ 1.3-2.2x (e055, e075); new world: adult mass is free over ten decades and every body ends at the default 0.1 kg, a swarm (e110); nothing but distance gets cheaper with size, and with litter no food the body left is 18-250 kg, a wood and seed eater (e111) | large |
+| C size | a thousandfold range, each size with its place | 21-35 blocks; winners differ 1.3-2.2x (e055, e075); new world: adult mass is free over ten decades and every body ends at the default 0.1 kg, a sack that is 65% gut (e110, e111); nothing but distance gets cheaper with size, and only with litter no food is the body left large (18-250 kg, a wood and seed eater, e111) | large |
 | C life history | lives spanning seasons; fat and dormancy selected | breeding values fixed; fat from the genome (e069, e072) | medium |
 | D behaviour | look, chase, flee, go to water, go home; some stay, some travel far | a linear reflex, 16 readings to 4 actions, no memory (e050); eyes not bought (2-4% look out, e070); a grown body ends 3-28 cells from its birth | **large**; cause is E |
 | E life vs year, vs day | many animals live through several seasons, and many days | a grown life is 500-570 steps, 1/20 of a year and about 7 days; half the dead die by 75 steps; the day's swing is wider than the bands (e071, e087) | **large**: bound by the crowd |
 | E travel vs places | a migrant crosses places within a year | a few cells of 512; a place fed in a lean month is 9-15 cells away (e086) | **large** |
 | F ways of living | many; the user asked for about 20 | 7.14 kinds at a census, 4.34 kept to a place, 8 ways at 5% in the mean (e101) | **large** |
-| F dominance | no line above a fifth of the animals | the largest line holds 39-70% of the land's bodies (e101); new world: two founders' lines of 256 hold every island and the sea, walking 450-1,900 km a year (e110) | large |
-| F food web | three or more levels, hunters of several kinds | kills are 27% of what bodies eat; pure flesh kinds 2-4% (e075); new world: bodies meet and break each other by one law of contact, but flesh is under 1% of the diet and no line lives on it; they eat the land bare in ten years on litter, 86-94% of the diet (e110); a designed hunter breaks every body in a year and starves (e111) | **large** |
+| F dominance | no line above a fifth of the animals | the largest line holds 39-70% of the land's bodies (e101); new world: one founder's line of 256 holds every island with bodies, on land and sea alike, walking 550 km a year (e110, e111) | large |
+| F food web | three or more levels, hunters of several kinds | kills are 27% of what bodies eat; pure flesh kinds 2-4% (e075); new world: bodies meet and break each other by one law of contact, but flesh is under 1% of the diet and no line lives on it; with a food worth its working part and a gut's leavings sent to the soil the land stands (78% of the world without bodies after 30 years, losing a point a year) and the bodies live on litter, 98% of the diet; a designed hunter empties the world in a year or fails on its prey, and flesh is 0.1% of the diet (e111) | **large** |
 | F crowding | numbers limited by food, hunters and seasons | limited by the birth rule: 47% of births find no room though a spot that fits is within two body lengths for 75% of them and off the four rays it searches; widening it thins the jam to 33% and costs 2.5 kinds (e097) | **large**, and not to be lifted by giving room |
 | F history (a replay) | the same world run again fills other roles with other bodies | between two seeds the ways holding 5% agree 0.66 and their shares 0.77, the largest way is the same in 4 of 6 seeds, the birth forms agree 0.038 (e101, `analysis/replay.py`) | medium: contingent already; the measure's own 64 boxes cap what can be said |
 | F cycles over time | predator and prey swing | the land's bodies swing twofold over a year; forms do not follow (e070) | medium |
@@ -102,8 +102,8 @@ Each holds under the conditions it was found in.
   a spread is read by what it is made of - one collapsed seed is not a various world (e100).
 - A law written in cells and updates holds at one scale only (e107), and a scale sets the clock: with seeds that
   cross metres, 300 years after a sowing is a transient (e109). Read a trend before a level.
-- A mouth that pays its day on 0.04 g a m2 takes what is free to nothing, and the dead are free: the land stands only
-  where litter is no food, and falls by the nutrients' road as much as by the mouth. Unbounded kills empty it (e111).
+- A mouth that pays its day on 0.04 g a m2 takes what is free to nothing: what holds eaters of the dead is what the
+  dead are worth and where their A and B go, not how fast they are found. A kill no refuge bounds empties a world (e111).
 
 ## 5. The direction
 
@@ -115,5 +115,5 @@ world's physics; producers evolve and the living make each other's niches; a sma
 space of forms; the world is judged whole, over long runs, by an open measure instead of the 64-box label.
 
 **The gap being filled** is the bodies' (rows C to F): individuals built of tissues, at real sizes and distances, on
-a ground and producers that already differ by place and evolve. Their machinery runs (e110), the world does not
-stand with it, and what a body stands for is open again (`foundation.md` 4). What is built next is #116's to say.
+a ground and producers that already differ by place and evolve. Their machinery runs (e110) and the land stands
+with them (e111), under one way of living and no eater of flesh. What is built next is #116's to say.

@@ -215,6 +215,7 @@ land's B, the bodies' weight a km2, the cost.
 | `no_road`, `no_worth`, `no_reach` | `all` with that one 0 | hypothesis 2 |
 | `all_hunter`, `all_twin` | `all` with `inject_year=20 inject_kind=1`, `2` | hypothesis 3 |
 | `no_bite_hunter` | `all_hunter` with `bite=0` | hypothesis 3 |
+| `all_hunter3`, `all_hunter4` | `all` with `inject_kind=3`, `4` (added after `all_hunter` was read) | is it the laws, or the hunter's design |
 | pilot `all` | `pilot.sh all` | the pilot's line |
 
 No line of the sown bodies presses by year 20 in this world, so the bite is left out only where a hunter is put in.
@@ -232,8 +233,108 @@ about two hours (e110's `tick1` took 80-90 minutes), started only if `all` holds
 
 ### Result
 
-(to be written)
+#### The set on the trial world (`results/set.csv`: means of years 26-30)
+
+| run | land's producers, kg a m2 (year 30) | of `nobody` | bodies' matter | litter through their guts, t a year | producers' B, g a m2 |
+|---|---|---|---|---|---|
+| `nobody` | 0.801 (0.846) | 100% | - | - | 14.8 |
+| `e110` (no switch; `base` to the digit) | 0.203 (0.154) | 25% | 1,506 t | 4,323 | 4.4 |
+| **`all`** | **0.747 (0.785)** | **93%** | 1,163 t, rising | 37,284 | 14.1 |
+| `no_road` | 0.557 (0.576) | 69% | 943 t | 3,626 | 10.3 |
+| `no_worth` | 0.217 (0.205) | 27% | 6,050 t | 16,467 | 6.1 |
+| `no_reach` | 0.702 (0.731) | 88% | 1,991 t | 80,038 | 13.4 |
+| `all_twin` (the twin's line gone in a year) | 0.749 (0.792) | 94% | 1,008 t | 30,800 | 14.0 |
+| `all_hunter4` (its line gone in two years) | 0.700 (0.708) | 87% | 2,741 t | 188,088 | 14.0 |
+| `all_hunter`, `no_bite_hunter`, `all_hunter3` | 0.78 (0.83) | 97% | none from year 22 | - | 14.3 |
+
+Ledgers close to 2e-13. `all`, `all_twin` and `all_hunter4` are three realisations of one world once the designed
+line is gone.
+
+1. **The set holds the land: yes.** 93% of the world without bodies and still rising, the cover whole (87% against
+   89%), the producers' B at 95%. The bodies are fewer than in e110's world and live on litter alone (99.96% of the
+   diet): the litter passes their guts again and again - 37,000 t a year where 22,800 t is fixed - and is not eaten
+   away (0.067 kg a m2 of the world against 0.058 without bodies). The world fixes more with them than without
+   (27,900 t a year against 22,800): eaters of the dead that speed the cycle.
+2. **Each cycle carries part of it: the worth and the road, yes; the reach, not shown.** Without the worth the land
+   is e110's again (27%) under four times e110's bodies, which then hold 5.8 g of the land's B in themselves, 3.6 g
+   of it at sea; without the road it is 69%. Without the reach it is 88%, 0.05 kg a m2 under `all` and inside what
+   two realisations differ by, with the cover at 80% against 87%. I had the worth as the smallest of the four
+   (about half as many eaters): it is the largest.
+3. **A hunter's line lives with its prey: no, with or without the bite.** The designed hunter empties the world in
+   a year either way (744 t torn in 8,180 contacts with the bite, 977 t in 1,305 without; 60 t and 15 t eaten).
+   Two thirds of its front are no mouth, and that part tears its own tip's mass a contact, 17 times what its gut
+   takes in. The same hunter that hunts only when its fat is under half (`all_hunter3`) does the same. With a front
+   that is all mouth and soft (`all_hunter4`) 14 presses of 767 break anything, the prey's harder faces return the
+   force, and the hunters' own fronts fail: 49 of them broken, their line gone in two years.
+4. **`e110` is `base` to the digit: yes** (every column of the log but the timings).
+- Not settled in 15 years: the bodies are still growing in all three realisations (1,008-2,741 t), and in the one
+  where they grew most the land stopped rising (0.708 in year 30 against 0.846).
+- One line holds 99% of the matter, 0.6% of it is in bodies over 1 kg, and 72% of the bodies are at sea.
+
+#### The pilot on `isles1` (`results/pilot.csv`: means of years 61-70)
+
+One run, 54 minutes on six threads (Ubuntu). Its first 40 years are e109's and `tick1`'s to the digit.
+
+| | e109 (no bodies) | e110 `tick1` | e111 `all` |
+|---|---|---|---|
+| the land's producers, kg a m2 (year 70) | 1.762 (1.832) | 0.013 (0.012) | **1.367 (1.343)** |
+| of e109's | 100% | 1% | **78%** (73% in year 70) |
+| the land they cover | 95% | 21% | 94% |
+| fixed a year | 533,000 t | 61,000 t | 505,000 t |
+| bodies / their matter | - | 4,467 / 6,360 t | 11,175 / 15,628 t (17,546 t in year 70) |
+| their matter a km2 of land | - | 16 t | 38 t |
+| bodies at sea | - | 54% | 18% |
+| litter through their guts a year | - | 41,700 t | 1,895,000 t |
+| leaf / wood / seed eaten a year | - | 2,472 / 1,526 / 988 t | 1,055 / 1,679 / 100 t |
+| flesh in the diet | - | 0.85% | 0.13% |
+| tissue failed in meetings a year | - | 760 t | 1,158 t |
+| founders' lines over 1% of the matter | - | 2 | 1, on 22 islands |
+| matter in bodies over 1 kg grown | - | 0% | 0.002% |
+| a year | 26 s | 90 s | 88 s (the bodies 52 s) |
+| worst ledger | | 2e-12 | 5e-12 |
+
+- **The pilot's line holds**: the land keeps 78% of its producers with bodies on it for 30 years, covered as the
+  world without bodies is, fixing 95% of what that world fixes.
+- **It is not settled.** Against e109 the land is 97% in year 50, 82% in year 60 and 73% in year 70: it loses about
+  a point a year while the bodies' matter still rises. The cause is not separated. It is not the nutrients - the
+  soil holds 3.3 g of B a m2 where it held 0.2, unused - and what is eaten of living plants is under 1% of their
+  matter a year.
+- **One way of living still.** One founder's line from year 60, on every island with bodies; 99.9% of the matter in
+  bodies of the default 0.1 kg; 98% of the diet litter. The bodies are sacks: 65% gut.
+- **They press each other and nothing lives on it.** Every genotype alive carries a pull and a press and 81% of the
+  matter is in genotypes that have killed: 10,000-54,000 failed faces a year, poison from those contacts and hunger
+  the first two causes of death. Flesh is 0.1-0.7% of the diet, and bodies with flesh over a tenth of their diet
+  hold 1.5% of the matter.
+- **The scale**: on a land that stands the animals weigh 38 t a km2 of land (29-43 over years 52-70), twice #126's
+  8.8-20. At `big_s` 4,000 kg that is 11,000 bodies, a body holding 0.35 S, and a year costs 88 s: a 300-year run
+  in 7.5 hours on six threads. #126's 30,000 bodies would be `big_s` 1,500 kg and about a day a run.
 
 ## Conclusion
 
-(to be written)
+Holds for the trial world (one land of 26 km2, 15 years with bodies, three realisations of the set) and one run of
+30 years on `isles1`, one life seed, `big_s` 4,000 kg; the leave-one-out is one run a cycle.
+
+- **What holds the eaters of this world is what the dead are worth and where their A and B go.** With a plant
+  food's working part digested at once, its bulk only as the rot digests it, and a gut's leavings sent to the soil,
+  the land stands: 93% of the world without bodies on the trial world, 78% on `isles1` where e110 left 1%. The
+  eaters of the dead then turn the litter over instead of removing it, and the world fixes as much with them.
+  The worth carries most of it (27% without), the road a part (69% without); the reach is not shown to matter on
+  this world (88% without, inside what two realisations differ by).
+- **Not held for good.** On `isles1` the land loses a point a year against the world without bodies and the bodies
+  still grow; 30 years do not say where it settles.
+- **The flesh cycle did not close**, and the bite is not what was missing. A front that breaks tears with the part
+  of it that is no mouth, 17 times what its gut takes, and empties the world in a year, hungry or not; a front
+  that is all mouth is soft and fails on the prey's faces. Between the two no designed hunter lives, and in 30 years
+  on `isles1` no line comes to live on flesh. What every one of these worlds lacks is a place where the caught is
+  not: #125's layers are next in #116's order, and the bite's second clause (what a front that is no mouth
+  breaks) is theirs to settle with them.
+- **A size has no place yet**, and one line holds every island. Both were named and not built; #116's turn for the
+  second (wider seas, a higher land) is met and is taken to its plan check.
+- **The scale**: `big_s` stays 4,000 kg, which holds about 11,000 bodies on a standing land and lets a 300-year run
+  cost 7.5 hours; the weight of animals it was chosen on is now measured, 38 t a km2.
+- **Kept**: the four laws stay in this crate, which is the bodies' code from here (not `base/`: rung 3 is judged
+  after its run). The wrong guess to remember: I had the worth as the smallest of the four cycles and it is the
+  largest - the readings showed where the land's B went, not how much the eaters' number hangs on what they digest.
+
+`vision.md`: rows B plant foods (what a food is worth), C size, F dominance, F food web, G matter, and the lesson
+on what holds eaters. `foundation.md`: the bodies' paragraph, the rows of mouth and gut and of contact, the scale.

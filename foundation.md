@@ -37,15 +37,15 @@ rungs, each judged before the next stands on it. The older world is e001-e101 an
   their toughness, and are harmed by a compound whose 8-bit key is far from every detox key they carry.
 - **The living cross metres** (e109), a cell only where a thing lands: a seed goes its stand's height x the wind /
   its fall speed, a length of river, or as the sea mixes; a fire runs a length of dry fuel; a small eater flies one.
-- **Bodies** (e106, e110: in e110's crate and not in `base/` - the world does not stand with them yet) are
+- **Bodies** (e106, e110, e111: in e111's crate and not in `base/` - rung 3 is judged after its run) are
   individuals with a place and a heading in metres. A form is an 8x8x8 grid of tissue developed from the genome,
   each voxel a mix of frame, muscle, gut, nerve, fat and glue with its A, B and compound; size is separate. Physics
-  reads a summary of the form: a mouth takes what its pressure breaks and a gut keeps what its share holds; water,
-  heat and breath pass through skin; speed is muscle over drag and friction. A body senses within a reach, steers
-  by weighted pulls and a wandering chance, grows from egg to adult, carries a clutch and dies of hunger, thirst,
-  heat, cold, breath, poison, age or being broken. Bodies meet by one law: a chaser arrives by its speed against the
-  other's, its front's pressure meets a face's strength, failed tissue lies as carrion for whoever stands there.
-  Designed and not built: soil and canopy, hidden units and learning (#125).
+  reads a summary of the form: a mouth takes what its pressure breaks within its height; water, heat and breath pass
+  through skin; speed is muscle over drag and friction. Of a plant food a gut digests the working part (by its B)
+  at once and the bulk only as the rot would while it holds it; what it digests and does not keep of A and B goes
+  to the soil, the rest is dung (e111). A body senses within a reach, steers by weighted pulls and a wandering
+  chance, carries a clutch and dies of hunger, thirst, heat, cold, breath, poison, age or being broken. Bodies meet
+  by one law of contact (below). Designed and not built: soil and canopy, hidden units and learning (#125).
 
 **Generated** from the seed and its parameters: the height map and sea level (land, sea, islands and lakes are
 results), the rock provinces, the drainage network, the latitudes, and the genomes sown.
@@ -69,11 +69,11 @@ Every freedom is a law about a material with a price no form escapes. They are b
 | compound and key | a compound harms an eater that carries no near key | fewer eaters | B to make it; each detox key costs the eater | `base/` |
 | fuel | dry litter and low leaves burn, and fire spreads by fuel | open land kept from tall forms | producers burn their own | `base/` |
 | size | the same form at any mass | cheap travel a kg, slow change of heat | surface falls behind mass (square-cube): skin, mouth and gut a kg | e106 |
-| mouth and gut | a mouth takes what its tip and muscle break; the gut's share sets how much bulk it keeps | tough leaves, wood, seed | frame and muscle; a heavy, B-rich gut | e106 |
+| mouth and gut | a mouth takes what its tip and muscle break; a plant food's working part (its B over 3%) is digested at once, its bulk at the rot's own rate for the time the gut holds it (its fill over what passes) | rich food fast; bulk to a large gut or a small meal | frame and muscle; a heavy, B-rich gut | e106, e111 (the land hangs on it) |
 | skin | soft open surface passes water, heat and breath | breath in water, cooling | water lost to dry air, warmth lost in the cold | e106 |
 | speed | muscle over drag (the front) and friction (the mass); a climb is paid by mass x rise | reach | muscle's upkeep, work by the path | e106 |
 | eggs | many small or few large, from the parent's fat | number, or a start | the parent's A and B | e106 |
-| contact | a face fails where a front's pressure passes its strength, for the time the two stay together; glue holds; the compound at a failed contact harms by keys | flesh | tip, muscle and glue; the catch is carrion for all who stand there | e110 (used, feeds no line) |
+| contact | a face fails where a front's pressure passes its strength, as fast as the front's own gut takes it in (it swallows it); the part of the front that is no mouth tears its own tip's mass a contact; glue holds; the compound at a failed contact harms by keys | flesh | tip, muscle and glue; a soft mouth fails on a harder face | e110, e111 (feeds no line: a front that breaks empties the world, #125) |
 | strata, mind | soil by a hard front, canopy by glue and a light body; hidden units and plastic weights by nerve | refuge, crowns, learning | dark and slow; nerve is the costliest tissue | designed (#125) |
 
 ## 3. Rungs, pass lines and measures
@@ -111,10 +111,9 @@ days. The planet `c1225` (cells of 63 km, climate by latitude) is e102-e106's wo
 laws are in metres and seconds - the cell is the ground's grain, the update the step of integration (19 minutes;
 nothing shows a longer one safe, e110). A body holds about S kg of animals at any age: a kind whose adult weighs S
 is one animal a body, a smaller kind a flock, a clutch one brood carried until it holds a tenth of S. The watcher
-sees a place, later at real size through a window that plays what the world decided. **Open on this scale** (e110):
-what a body stands for - #126 chose S 300-1,000 kg on 8.8-20 t of animals a km2, and the bodies weigh 180-310 t at
-their peak and 16-48 t on the land they have eaten bare, so the pilot ran at S 4,000 kg - and what parts the lines:
-two lines hold every island, a body walking 450-1,900 km a year across seas of 2-33 km.
+sees a place, later at real size through a window that plays what the world decided. **S is 4,000 kg** (e111): on a
+land that stands the animals weigh 38 t a km2, about 11,000 bodies. **Open**: what parts the lines - one line holds
+every island, a body walking 550 km a year across seas of 2-33 km and living on land and sea alike.
 
-**Compute**: the islands with producers take 26 s a year on six threads (e109); bodies add 36 s a year at 4,500
-bodies and 300 s at 25,000 (e110, three runs on six cores), so a 300-year run pays for about 10^4 bodies.
+**Compute**: the islands with producers take 26 s a year on six threads (e109); 11,000 bodies add 52 s (e111) and
+25,000 add 300 s (e110), so a 300-year run costs 7.5 hours at S 4,000 kg and about a day at #126's 30,000 bodies.
