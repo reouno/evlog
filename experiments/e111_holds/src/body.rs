@@ -397,11 +397,12 @@ fn fail(b: &mut Body, car: &mut Carrion, vapor: &mut f64, area: f64, d: f64) -> 
     if b.s > 1.0 {
         let whole = (d / each).floor().min(b.s - 1.0);
         if whole > 0.0 {
+            // with what each had just swallowed (e111, `meal`)
             let k = whole / area;
-            car.m += each * k;
-            car.a += (b.ta + b.pa + b.c_a) * k;
-            car.b += (b.tb + b.pb + b.c_b) * k;
-            car.kill += each * k;
+            car.m += (each + b.meal[0]) * k;
+            car.a += (b.ta + b.pa + b.c_a + b.meal[1]) * k;
+            car.b += (b.tb + b.pb + b.c_b + b.meal[2]) * k;
+            car.kill += (each + b.meal[0]) * k;
             *vapor += (b.w + b.c_w) * k;
             b.s -= whole;
             animals = whole;
@@ -1578,12 +1579,13 @@ fn live(x: &Ctx, sh: &Sh, i: usize, f: &mut BFlux) {
         total += want[j];
     }
     // What it takes in: first the meal its front took from another body in this update's meeting (e111), then
-    // what its mouth swept, as far as its gut has room. Each mouthful: kg, g of A, g of B, its kind, its harm.
-    let mut got = [(0.0f64, 0.0f64, 0.0f64, 0usize, 0.0f64); MAX_FOODS + 1];
+    // what its mouth swept, as far as its gut has room. Each mouthful: kg, g of A, g of B, its kind, its harm, and
+    // the food's A and B shares.
+    let mut got = [(0.0f64, 0.0f64, 0.0f64, 0usize, 0.0f64, 0.0f64, 0.0f64); MAX_FOODS + 1];
     let mut ng = 0;
     let mut intake = 0.0;
     if b.meal[0] > 0.0 {
-        got[ng] = (b.meal[0], b.meal[1], b.meal[2], 5, 0.0);
+        got[ng] = (b.meal[0], b.meal[1], b.meal[2], 5, 0.0, b.meal[1] / (b.meal[0] * 1000.0), b.meal[2] / (b.meal[0] * 1000.0));
         ng += 1;
         intake += b.meal[0];
         f.eaten[5] += b.meal[0] * k;
@@ -1646,7 +1648,7 @@ fn live(x: &Ctx, sh: &Sh, i: usize, f: &mut BFlux) {
             };
             f.eaten[kind] += m;
             b.eaten[kind] += m / k;
-            got[ng] = (m / k, a / k, bb / k, kind, fo.tox);
+            got[ng] = (m / k, a / k, bb / k, kind, fo.tox, fo.a, fo.b);
             ng += 1;
             intake += m / k;
         }
@@ -1656,32 +1658,31 @@ fn live(x: &Ctx, sh: &Sh, i: usize, f: &mut BFlux) {
         // bulk what the rot would take in the time the gut holds it - its fill over what passes
         let held = p.gut_hold * fm.frac[GUT] * b.m / (intake / dt) / (p.year / p.day); // years
         let bulk = 1.0 - (-p.decay * q10(tb) * held).exp();
-        let (mut gm, mut ga, mut gb, mut dung, mut da, mut db, mut harm) = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-        for &(m, a, bb, kind, tox) in &got[..ng] {
+        let (mut gm, mut ga, mut gb, mut dung, mut da, mut harm) = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+        for &(m, a, bb, kind, tox, share_a, share_b) in &got[..ng] {
             harm += m * tox * p.body_harm;
             let dig = if p.worth > 0.0 && kind < 4 {
-                let work = (bb / (m * 1000.0) / p.b_work).min(1.0);
+                let work = (share_b / p.b_work).min(1.0);
                 work + (1.0 - work) * bulk
             } else {
                 // flesh, and every food in e110's world: the soft part, and the tough part as far as the gut holds it
-                let tough = toughness(a / (m * 1000.0));
+                let tough = toughness(share_a);
                 (1.0 - tough) + tough * retention
             };
-            // with the worth law a food's A and B go with its matter; without, the gut frees all of them
+            // a food's B is its working part, freed whole; with the worth law its A goes with its matter
             let free = if p.worth > 0.0 { dig } else { 1.0 };
             gm += m * dig;
             ga += a * free;
-            gb += bb * free;
+            gb += bb;
             dung += m * (1.0 - dig);
             da += a * (1.0 - free);
-            db += bb * (1.0 - free);
         }
         let kept = gm * eff;
         b.fat += kept;
         f.returned += (gm - kept) * k;
         // A and B held up to what a tenth of its tissue holds. What is digested and not kept: into the litter
         // (e110), or to the soil where it stands (e111, road: a body's waste is mineral). What is not digested is
-        // dung, litter with its A and B.
+        // dung, litter with the A that goes with it.
         let cap_a = 0.1 * b.ta.max(1e-6) + 1.0 * b.m;
         let cap_b = 0.1 * b.tb.max(1e-6) + 1.0 * b.m;
         let ka = ga.min((cap_a - b.pa).max(0.0));
@@ -1691,7 +1692,6 @@ fn live(x: &Ctx, sh: &Sh, i: usize, f: &mut BFlux) {
         let l = sh.lit.at(c);
         l.m += dung * k;
         l.a += da * k;
-        l.b += db * k;
         if p.road > 0.0 {
             *sh.sa.at(c) += (ga - ka) * k;
             *sh.sb.at(c) += (gb - kb) * k;
