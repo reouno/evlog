@@ -237,7 +237,7 @@ params! {
     eat_wood = 1.0, "0: wood is out of every body's reach (a reading)";
     eat_bank = 1.0, "0: the seed bank is out of every body's reach (a reading)";
     inject_year = 0.0, "the year designed bodies are put among the others (0: none; a reading)";
-    inject_kind = 1.0, "1: the designed hunter; 2: its twin, the same body with no pull towards another";
+    inject_kind = 1.0, "1: the designed hunter; 2: its twin, the same body with no pull towards another; 3: the hunter that hunts when hungry";
     inject_bodies = 50.0, "designed bodies put in, each where a body stands on land";
     // e111's design (#130, agreed 2026-10-07): four cycles, each behind a switch (0: e110's law).
     road = 0.0, "1: the A and B a gut digests and does not keep go to the soil where the body stands, and what it does not digest is dung with its A and B (0: all of it into the litter)";

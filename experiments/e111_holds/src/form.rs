@@ -391,8 +391,9 @@ pub fn random(rng: &mut Rng) -> Vec<u32> {
 /// frame and muscle, muscle through its fore half, gut and fat behind. With `hunts` it is pulled towards a body
 /// smaller than itself that is not its kin and presses it, runs when no flesh lies where it stands and rests
 /// when some does; without, it is the same body with no pull towards another (the twin the hunter is read
-/// against). A design in the genome's own language: nothing in the world knows it.
-pub fn designed(hunts: bool) -> Vec<u32> {
+/// against). With `sated` the pull falls with its fat (none once its fat is half full) and so does its running: it
+/// hunts when it is hungry. A design in the genome's own language: nothing in the world knows it.
+pub fn designed(hunts: bool, sated: bool) -> Vec<u32> {
     let gene = |t: usize, c: u32, v: f64| ((t as u32) << 24) | (c << 16) | (((v / 2.0 * 32768.0) as i32).clamp(-32768, 32767) as i16 as u16 as u32);
     let when = |signal: u32, above: bool, level: u32| 128 | (signal << 4) | ((above as u32) << 3) | level; // level in sevenths
     let (fore, front, back) = (when(0, true, 3), when(0, true, 4), when(0, false, 3));
@@ -427,6 +428,16 @@ pub fn designed(hunts: bool) -> Vec<u32> {
             gene(BEVAL + 1, 2, -1.99),
             // and it goes where flesh lies thicker
             gene(WEIGHT + 1, 0, 1.99),
+        ]);
+    }
+    if sated {
+        g.extend([
+            // the fuller its fat, the less it is pulled and the less it runs
+            gene(BEVAL, 3, -1.99),
+            gene(BEVAL, 3, -1.99),
+            gene(BEVAL, 3, -1.99),
+            gene(WEIGHT + 5, 1, -1.99),
+            gene(WEIGHT + 5, 1, -1.0),
         ]);
     }
     g

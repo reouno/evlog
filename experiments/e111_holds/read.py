@@ -23,7 +23,7 @@ TRIAL_CONTROL = os.path.join(RES, "read", "nobody_log.csv")
 SETS = [
     # directory, the runs in the order they are printed, the log of the world without bodies, years read
     ("read", ["nobody", "base", "nolitter", "decay10", "noreach", "nolitter_noreach", "decay10_noreach", "hunter", "twin"], TRIAL_CONTROL, 5),
-    ("set", ["e110", "all", "no_road", "no_worth", "no_reach", "no_bite", "all_hunter", "all_twin"], TRIAL_CONTROL, 5),
+    ("set", ["e110", "all", "no_road", "no_worth", "no_reach", "no_bite", "all_hunter", "no_bite_hunter", "all_twin"], TRIAL_CONTROL, 5),
     ("pilot", ["tick1", "all"], os.path.join(HERE, "..", "e109_metres", "results", "isles1_life1_log.csv"), 10),
 ]
 # e110's `tick1` is the pilot's world with none of the four cycles: read from its own experiment
