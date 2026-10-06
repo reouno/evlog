@@ -207,6 +207,8 @@ land's B, the bodies' weight a km2, the cost.
 
 `OUT=set experiments/e111_holds/read.sh <name> ...` (the trial world of part 1) and `experiments/e111_holds/pilot.sh
 <name>` (e110's `tick1` with the four on), all on Ubuntu, read by `read.py` (`results/set.csv`, `results/pilot.csv`).
+The body censuses (`*_bodies.csv`) are not committed; `read.py` needs them beside the logs to write those files
+again, and leaves the files as they are without them.
 
 | run | arguments | asks |
 |---|---|---|

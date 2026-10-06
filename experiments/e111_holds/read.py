@@ -110,6 +110,12 @@ def read_set(name, order, control_path, last, prov, des):
             if "land_b_soil" in o:
                 print(f"{o['run']:17s} " + " ".join(f"{o['land_b_' + k]:6.3f}" for k in POOLS) + f" {sum(o['land_b_' + k] for k in POOLS):6.3f} {o['sea_b_bodies']:7.3f}")
     keys = list(dict.fromkeys(k for o in out for k in o))
+    if not any(os.path.exists(os.path.join(where[r], r + "_bodies.csv")) for r in runs):
+        print(f"{name}: no body census beside the logs - {name}.csv and designed.csv are left as they are")
+        prov.append([f"{name}: runs read", " ".join(runs)])
+        prov.append([f"{name}: window, the last years of the shortest run (means)", f"{window[0]}-{window[-1]}"])
+        prov.append([f"{name}: the world without bodies (land_biomass over the same years)", os.path.relpath(control_path, HERE)])
+        return
     with open(os.path.join(RES, name + ".csv"), "w", newline="") as f:
         wr = csv.DictWriter(f, fieldnames=keys, restval="", lineterminator="\n")
         wr.writeheader()
@@ -120,7 +126,7 @@ def read_set(name, order, control_path, last, prov, des):
     for r in runs:
         rp = os.path.join(where[r], r + "_row.csv")
         iy = int(float(rows(rp)[0].get("inject_year", 0))) if os.path.exists(rp) else 0
-        if iy == 0:
+        if iy == 0 or not os.path.exists(os.path.join(where[r], r + "_bodies.csv")):
             continue
         cen = rows(os.path.join(where[r], r + "_bodies.csv"))
         roots = {int(x["root"]) for x in cen if int(x["born"]) == iy and int(x["parent"]) < 0}
