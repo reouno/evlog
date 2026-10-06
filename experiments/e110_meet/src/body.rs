@@ -75,6 +75,7 @@ pub struct Body {
     pub y: f64,
     pub hx: f64, // its last heading
     pub hy: f64,
+    pub wa: f64, // the way chance turns it, an angle that wanders
     pub cell: u32,
     pub m: f64,   // dry tissue, kg
     pub ta: f64,  // g of A in the tissue
@@ -192,6 +193,7 @@ struct Plan {
     vy: f64,
     hx: f64,
     hy: f64,
+    wa: f64,
     v: f64,
     v_top: f64,
     power: f64, // W of propulsion at full activity
@@ -485,6 +487,7 @@ impl Bodies {
                 y,
                 hx: turn.cos(),
                 hy: turn.sin(),
+                wa: turn,
                 cell: c as u32,
                 m,
                 ta,
@@ -607,6 +610,7 @@ impl Bodies {
                 cell_m: self.cell_m,
                 wrap: self.wrap,
                 salt: self.updates,
+                dts,
                 season_sin: season.sin(),
                 season_cos: season.cos(),
             };
@@ -860,6 +864,7 @@ impl Bodies {
             let b = &mut self.list[i];
             b.hx = pl.hx;
             b.hy = pl.hy;
+            b.wa = pl.wa;
             b.breed = pl.breed;
             b.v_top = pl.v_top;
             b.reach = pl.reach;
@@ -931,6 +936,7 @@ impl Bodies {
             y: b.y,
             hx: b.hx,
             hy: b.hy,
+            wa: b.wa,
             cell: b.cell,
             m: e,
             ta: e * 1000.0 * fa,
@@ -1130,6 +1136,7 @@ struct Sense<'a> {
     cell_m: f64,
     wrap: bool,
     salt: u64,
+    dts: f64,
     season_sin: f64,
     season_cos: f64,
 }
@@ -1144,7 +1151,7 @@ fn cap(v: (f64, f64)) -> (f64, f64) {
 fn decide(x: &Sense, i: usize) -> Plan {
     let p = x.p;
     let b = &x.bodies[i];
-    let mut pl = Plan { vx: 0.0, vy: 0.0, hx: b.hx, hy: b.hy, v: 0.0, v_top: 0.0, power: 0.0, act: 0.0, len: 0.0, reach: 0.0, tgt: NONE, chase: false, press: false, breed: false };
+    let mut pl = Plan { vx: 0.0, vy: 0.0, hx: b.hx, hy: b.hy, wa: b.wa, v: 0.0, v_top: 0.0, power: 0.0, act: 0.0, len: 0.0, reach: 0.0, tgt: NONE, chase: false, press: false, breed: false };
     let bt = x.types[b.g as usize].as_ref().unwrap();
     let fm = &bt.forms[b.stage as usize];
     if fm.nv == 0.0 || b.dead != Death::None {
@@ -1171,26 +1178,36 @@ fn decide(x: &Sense, i: usize) -> Plan {
     let u_flesh = cap((fd(x.flesh[ce]) - fd(x.flesh[cw]), fd(x.flesh[cs]) - fd(x.flesh[cn])));
     let u_water = cap((x.water[ce] - x.water[cw], x.water[cs] - x.water[cn]));
     let u_down = cap(((x.ter.air[cw] - x.ter.air[ce]) / 50.0, (x.ter.air[cn] - x.ter.air[cs]) / 50.0)); // a fall of 50 m is a full pull
-    // the nearest bodies within its reach
+    // the nearest bodies within its reach: the cells around its own, ring by ring, until none farther can be nearer
     let mut seen = [(f64::MAX, NONE); SEE];
-    let r = (reach / x.cell_m).ceil() as i64;
+    let rmax = (reach / x.cell_m).ceil() as i64;
     let (cx, cy) = ((c % n) as i64, (c / n) as i64);
-    for yy in (cy - r).max(0)..=(cy + r).min(n as i64 - 1) {
-        for xx in (cx - r).max(0)..=(cx + r).min(n as i64 - 1) {
-            let mut j = x.head[yy as usize * n + xx as usize];
-            while j != NONE {
-                let o = &x.bodies[j as usize];
-                let d2 = (o.x - b.x).powi(2) + (o.y - b.y).powi(2);
-                if j as usize != i && d2 <= reach * reach && o.dead == Death::None {
-                    let mut e = (d2, j);
-                    for slot in seen.iter_mut() {
-                        if e.0 < slot.0 || (e.0 == slot.0 && e.1 < slot.1) {
-                            std::mem::swap(&mut e, slot);
+    for r in 0..=rmax {
+        for yy in (cy - r).max(0)..=(cy + r).min(n as i64 - 1) {
+            let rim = yy == cy - r || yy == cy + r;
+            let mut xx = cx - r;
+            while xx <= cx + r {
+                if xx >= 0 && xx < n as i64 {
+                    let mut j = x.head[yy as usize * n + xx as usize];
+                    while j != NONE {
+                        let o = &x.bodies[j as usize];
+                        let d2 = (o.x - b.x).powi(2) + (o.y - b.y).powi(2);
+                        if j as usize != i && d2 <= reach * reach && o.dead == Death::None {
+                            let mut e = (d2, j);
+                            for slot in seen.iter_mut() {
+                                if e.0 < slot.0 || (e.0 == slot.0 && e.1 < slot.1) {
+                                    std::mem::swap(&mut e, slot);
+                                }
+                            }
                         }
+                        j = x.next[j as usize];
                     }
                 }
-                j = x.next[j as usize];
+                xx += if rim || r == 0 { 1 } else { 2 * r };
             }
+        }
+        if seen[SEE - 1].1 != NONE && seen[SEE - 1].0 <= (r as f64 * x.cell_m).powi(2) {
+            break;
         }
     }
     // each of them pulls it, towards or away, and it would press it or not: the body evaluator
@@ -1245,8 +1262,10 @@ fn decide(x: &Sense, i: usize) -> Plan {
         out[o] = (0..NI).map(|j| w[j] * inp[j]).sum();
     }
     let act = 1.0 / (1.0 + (-(out[5] + ACT0)).exp());
-    let turn = TAU * chance(b.seed, x.salt);
-    let (rx, ry) = (turn.cos(), turn.sin());
+    // chance turns it: an angle that wanders, keeping its way for about `turn_s` whatever the update's length
+    let gauss = (-2.0 * (1.0 - chance(b.seed, x.salt)).ln()).sqrt() * (TAU * chance(b.seed ^ 0x5DEE_CE66, x.salt)).cos();
+    pl.wa = (b.wa + (2.0 * x.dts / p.turn_s).sqrt() * gauss).rem_euclid(TAU);
+    let (rx, ry) = (pl.wa.cos(), pl.wa.sin());
     let (mut sx, mut sy, mut strongest) = (rx, ry, 1.0f64); // a unit of chance
     for (w, u) in [(out[0], u_food), (out[1], u_flesh), (out[2], u_water), (out[3], u_down), (out[4], (b.hx, b.hy))] {
         sx += w * u.0;

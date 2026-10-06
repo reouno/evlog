@@ -199,6 +199,7 @@ params! {
     big_s = 400.0, "kg of animals a body holds (S): a sown body stands for the whole animals nearest to it, a clutch is one brood, and a body over twice it parts in two";
     body_tick = 1.0, "steps between two updates of the bodies (the step of integration)";
     sense_max = 500.0, "m: the farthest a body senses (a compute rule)";
+    turn_s = 3600.0, "s: the time a wandering body keeps its way";
     carrion_rot = 0.2, "share of the carrion rotted into the litter a day at 20 C (Q10 2): a carcass lasts days";
     brood_s = 0.1, "share of `big_s` a body's clutches hold together when they are laid as one brood (a compute rule)";
     glue_stress = 1e4, "Pa: what a face of glue holds (a wet adhesive; the strongest hold 1e6)";

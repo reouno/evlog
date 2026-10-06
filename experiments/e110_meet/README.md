@@ -84,11 +84,16 @@ not kept): the world runs, the ledgers close to 1e-13, and the log, the census a
 threads. The first trial hatched every laying as a body: 10,192 bodies in four years, each a few kg of animals - so
 a clutch is carried until it holds a tenth of the grain (`brood_s`), and the bodies then hold 140-270 kg each.
 
-**The pilot** (Ubuntu, 6 cores; all three at once):
+**The first pilot** (Ubuntu, 2026-10-06 02:17; `results/pilot1`): `tick1` (6 threads), `tick3` and `tick10` (3
+threads each) with `years=70 body_sow=40`, `big_s` 400 and 20,000 bodies sown. Stopped by hand in its second year
+with bodies, before the step its cost rule was written for: a year took 2.7 to 6.7 hours (Result).
+
+**The second pilot** (the same three runs, at once): `big_s` 4000 and `bodies0` 2000 (the same 8,000 t sown), with
+the two faults the first one showed mended (Result).
 
 | run | arguments | asks | cost |
 |---|---|---|---|
-| `tick1` | `years=70 body_sow=40 threads=6` | hypotheses 1-4, the cost | about 3 h |
+| `tick1` | `years=70 body_sow=40 big_s=4000 bodies0=2000 threads=6` | hypotheses 1-4, the cost | about 3 h |
 | `tick3` | `... body_tick=3.3333 threads=3` | hypothesis 5 | about 2 h |
 | `tick10` | `... body_tick=10 threads=3` | hypothesis 5 | about 1.5 h |
 
@@ -98,10 +103,48 @@ a clutch is carried until it holds a tenth of the grain (`brood_s`), and the bod
 
 - `water_err` > 1e-6 at 23760
 - `c_err` > 1e-6 at 23760
+- `ms_step` > 60 at 487080
+- `bodies` > 200000 at 487080
 - `bodies` < 100 at 594000
-- `ms_step` > 60 at 594000
 
 ## Result
+
+### The first pilot: stopped in its second year (`results/pilot1`, read by `pilot.py`)
+
+| | `tick1` | `tick3` | `tick10` |
+|---|---|---|---|
+| bodies, year 41 / 42 | 27,556 / 556,066 | 23,978 / 581,822 | 291,957 / 563,629 |
+| their matter, year 42 | 84,055 t | 117,498 t | 90,730 t |
+| a body holds, year 42 | 151 kg | 202 kg | 161 kg |
+| eaten of the producers' fixing, year 42 | 100% | 126% | 263% |
+| the land's producers, kg a m2 (e109: 1.35) | 1.21 | 0.99 | 0.42 |
+| flesh in the diet, year 42 | 0.4% | 0.7% | 2.9% |
+| catches / faces failed, year 42 | 7.0 million / 11,568 | 7.1 million / 39,252 | 1.9 million / 133,005 |
+| a year, year 41 / 42 | 96 s / 6.7 h | 97 s / 2.8 h | 322 s / 4.8 h |
+| worst ledger | 9e-13 | 1e-12 | 2e-12 |
+
+- **Ledgers close** and **the grain holds** (hypotheses 1 and 4): a body holds 0.4-0.5 `big_s`. Meetings happen
+  from the first year (hypothesis 3), and the flesh eaten is under 3% of the diet.
+- **The animals weigh ten to twenty times what the scale was chosen for.** #126 took 8.8-20 t a km2 of land from
+  e106's planet; here the bodies' matter is 84,000-117,000 t in the second year, 200-290 t a km2 of land. They eat
+  the litter (86-99% of the leading lines' diet): the world holds 280,000 t of it and 416,000 t a year is fixed, and
+  nothing but a slow decay (1 a year) competes for it. Nine tenths of the matter is in swarms of the default adult
+  mass, 0.1 kg. At `big_s` 400 that is 556,000-582,000 bodies against the 30,000 a run can pay for.
+- **The cost of choosing grew with the crowd.** A body searched every cell within its reach (up to 81 cells) and
+  with 20 bodies a cell that was 91% of a year's 6.7 hours.
+- **A law still read the update.** The unit of chance was drawn afresh every update, so a wanderer's spread grew
+  with the update's length: at `tick10` the bodies held 86% of the land's cells after one year, against 24% and 16%,
+  and weighed ten times as much.
+- Not read: whether the world stands, whether hunters hold the eaters, lines by island (two years).
+
+**Mended before the second pilot** (trials: the log and the census the same on 1 and 7 threads): a body's reach is
+searched ring by ring and stops when no farther cell can hold a nearer body; chance is an angle that wanders,
+keeping its way for `turn_s` 3,600 s whatever the update. **Not mended, because it is the scale's question**: the
+animals' weight. The second pilot follows #126's rule - the bodies are held near 30,000 and `big_s` follows - with
+`big_s` 4,000 kg, ten times the agreed 300-1,000: a 400 kg adult's body is then a herd of ten, and only a kind of
+4 t is one animal a body. What the weight settles at after the first years' overshoot is read there.
+
+### The second pilot
 
 To come.
 
