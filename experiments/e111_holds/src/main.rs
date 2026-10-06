@@ -531,7 +531,7 @@ fn main() {
     let mut cm = 0.0f64; // the living's matter: fixed less returned
     let upy = (p.year / p.tick).round() as usize;
     let mut log = std::fs::File::create(format!("{prefix}_log.csv")).unwrap();
-    writeln!(log, "step,year,land_temp,land_rain,land_evap,sea_evap,sea_rain,to_sea,water,water_err,a,b,a_err,b_err,weathered_a,weathered_b,river_a,river_b,buried_a,buried_b,rivers,lakes,storms,land_water,land_biomass,sea_biomass,land_cover,sea_cover,land_height,litter,eaters,eater_cells,gpp,resp,transp,eaten,decayed,burnt,burnt_cells,genotypes,eater_genotypes,leading,mutant_share,matter,c_err,ms_step,wind_net,air_err,bodies,animals,body_land_cells,body_sea_share,body_matter,carrion,body_genotypes,births,splits,{},{},body_km,body_drunk,body_evap,body_resp,catches,presses,breaks,killed,torn,riders,rotted,secs_decide,secs_meet,secs_live,secs_last", body::DEATHS.map(|d| format!("died_{d}")).join(","), body::FOODS.map(|d| format!("ate_{d}")).join(",")).unwrap();
+    writeln!(log, "step,year,land_temp,land_rain,land_evap,sea_evap,sea_rain,to_sea,water,water_err,a,b,a_err,b_err,weathered_a,weathered_b,river_a,river_b,buried_a,buried_b,rivers,lakes,storms,land_water,land_biomass,sea_biomass,land_cover,sea_cover,land_height,litter,eaters,eater_cells,gpp,resp,transp,eaten,decayed,burnt,burnt_cells,genotypes,eater_genotypes,leading,mutant_share,matter,c_err,ms_step,wind_net,air_err,bodies,animals,body_land_cells,body_sea_share,body_matter,carrion,body_genotypes,births,splits,{},{},body_km,body_drunk,body_evap,body_resp,catches,presses,breaks,killed,torn,riders,rotted,secs_decide,secs_meet,secs_live,secs_last,land_b_soil,land_b_plants,land_b_litter,land_b_bodies,sea_b_bodies,land_a_soil,land_a_plants,land_a_litter,land_a_bodies,sea_a_bodies", body::DEATHS.map(|d| format!("died_{d}")).join(","), body::FOODS.map(|d| format!("ate_{d}")).join(",")).unwrap();
     let mut cen = std::io::BufWriter::new(std::fs::File::create(format!("{prefix}_census.csv")).unwrap());
     writeln!(cen, "year,id,parent,born,genes,mass_land,mass_sea,cells,lead_cells,h_real,age,lifespan,alloc_leaf,alloc_wood,alloc_root,alloc_store,alloc_seed,leaf_b,leaf_a,wood_b,wood_a,root_b,root_a,height,deep,seed_mass,wing,float,compound,t_opt,breadth,shed,n_keys,keys,conditional").unwrap();
     let mut ecen = std::io::BufWriter::new(std::fs::File::create(format!("{prefix}_eaters.csv")).unwrap());
@@ -682,7 +682,7 @@ fn main() {
         )
         .unwrap();
         let join = |v: &[f64]| v.iter().map(|d| format!("{d:.4e}")).collect::<Vec<_>>().join(",");
-        writeln!(
+        write!(
             log,
             ",{nbod},{animals},{bl_cells:.4},{:.4},{:.6e},{carrion:.4e},{nbg},{},{},{},{},{:.4e},{:.4e},{:.4e},{:.4e},{},{},{},{},{:.4e},{},{:.4e},{:.1},{:.1},{:.1},{:.1}",
             bsea / (nbod as f64).max(1.0), bm - carrion, bf.births, bf.splits, join(&bf.deaths), join(&bf.eaten),
@@ -690,6 +690,43 @@ fn main() {
             bodies.secs[0], bodies.secs[1], bodies.secs[2], bodies.secs[3]
         )
         .unwrap();
+        // e111: where the land's B and A are (g a m2 of land) - the soil, the producers with their seed bank and
+        // small eaters, the litter, the bodies and carrion standing on land - and what the bodies at sea hold.
+        let mut nut = [[0.0f64; 5]; 2]; // B, A: soil, plants, litter, bodies on land, bodies at sea
+        for c in 0..cells {
+            if ter.sea[c] {
+                continue;
+            }
+            nut[0][0] += hy.b[c];
+            nut[1][0] += hy.a[c];
+            for x in &life.co[c * life::K..(c + 1) * life::K] {
+                if x.live() {
+                    nut[0][1] += x.o.iter().map(|o| o.b).sum::<f64>() + x.pb;
+                    nut[1][1] += x.o.iter().map(|o| o.a).sum::<f64>() + x.pa;
+                }
+            }
+            for e in &life.ea[c * life::E..(c + 1) * life::E] {
+                if e.g != terrain::NONE {
+                    nut[0][1] += e.m * 1000.0 * p.eater_b;
+                    nut[1][1] += e.m * 1000.0 * p.eater_a;
+                }
+            }
+            for e in &life.bank[c * life::BANK..(c + 1) * life::BANK] {
+                nut[0][1] += e.b;
+                nut[1][1] += e.a;
+            }
+            nut[0][2] += life.lit[c].b;
+            nut[1][2] += life.lit[c].a;
+            nut[0][3] += bodies.carrion[c].b;
+            nut[1][3] += bodies.carrion[c].a;
+        }
+        for x in &bodies.list {
+            let k = bodies.k(x);
+            let at = if ter.sea[x.cell as usize] { 4 } else { 3 };
+            nut[0][at] += (x.tb + x.pb + x.c_b) * k;
+            nut[1][at] += (x.ta + x.pa + x.c_a) * k;
+        }
+        writeln!(log, ",{}", nut.iter().flatten().map(|v| format!("{:.5e}", v / lfn)).collect::<Vec<_>>().join(",")).unwrap();
         log.flush().unwrap();
         eprintln!(
             "year {:>3}: land {:.1} C, rain {:.0} mm, evap {:.0}, transp {:.0}, to sea {:.0}, land bio {:.3}, cover {:.2}/{:.2}, h {:.1}, eaters {:.2e}, burnt {}, genotypes {ng}/{neg}, leading {}, mutants {mutant_share:.3}, errs w {werr:.0e} A {aerr:.0e} C {cerr:.0e}, {:.1} s",

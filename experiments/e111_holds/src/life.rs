@@ -88,7 +88,7 @@ impl Cohort {
         let woody = if m > 0.0 { self.o[WOOD].m / m } else { 0.0 };
         1.0 + p.life_max * toughness(self.o[WOOD].share_a()) * woody
     }
-    fn live(&self) -> bool {
+    pub fn live(&self) -> bool {
         self.g != NONE
     }
 }
