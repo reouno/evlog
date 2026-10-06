@@ -3,7 +3,7 @@
     uv run python experiments/e110_meet/pilot.py [results dir]
 
 Prints, a run: the years after the sowing, the last ten years' means the hypotheses are read on, what the leading
-body genotypes are, and founders' lines by island. Writes `results/pilot.csv` (a row a run and a year) and
+body genotypes are, and founders' lines by island. Writes `results/pilot.csv` and `results/sizes.csv` (a row a run and a year) and
 `results/provenance.csv` (the window read and every threshold).
 """
 import csv
@@ -16,6 +16,7 @@ CONTROL = os.path.join(HERE, "..", "e109_metres", "results", "isles1_life1_log.c
 CELL_M2 = 125.0 ** 2
 LAST = 10  # years the levels are read over
 FLESH = 0.1  # share of flesh in its diet over which a genotype is read as a flesh eater
+BIG = 1.0  # kg grown: over it a genotype is read as a large body
 FOODS = ["leaf", "wood", "seed", "litter", "carrion", "kill"]
 DEATHS = ["hunger", "thirst", "heat", "cold", "breath", "poison", "age", "form", "broken"]
 
@@ -139,6 +140,36 @@ def main():
                 lead = max(m, key=m.get)
                 parts.append(f"{'sea' if i == 0 else 'island ' + str(i)}: {t / 1000:.0f} t, {len(m)} lines, line {lead} {100 * m[lead] / t:.0f}%")
             print("  " + "; ".join(parts))
+    # a row a run and a year off the censuses and the lines, so that a report needs neither
+    sizes = []
+    for run in runs:
+        cen, lin = os.path.join(DIR, run + "_bodies.csv"), os.path.join(DIR, run + "_lines.csv")
+        if not (os.path.exists(cen) and os.path.exists(lin)):
+            continue
+        by, lines = {}, {}
+        for x in rows(cen):
+            by.setdefault(int(x["year"]), []).append(x)
+        for x in rows(lin):
+            lines.setdefault(int(x["year"]), set()).add(x["root"])
+        for y in sorted(by):
+            c = by[y]
+            tot = sum(float(x["matter"]) for x in c) or 1.0
+            share = lambda f: sum(float(x["matter"]) for x in c if f(x)) / tot
+            sizes.append({
+                "run": run,
+                "year": y,
+                "genotypes": len(c),
+                "lines": len(lines.get(y, ())),
+                "over_1kg": share(lambda x: float(x["adult_mass"]) > BIG),
+                "flesh_eaters": share(lambda x: float(x["ate_carrion"]) + float(x["ate_kill"]) > FLESH),
+                "travel_km_yr": sum(float(x["matter"]) * float(x["travel_km_yr"]) for x in c) / tot,
+                "from_birth_km": sum(float(x["matter"]) * float(x["from_birth_km"]) for x in c) / tot,
+            })
+    if sizes:
+        with open(os.path.join(HERE, "results", "sizes.csv"), "w", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=list(sizes[0].keys()))
+            w.writeheader()
+            w.writerows(sizes)
     if out:
         with open(os.path.join(HERE, "results", "pilot.csv"), "w", newline="") as f:
             w = csv.DictWriter(f, fieldnames=list(out[0].keys()))
@@ -151,6 +182,7 @@ def main():
             w.writerow(["years read a run", f"{out[0]['year']}-{max(y['year'] for y in out)}"])
             w.writerow(["levels: the last years", LAST])
             w.writerow(["a flesh eater: flesh over this share of its diet", FLESH])
+            w.writerow(["a large body: adult mass over, kg", BIG])
             w.writerow(["a cell, m2", CELL_M2])
             w.writerow(["control without bodies", "e109 isles1_life1 (land_biomass)"])
 

@@ -1,6 +1,6 @@
 # e110: bodies in metres and seconds, and bodies that meet (#123)
 
-Date: 2026-10-06 (started)
+Date: 2026-10-06
 
 ## Purpose
 
@@ -144,10 +144,74 @@ animals' weight. The second pilot follows #126's rule - the bodies are held near
 `big_s` 4,000 kg, ten times the agreed 300-1,000: a 400 kg adult's body is then a herd of ten, and only a kind of
 4 t is one animal a body. What the weight settles at after the first years' overshoot is read there.
 
-### The second pilot
+### The second pilot (`results/pilot`, read by `pilot.py`; thresholds in `results/provenance.csv`)
 
-To come.
+All three ran to year 70, in 80-90 minutes each. Levels are the last ten years' means (years 61-70).
+
+| | `tick1` | `tick3` | `tick10` |
+|---|---|---|---|
+| bodies: the peak (year) / the last ten years | 29,786 (44) / 4,467 | 43,623 (43) / 6,050 | 52,542 (42) / 7,158 |
+| their matter: the peak / the last ten years | 75,300 t / 6,360 t | 99,100 t / 10,070 t | 128,300 t / 19,887 t |
+| a body holds | 1,428 kg | 1,667 kg | 2,831 kg |
+| the land's producers, kg a m2 (e109 without bodies: 1.75-1.83) | 0.013 | 0.021 | 0.072 |
+| the land they cover | 21% | 37% | 52% |
+| the producers' fixing, year 40 -> year 70 | 416,000 -> 57,000 t | -> 57,000 t | -> 149,000 t |
+| eaten of that fixing | 76% | 76% | 66% |
+| flesh in the diet (of it killed) | 0.8% (0.2%) | 0.4% (0.0%) | 0.5% (0.1%) |
+| faces failed a year, year 45 / year 70 | 10,788 / 1,520 | 5,715 / 0 | 2,441 / 504 |
+| founders' lines, year 41 / year 70 | 28 / 2 | 25 / 2 | 25 / 2 |
+| matter in bodies over 1 kg grown, year 43 / year 50 on | 38% / 0% | 3% / 0% | 0.3% / 0% |
+| a year: the dearest / the last ten years | 353 s / 90 s | 339 s / 78 s | 161 s / 96 s |
+| worst ledger | 2.2e-12 | 2.4e-12 | 2.0e-12 |
+
+Against the hypotheses:
+
+1. **Ledgers: yes.** Water, A, B and the living's matter with the carrion close to 2.4e-12.
+2. **The world stands: no.** Bodies live to year 70, but the land is eaten bare within ten years and stays so: its
+   producers are 0.7-4% of the world without bodies, they cover 21% and 37% of the land in two runs of three, and what
+   they fix falls by 64-86%. In `tick1` the litter goes first (280,000 t to 47,000 t in five years, 285,000-378,000 t
+   eaten a year), then the wood (42,000-53,000 t a year at the peak) and the seed with its bank.
+3. **Meetings happen: yes, and they feed no one.** Catches every year, and failed faces in every year of `tick1`
+   and `tick10`; in `tick3` the bodies that press die out and no face fails after year 62. Flesh is 0.4-0.8% of the
+   diet, and bodies with flesh over a tenth of their diet never hold more than 0.7% of the matter.
+4. **The grain holds: yes.** A body holds 0.36-0.71 `big_s`.
+5. **The update may not be lengthened on this reading**: against `tick1` the bodies' matter is 1.6 times at
+   `tick3` and 3.1 times at `tick10` (the line was 1.5), the flesh in the diet half. One run each: a difference
+   between two replays of one update was not measured, so this says only that nothing shows the longer update to be
+   safe. `body_tick` stays 1; the bodies then cost 36 s of a year's 90 s at 4,500 bodies and 303 s of 353 s at 25,000.
+
+#116's turn points, read:
+
+- **The eaters strip the land with bodies that break each other present.** Nothing holds them but their food.
+- **One world of bodies on every island.** Two founders' lines of 256 are left from year 50, both on all eight
+  islands and in the sea; a body ends 5-13 km from where it hatched and walks 450-1,900 km a year.
+- **One way of living.** From year 50 every body is of the default adult mass, 0.1 kg, a swarm of 40,000 animals a
+  body; 86-94% of what the bodies eat is litter.
 
 ## Conclusion
 
-To come.
+Holds for this world as built: `isles1` 40 years after the producers were sown and one seed, e106's body rates,
+`big_s` 4,000 kg, bodies whose default form eats and digests anything soft, and 30 years.
+
+- **The mechanics stand.** A body's laws in metres and seconds, the grain, pursuit in closed form, one law of
+  contact and the carrion pool run with closed ledgers, the same on any number of threads, at a cost a 300-year run
+  can pay if the bodies stay near 5,000 (7.5 hours) and not if they stay near 30,000 (a day and more).
+- **The world does not stand with them.** The meeting law is not the brake on the eaters it was built to be: in 30
+  years no line comes to live on flesh, and the eaters take three quarters of what the producers fix from a land
+  they have eaten to a hundredth. This is the turn #116 wrote before the pilot - the producers' side of the cycle -
+  and it is taken there, not mended here.
+- **What the runs show of why** (read from the code and the outcome, not tested one by one): a body's food is found
+  by sweeping a path, so no density of it is safe; dead matter is as digestible as its toughness allows and nothing
+  else takes it at the bodies' pace (decay is 1 a year); wood and the seed bank lie within reach of a body of any
+  size; and the world ends at one size - bodies over 1 kg grown held up to 38% of the matter in the first years
+  and none from year 50.
+- **The scale's numbers hold only for a land eaten out.** The bodies' matter over the land's area is 180-310 t a
+  km2 at the overshoot's peak and 16-48 t once the land is bare, against #126's 8.8-20 (e106's planet, eaten to
+  half). At `big_s` 400 kg that is some 470,000 bodies at the peak and 40,000 on the bare land; what a land that
+  stands would hold is not known. What a body should stand for is asked after the eaters are held, not before: the
+  weight depends on what holds them.
+- Nothing goes to `base/`: e110's crate is the bodies' code until a world stands with them.
+
+`vision.md`: rows C size, F dominance and F food web (the new world's part), and a lesson (a food found by sweeping
+has no safe density). `foundation.md`: the bodies' paragraph, the contact row and the scale. The next step is #130 (what holds the eaters),
+with the plan check on #116.

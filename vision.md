@@ -6,7 +6,7 @@ issues (#116), never here. **Keep this under 120 lines**:
 when a row wants a paragraph, the paragraph belongs in an experiment's README and the row keeps the one sentence
 that decides the next step.
 
-Last updated: 2026-10-05.
+Last updated: 2026-10-06.
 
 ## 1. The ideal
 
@@ -41,14 +41,14 @@ Today is the last whole world (stage C on c1225, e101) and, where a row says so,
 | B response to eating | regrowth, defence, fruit offered | new world: compounds with keys; small eaters evolve and come within 1 bit of the producers' keys, or live on the undefended (e103) | medium |
 | B plants as places | a forest is home, cover and food | a stand is a home only through its wet ground (e078) | medium |
 | C parts | worth depending on where they sit and how they move | 4 block kinds, 2D grid of side 4-16; every block pays best packed, so bodies fill their grids (e047) | **large** |
-| C size | a thousandfold range, each size with its place | 21-35 blocks; winners differ 1.3-2.2x (e055, e075) | large |
+| C size | a thousandfold range, each size with its place | 21-35 blocks; winners differ 1.3-2.2x (e055, e075); new world: adult mass is free over ten decades, and after ten years every body is of the default 0.1 kg, a swarm (e110) | large |
 | C life history | lives spanning seasons; fat and dormancy selected | breeding values fixed; fat from the genome (e069, e072) | medium |
 | D behaviour | look, chase, flee, go to water, go home; some stay, some travel far | a linear reflex, 16 readings to 4 actions, no memory (e050); eyes not bought (2-4% look out, e070); a grown body ends 3-28 cells from its birth | **large**; cause is E |
 | E life vs year, vs day | many animals live through several seasons, and many days | a grown life is 500-570 steps, 1/20 of a year and about 7 days; half the dead die by 75 steps; the day's swing is wider than the bands (e071, e087) | **large**: bound by the crowd |
 | E travel vs places | a migrant crosses places within a year | a few cells of 512; a place fed in a lean month is 9-15 cells away (e086) | **large** |
 | F ways of living | many; the user asked for about 20 | 7.14 kinds at a census, 4.34 kept to a place, 8 ways at 5% in the mean (e101) | **large** |
-| F dominance | no line above a fifth of the animals | the largest line holds 39-70% of the land's bodies (e101); new world: one founder's line holds all (e106) | large |
-| F food web | three or more levels, hunters of several kinds | kills are 27% of what bodies eat; pure flesh kinds 2-4% (e075); new world: nothing eats a body yet, and bodies eat the land down by half, or bare once all of it is within reach (e106, e107) | medium |
+| F dominance | no line above a fifth of the animals | the largest line holds 39-70% of the land's bodies (e101); new world: two founders' lines of 256 hold every island and the sea, walking 450-1,900 km a year (e110) | large |
+| F food web | three or more levels, hunters of several kinds | kills are 27% of what bodies eat; pure flesh kinds 2-4% (e075); new world: bodies meet and break each other by one law of contact, but flesh is under 1% of the diet and no line lives on it; they eat the land bare in ten years - its producers 0.7-4% of the world without bodies - on litter, 86-94% of the diet (e110) | **large** |
 | F crowding | numbers limited by food, hunters and seasons | limited by the birth rule: 47% of births find no room though a spot that fits is within two body lengths for 75% of them and off the four rays it searches; widening it thins the jam to 33% and costs 2.5 kinds (e097) | **large**, and not to be lifted by giving room |
 | F history (a replay) | the same world run again fills other roles with other bodies | between two seeds the ways holding 5% agree 0.66 and their shares 0.77, the largest way is the same in 4 of 6 seeds, the birth forms agree 0.038 (e101, `analysis/replay.py`) | medium: contingent already; the measure's own 64 boxes cap what can be said |
 | F cycles over time | predator and prey swing | the land's bodies swing twofold over a year; forms do not follow (e070) | medium |
@@ -100,10 +100,10 @@ Each holds under the conditions it was found in.
 - Measures: a distribution against a distribution, harm a fixed 1.02 kinds below the control (e092, e101); never
   judge on a conjunction over censuses (e094); a measure of place breaks when bodies change place within a life (e091);
   a spread is read by what it is made of - one collapsed seed is not a various world (e100).
-- A law written in cells and updates holds at one scale only: the same bodies in a smaller world walk off the land or
-  never leave their cell, and the distance that rationed the eaters is gone (e107). A scale is chosen, not inherited -
-  and it sets the clock: with seeds that cross metres, 300 years after a sowing is a transient, where cells of 63 km
-  mixed every form into every place within years (e109). Read a trend before a level.
+- A law written in cells and updates holds at one scale only (e107), and a scale sets the clock: with seeds that
+  cross metres, 300 years after a sowing is a transient (e109). Read a trend before a level. Distance was the
+  eaters' brake: where food is found by sweeping a path and all of it lies in reach, no density of it is safe, the
+  land is eaten bare, and acts of hunting feed no line (e110).
 
 ## 5. The direction
 
@@ -115,5 +115,5 @@ world's physics; producers evolve and the living make each other's niches; a sma
 space of forms; the world is judged whole, over long runs, by an open measure instead of the 64-box label.
 
 **The gap being filled** is the bodies' (rows C to F): individuals built of tissues, at real sizes and distances, on
-a ground and producers that already differ by place and evolve, in a world small enough that a grown body is one
-animal (`foundation.md` 4). What is built next, and in what order, is #116's to say, not this document's.
+a ground and producers that already differ by place and evolve. Their machinery runs (e110), the world does not
+stand with it, and what a body stands for is open again (`foundation.md` 4). What is built next is #116's to say.
