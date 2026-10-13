@@ -279,6 +279,8 @@ pub struct Bodies {
     pub watched: bool,         // whether the viewer is told who died and who was born (`died`, `born`)
     pub died: Vec<(u32, u8)>,  // since the viewer last took them: a body, what it died of (`DEATHS`)
     pub born: Vec<(u32, u32)>, // a body, the body it came from (a brood's parent, a split's other half)
+    // e112: the dead since the last census by founder's line and cause (`DEATHS`): bodies, animals
+    fates: std::collections::BTreeMap<(u32, u8), (u32, f64)>,
 }
 
 /// What the bodies read and write of the world in an update.
@@ -482,6 +484,7 @@ impl Bodies {
             watched: false,
             died: Vec::new(),
             born: Vec::new(),
+            fates: std::collections::BTreeMap::new(),
         }
     }
 
@@ -748,6 +751,9 @@ impl Bodies {
                 x.kill += b.meal[0] * k;
                 wd.vapor[c] += (b.w + b.c_w) * k;
                 f.deaths[b.dead as usize - 1] += 1.0;
+                let fate = self.fates.entry((self.types[b.g as usize].as_ref().unwrap().root, b.dead as u8 - 1)).or_default();
+                fate.0 += 1;
+                fate.1 += b.s;
                 if self.watched {
                     self.died.push((b.id as u32, b.dead as u8 - 1));
                 }
@@ -1198,6 +1204,28 @@ impl Bodies {
         }
         for ((root, isle), (n, animals, matter)) in acc {
             writeln!(out, "{year},{root},{isle},{n},{animals},{matter:.4e}").unwrap();
+        }
+    }
+
+    /// e112: a row a founder's line and cause of death, for the bodies that died since the last census.
+    pub fn fates(&mut self, out: &mut impl std::io::Write, year: usize) {
+        for ((root, cause), (n, animals)) in std::mem::take(&mut self.fates) {
+            writeln!(out, "{year},{root},{},{n},{animals}", DEATHS[cause as usize]).unwrap();
+        }
+    }
+
+    /// e112: a row a genotype on an island (0: the sea): its bodies, animals and matter - where each way of living
+    /// is (`analysis/ways.py`, held by place).
+    pub fn places(&self, out: &mut impl std::io::Write, island: &[u16], year: usize) {
+        let mut acc: std::collections::BTreeMap<(u32, u16), (u32, f64, f64)> = std::collections::BTreeMap::new();
+        for b in &self.list {
+            let e = acc.entry((b.g, island[b.cell as usize])).or_default();
+            e.0 += 1;
+            e.1 += b.s;
+            e.2 += (b.m + b.fat) * b.s;
+        }
+        for ((g, isle), (n, animals, matter)) in acc {
+            writeln!(out, "{year},{g},{isle},{n},{animals},{matter:.4e}").unwrap();
         }
     }
 

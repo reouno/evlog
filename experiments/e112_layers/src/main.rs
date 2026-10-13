@@ -27,7 +27,8 @@
 //!
 //! e112 (#125): readings before the layers' design, no law added - the log gains what the land's producers hold by
 //! organ and the seed bank (`land_leaf` .. `land_bank`), a run ends with every stand and every land cell written out
-//! (`_stands.csv`, `_cells.csv`), and `tear=0` takes away what the part of a front that is no mouth tears.
+//! (`_stands.csv`, `_cells.csv`), `tear=0` takes away what the part of a front that is no mouth tears, and the
+//! bodies' dead are written by founder's line and cause (`_fates.csv`) and their genotypes by island (`_where.csv`).
 //!
 //! Run: cargo run --release -p e112_layers -- <prefix> [key=value ...] [file.params ...]
 //! Writes `<prefix>_log.csv` (a row a year), `_census.csv` (a row a producer genotype a year), `_eaters.csv`,
@@ -554,6 +555,11 @@ fn main() {
     writeln!(bcen, "{}", body::CENSUS).unwrap();
     let mut lcen = std::io::BufWriter::new(std::fs::File::create(format!("{prefix}_lines.csv")).unwrap());
     writeln!(lcen, "year,root,island,bodies,animals,matter").unwrap();
+    // e112: the dead of each year by founder's line and cause, and every tenth year each genotype by island
+    let mut fcen = std::io::BufWriter::new(std::fs::File::create(format!("{prefix}_fates.csv")).unwrap());
+    writeln!(fcen, "year,root,cause,bodies,animals").unwrap();
+    let mut wcen = std::io::BufWriter::new(std::fs::File::create(format!("{prefix}_where.csv")).unwrap());
+    writeln!(wcen, "year,id,island,bodies,animals,matter").unwrap();
     let mut leadbin = std::io::BufWriter::new(std::fs::File::create(format!("{prefix}_lead.bin")).unwrap());
     let mut lead_years: Vec<usize> = Vec::new();
     let mut kept: Vec<(usize, Vec<Vec<f32>>)> = Vec::new();
@@ -772,6 +778,12 @@ fn main() {
             bcen.flush().unwrap();
             bodies.lines(&mut lcen, &island, yr + 1);
             lcen.flush().unwrap();
+            bodies.fates(&mut fcen, yr + 1);
+            fcen.flush().unwrap();
+            if (yr + 1) % 10 == 0 || yr + 1 == years {
+                bodies.places(&mut wcen, &island, yr + 1);
+                wcen.flush().unwrap();
+            }
         }
         if life.sown {
             census(&mut cen, &mut ecen, &life, &ter, &st, yr + 1, &p);
