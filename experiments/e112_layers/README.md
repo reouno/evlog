@@ -67,8 +67,8 @@ minutes a run, under 2 core-hours. Read by `read.py` (`results/read.csv`, `layer
 `provenance.csv`).
 
 **The control of the pilot** is e111's own pilot (`pilot.sh all`, `isles1`, bodies sown in year 40) run on to year
-140 on Ubuntu, six threads, 3.5 hours; read by `control.py` by decade against e109's world without bodies, the
-bodies by `analysis/ways.py` (#119).
+140 on Ubuntu, six threads, 5.0 hours; read by `control.py` (`results/control.csv`, `control_ways.csv`) by decade
+against e109's world without bodies, the bodies by `analysis/ways.py` (#119).
 
 **Stop early if:**
 
@@ -124,10 +124,64 @@ All numbers from `results/read.csv`, `layers.csv` and `designed.csv`; what was r
    stands as it does there (91% of `nobody` against 93%, inside what two realisations differ by).
 4. **`all` is e111's `all` to the digit: yes** (92 columns of the log over 30 years).
 
+#### The control: e111's pilot run on to year 140 (`results/control.csv`)
+
+Means of a decade; the land's producers against e109's world without bodies over the same years; the ways from
+the body census of the decade's last year. Ledgers close to 5e-12 over the 140 years.
+
+| years | land, of bare | bodies | their matter, kt | at sea | flesh in the diet | died of thirst a year | frame, of the body | ways | s a year |
+|---|---|---|---|---|---|---|---|---|---|
+| 41-50 | 99% | 1,328 | 1.5 | 35% | 0.50% | 198 | 0.08 | 1.4 | 41 |
+| 51-60 | 89% | 13,201 | 13.1 | 20% | 0.34% | 1,481 | 0.08 | 1.2 | 91 |
+| 61-70 | 78% | 11,175 | 15.6 | 18% | 0.13% | 3,068 | 0.11 | 1.3 | 88 |
+| 71-80 | 69% | 13,140 | 19.6 | 19% | 0.09% | 3,308 | 0.17 | 2.6 | 104 |
+| 81-90 | 68% | 14,075 | 23.7 | 26% | 0.03% | 4,284 | 0.22 | 3.1 | 115 |
+| 91-100 | 65% | 17,876 | 31.2 | 28% | 0.02% | 5,157 | 0.27 | 2.9 | 137 |
+| 101-110 | 61% | 31,704 | 46.5 | 28% | 0.02% | 5,773 | 0.29 | 2.6 | 236 |
+| 111-120 | 67% | 29,187 | 48.0 | 32% | 0.01% | 5,692 | 0.31 | 2.9 | 213 |
+| 121-130 | 70% | 43,644 | 70.0 | 31% | 0.02% | 6,161 | 0.32 | 2.9 | 331 |
+| 131-140 | 71% | 50,044 | 79.7 | 33% | 0.01% | 5,405 | 0.32 | 2.0 | 346 |
+
+- **The land stands, and is not falling.** It fell to 61% of the world without bodies over years 101-110 and is
+  back at 71%; its cover is 94% throughout and what it fixes is the bare world's (0.91-1.07 of it). #116's turn
+  (a land falling past half) is not met.
+- **The bodies keep growing in number and matter**, five times the matter of year 70: 195 t a km2 of land. The B
+  in the soil rises with them, 0.46 to 16.5 g a m2, and in the plants 23 to 49.
+- **One food, one size, one line, no flesh.** Litter is 99.4-99.9% of the diet from year 51; no genotype holding
+  1% of the matter is over 1 kg; one founder's line holds the world from year 51; flesh falls to 0.01% of the diet
+  and the bodies that die broken from 3,059 a year to 47.
+- **What changed is the make and the range.** The frame went from 8% of the body to 32% (armour; the deaths by
+  poison fall with the breaks, 12,713 to 664 a year) and muscle from 14% to 5%. From year 80 the measure reads
+  2.0-3.1 ways where it read 1.2-1.4 before, parted by make, place and range and by nothing else (diet and size
+  read 1.0). In year 140: an armoured stayer on land (75% of the matter; 107 km a year, 3% at sea), the first soft
+  sack, now mostly at sea (21%; 80% at sea, 1,147 km a year), and the armoured form at sea (3%). 79% of the matter
+  is in ways the census of year 50 has no match for; between censuses ten years apart nothing is new (under 2%):
+  the change is a drift, not a founding.
+- **A year costs what its bodies cost**: 41 s with 1,300 bodies, 346 s with 50,000 (six threads on Ubuntu). A run
+  of 300 years at this `big_s` is 17 hours or more, not the 7.5 hours e111 wrote.
+
 ## The design (part 2)
 
-(on #125, to be agreed before code)
+Written on #125 (https://github.com/reouno/evlog/issues/125#issuecomment-6152160545) and not built
+until it is agreed: the ground, the crowns and `tear=0` as one set, with the measure the pilot is read by on #119.
 
 ## Conclusion
 
-(to be written)
+**Part 1.** The readings say where the unused food is and which way the bite's clause goes; the control says the
+plan does not turn.
+
+1. The ground holds food no body reaches: **yes** - 45% of the land's living producers, ten times the leaves.
+2. The crown is a closed door: **nearly** - 12% of the leaves and hanging seed is within a grown body's reach;
+   the stands are lower and thinner than assumed, so a climber of these crowns is a small body.
+3. A front that tears only what it swallows still does not live with its prey: **half wrong** - the kill is
+   bounded by the gut and the world is not emptied; the designed hunter starves, which is the hunter's design
+   (it runs all day), not the clause.
+4. The copy is e111's world to the digit: **yes**.
+
+The control: a land at 61-71% of the bare world and not falling, one line on one food at one size for a hundred
+years, its only spread in armour and range.
+
+Rows of `vision.md` changed: the plant foods (the ground's share, unreached), size, dominance, the food web and
+the ways of living (today's numbers from the control), and the lesson on the kill.
+
+Parts 2 and 3: to be written.

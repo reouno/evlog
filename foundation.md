@@ -112,8 +112,8 @@ laws are in metres and seconds - the cell is the ground's grain, the update the 
 nothing shows a longer one safe, e110). A body holds about S kg of animals at any age: a kind whose adult weighs S
 is one animal a body, a smaller kind a flock, a clutch one brood carried until it holds a tenth of S. The watcher
 sees a place, later at real size through a window that plays what the world decided. **S is 4,000 kg** (e111): on a
-land that stands the animals weigh 38 t a km2, about 11,000 bodies. **Open**: what parts the lines - one line holds
-every island, a body walking 550 km a year across seas of 2-33 km and living on land and sea alike.
+land that stands the animals weigh 38 t a km2 after 30 years (11,000 bodies) and 195 after a hundred (50,000, still
+rising; e112). **Open**: what parts the lines - one line holds every island, on land and sea alike.
 
-**Compute**: the islands with producers take 26 s a year on six threads (e109); 11,000 bodies add 52 s (e111) and
-25,000 add 300 s (e110), so a 300-year run costs 7.5 hours at S 4,000 kg and about a day at #126's 30,000 bodies.
+**Compute**: the islands with producers take 26 s a year on six threads (e109); 11,000 bodies add 60 s and 50,000
+add 320 s (e112's control: a hundred years with bodies in 5 hours), so a 300-year run is about a day at S 4,000 kg.
