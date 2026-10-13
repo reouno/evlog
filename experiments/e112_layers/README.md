@@ -42,7 +42,9 @@ e111's crate copied (`e112_layers`). Added:
 - log columns `land_leaf`, `land_wood`, `land_root`, `land_store`, `land_seed`, `land_bank` (kg a m2 of land);
 - `<prefix>_stands.csv` (every stand on land as the run ends: height, age, each organ's matter, A and B) and
   `<prefix>_cells.csv` (every land cell: its soil's water, A and B, its litter, its seed bank);
-- `tear` (default 1: e111's law): at 0, under `bite`, the part of a front that is no mouth tears nothing.
+- `tear` (default 1: e111's law): at 0, under `bite`, the part of a front that is no mouth tears nothing;
+- `<prefix>_fates.csv` (the bodies that died in a year by founder's line and cause) and `<prefix>_where.csv` (every
+  tenth year, each genotype's bodies by island) - added after the first reading, changing no number of a run.
 
 The trial world is e111's (`read.sh`: 16 km of 128 cells, terrain seed 1, life seed 1, producers sown in year 2,
 300 bodies of `big_s` 1,000 kg sown in year 15, read to year 30).
@@ -113,8 +115,10 @@ All numbers from `results/read.csv`, `layers.csv` and `designed.csv`; what was r
    The hunter eats all it breaks (in e111's `all_hunter` a twelfth: 60 t of 744), and the world is not emptied: the
    other bodies are a third fewer for a year and back the next. I had the kill unbounded still; it is bounded by
    the gut. The hunter's line ends all the same, in two years: its last bodies are young at a third of their egg's
-   weight. Cause not separated (the log has deaths by cause, not by line); by `bench` this body pays 15% of its
-   weight a day to run as it does, all day, where a gut kept full all day passes 34% and keeps about half of it.
+   weight. It starves: of the line's bodies 70 died of hunger in the first year and 5 in the second, 5 of poison
+   and 1 of cold (`notear_hunter_fates.csv`: the dead by line and cause, added to the crate after the first
+   reading and the run made again, its log the same to the digit). By `bench` this body pays 15% of its weight a
+   day to run as it does, all day, where a gut kept full all day passes 34% and keeps about half of it.
    The hunter that hunts when hungry (`notear_hunter3`) does the same (315 t eaten, gone in two years).
    With `tear=0` and no designed body (`notear`) the sown bodies stop pressing by year 22, as in `all`, and the land
    stands as it does there (91% of `nobody` against 93%, inside what two realisations differ by).
