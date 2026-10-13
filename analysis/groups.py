@@ -9,7 +9,11 @@ The reading is the effective number of groups (Hill number of order 1 over their
 A new trait column extends `SCALES` without a rewrite; a census column no reader knows stops the reading
 (CLAUDE.md, Measuring).
 
-    from analysis.groups import vectors, group, hill
+Beside the number of groups (#119): how far they are held by place (`nmi`), how much of the biomass is in groups
+founded late (`founded`: change), and how much two replays of one world hold in matching groups (`matched`:
+history). Bodies are read the same way by `ways.py`.
+
+    from analysis.groups import vectors, group, hill, masses, nmi, founded, matched
 """
 import math
 
@@ -103,3 +107,54 @@ def hill(weights):
         return 0.0
     p /= p.sum()
     return float(np.exp(-(p * np.log(p)).sum()))
+
+
+def masses(g, w):
+    """The biomass of each group."""
+    gm = {}
+    for i, gi in enumerate(g):
+        gm[int(gi)] = gm.get(int(gi), 0.0) + float(w[i])
+    return gm
+
+
+def nmi(a, b):
+    """Normalised mutual information of two labelings (by the geometric mean of their entropies): how far a
+    cell's leading group is held by its place."""
+    _, ia = np.unique(a, return_inverse=True)
+    _, ib = np.unique(b, return_inverse=True)
+    joint = np.zeros((ia.max() + 1, ib.max() + 1))
+    np.add.at(joint, (ia, ib), 1)
+    p = joint / joint.sum()
+    pa, pb = p.sum(1), p.sum(0)
+    nz = p > 0
+    mi = (p[nz] * np.log(p[nz] / np.outer(pa, pb)[nz])).sum()
+    ha = -(pa[pa > 0] * np.log(pa[pa > 0])).sum()
+    hb = -(pb[pb > 0] * np.log(pb[pb > 0])).sum()
+    return float(mi / np.sqrt(ha * hb)) if ha > 0 and hb > 0 else 0.0
+
+
+def founded(rows, g, w, late, share=0.01):
+    """Change, read by groups and not by one genotype (e104, e105): the biomass in groups whose leader was born
+    after `late`, how many of them hold `share`, and the year by which half of the biomass's genotypes were born."""
+    gm = masses(g, w)
+    new = {gi: m for gi, m in gm.items() if int(rows[gi]["born"]) > late}
+    order = np.argsort([int(r["born"]) for r in rows], kind="stable")
+    half = int(np.searchsorted(np.cumsum(w[order]), 0.5 * w.sum()))
+    return {
+        "new_group_share": float(sum(new.values()) / w.sum()),
+        "new_groups": sum(1 for m in new.values() if m / w.sum() >= share),
+        "born_median_biomass": int(rows[order[min(half, len(order) - 1)]]["born"]),
+    }
+
+
+def matched(a, b, cut=CUT):
+    """History (e105): the share of each replay's biomass in groups whose leader has a match in the other replay
+    within the cut. `a` and `b`: a census's rows and their groups."""
+    (ra, ga), (rb, gb) = a, b
+    (xa, wa), (xb, wb) = vectors(ra), vectors(rb)
+    gma, gmb = masses(ga, wa), masses(gb, wb)
+    la, lb = list(gma), list(gmb)
+    d = np.sqrt(((xa[la][:, None, :] - xb[lb][None, :, :]) ** 2).sum(-1)) / math.sqrt(xa.shape[1])
+    ma = sum(gma[gi] for i, gi in enumerate(la) if d[i].min() <= cut) / wa.sum()
+    mb = sum(gmb[gi] for j, gi in enumerate(lb) if d[:, j].min() <= cut) / wb.sum()
+    return float(ma), float(mb)
