@@ -54,12 +54,19 @@ The trial world is e111's (`read.sh`: 16 km of 128 cells, terrain seed 1, life s
 |---|---|---|
 | `nobody` | `body_sow=0` | hypothesis 1, and the line the later runs are set against |
 | `all` | `road=1 worth=1 reach=1 bite=1` | hypotheses 1, 2 and 4 |
-| `notear_hunter` | `all` with `tear=0 inject_year=20 inject_kind=1` | hypothesis 3 |
-| `notear_hunter3` | `all` with `tear=0 inject_year=20 inject_kind=3` | hypothesis 3 |
+| `notear` | `all` with `tear=0` | the hunters' control (added: `tear` changes the sown bodies' meetings too) |
+| `notear_hunter` | `notear` with `inject_year=20 inject_kind=1` | hypothesis 3 |
+| `notear_hunter3` | `notear` with `inject_year=20 inject_kind=3` | hypothesis 3 |
 
 One run each, one seed: a reading says which way the design must go, not how large an effect is.
 
-**Cost and where**: four runs on Ubuntu, two threads each, at once: about 15 minutes, 2 core-hours.
+**Cost and where**: five runs on Ubuntu (2026-10-14), two threads each, four at once beside e111's pilot: 4-9
+minutes a run, under 2 core-hours. Read by `read.py` (`results/read.csv`, `layers.csv`, `designed.csv`,
+`provenance.csv`).
+
+**The control of the pilot** is e111's own pilot (`pilot.sh all`, `isles1`, bodies sown in year 40) run on to year
+140 on Ubuntu, six threads, 3.5 hours; read by `control.py` by decade against e109's world without bodies, the
+bodies by `analysis/ways.py` (#119).
 
 **Stop early if:**
 
@@ -69,7 +76,49 @@ One run each, one seed: a reading says which way the design must go, not how lar
 
 ### Result
 
-(to be written)
+All numbers from `results/read.csv`, `layers.csv` and `designed.csv`; what was read and by which thresholds is in
+`results/provenance.csv`. Ledgers close to 2e-13.
+
+#### What the land holds (kg a m2 of land, means of years 26-30; B as the run ends)
+
+| pool | `nobody` | `all` | its B share |
+|---|---|---|---|
+| leaf | 0.037 | 0.035 | 1.6% |
+| wood | 0.428 | 0.400 | 0.28% |
+| hanging seed | 0.002 | 0.002 | 1.3% |
+| **root** | 0.108 | 0.099 | 1.1% |
+| **store** | 0.227 | 0.212 | 0.10% |
+| **seed bank** | 0.044 | 0.040 | 2.0% |
+| litter | 0.391 | 0.315 | 1.5% (`all`: 0.9%) |
+
+1. **The ground holds food no body reaches: yes, and it is most of what there is.** Roots, stores and the bank are
+   45% of the living producers' matter and 56% of the B built into them, ten times the leaves. The largest pool is
+   the store, sugar with next to no A and B: by e111's worth law 3% of it is working part. The richest tissue on
+   the land is the seed in the ground.
+2. **The crown is already a closed door: nearly, not as I wrote it.** A grown body of `all` stands 6.8 cm tall (the
+   mean animal 3.7 cm). The stands are lower than I assumed - 1.30 m at the median by their leaves, a tenth under
+   0.21 m, a tenth over 1.70 m - so a grown body reaches 12% of the leaves and hanging seed, not under a tenth. A
+   body 0.3 m tall would reach 37%, one of 1 m 75%.
+   - The stands are thin: the median stand (by its leaves) holds 0.13 kg of wood a m2, a tenth of them over 0.76.
+   - The soil is full: 99% of the land's cells are over two thirds full as the year ends.
+3. **A front that tears nothing but what it swallows: the kill is bounded, and the hunter still does not live.**
+
+   | year | bodies, `notear` | `notear_hunter` | tissue failed, t | of it down a gut | the designed line |
+   |---|---|---|---|---|---|
+   | 20 (put in) | 867 | 867 | 1.6 | | 50 bodies, 50 t |
+   | 21 | 935 | 647 | 388 | 100% | 5 bodies, 1.2 t, flesh 98% of its diet |
+   | 22 | 1,027 | 1,011 | 22 | 100% | none at the census |
+   | 23 to 30 | 1,109 to 2,481 | 1,222 to 1,346 | 0 | | none |
+
+   The hunter eats all it breaks (in e111's `all_hunter` a twelfth: 60 t of 744), and the world is not emptied: the
+   other bodies are a third fewer for a year and back the next. I had the kill unbounded still; it is bounded by
+   the gut. The hunter's line ends all the same, in two years: its last bodies are young at a third of their egg's
+   weight. Cause not separated (the log has deaths by cause, not by line); by `bench` this body pays 15% of its
+   weight a day to run as it does, all day, where a gut kept full all day passes 34% and keeps about half of it.
+   The hunter that hunts when hungry (`notear_hunter3`) does the same (315 t eaten, gone in two years).
+   With `tear=0` and no designed body (`notear`) the sown bodies stop pressing by year 22, as in `all`, and the land
+   stands as it does there (91% of `nobody` against 93%, inside what two realisations differ by).
+4. **`all` is e111's `all` to the digit: yes** (92 columns of the log over 30 years).
 
 ## The design (part 2)
 
