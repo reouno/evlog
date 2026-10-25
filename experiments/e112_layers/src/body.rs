@@ -291,6 +291,7 @@ pub struct Bodies {
     head: Vec<u32>, // the bodies of each cell, as a list through `next`
     next: Vec<u32>,
     trace: u64,
+    trace_g: u64, // EVLOG_BODY_TRACE_G: a genotype + 1 whose bodies are traced every fifth day of their age
     pub secs: [f64; 4], // decide, meet, live, the last pass
     pub watched: bool,         // whether the viewer is told who died and who was born (`died`, `born`)
     pub died: Vec<(u32, u8)>,  // since the viewer last took them: a body, what it died of (`DEATHS`)
@@ -522,6 +523,7 @@ impl Bodies {
             head: vec![NONE; n * n],
             next: Vec::new(),
             trace: std::env::var("EVLOG_BODY_TRACE").ok().and_then(|v| v.parse().ok()).unwrap_or(0),
+            trace_g: std::env::var("EVLOG_BODY_TRACE_G").ok().and_then(|v| v.parse().ok()).unwrap_or(0),
             secs: [0.0; 4],
             watched: false,
             died: Vec::new(),
@@ -782,7 +784,7 @@ impl Bodies {
         for (i, b) in self.list.iter().enumerate() {
             by_chunk[self.chunk_of_row[b.cell as usize / n]].push(i);
         }
-        let ctx = Ctx { p, ter: wd.ter, temp: wd.temp, soil_t: &self.soil_t, sat: wd.sat, types: &self.types, gen: wd.gen, area: self.area, trace: self.trace, dt };
+        let ctx = Ctx { p, ter: wd.ter, temp: wd.temp, soil_t: &self.soil_t, sat: wd.sat, types: &self.types, gen: wd.gen, area: self.area, trace: self.trace, trace_g: self.trace_g, dt };
         let sh = Sh {
             bodies: Shared::new(&mut self.list),
             co: Shared::new(&mut *wd.co),
@@ -1564,6 +1566,7 @@ struct Ctx<'a> {
     gen: &'a [Option<Box<genome::Genotype>>],
     area: f64,
     trace: u64,
+    trace_g: u64, // EVLOG_BODY_TRACE_G: a genotype + 1 whose bodies are traced every fifth day of their age
     dt: f64, // days an update
 }
 
@@ -1939,10 +1942,10 @@ fn live(x: &Ctx, sh: &Sh, i: usize, f: &mut BFlux) {
 
     // Upkeep and work, from the fat; short of fat, the tissue burns.
     let cost = upkeep_rate * dt + b.work;
-    if b.id < x.trace && b.age < 30.0 {
+    if (b.id < x.trace && b.age < 30.0) || (b.g as u64 + 1 == x.trace_g && (b.age / 5.0).floor() != ((b.age + dt) / 5.0).floor()) {
         eprintln!(
-            "trace {} age {:.1} sea {} m {:.3e}/{:.3e} s {} fat {:.2}cap w {:.2}tgt t {:.1} env {:.1} topt {:.1}/{:.1} v {:.3} path {:.0}m upkeep {:.2e} work {:.2e} gutcap {:.2e} foods {} pressure {:.1e} height {:.3} mouth {:.1} harm {:.2}",
-            b.id, b.age, sea as u8, b.m, bt.adult(), b.s, b.fat / fat_cap, b.w / target, tb, t_env, t_opt, breadth, b.v_top, b.path, upkeep_rate * dt, b.work, gut_cap, nf, pressure, height, fm.mouth, b.harm
+            "trace {} layer {} intake {:.2e} pa {:.2e} pb {:.2e} age {:.1} sea {} m {:.3e}/{:.3e} s {} fat {:.2}cap w {:.2}tgt t {:.1} env {:.1} topt {:.1}/{:.1} v {:.3} path {:.0}m upkeep {:.2e} work {:.2e} gutcap {:.2e} foods {} pressure {:.1e} height {:.3} mouth {:.1} harm {:.2}",
+            b.id, b.layer, intake, b.pa, b.pb, b.age, sea as u8, b.m, bt.adult(), b.s, b.fat / fat_cap, b.w / target, tb, t_env, t_opt, breadth, b.v_top, b.path, upkeep_rate * dt, b.work, gut_cap, nf, pressure, height, fm.mouth, b.harm
         );
     }
     b.fat -= cost;

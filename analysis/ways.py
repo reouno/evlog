@@ -41,7 +41,7 @@ READ = {"matter", "adult_mass", "travel_km_yr", "sea", "born", "id", *MAKE}
 CARRIED = {
     "year", "parent", "root", "genes", "bodies", "animals", "mass", "egg", "clutch", "maturity", "t_opt", "breadth",
     "tolerance", "n_keys", "keys", "ckey", "cells", "nv", "a", "b", "cmp", "frame_tough", "density", "legs", "bite",
-    "mouth", "eye", "glue_front", "hard_front", "hard_back", "hard_flank", "tip_front", "tip_back", "tip_flank",
+    "mouth", "eye", "glue_front", "glue_under", "hard_front", "hard_back", "hard_flank", "tip_front", "tip_back", "tip_flank",
     "ext_x", "ext_y", "ext_z", "v_top", "reach", "from_birth_km", "kills",
     "pull_one", "pull_size", "pull_alike", "pull_fat", "pull_near", "pull_coming",
     "press_one", "press_size", "press_alike", "press_fat", "press_near", "press_coming",
