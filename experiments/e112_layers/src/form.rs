@@ -403,8 +403,10 @@ pub fn random(rng: &mut Rng) -> Vec<u32> {
 ///   that is all mouth, soft, with no frame in it. 5 (e112): the hunter that walks - kind 1 without the genes that
 ///   make it run, at a quarter of its speed all day.
 /// - 6 (e112), the digger: 0.1 kg (no gene of size), its front hard and tough with active muscle behind it and some
-///   gut in it, gut and fat behind; it goes down into the ground whenever its door lets it, and stays.
-/// - 7 (e112), the climber: 10 mg, glue on its bottom; it goes up into the crowns whenever its door lets it.
+///   gut in it, gut and fat behind, at activity 0.45; it goes down into the ground whenever its door lets it, and
+///   stays.
+/// - 7 (e112), the climber: 10 mg, glue on its bottom; it goes up into the crowns when its water is full and its
+///   door lets it, and down to drink when its water falls under 0.7 of what it should hold.
 ///
 /// A design in the genome's own language: nothing in the world knows it.
 pub fn designed(kind: u8) -> Vec<u32> {
@@ -423,10 +425,11 @@ pub fn designed(kind: u8) -> Vec<u32> {
                 gene(FIELD + 1 + FRAME, front, 1.99),
                 gene(FIELD + 1 + GUT, front, 1.99),
                 gene(FIELD + 7, front, 1.99),
-                gene(FIELD + 7, front, 1.99),
                 // the back is gut and fat
                 gene(FIELD + 1 + GUT, back, 1.99),
                 gene(FIELD + 1 + FAT, back, 1.0),
+                // it moves at activity 0.45 (with no gene 0.1: it would never leave the cell it has eaten)
+                gene(WEIGHT + 5, 0, 1.99),
                 // down, always
                 gene(WEIGHT + 7, 0, -1.99),
             ];
@@ -438,8 +441,17 @@ pub fn designed(kind: u8) -> Vec<u32> {
                 // glue on its bottom
                 gene(FIELD + 1 + GLUE, bottom, 1.99),
                 gene(FIELD + 1 + GLUE, bottom, 1.99),
-                // up, always
-                gene(WEIGHT + 7, 0, 1.99),
+                // up when its water is full, down to drink when it falls under 0.7 of what it should hold:
+                // -7.96 + 9.95 x its water
+                gene(WEIGHT + 7, 0, -1.99),
+                gene(WEIGHT + 7, 0, -1.99),
+                gene(WEIGHT + 7, 0, -1.99),
+                gene(WEIGHT + 7, 0, -1.99),
+                gene(WEIGHT + 7, 2, 1.99),
+                gene(WEIGHT + 7, 2, 1.99),
+                gene(WEIGHT + 7, 2, 1.99),
+                gene(WEIGHT + 7, 2, 1.99),
+                gene(WEIGHT + 7, 2, 1.99),
             ];
         }
         _ => {}
