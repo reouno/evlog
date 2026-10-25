@@ -33,7 +33,10 @@ const BEVAL: usize = 120; // the body evaluator's weights: pull, then press; the
 pub const NB: usize = 6;
 const WEIGHT: usize = 128; // controller weights: the address picks the output, the condition byte the input
 pub const NI: usize = 16;
-pub const NO: usize = 7;
+pub const NO: usize = 8;
+// The outputs a random genome draws (e111's seven): the eighth, the layer (e112, #125), is reached by mutation, so
+// the first bodies are e111's.
+const NO_RANDOM: usize = 7;
 
 /// (name, lo, hi, log)
 pub const S_RANGE: [(&str, f64, f64, bool); S_TRAITS] = [
@@ -87,6 +90,7 @@ pub struct Form {
     pub face_cmp: [f64; 3],  // their mean share of compound
     pub behind: f64,         // active muscle in the three layers behind the front, in voxels
     pub glue: f64,           // glue on the front, in voxel faces
+    pub glue_under: f64,     // glue on the bottom, in voxel faces (e112: what holds it to a crown)
 }
 
 pub struct BodyType {
@@ -337,6 +341,9 @@ fn develop(fg: &[FieldGene], stage: f64, b_comp: f64) -> Form {
         if x + 3 > hi[0] {
             f.behind += mix[i][MUSCLE] * activity(sb[i]);
         }
+        if i / (SIDE * SIDE) == lo[2] {
+            f.glue_under += mix[i][GLUE];
+        }
     }
     for k in 0..3 {
         f.face_hard[k] /= f.face_n[k].max(1.0);
@@ -380,24 +387,64 @@ pub fn random(rng: &mut Rng) -> Vec<u32> {
             } else if r < 0.73 {
                 BEVAL + rng.below(2)
             } else {
-                WEIGHT + rng.below(NO)
+                WEIGHT + rng.below(NO_RANDOM)
             } as u32;
             (t << 24) | (rng.next_u64() as u32 & 0x00FF_FFFF)
         })
         .collect()
 }
 
-/// A designed body for a reading by injection (#130, e074's form): 10 kg grown, a tough front that is mouth,
-/// frame and muscle, muscle through its fore half, gut and fat behind. With `hunts` it is pulled towards a body
-/// smaller than itself that is not its kin and presses it, runs when no flesh lies where it stands and rests
-/// when some does; without, it is the same body with no pull towards another (the twin the hunter is read
-/// against). With `sated` the pull falls with its fat (none once its fat is half full) and so does its running: it
-/// hunts when it is hungry. With `mouth` its front is all mouth, soft, with no frame in it. A design in the genome's
-/// own language: nothing in the world knows it.
-pub fn designed(hunts: bool, sated: bool, mouth: bool) -> Vec<u32> {
+/// A designed body for a reading by injection (#130, e074's form; e112's three for the layers), by `kind`:
+///
+/// - 1, the hunter: 10 kg grown, a tough front that is mouth, frame and muscle, muscle through its fore half, gut
+///   and fat behind; pulled towards a body smaller than itself that is not its kin and presses it, runs when no
+///   flesh lies where it stands and rests when some does. 2: its twin, the same body with no pull towards another.
+///   3: the hunter that hunts when hungry (the pull and the running fall with its fat). 4: that hunter with a front
+///   that is all mouth, soft, with no frame in it. 5 (e112): the hunter that walks - kind 1 without the genes that
+///   make it run, at a quarter of its speed all day.
+/// - 6 (e112), the digger: 0.1 kg (no gene of size), its front hard and tough with active muscle behind it and some
+///   gut in it, gut and fat behind; it goes down into the ground whenever its door lets it, and stays.
+/// - 7 (e112), the climber: 10 mg, glue on its bottom; it goes up into the crowns whenever its door lets it.
+///
+/// A design in the genome's own language: nothing in the world knows it.
+pub fn designed(kind: u8) -> Vec<u32> {
     let gene = |t: usize, c: u32, v: f64| ((t as u32) << 24) | (c << 16) | (((v / 2.0 * 32768.0) as i32).clamp(-32768, 32767) as i16 as u16 as u32);
     let when = |signal: u32, above: bool, level: u32| 128 | (signal << 4) | ((above as u32) << 3) | level; // level in sevenths
-    let (fore, front, back) = (when(0, true, 3), when(0, true, 4), when(0, false, 3));
+    let (fore, front, back, bottom) = (when(0, true, 3), when(0, true, 4), when(0, false, 3), when(2, false, 2));
+    match kind {
+        6 => {
+            return vec![
+                // the fore half is active muscle; the front is frame, tough, with some gut in it (a mouth with a point)
+                gene(FIELD + 1 + MUSCLE, fore, 1.99),
+                gene(FIELD + 1 + MUSCLE, fore, 1.99),
+                gene(FIELD + 8, fore, 1.99),
+                gene(FIELD + 1 + FRAME, front, 1.99),
+                gene(FIELD + 1 + FRAME, front, 1.99),
+                gene(FIELD + 1 + FRAME, front, 1.99),
+                gene(FIELD + 1 + GUT, front, 1.99),
+                gene(FIELD + 7, front, 1.99),
+                gene(FIELD + 7, front, 1.99),
+                // the back is gut and fat
+                gene(FIELD + 1 + GUT, back, 1.99),
+                gene(FIELD + 1 + FAT, back, 1.0),
+                // down, always
+                gene(WEIGHT + 7, 0, -1.99),
+            ];
+        }
+        7 => {
+            return vec![
+                gene(SCALAR, 0, -1.99), // adult mass 10 mg
+                gene(SCALAR, 0, -0.207),
+                // glue on its bottom
+                gene(FIELD + 1 + GLUE, bottom, 1.99),
+                gene(FIELD + 1 + GLUE, bottom, 1.99),
+                // up, always
+                gene(WEIGHT + 7, 0, 1.99),
+            ];
+        }
+        _ => {}
+    }
+    let (hunts, sated, mouth) = (kind != 2, kind == 3 || kind == 4, kind == 4);
     let mut g = vec![
         gene(SCALAR, 0, 0.847), // adult mass 10 kg
         // the fore half is muscle; the front layer is as much frame and gut (a mouth with a hard tip), and tough
@@ -411,11 +458,13 @@ pub fn designed(hunts: bool, sated: bool, mouth: bool) -> Vec<u32> {
         // the back is gut and fat
         gene(FIELD + 1 + GUT, back, 1.99),
         gene(FIELD + 1 + FAT, back, 1.0),
-        // it runs (activity 0.86) when no flesh lies where it stands, and rests when some does
+        // it moves at a quarter of its speed; with the next two it runs (activity 0.86) when no flesh lies where it
+        // stands, and rests when some does
         gene(WEIGHT + 5, 0, 1.0),
-        gene(WEIGHT + 5, 12, -1.99),
-        gene(WEIGHT + 5, 12, -1.0),
     ];
+    if kind != 5 {
+        g.extend([gene(WEIGHT + 5, 12, -1.99), gene(WEIGHT + 5, 12, -1.0)]);
+    }
     if hunts {
         g.extend([
             // pulled towards a body: more the smaller it is against itself, not towards its kin

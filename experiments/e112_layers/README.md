@@ -162,8 +162,79 @@ the body census of the decade's last year. Ledgers close to 5e-12 over the 140 y
 
 ## The design (part 2)
 
-Written on #125 (https://github.com/reouno/evlog/issues/125#issuecomment-6152160545) and not built
-until it is agreed: the ground, the crowns and `tear=0` as one set, with the measure the pilot is read by on #119.
+Written on #125 (https://github.com/reouno/evlog/issues/125#issuecomment-6152160545) and agreed on 2026-10-26 as
+recommended: the three laws as one set, a store digested whole, `tear=0` as the bite's clause, and the bodies'
+measure with its five blocks and cuts (#119). Built behind switches in `src/body.rs`, all 0 = e111's world to the
+digit:
+
+- `ground`: a land cell's ground is a layer a body enters when its front presses (muscle stress x its bite) as hard
+  as the soil - `soil_hard` 1e5 Pa full, twice that dry. Inside, it moves at its front's power over the soil's
+  strength times its frontal area, senses to its own length in the dark, loses no water through its skin and takes
+  the soil's heat (the air's, followed over `soil_days` 10). It eats the stands' roots and stores and the seed
+  bank; a store is digested whole, as a body's fat is.
+- `crown`: a land cell's crowns are a layer a body enters when the glue under it holds its weight and the wood
+  under its own length bears it (`bear` 10 kg a kg of wood), paying weight x the tallest stand's height. Inside, it
+  eats all the leaves, hanging seed and wood, whatever its height, and finds no water; it falls back to the surface
+  where the crowns no longer hold it.
+- `tear=0`: a front breaks what its own gut takes in, and nothing more.
+- In every layer a body senses and meets only the bodies of its layer, reaches only its layer's foods and changes
+  layer by the eighth output of its controller (past +1 up, past -1 down, one layer an update; a random first genome
+  draws only the seven outputs e111 had, so the founders are e111's and the eighth is found by mutation). Dung and
+  the dead go to the cell's pools from any layer. At sea a body is on the surface.
+- The census gains `ate_root`, `ate_store`, `ate_bank`, `glue_under` and the shares of a genotype's animals by place
+  (`at_sea`, `at_surface`, `at_ground`, `at_crown`), so `analysis/ways.py` reads the layers as places and the new
+  foods as diet; the log gains `ate_root` .. `ate_bank` and `body_ground`, `body_crown` (shares of the bodies'
+  matter).
+
+The designed bodies (`form::designed`, `inject_kind`), by `bench`'s arithmetic as grown:
+
+| kind | body | front's pressure | the ground's door | digs a day at full activity | glue holds it | wood it needs under it |
+|---|---|---|---|---|---|---|
+| no genes | 0.1 kg | 2.2e4 Pa | shut | - | yes | 6.7 kg a m2 |
+| 5, the walking hunter | 10 kg, e111's hunter without the genes that make it run (activity 0.23, not 0.86) | 2.0e5 Pa | open | - | no | - |
+| 6, the digger | 0.1 kg, a hard front with active muscle behind it, gut and fat behind, goes down | 5.4e5 Pa | open, dry or full | 635 m | no | - |
+| 7, the climber | 10 mg, glue on its bottom, goes up | 2.2e4 Pa | shut | - | yes | 0.31 kg a m2 |
+
+The climber is 10 mg, not the gram the design named: by `bear` 10 a gram needs about 1 kg of wood a m2 under it, a
+stand only the heaviest tenth of the trial world's have.
+
+## The set (part 3)
+
+### Hypothesis
+
+Written before the runs:
+
+1. **Each door can be lived in**: the digger's and the climber's lines are alive in year 30 with over half of their
+   diet from their layer's foods, and the walking hunter's line is alive in year 30 with over half of its diet flesh.
+2. **Evolution has not found a door in fifteen years**: in `layers` under 5% of the bodies' matter is in the ground
+   or the crowns at year 30 (the eighth output is a mutation away, and a door a few more).
+3. **The land is not eaten from below**: the land's producers in `layers` are within the spread of two
+   realisations (0.07 kg a m2) of `notear`'s, and the digger takes under a fifth of the ground's foods.
+4. With `ground=0 crown=0` and `tear=1` the world is e111's `all` to the digit.
+
+### Method
+
+The trial world (`read.sh`), `OUT=set`, one run each, against `notear` (part 1: `all` with `tear=0`):
+
+| run | arguments | asks |
+|---|---|---|
+| `off` | `road=1 worth=1 reach=1 bite=1` | hypothesis 4 |
+| `layers` | `off` with `tear=0 ground=1 crown=1` | hypotheses 2 and 3 |
+| `no_ground`, `no_crown`, `tear` | `layers` with `ground=0`, `crown=0`, `tear=1` | each law left out |
+| `digger`, `climber`, `hunter` | `layers` with `inject_year=20 inject_kind=` 6, 7, 5 | hypothesis 1 |
+
+A designed line is read by its founder's line in `_lines.csv`, `_bodies.csv` and `_fates.csv`.
+
+**Cost and where**: eight runs on Ubuntu, two threads each, six then two at once: about 20 minutes, under 3
+core-hours. Then the pilot on `isles1` (`pilot.sh`, bodies sown in year 40, to year 100) with the set as the
+results say, against the control (`results/control.csv`): about 2 hours on six threads, more if the layers hold
+more bodies.
+
+**Stop early if:**
+
+- `water_err` > 1e-6 at 23760
+- `c_err` > 1e-6 at 23760
+- `ms_step` > 60 at 201960
 
 ## Conclusion
 

@@ -28,11 +28,11 @@ pub const K: usize = 4; // producer cohorts a cell
 pub const E: usize = 2; // eater cohorts a cell
 pub const BANK: usize = 4; // genotypes in a cell's seed bank
 const NCHUNK: usize = 64; // fixed work chunks, so that the sums do not depend on the threads
-const STORE_SHARE: f64 = 0.001; // A and B a kg of store (sugar and starch)
+pub const STORE_SHARE: f64 = 0.001; // A and B a kg of store (sugar and starch)
 pub const LEAF: usize = 0;
 pub const WOOD: usize = 1;
-const ROOT: usize = 2;
-const STORE: usize = 3;
+pub const ROOT: usize = 2;
+pub const STORE: usize = 3;
 pub const SEED: usize = 4;
 
 #[derive(Clone, Copy, Default)]

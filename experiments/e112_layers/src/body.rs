@@ -23,12 +23,16 @@
 //!    cell): heat, eating (producers, litter, carrion), water, breath, upkeep, growth, eggs, wear;
 //! 4. in order: the dead become carrion, clutches hatch as broods, heavy bodies part.
 //!
+//! e112 (#125): a land cell has three layers - the ground, its surface (e111's world) and the crowns of its stands.
+//! A body senses and meets only the bodies of its layer and reaches only its layer's foods; it changes layer by
+//! the eighth output of its controller, one layer an update, when the layer's door lets it (`ground`, `crown`).
+//!
 //! Units: masses kg of dry matter a body (one animal), A and B in g; a cell's fields stay kg (or mm) a m2, and
 //! a body's flows reach them times `s / area`. Places in m, speeds in m/s, time in days (`dt`) or seconds.
 
-use crate::form::{BodyType, Form, BACK, FAT, FLANK, FRAME, FRONT, GUT, MUSCLE, NB, NE, NI, NO, STAGES};
+use crate::form::{BodyType, Form, BACK, FAT, FLANK, FRAME, FRONT, GLUE, GUT, MUSCLE, NB, NE, NI, NO, STAGES};
 use crate::genome::{self, hamming};
-use crate::life::{activity, q10, toughness, Cohort, Litter, Seeds, BANK, K, LEAF, SEED, WOOD};
+use crate::life::{activity, q10, toughness, Cohort, Litter, Seeds, BANK, K, LEAF, ROOT, SEED, STORE, WOOD};
 use crate::noise::Rng;
 use crate::par::{self, Shared, CHUNKS};
 use crate::terrain::{Terrain, NONE};
@@ -48,6 +52,11 @@ const HEAT_HARM: f64 = 2.25;
 const FROST: f64 = 0.015;
 const DRINK: f64 = 0.075; // share of a cell's water a body's animals may drink a day
 
+// e112: the layers of a land cell, from the bottom (the sea's bodies are on its surface)
+pub const GROUND: u8 = 0;
+pub const SURFACE: u8 = 1;
+pub const CROWN: u8 = 2;
+
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Death {
     None,
@@ -63,9 +72,12 @@ pub enum Death {
 }
 
 pub const DEATHS: [&str; 9] = ["hunger", "thirst", "heat", "cold", "breath", "poison", "age", "form", "broken"];
-pub const FOODS: [&str; 6] = ["leaf", "wood", "seed", "litter", "carrion", "kill"];
+// e112: roots, stores and the seed bank are foods of the ground (the bank reached from the surface, with `reach` 0,
+// is counted as seed, as in e111)
+pub const FOODS: [&str; 9] = ["leaf", "wood", "seed", "litter", "carrion", "kill", "root", "store", "bank"];
+const NF: usize = FOODS.len();
 
-pub const CENSUS: &str = "year,id,parent,root,born,genes,bodies,animals,matter,mass,adult_mass,egg,clutch,maturity,t_opt,breadth,tolerance,n_keys,keys,ckey,cells,nv,frame,muscle,gut,nerve,fat,glue,a,b,cmp,frame_tough,density,legs,bite,mouth,eye,glue_front,hard_front,hard_back,hard_flank,tip_front,tip_back,tip_flank,ext_x,ext_y,ext_z,sea,v_top,reach,travel_km_yr,from_birth_km,ate_leaf,ate_wood,ate_seed,ate_litter,ate_carrion,ate_kill,kills,pull_one,pull_size,pull_alike,pull_fat,pull_near,pull_coming,press_one,press_size,press_alike,press_fat,press_near,press_coming";
+pub const CENSUS: &str = "year,id,parent,root,born,genes,bodies,animals,matter,mass,adult_mass,egg,clutch,maturity,t_opt,breadth,tolerance,n_keys,keys,ckey,cells,nv,frame,muscle,gut,nerve,fat,glue,a,b,cmp,frame_tough,density,legs,bite,mouth,eye,glue_front,hard_front,hard_back,hard_flank,tip_front,tip_back,tip_flank,ext_x,ext_y,ext_z,sea,v_top,reach,travel_km_yr,from_birth_km,ate_leaf,ate_wood,ate_seed,ate_litter,ate_carrion,ate_kill,kills,pull_one,pull_size,pull_alike,pull_fat,pull_near,pull_coming,press_one,press_size,press_alike,press_fat,press_near,press_coming,ate_root,ate_store,ate_bank,glue_under,at_sea,at_surface,at_ground,at_crown";
 
 #[derive(Clone)]
 pub struct Body {
@@ -94,9 +106,10 @@ pub struct Body {
     pub bx: f64,         // where it was born, m
     pub by: f64,
     pub travel: f64,     // m walked
-    pub eaten: [f64; 6], // kg eaten in its life (`FOODS`)
+    pub eaten: [f64; NF], // kg eaten in its life (`FOODS`)
     pub kills: f64,      // animals its presses killed
     pub dead: Death,
+    pub layer: u8, // e112: `GROUND`, `SURFACE` or `CROWN`
     // the clutch each of its animals carries until it is laid: eggs, their dry matter, A and B (g), water
     pub carry: f64,
     pub c_m: f64,
@@ -145,9 +158,10 @@ impl Body {
             bx: at.0,
             by: at.1,
             travel: 0.0,
-            eaten: [0.0; 6],
+            eaten: [0.0; NF],
             kills: 0.0,
             dead: Death::None,
+            layer: SURFACE,
             carry: 0.0,
             c_m: 0.0,
             c_a: 0.0,
@@ -194,7 +208,7 @@ pub struct Carrion {
 pub struct BFlux {
     pub fixed: f64,    // matter that entered (sown)
     pub returned: f64, // respired
-    pub eaten: [f64; 6],
+    pub eaten: [f64; NF],
     pub drunk: f64,
     pub evap: f64,
     pub births: f64,
@@ -214,7 +228,7 @@ impl BFlux {
     pub fn add(&mut self, o: &BFlux) {
         self.fixed += o.fixed;
         self.returned += o.returned;
-        for k in 0..6 {
+        for k in 0..NF {
             self.eaten[k] += o.eaten[k];
         }
         self.drunk += o.drunk;
@@ -253,6 +267,8 @@ struct Plan {
     chase: bool,
     press: bool,
     breed: bool,
+    layer: u8,  // e112: the layer it goes to
+    climb: f64, // kg it burns going up into a crown
 }
 
 pub struct Bodies {
@@ -281,6 +297,14 @@ pub struct Bodies {
     pub born: Vec<(u32, u32)>, // a body, the body it came from (a brood's parent, a split's other half)
     // e112: the dead since the last census by founder's line and cause (`DEATHS`): bodies, animals
     fates: std::collections::BTreeMap<(u32, u8), (u32, f64)>,
+    // e112, the layers: what a body senses of each land cell's ground (roots, stores, the bank) and crowns (leaves,
+    // hanging seed, wood), kg a m2; the wood of its stands (kg a m2) and the tallest's height (m); the soil's heat
+    food_g: Vec<f64>,
+    food_c: Vec<f64>,
+    wood: Vec<f64>,
+    top: Vec<f64>,
+    soil_t: Vec<f64>,
+    soil_ready: bool,
 }
 
 /// What the bodies read and write of the world in an update.
@@ -453,6 +477,24 @@ fn poison(b: &mut Body, bt: &BodyType, key: u8, dose: f64, p: &Params, car: &mut
     car.b += db * k;
 }
 
+/// e112, `ground`: what a land cell's soil takes to be pressed into, Pa - `soil_hard` full, twice that dry.
+fn soil_strength(p: &Params, wet: f64) -> f64 {
+    p.soil_hard * (2.0 - wet.clamp(0.0, 1.0))
+}
+
+/// e112, `ground`: a body in the ground moves by its front's work - the power of the muscle behind its front over
+/// the soil's strength times its frontal area. Its speed at full activity and that power.
+fn dig_speed(p: &Params, fm: &Form, sz: &Size, strength: f64, ft: f64) -> (f64, f64) {
+    let power = p.muscle_power * fm.behind * sz.d2 * sz.d * 1000.0 * ft.min(1.5);
+    (power / (strength * fm.front * sz.d2).max(1e-30), power)
+}
+
+/// e112, `crown`: a body holds to a cell's crowns when the glue under it holds its weight and the wood under its
+/// own length bears it (`bear` times the wood's mass).
+fn holds(p: &Params, fm: &Form, sz: &Size, wood: f64) -> bool {
+    wood > 0.0 && p.glue_stress * fm.glue_under * sz.d2 >= sz.wet * G && sz.wet <= p.bear * wood * sz.len * sz.len
+}
+
 impl Bodies {
     pub fn new(ter: &Terrain, p: &Params) -> Self {
         let n = ter.n;
@@ -485,6 +527,12 @@ impl Bodies {
             died: Vec::new(),
             born: Vec::new(),
             fates: std::collections::BTreeMap::new(),
+            food_g: vec![0.0; n * n],
+            food_c: vec![0.0; n * n],
+            wood: vec![0.0; n * n],
+            top: vec![0.0; n * n],
+            soil_t: vec![0.0; n * n],
+            soil_ready: false,
         }
     }
 
@@ -560,14 +608,14 @@ impl Bodies {
     /// own chance is not drawn, so a run with an injection is its control until that year.
     pub fn inject(&mut self, p: &Params, ter: &Terrain, sa: &mut [f64], sb: &mut [f64], vapor: &mut [f64], year: u32) -> BFlux {
         let mut f = BFlux::default();
-        let mut bt = BodyType::new(crate::form::designed(p.inject_kind != 2.0, p.inject_kind >= 3.0, p.inject_kind == 4.0), NONE, year, p.b_comp);
+        let mut bt = BodyType::new(crate::form::designed(p.inject_kind as u8), NONE, year, p.b_comp);
         let g = self.types.len() as u32;
         bt.root = g;
         let fm = bt.forms[STAGES - 1].clone();
         let m = bt.adult();
         eprintln!(
-            "designed body {g}: adult {m:.2} kg, voxels {}, frame {:.2} muscle {:.2} gut {:.2} fat {:.2}, legs {:.3}, bite {:.3}, mouth {:.2}, tip {:.2}, pull {:?}, press {:?}",
-            fm.nv, fm.frac[FRAME], fm.frac[MUSCLE], fm.frac[GUT], fm.frac[FAT], fm.legs, fm.bite, fm.mouth, fm.face_tip[FRONT], bt.bev[0], bt.bev[1]
+            "designed body {g}: adult {m:.2e} kg, voxels {}, frame {:.2} muscle {:.2} gut {:.2} fat {:.2} glue {:.2}, legs {:.3}, bite {:.3}, mouth {:.2}, tip {:.2}, glue under {:.1}, pull {:?}, press {:?}",
+            fm.nv, fm.frac[FRAME], fm.frac[MUSCLE], fm.frac[GUT], fm.frac[FAT], fm.frac[GLUE], fm.legs, fm.bite, fm.mouth, fm.face_tip[FRONT], fm.glue_under, bt.bev[0], bt.bev[1]
         );
         self.types.push(Some(Box::new(bt)));
         let at: Vec<usize> = (0..self.list.len()).filter(|&i| !ter.sea[self.list[i].cell as usize]).collect();
@@ -611,6 +659,14 @@ impl Bodies {
         let threads = (if p.body_threads > 0.0 { p.body_threads } else { p.threads }) as usize;
         let (food, flesh, water, car, lit) = (Shared::new(&mut self.food), Shared::new(&mut self.flesh), Shared::new(&mut self.water), Shared::new(&mut self.carrion), Shared::new(&mut *wd.lit));
         let (co, bank, ground, ter, temp) = (&*wd.co, &*wd.bank, &*wd.ground, wd.ter, wd.temp);
+        // e112: the layers' fields, and the soil's heat - the air's, followed over `soil_days`
+        let layers = p.ground > 0.0 || p.crown > 0.0;
+        if layers && !self.soil_ready {
+            self.soil_t.copy_from_slice(temp);
+            self.soil_ready = true;
+        }
+        let soil_q = 1.0 - (-days / p.soil_days).exp();
+        let (food_g, food_c, wood, top, soil_t) = (Shared::new(&mut self.food_g), Shared::new(&mut self.food_c), Shared::new(&mut self.wood), Shared::new(&mut self.top), Shared::new(&mut self.soil_t));
         let rot: f64 = par::pieces(threads, cells, |lo, hi| {
             let mut rotted = 0.0;
             for c in lo..hi {
@@ -639,6 +695,24 @@ impl Bodies {
                     }
                 }
                 *food.at(c) = fsum;
+                if layers && !ter.sea[c] {
+                    let (mut g, mut cr, mut w, mut h) = (0.0, 0.0, 0.0, 0.0f64);
+                    for i in 0..K {
+                        let y = &co[c * K + i];
+                        if y.g != NONE {
+                            g += y.o[ROOT].m + y.o[STORE].m;
+                            cr += y.o[LEAF].m + y.o[SEED].m + if p.eat_wood > 0.0 { y.o[WOOD].m } else { 0.0 };
+                            w += y.o[WOOD].m;
+                            h = h.max(y.h);
+                        }
+                    }
+                    for j in 0..BANK {
+                        g += bank[c * BANK + j].m;
+                    }
+                    (*food_g.at(c), *food_c.at(c), *wood.at(c), *top.at(c)) = (g, cr, w, h);
+                    let st = soil_t.at(c);
+                    *st += (temp[c] - *st) * soil_q;
+                }
                 *flesh.at(c) = x.m;
                 *water.at(c) = if ter.sea[c] { 0.0 } else { (ground[c] / ter.cap[c]).min(2.0) };
             }
@@ -681,6 +755,10 @@ impl Bodies {
                 food: &self.food,
                 flesh: &self.flesh,
                 water: &self.water,
+                food_g: &self.food_g,
+                food_c: &self.food_c,
+                wood: &self.wood,
+                top: &self.top,
                 cell_m: self.cell_m,
                 wrap: self.wrap,
                 salt: self.updates,
@@ -704,7 +782,7 @@ impl Bodies {
         for (i, b) in self.list.iter().enumerate() {
             by_chunk[self.chunk_of_row[b.cell as usize / n]].push(i);
         }
-        let ctx = Ctx { p, ter: wd.ter, temp: wd.temp, sat: wd.sat, types: &self.types, gen: wd.gen, area: self.area, trace: self.trace, dt };
+        let ctx = Ctx { p, ter: wd.ter, temp: wd.temp, soil_t: &self.soil_t, sat: wd.sat, types: &self.types, gen: wd.gen, area: self.area, trace: self.trace, dt };
         let sh = Sh {
             bodies: Shared::new(&mut self.list),
             co: Shared::new(&mut *wd.co),
@@ -802,6 +880,9 @@ impl Bodies {
             }
             let j = pl.tgt as usize;
             let (bi, bj, pj) = (&self.list[i], &self.list[j], &plans[j]);
+            if pl.layer != pj.layer {
+                continue; // e112: the other left its layer, or it did
+            }
             let (dx, dy) = (bj.x - bi.x, bj.y - bi.y);
             let d0 = (dx * dx + dy * dy).sqrt();
             let gap = (d0 - 0.5 * (pl.len + pj.len)).max(0.0);
@@ -973,8 +1054,10 @@ impl Bodies {
             b.v_top = pl.v_top;
             b.reach = pl.reach;
             b.path = 0.0;
-            // work: its propulsion for the time it moved, and its front's muscle for the time it pressed
-            b.work = (pl.power * pl.act * to[i].2 + pressed[i]) / ENERGY;
+            // work: its propulsion for the time it moved, and its front's muscle for the time it pressed; and (e112)
+            // the climb into a crown
+            b.work = (pl.power * pl.act * to[i].2 + pressed[i]) / ENERGY + pl.climb;
+            b.layer = pl.layer;
             if b.dead != Death::None {
                 continue;
             }
@@ -1000,6 +1083,13 @@ impl Bodies {
             b.x = x;
             b.y = y;
             b.cell = nc as u32;
+            // e112: at sea a body is on its surface, and it falls from a crown that does not hold it
+            if b.layer != SURFACE && (wd.ter.sea[nc] || b.layer == CROWN && {
+                let fm = &self.types[b.g as usize].as_ref().unwrap().forms[b.stage as usize];
+                !holds(p, fm, &size(b, fm), self.wood[nc])
+            }) {
+                b.layer = SURFACE;
+            }
         }
     }
 
@@ -1059,9 +1149,10 @@ impl Bodies {
             bx: b.x,
             by: b.y,
             travel: 0.0,
-            eaten: [0.0; 6],
+            eaten: [0.0; NF],
             kills: 0.0,
             dead: Death::None,
+            layer: b.layer,
             carry: 0.0,
             c_m: 0.0,
             c_a: 0.0,
@@ -1111,9 +1202,10 @@ impl Bodies {
             reach: f64,
             travel: f64,
             from_birth: f64,
-            eaten: [f64; 6],
+            eaten: [f64; NF],
             kills: f64,
             cells: Vec<u32>,
+            at: [f64; 4], // e112: animals at sea, on the surface, in the ground, in the crowns
         }
         let mut acc = vec![Acc::default(); ng];
         for b in &self.list {
@@ -1129,10 +1221,11 @@ impl Bodies {
             a.reach += b.reach;
             a.travel += b.travel / 1000.0 / (b.age / 365.0).max(0.1);
             a.from_birth += ((b.x - b.bx).powi(2) + (b.y - b.by).powi(2)).sqrt() / 1000.0;
-            for k in 0..6 {
+            for k in 0..NF {
                 a.eaten[k] += b.eaten[k] * b.s;
             }
             a.kills += b.kills;
+            a.at[if ter.sea[b.cell as usize] { 0 } else { 1 + [1, 0, 2][b.layer as usize] }] += b.s;
             a.cells.push(b.cell);
         }
         for (g, a) in acc.iter_mut().enumerate() {
@@ -1187,6 +1280,11 @@ impl Bodies {
                 for v in row {
                     write!(out, ",{v:.3}").unwrap();
                 }
+            }
+            // e112
+            write!(out, ",{:.3},{:.3},{:.3},{:.2}", a.eaten[6] / et, a.eaten[7] / et, a.eaten[8] / et, fm.glue_under).unwrap();
+            for v in a.at {
+                write!(out, ",{:.3}", v / a.animals).unwrap();
             }
             writeln!(out).unwrap();
         }
@@ -1260,6 +1358,10 @@ struct Sense<'a> {
     food: &'a [f64],
     flesh: &'a [f64],
     water: &'a [f64],
+    food_g: &'a [f64],
+    food_c: &'a [f64],
+    wood: &'a [f64],
+    top: &'a [f64],
     cell_m: f64,
     wrap: bool,
     salt: u64,
@@ -1278,7 +1380,7 @@ fn cap(v: (f64, f64)) -> (f64, f64) {
 fn decide(x: &Sense, i: usize) -> Plan {
     let p = x.p;
     let b = &x.bodies[i];
-    let mut pl = Plan { vx: 0.0, vy: 0.0, hx: b.hx, hy: b.hy, wa: b.wa, v: 0.0, v_top: 0.0, power: 0.0, act: 0.0, len: 0.0, reach: 0.0, tgt: NONE, chase: false, press: false, breed: false };
+    let mut pl = Plan { vx: 0.0, vy: 0.0, hx: b.hx, hy: b.hy, wa: b.wa, v: 0.0, v_top: 0.0, power: 0.0, act: 0.0, len: 0.0, reach: 0.0, tgt: NONE, chase: false, press: false, breed: false, layer: b.layer, climb: 0.0 };
     let bt = x.types[b.g as usize].as_ref().unwrap();
     let fm = &bt.forms[b.stage as usize];
     if fm.nv == 0.0 || b.dead != Death::None {
@@ -1289,10 +1391,21 @@ fn decide(x: &Sense, i: usize) -> Plan {
     let sea = x.ter.sea[c];
     let sz = size(b, fm);
     let (t_opt, breadth) = (bt.tr[4], bt.tr[5]);
-    let (v_top, power) = speed(p, fm, b.m, &sz, sea, heat_factor(b.t, t_opt, breadth));
-    let light = x.light[c];
+    // e112: in the ground it digs, in the dark, and senses to its own length
+    let layer = b.layer;
+    let strength = soil_strength(p, x.water[c]);
+    let ft = heat_factor(b.t, t_opt, breadth);
+    let (v_top, power) = if layer == GROUND { dig_speed(p, fm, &sz, strength, ft) } else { speed(p, fm, b.m, &sz, sea, ft) };
+    let light = if layer == GROUND { 0.0 } else { x.light[c] };
     // its reach: its eyes' side times the light, at least its own length, at most `sense_max`
-    let reach = ((fm.eye * sz.d2).sqrt() * p.sense_k * (0.2 + 0.8 * (light / 0.5).min(1.0))).max(sz.len).min(p.sense_max);
+    let reach = if layer == GROUND { sz.len } else { ((fm.eye * sz.d2).sqrt() * p.sense_k * (0.2 + 0.8 * (light / 0.5).min(1.0))).max(sz.len).min(p.sense_max) };
+    // what it senses of food is its layer's; carrion lies on the surface
+    let food = match layer {
+        GROUND => x.food_g,
+        CROWN => x.food_c,
+        _ => x.food,
+    };
+    let flesh = |c: usize| if layer == SURFACE { x.flesh[c] } else { 0.0 };
     // which way the fields rise within its reach
     let side = n as f64 * x.cell_m;
     let at = |dx: f64, dy: f64| {
@@ -1301,8 +1414,8 @@ fn decide(x: &Sense, i: usize) -> Plan {
     };
     let (ce, cw, cs, cn) = (at(reach, 0.0), at(-reach, 0.0), at(0.0, reach), at(0.0, -reach));
     let fd = |v: f64| ((v.max(1e-6)).log10() + 3.0) / 3.0;
-    let u_food = cap((fd(x.food[ce]) - fd(x.food[cw]), fd(x.food[cs]) - fd(x.food[cn])));
-    let u_flesh = cap((fd(x.flesh[ce]) - fd(x.flesh[cw]), fd(x.flesh[cs]) - fd(x.flesh[cn])));
+    let u_food = cap((fd(food[ce]) - fd(food[cw]), fd(food[cs]) - fd(food[cn])));
+    let u_flesh = cap((fd(flesh(ce)) - fd(flesh(cw)), fd(flesh(cs)) - fd(flesh(cn))));
     let u_water = cap((x.water[ce] - x.water[cw], x.water[cs] - x.water[cn]));
     let u_down = cap(((x.ter.air[cw] - x.ter.air[ce]) / 50.0, (x.ter.air[cn] - x.ter.air[cs]) / 50.0)); // a fall of 50 m is a full pull
     // the nearest bodies within its reach: the cells around its own, ring by ring, until none farther can be nearer
@@ -1319,7 +1432,7 @@ fn decide(x: &Sense, i: usize) -> Plan {
                     while j != NONE {
                         let o = &x.bodies[j as usize];
                         let d2 = (o.x - b.x).powi(2) + (o.y - b.y).powi(2);
-                        if j as usize != i && d2 <= reach * reach && o.dead == Death::None {
+                        if j as usize != i && d2 <= reach * reach && o.dead == Death::None && o.layer == layer {
                             let mut e = (d2, j);
                             for slot in seen.iter_mut() {
                                 if e.0 < slot.0 || (e.0 == slot.0 && e.1 < slot.1) {
@@ -1376,10 +1489,10 @@ fn decide(x: &Sense, i: usize) -> Plan {
     let ls = if x.ter.lat[c / n] >= 0.0 { 1.0 } else { -1.0 };
     inp[7] = x.season_sin * ls;
     inp[8] = x.season_cos * ls;
-    inp[9] = fd(x.food[c]);
+    inp[9] = fd(food[c]);
     inp[10] = x.water[c];
     inp[11] = if sea { 1.0 } else { 0.0 };
-    inp[12] = fd(x.flesh[c]);
+    inp[12] = fd(flesh(c));
     inp[13] = (-best_pull).max(0.0).min(4.0);
     inp[14] = best_pull.max(0.0).min(4.0);
     inp[15] = count / SEE as f64;
@@ -1424,6 +1537,20 @@ fn decide(x: &Sense, i: usize) -> Plan {
     pl.len = sz.len;
     pl.reach = reach;
     pl.breed = 1.0 + out[6] > 0.0; // with no genes, a body breeds when it can
+    // e112: up or down a layer when the eighth output is past one, if the door lets it (with no genes it stays). Into
+    // the ground through a front that presses as hard as the soil; into the crowns held by glue on wood that bears it,
+    // paying the climb.
+    if !sea {
+        let (up, down) = (out[7] > 1.0, out[7] < -1.0);
+        if (down && layer == CROWN) || (up && layer == GROUND) {
+            pl.layer = SURFACE;
+        } else if down && layer == SURFACE && p.ground > 0.0 && p.muscle_stress * fm.bite >= strength {
+            pl.layer = GROUND;
+        } else if up && layer == SURFACE && p.crown > 0.0 && holds(p, fm, &sz, x.wood[c]) {
+            pl.layer = CROWN;
+            pl.climb = sz.wet * G * x.top[c] / ENERGY;
+        }
+    }
     pl
 }
 
@@ -1431,6 +1558,7 @@ struct Ctx<'a> {
     p: &'a Params,
     ter: &'a Terrain,
     temp: &'a [f64],
+    soil_t: &'a [f64],
     sat: &'a crate::climate::Sat,
     types: &'a [Option<Box<BodyType>>],
     gen: &'a [Option<Box<genome::Genotype>>],
@@ -1455,7 +1583,7 @@ struct Sh {
 /// the harm of its compounds to this body a kg.
 #[derive(Clone, Copy, Default)]
 struct Food {
-    kind: usize, // 0 leaf, 1 wood, 2 seed, 3 litter, 4 carrion
+    kind: usize, // its place in `FOODS`: 0 leaf, 1 wood, 2 seed, 3 litter, 4 carrion, 6 root, 7 store, 8 bank
     src: usize,  // the cohort, or 100 + the bank slot
     dens: f64,   // within reach
     full: f64,   // all of it in the cell
@@ -1492,7 +1620,9 @@ fn live(x: &Ctx, sh: &Sh, i: usize, f: &mut BFlux) {
     // Its heat: made by its upkeep, lost through its open surface (less through fat), cooled by water when hot.
     // It goes towards that balance at the pace its mass allows: a large body evens out the day, a small one
     // follows it.
-    let t_env = x.temp[c];
+    // e112: in the ground its heat follows the soil's
+    let layer = b.layer;
+    let t_env = if layer == GROUND { x.soil_t[c] } else { x.temp[c] };
     let bkg = b.tb / 1000.0;
     let upkeep_rate = p.body_resp * bkg * q10(b.t); // kg a day
     let skin = fm.open * d2 * (1.0 - 0.8 * fm.fat_skin / fm.open.max(1e-9));
@@ -1534,7 +1664,48 @@ fn live(x: &Ctx, sh: &Sh, i: usize, f: &mut BFlux) {
         t
     };
     let need_of = |a: f64| p.bite_ref * (1.0 + p.bite_tough * toughness(a));
-    {
+    if layer == GROUND {
+        // e112: in the ground, the stands' roots and stores and the seed bank, all of them within reach
+        for j in 0..K {
+            let y = sh.co.at(c * K + j);
+            if y.g == NONE {
+                continue;
+            }
+            for (kind, organ) in [(6, ROOT), (7, STORE)] {
+                let o = y.o[organ];
+                if o.m > 1e-12 {
+                    foods[nf] = Food { kind, src: j, dens: o.m, full: o.m, a: o.share_a(), b: o.share_b(), need: need_of(o.share_a()), tox: 0.0 };
+                    nf += 1;
+                }
+            }
+        }
+        for j in 0..BANK {
+            let e = sh.bank.at(c * BANK + j);
+            if e.g != NONE && e.m > 1e-12 {
+                let ea = e.a / (e.m * 1000.0);
+                foods[nf] = Food { kind: 8, src: 100 + j, dens: e.m, full: e.m, a: ea, b: e.b / (e.m * 1000.0), need: need_of(ea), tox: 0.0 };
+                nf += 1;
+            }
+        }
+    } else if layer == CROWN {
+        // e112: in the crowns, all the stands' leaves, hanging seed and wood, whatever its height
+        for j in 0..K {
+            let y = sh.co.at(c * K + j);
+            if y.g == NONE {
+                continue;
+            }
+            let ph = &x.gen[y.g as usize].as_ref().unwrap().base;
+            for (kind, organ) in [(0, LEAF), (2, SEED), (1, WOOD)] {
+                let o = y.o[organ];
+                if o.m > 1e-12 && (kind != 1 || p.eat_wood > 0.0) {
+                    let need = if kind == 1 { p.wood_hard } else { 1.0 } * need_of(o.share_a());
+                    let tox = if kind == 0 { tox_of(y.cmp, o.m, ph) } else { 0.0 };
+                    foods[nf] = Food { kind, src: j, dens: o.m, full: o.m, a: o.share_a(), b: o.share_b(), need, tox };
+                    nf += 1;
+                }
+            }
+        }
+    } else {
         let floating = fm.density < 1.0;
         for j in 0..K {
             let y = sh.co.at(c * K + j);
@@ -1656,7 +1827,7 @@ fn live(x: &Ctx, sh: &Sh, i: usize, f: &mut BFlux) {
                     e.kill -= killed;
                     o
                 }
-                (2, s) if s >= 100 => {
+                (2 | 8, s) if s >= 100 => {
                     let e = sh.bank.at(c * BANK + s - 100);
                     let o = (e.m * frac, e.a * frac, e.b * frac);
                     e.m -= o.0;
@@ -1666,7 +1837,7 @@ fn live(x: &Ctx, sh: &Sh, i: usize, f: &mut BFlux) {
                 }
                 (_, s) => {
                     let y = sh.co.at(c * K + s);
-                    let organ = [LEAF, WOOD, SEED][kind];
+                    let organ = [LEAF, WOOD, SEED, 0, 0, 0, ROOT, STORE][kind];
                     let o = y.o[organ].take(frac);
                     if kind == 0 {
                         y.cmp *= 1.0 - frac;
@@ -1690,8 +1861,9 @@ fn live(x: &Ctx, sh: &Sh, i: usize, f: &mut BFlux) {
         let (mut gm, mut ga, mut gb, mut dung, mut da, mut harm) = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
         for &(m, a, bb, kind, tox, share_a, share_b) in &got[..ng] {
             harm += m * tox * p.body_harm;
-            let dig = if p.worth > 0.0 && kind < 4 {
-                let work = (share_b / p.b_work).min(1.0);
+            let dig = if p.worth > 0.0 && kind != 4 && kind != 5 {
+                // e112: a store is the plant's fat, digested whole
+                let work = if kind == 7 { 1.0 } else { (share_b / p.b_work).min(1.0) };
                 work + (1.0 - work) * bulk
             } else {
                 // flesh, and every food in e110's world: the soft part, and the tough part as far as the gut holds it
@@ -1748,13 +1920,14 @@ fn live(x: &Ctx, sh: &Sh, i: usize, f: &mut BFlux) {
             }
         }
     } else {
-        let deficit = (x.sat.at(t_env) - *sh.vapor.at(c)).max(0.0);
+        // e112: in the ground no water leaves through the skin; in the crowns there is none to drink
+        let deficit = if layer == GROUND { 0.0 } else { (x.sat.at(t_env) - *sh.vapor.at(c)).max(0.0) };
         let lose = (p.skin_loss * fm.soft * d2 * deficit * dt + cool).min(b.w);
         b.w -= lose;
         *sh.vapor.at(c) += lose * k;
         f.evap += lose * k;
         let g = sh.ground.at(c);
-        let avail = (*g * DRINK * dt).max(0.0) / k; // kg for each of its animals
+        let avail = if layer == CROWN { 0.0 } else { (*g * DRINK * dt).max(0.0) / k }; // kg for each of its animals
         let drink = (target - b.w).max(0.0).min(avail).min(2.0 * target * dt);
         b.w += drink;
         *g -= drink * k;
@@ -1889,7 +2062,7 @@ pub fn bench(p: &Params) {
     let dt = p.body_tick / p.day;
     let dts = dt * 86400.0;
     let none = BodyType::new(Vec::new(), NONE, 0, p.b_comp);
-    let made = BodyType::new(crate::form::designed(true, false, false), NONE, 0, p.b_comp);
+    let made = BodyType::new(crate::form::designed(1), NONE, 0, p.b_comp);
     let act0 = 1.0 / (1.0 + (-ACT0).exp());
     println!("body,act,adult_kg,height_m,v_top,km_day,mouth_m,sweep_m2_day,sweep_m2_day_kg,gut_kg_day_kg,upkeep_kg_day_kg,work_kg_day_kg,thinnest_kg_m2,days_to_fill_at_0.1");
     for (name, bt, act) in [("no genes", &none, act0), ("no genes", &none, 1.0), ("designed", &made, 1.0)] {
@@ -1923,5 +2096,30 @@ pub fn bench(p: &Params) {
                 if fill > 0.0 { fat_cap / fill } else { f64::INFINITY }
             );
         }
+    }
+    // e112: the doors of the layers for the designed bodies as grown, and for the form with no genes
+    println!();
+    println!("kind,adult_kg,wet_kg,len_m,pressure_pa,ground_door_full,ground_door_dry,dig_m_day_full,mouth,glue_under,glue_holds,wood_needed_kg_m2");
+    for kind in [0u8, 1, 5, 6, 7] {
+        let bt = if kind == 0 { BodyType::new(Vec::new(), NONE, 0, p.b_comp) } else { BodyType::new(crate::form::designed(kind), NONE, 0, p.b_comp) };
+        let fm = &bt.forms[STAGES - 1];
+        let m = bt.adult();
+        let b = Body::grown(0, 0, (0.0, 0.0), 0, 0.0, 1, m, 1.0, 0.0, (m * 1000.0 * fm.a, m * 1000.0 * fm.b));
+        let sz = size(&b, fm);
+        let pressure = p.muscle_stress * fm.bite;
+        let ft = heat_factor(bt.tr[4], bt.tr[4], bt.tr[5]);
+        let (v, _) = dig_speed(p, fm, &sz, soil_strength(p, 1.0), ft);
+        println!(
+            "{kind},{m:.3e},{:.3e},{:.4},{pressure:.3e},{},{},{:.2},{:.2},{:.2},{},{:.3e}",
+            sz.wet,
+            sz.len,
+            pressure >= soil_strength(p, 1.0),
+            pressure >= soil_strength(p, 0.0),
+            v * 86400.0,
+            (fm.mouth / fm.face_n[FRONT].max(1.0)).min(1.0),
+            fm.glue_under,
+            p.glue_stress * fm.glue_under * sz.d2 >= sz.wet * G,
+            sz.wet / (p.bear * sz.len * sz.len)
+        );
     }
 }

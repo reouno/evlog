@@ -29,6 +29,8 @@
 //! organ and the seed bank (`land_leaf` .. `land_bank`), a run ends with every stand and every land cell written out
 //! (`_stands.csv`, `_cells.csv`), `tear=0` takes away what the part of a front that is no mouth tears, and the
 //! bodies' dead are written by founder's line and cause (`_fates.csv`) and their genotypes by island (`_where.csv`).
+//! The design (agreed 2026-10-26): the ground and the crowns as layers a body enters (`ground`, `crown`; `body.rs`),
+//! and `tear=0` as the bite's second clause; `inject_kind` 5-7 are the designed bodies for them (`form::designed`).
 //!
 //! Run: cargo run --release -p e112_layers -- <prefix> [key=value ...] [file.params ...]
 //! Writes `<prefix>_log.csv` (a row a year), `_census.csv` (a row a producer genotype a year), `_eaters.csv`,
@@ -252,7 +254,13 @@ params! {
     reach = 0.0, "1: wood is reached by height as leaves are, and fallen seed lies in the ground, out of reach (0: all of both)";
     bite = 0.0, "1: a front breaks another body's tissue only as fast as its own gut takes it in, and swallows it; what is no mouth of it breaks its own tip's mass in a pass (0: power over strength for the time together, all of it carrion)";
     // e112: a reading for #125 (the bite's open clause). The default leaves e111's world.
-    tear = 1.0, "0: under `bite`, the part of a front that is no mouth tears nothing (a reading)";
+    tear = 1.0, "0: under `bite`, the part of a front that is no mouth tears nothing (the design's second clause of the bite)";
+    // e112's design (#125, agreed 2026-10-26): the layers, each behind a switch (0: e111's world).
+    ground = 0.0, "1: a body enters the ground of a land cell when its front presses as hard as the soil; there it digs at its front's work, senses to its own length in the dark, loses no water through its skin, takes the soil's heat and eats roots, stores (digested whole) and the seed bank";
+    crown = 0.0, "1: a body enters the crowns of a land cell when the glue under it holds its weight and the wood bears it, paying the climb; there it eats all the leaves, hanging seed and wood, and finds no water";
+    soil_hard = 1e5, "Pa: what a full soil takes to be pressed into (twice it dry)";
+    bear = 10.0, "kg the crowns bear a kg of wood (under a body's own length squared)";
+    soil_days = 10.0, "days over which the soil's heat follows the air's";
 }
 
 fn parse(args: &[String]) -> Params {
@@ -546,7 +554,7 @@ fn main() {
     let mut cm = 0.0f64; // the living's matter: fixed less returned
     let upy = (p.year / p.tick).round() as usize;
     let mut log = std::fs::File::create(format!("{prefix}_log.csv")).unwrap();
-    writeln!(log, "step,year,land_temp,land_rain,land_evap,sea_evap,sea_rain,to_sea,water,water_err,a,b,a_err,b_err,weathered_a,weathered_b,river_a,river_b,buried_a,buried_b,rivers,lakes,storms,land_water,land_biomass,sea_biomass,land_cover,sea_cover,land_height,litter,eaters,eater_cells,gpp,resp,transp,eaten,decayed,burnt,burnt_cells,genotypes,eater_genotypes,leading,mutant_share,matter,c_err,ms_step,wind_net,air_err,bodies,animals,body_land_cells,body_sea_share,body_matter,carrion,body_genotypes,births,splits,{},{},body_km,body_drunk,body_evap,body_resp,catches,presses,breaks,killed,torn,riders,rotted,secs_decide,secs_meet,secs_live,secs_last,land_b_soil,land_b_plants,land_b_litter,land_b_bodies,sea_b_bodies,land_a_soil,land_a_plants,land_a_litter,land_a_bodies,sea_a_bodies,land_leaf,land_wood,land_root,land_store,land_seed,land_bank", body::DEATHS.map(|d| format!("died_{d}")).join(","), body::FOODS.map(|d| format!("ate_{d}")).join(",")).unwrap();
+    writeln!(log, "step,year,land_temp,land_rain,land_evap,sea_evap,sea_rain,to_sea,water,water_err,a,b,a_err,b_err,weathered_a,weathered_b,river_a,river_b,buried_a,buried_b,rivers,lakes,storms,land_water,land_biomass,sea_biomass,land_cover,sea_cover,land_height,litter,eaters,eater_cells,gpp,resp,transp,eaten,decayed,burnt,burnt_cells,genotypes,eater_genotypes,leading,mutant_share,matter,c_err,ms_step,wind_net,air_err,bodies,animals,body_land_cells,body_sea_share,body_matter,carrion,body_genotypes,births,splits,{},{},body_km,body_drunk,body_evap,body_resp,catches,presses,breaks,killed,torn,riders,rotted,secs_decide,secs_meet,secs_live,secs_last,land_b_soil,land_b_plants,land_b_litter,land_b_bodies,sea_b_bodies,land_a_soil,land_a_plants,land_a_litter,land_a_bodies,sea_a_bodies,land_leaf,land_wood,land_root,land_store,land_seed,land_bank,body_ground,body_crown", body::DEATHS.map(|d| format!("died_{d}")).join(","), body::FOODS.map(|d| format!("ate_{d}")).join(",")).unwrap();
     let mut cen = std::io::BufWriter::new(std::fs::File::create(format!("{prefix}_census.csv")).unwrap());
     writeln!(cen, "year,id,parent,born,genes,mass_land,mass_sea,cells,lead_cells,h_real,age,lifespan,alloc_leaf,alloc_wood,alloc_root,alloc_store,alloc_seed,leaf_b,leaf_a,wood_b,wood_a,root_b,root_a,height,deep,seed_mass,wing,float,compound,t_opt,breadth,shed,n_keys,keys,conditional").unwrap();
     let mut ecen = std::io::BufWriter::new(std::fs::File::create(format!("{prefix}_eaters.csv")).unwrap());
@@ -760,7 +768,14 @@ fn main() {
             }
             org[5] += life.bank[c * life::BANK..(c + 1) * life::BANK].iter().map(|e| e.m).sum::<f64>();
         }
-        writeln!(log, ",{}", org.iter().map(|v| format!("{:.5e}", v / lfn)).collect::<Vec<_>>().join(",")).unwrap();
+        write!(log, ",{}", org.iter().map(|v| format!("{:.5e}", v / lfn)).collect::<Vec<_>>().join(",")).unwrap();
+        // e112: the share of the bodies' matter in the ground and in the crowns
+        let mut lay = [0.0f64; 3];
+        for x in &bodies.list {
+            lay[x.layer as usize] += (x.m + x.fat) * x.s;
+        }
+        let lt = lay.iter().sum::<f64>().max(1e-30);
+        writeln!(log, ",{:.4e},{:.4e}", lay[body::GROUND as usize] / lt, lay[body::CROWN as usize] / lt).unwrap();
         log.flush().unwrap();
         eprintln!(
             "year {:>3}: land {:.1} C, rain {:.0} mm, evap {:.0}, transp {:.0}, to sea {:.0}, land bio {:.3}, cover {:.2}/{:.2}, h {:.1}, eaters {:.2e}, burnt {}, genotypes {ng}/{neg}, leading {}, mutants {mutant_share:.3}, errs w {werr:.0e} A {aerr:.0e} C {cerr:.0e}, {:.1} s",
