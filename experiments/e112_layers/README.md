@@ -273,9 +273,58 @@ to 2e-13 in every run. Land: the land's producers, kg a m2, years 26-30; `notear
 
    Read from the traces (`EVLOG_BODY_TRACE_G`, `results/trace/`): the first digger ate its cell down with its broods
    and never left it at the activity of no gene (late in its first year an adult took in a hundredth of what its
-   gut could pass), and its young grew slowly on a food poor in A (stores carry 0.1%); the walking hunter's gut
+   gut could pass), and its young grew slowly on a food poor in A (stores carry 0.1%); the revised digger's dead
+   (`digger2` traced, 537 bodies) are its young: their last trace finds them at 0.3-6 g of an adult's 100, 476 with no fat
+   left, taking in nothing and moving a metre a day - too small to dig out of the cell their kin ate down; the walking hunter's gut
    runs full, but a press works its front's muscle for the whole time it holds its prey, 0.013 kg an update against
    the 0.009 its gut passes, and walking alone costs half of what it keeps.
+
+## The pilot (part 3)
+
+### Method
+
+`pilot.sh layers years=100 tear=0 ground=1 crown=1` on `isles1` (bodies sown in year 40), Ubuntu, six threads,
+4.0 hours; read by `control.py pilot` (`results/pilot.csv`, `pilot_ways.csv`) as the control is. Lines written
+before it (#125): ledgers to 1e-9; the land's producers at half of e109's or more; a door used (5% of the bodies'
+matter in the ground or the crowns, or 5% of the diet from roots, stores, bank or leaf); flesh over 1% of the diet.
+
+Added after reading it, because the pilot's bodies were large and the control's are not: `pilot.sh notear tear=0`
+to year 70 (is it the layers or the clause?), and `pilot.sh sow41_tear<0|1> body_sow=41 years=61 threads=3` (the
+same world sown a year later, a second realisation: is it the clause or the founders?). Three runs, 1.7 hours on
+six threads.
+
+### Result (the pilot)
+
+From `results/pilot.csv` (what was read: `results/provenance.csv`, rows `pilot:`); the control from
+`results/control.csv`. Land: the land's producers against e109's world without bodies.
+
+| years | land, of bare (control) | bodies | the bodies' matter, t | over 1 kg (control) | flesh | ways (place, size) | held by island |
+|---|---|---|---|---|---|---|---|
+| 41-50 | 100% (99%) | 70 | 102 | 100% (1.0%) | 0.13% | 1.08 (1.08, 1.00) | 0.27 |
+| 51-60 | 100% (89%) | 359 | 551 | 100% (0.0%) | 0.01% | 1.04 (1.01, 1.02) | 0.03 |
+| 61-70 | 95% (78%) | 17,423 | 21,419 | 95% (0.0%) | 0.14% | 2.63 (1.14, 1.25) | 0.13 |
+| 71-80 | 87% (69%) | 45,693 | 61,861 | 99.5% (0.0%) | 0.00% | 1.98 (1.84, 1.05) | 0.22 |
+| 81-90 | 82% (68%) | 38,799 | 70,621 | 97% (0%) | 0.00% | 2.13 (1.79, 1.21) | 0.15 |
+| 91-100 | 81% (65%) | 44,222 | 83,841 | 95% (0.0%) | 0.00% | 2.38 (1.87, 1.26) | 0.24 |
+
+- **Ledgers: pass** (7e-13 at most).
+- **The land at half of the bare world or more: pass** - 81-100%, above the control in every decade (65% against
+  81% in the last); falling against the bare world by up to 9 points a decade, under 1 in the last.
+- **A door used: no.** No body's matter is in the ground or the crowns in any decade (0.00%); leaf, roots, stores and
+  the bank are 1.6% of the diet at most (years 51-60) and nothing after year 80. Litter is 100% from year 80.
+- **Flesh over 1% of the diet: no** - 0.14% at most, nothing after year 80. Presses fall from 137,000 a year (years
+  61-70) to 939.
+- **The layers did nothing here**: `notear` (no ground, no crowns) is `layers` to the digit to year 70.
+- **The bodies are large, and by history, not by law.** In every decade 95-100% of the matter is in bodies over 1 kg
+  (the leader 18.4 kg; the control under 1% from year 50). The world passed through 48 bodies in year 43 and the
+  line that came through is a large founder's. Sown a year later the same world comes through large with the clause
+  and without it (`sow41_tear0`, `sow41_tear1`: 100% over 1 kg by year 50-55, 81 and 772 bodies in years 56-60), and
+  on the trial world neither clause makes them large (0.3-0.6% over 1 kg). A large world fills slowly: 646 bodies
+  in years 56-60 against the control's 12,562; by year 100 it holds 2.7 times the control's matter.
+- **The ways**: 2.0-2.6 from year 60, parted by place (land against sea, 1.8-1.9 from year 70) and size (18 kg against 0.57 kg,
+  1.2-1.3); one line; the ways held by island 0.03-0.27. Year 100: 64% an 18 kg stayer on land (11% at sea, 468 km a
+  year), 30% the same form at sea (84%, 1,682 km), 3% and 2% a 0.57 kg form on land and at sea.
+- Thirst kills more each decade (6 a year to 1,325); a year costs 352 s on six threads at 44,000 bodies.
 
 ## Conclusion
 
@@ -296,4 +345,32 @@ years, its only spread in armour and range.
 Rows of `vision.md` changed: the plant foods (the ground's share, unreached), size, dominance, the food web and
 the ways of living (today's numbers from the control), and the lesson on the kill.
 
-Parts 2 and 3: to be written.
+**Parts 2 and 3.** The layers stand and cost nothing when unused, and no body lives in them: **a door entered is
+not a door lived in.**
+
+1. Each door can be lived in: **no, not by these bodies.** Each designed body entered its layer and its line died
+   within ten years, each of something the layer's law did not price: the digger's young are too small to dig out
+   of the cell their kin ate down, a climber of 10 mg in the crowns dies of thirst, and a press costs the front's
+   muscle for the whole hold, more than the gut passes.
+2. Evolution has not found a door: **yes** - not in fifteen years on the trial world, nor in sixty on `isles1`.
+3. The land is not eaten from below: **yes** for evolved bodies; a designed digger takes it to 83% of the bare world
+   in ten years and dies of it.
+4. The copy is e111's world to the digit: **yes**, and with the layers on and unused it still is (`notear` is
+   `layers` to year 70).
+
+The pilot passes its ledgers and its land and fails both of its uses: no door, no flesh. What it shows instead is
+history: the same laws and ground, sown in year 40 or 41, give a world of 18 kg bodies that fills slowly and leaves
+81% of the bare world's producers standing at year 100, where e111's sowing gave 0.1 kg bodies and 65%. Which
+founder came through a bottleneck of a few dozen bodies set the size of everything after it for sixty years; the
+bite's clause did not.
+
+Kept: the ground, the crowns and their designed bodies stay behind switches in this crate, which the next step
+starts from (`ground=1 crown=1 tear=0`); nothing goes to `base/`, which holds no bodies yet. Not settled: whether
+the clause matters for the land (one realisation each). Two of #116's turns after this pilot are met: one line
+still holds land and sea (then the sea as a place of its own for a body), and no line lives on flesh with a place
+to hide (then the catch itself). Its own turn "no door used though a designed body lives in it" is not, since no
+designed body lives: a layer also needs a body that can live there, and that body is several steps from today's.
+
+Rows of `vision.md` changed: B plant foods (the ground opened, unused), C size (large by history), F food web
+(no flesh with a place to hide), F ways (2-2.6, by place and size), F history (a replay differs in size), the
+lessons (a door entered is not a door lived in; the founders' bottleneck sets the size).
