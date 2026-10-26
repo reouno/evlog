@@ -94,13 +94,13 @@ is not searched to hit a result. If a rung fails on a ground that passed, the fa
   bodies eat >= 10% of what producers fix and producers turn over; the freedoms are used (adult masses x100, two
   strata, flesh 10% of the diet, plastic weights, a group that travels); >= 5 effective groups of bodies by place.
 
-**The open measure** (`analysis/groups.py`): no boxes fixed in advance. Each genotype's traits are a vector scaled
-by fixed physical ranges; groups come from average-linkage clustering cut at a fixed distance and are read as an
-effective number (Hill 1 by biomass), as held by place (NMI of a cell's leading group against its place), as change
-(when the biomass and its groups were founded) and as history (the biomass two replays of one world hold in matching
-groups, `analysis/replay.py`). It reads producers; the bodies' is still to be built. Every threshold is written to
-`provenance.csv` (`CLAUDE.md`, Measuring). The old world's measures - kinds by birth form, the 64-box label of a
-way, the six-seed control ladder at 7.14 kinds (e068, e094, e101) - judge that world only.
+**The open measure**: no boxes fixed in advance, read as an effective number (Hill 1 by matter), as held by place
+(NMI), as change and as history (the matter two replays hold in matching groups, `analysis/replay.py`). Producers
+(`analysis/groups.py`): a trait vector scaled by fixed physical ranges, clustered at a fixed distance. Bodies
+(`analysis/ways.py`, agreed with #125): five blocks - diet 0.25, place 0.5 (shares that differ), size and range 1
+decade, make 0.25 - and one way only within every cut; foods and places come off the census's own header; change is
+a match against an earlier census. Every threshold goes to `provenance.csv` (`CLAUDE.md`, Measuring). The old world's
+measures - kinds by birth form, the 64-box label, the six-seed ladder at 7.14 kinds (e068, e094, e101) - judge it only.
 
 ## 4. Scale and compute
 

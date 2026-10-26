@@ -236,6 +236,47 @@ more bodies.
 - `c_err` > 1e-6 at 23760
 - `ms_step` > 60 at 201960
 
+### Result (the set)
+
+From `results/set.csv` and `set_designed.csv` (what was read: `results/provenance.csv`, rows `set:`). Ledgers close
+to 2e-13 in every run. Land: the land's producers, kg a m2, years 26-30; `notear` (part 1) is the line.
+
+| run | land | of `nobody` | against `notear` | the bodies' matter, t | in the ground / crowns | ways (place) |
+|---|---|---|---|---|---|---|
+| `notear` | 0.728 | 91% | - | 1,734 | - | - |
+| `off` | 0.747 | 93% | +0.019 | 1,163 | - | 1.51 (1.09) |
+| `layers` | 0.738 | 92% | +0.010 | 1,461 | 0 / 0 | 1.11 (1.07) |
+| `no_ground` | 0.738 | 92% | +0.010 | 1,461 | 0 / 0 | 1.11 (1.07) |
+| `no_crown` | 0.728 | 91% | +0.000 | 1,734 | 0 / 0 | 1.26 (1.10) |
+| `tear` | 0.675 | 84% | -0.053 | 1,646 | 0 / 0 | 1.47 (1.18) |
+| `digger` | 0.716 | 89% | -0.012 | 1,432 | 0 / 0 | 1.17 (1.10) |
+| `digger2` | 0.666 | 83% | -0.062 | 1,376 | 0 / 0 | 1.13 (1.06) |
+| `climber2` | 0.729 | 91% | +0.001 | 1,413 | 0 / 0.03% | 1.16 (1.06) |
+| `hunter` | 0.743 | 93% | +0.016 | 1,566 | 0 / 0 | 1.26 (1.12) |
+
+4. **`off` is e111's `all` to the digit: yes** (98 columns over 30 years).
+2. **Evolution has not found a door in fifteen years: yes.** No body of `layers` is in the ground or the crowns
+   in years 26-30, and `no_ground` is `layers` to the digit: nothing entered the ground. `no_crown` is `notear` to
+   the digit, so something entered the crowns for a while; it left no line there. Litter is 99.9% of the diet.
+3. **The land is not eaten from below: by the evolved bodies, yes; by a designed digger, no.** `layers` is within
+   the spread of `notear` (+0.010). The revised digger took the land to 83% of `nobody` in ten years (-0.062 against
+   `notear`, roots -0.007 and stores -0.030 kg a m2) and was gone in six.
+1. **Each door can be lived in: no, not by these bodies.** Each door was entered; no designed line lived ten years.
+
+   | designed line | where it lived | what it ate | how it ended |
+   |---|---|---|---|
+   | `digger` (activity 0.1) | the ground, all of it | roots 27-47%, stores 34-59%, bank 14-18% | hunger in five years (203, 88, 9 bodies a year) |
+   | `digger2` (activity 0.45, half the A in its front) | the ground, all of it | roots 23-37%, stores 48-64%, bank 12-17% | 87 t in its first year, then hunger in six |
+   | `climber` (always up) | a quarter of its animals in the crowns in its first year, then none | litter 97% | thirst (142, 76 bodies a year) |
+   | `climber2` (down to drink at 0.7 of its water) | 20-33% of its animals in the crowns | litter 90-95%, leaf 3-5%, wood 2-5% | thirst (272, 252, 98 bodies a year), gone in eight |
+   | `hunter` (walks) | the surface | - | its first year: hunger 45 bodies, poison 9, broken 8 |
+
+   Read from the traces (`EVLOG_BODY_TRACE_G`, `results/trace/`): the first digger ate its cell down with its broods
+   and never left it at the activity of no gene (late in its first year an adult took in a hundredth of what its
+   gut could pass), and its young grew slowly on a food poor in A (stores carry 0.1%); the walking hunter's gut
+   runs full, but a press works its front's muscle for the whole time it holds its prey, 0.013 kg an update against
+   the 0.009 its gut passes, and walking alone costs half of what it keeps.
+
 ## Conclusion
 
 **Part 1.** The readings say where the unused food is and which way the bite's clause goes; the control says the
