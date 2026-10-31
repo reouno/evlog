@@ -22,7 +22,11 @@ Written before the runs:
 4. **Parted islands hold different sizes** (pilot): each has its own bottleneck, and two ways over 5% of the matter
    stand a decade apart in adult mass.
 
-Hypotheses 3 and 4 are read only if part 1 passes.
+5. **A crash stays local** (added after the gate, before the pilot): a hunter that empties one island does not empty
+   the world, because the sea stands between the islands.
+
+Hypotheses 3 to 5 were to be read only if part 1 passed. It did not; the user chose on 2026-11-01 to run the pilot all
+the same (see Part 2).
 
 ## Method
 
@@ -45,14 +49,33 @@ put in in year 20). Ubuntu, two threads each, six at once: about 30 minutes, und
 
 **Part 2, the pilot**, on `isles1` (`pilot.sh`, to year 100, all four on, sown in year 40 and in year 41; about 10
 hours on six threads, Ubuntu). Controls: e112's `layers` and `sow41_tear0`, also from Ubuntu. Read with `control.py
-pilot` and `analysis/ways.py`. A third run, the hunter put in in year 70 (5 hours), only if neither history makes
-flesh. Lines, written before the run:
+pilot` and `analysis/ways.py`.
+
+**Changed after the gate, by the user's decision of 2026-11-01.** The gate said the pilot does not run. It was not the
+world starving that failed the gate but a hunter too strong for a world it can cross in hours, which the trial world
+cannot read further. So the pilot runs, with the third run always and with a different purpose: `hungry70`, kind 3
+put in on the largest island alone in year 70 (`inject_island=1`, a reading argument added for this: the default puts
+the line on every island at once, which could not test a crash on one). Three runs at once, two threads each, about
+15 hours in all, six cores:
+
+| run | arguments on top of `pilot.sh` | asks |
+|---|---|---|
+| `all` | `years=100 tear=0 ground=1 crown=1 floor=1 press_work=1 sight=1 cover=1 threads=2` | is the sea a place; does flesh evolve where a press pays |
+| `sow41` | the same, `body_sow=41` | the same in a second history; size by history |
+| `hungry70` | the same as `all`, `inject_year=70 inject_kind=3 inject_island=1` | does a crash stay on its island |
+
+`hungry70` is `all` up to year 70, which is checked first. e112's `sow41_tear0` ends at year 61, so `sow41` has a
+control only up to there. The hypothesis 5 line is read from `_lines.csv`, and its failure says the sea does not part
+the world even for a hunter. Lines, written before the run:
 
 - Stands: ledgers under 1e-9; the land at least half of the bare world's over the last decade.
 - The sea is a place: `held` by island at least 0.2 over each of the last two decades (e112: 0.03-0.27), and the
   largest ways at sea and on land differ in make or size (e112: the same body).
 - The catch: flesh at least 1% of the diet over a decade (e112: 0.14%). Rung 3's line remains 10%.
 - Size: two ways, each at least 5% of the matter, a decade apart in adult mass (e112: 2.8% and 2.1% at the second).
+- A crash stays local (`hungry70`): island 1's bodies fall under half of `all`'s within ten years of the injection (if
+  not, there was no crash to test), while the matter on all other islands, not of the designed line, stays at least
+  half of `all`'s at years 75, 80, 90 and 100. Also read: the year the line first stands on each other island.
 
 Compute: no new search. `sight` reads a length per body and searches the same 500 m at most; a body with small eyes
 searches further than before only if a long body is in the world. Any cost beyond that is the number of bodies.
@@ -61,7 +84,8 @@ searches further than before only if a long body is in the world. Any cost beyon
 
 - `bodies` < 10 at 540000
 
-For the pilot (bodies sown in year 40 or 41; the step is year 45). Only a world without bodies stops a run.
+For the pilot (bodies sown in year 40 or 41; the step is year 45). Only a world without bodies stops a run. A
+`hungry70` with no bodies left is ended by hand, since nothing can come back.
 
 ## Result
 

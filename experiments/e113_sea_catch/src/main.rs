@@ -250,6 +250,7 @@ params! {
     inject_year = 0.0, "the year designed bodies are put among the others (0: none; a reading)";
     inject_kind = 1.0, "1: the designed hunter; 2: its twin, the same body with no pull towards another; 3: the hunter that hunts when hungry; 4: that hunter with a front that is all mouth";
     inject_bodies = 50.0, "designed bodies put in, each where a body stands on land";
+    inject_island = 0.0, "e113: the island they are put in on (1 the largest; 0: every island; a reading)";
     // e111's design (#130, agreed 2026-10-07): four cycles, each behind a switch (0: e110's law).
     road = 0.0, "1: the A and B a gut digests and does not keep go to the soil where the body stands, and what it does not digest is dung with its A and B (0: all of it into the litter)";
     worth = 0.0, "1: of a plant food a gut digests the working part at once and the bulk as the rot does for the time it holds it (0: by toughness, as flesh is)";
@@ -601,7 +602,7 @@ fn main() {
             bf.add(&bodies.sow(&p, &ter, &mut hy.a, &mut hy.b, &mut air.vapor, yr as u32));
         }
         if p.inject_year > 0.0 && yr == p.inject_year as usize && bodies.sown {
-            bf.add(&bodies.inject(&p, &ter, &mut hy.a, &mut hy.b, &mut air.vapor, yr as u32));
+            bf.add(&bodies.inject(&p, &ter, &island, &mut hy.a, &mut hy.b, &mut air.vapor, yr as u32));
         }
         let mut secs = [0.0f64; 4]; // air, water, life, the year's sums
         for u in 0..upy {

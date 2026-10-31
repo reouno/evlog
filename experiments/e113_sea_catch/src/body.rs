@@ -624,7 +624,7 @@ impl Bodies {
     /// at the place of a body standing on land, taken in the list's order at even steps. Their A and B come from
     /// the soils of the whole world and their water from the air above them, as the sown bodies' did. The world's
     /// own chance is not drawn, so a run with an injection is its control until that year.
-    pub fn inject(&mut self, p: &Params, ter: &Terrain, sa: &mut [f64], sb: &mut [f64], vapor: &mut [f64], year: u32) -> BFlux {
+    pub fn inject(&mut self, p: &Params, ter: &Terrain, island: &[u16], sa: &mut [f64], sb: &mut [f64], vapor: &mut [f64], year: u32) -> BFlux {
         let mut f = BFlux::default();
         let mut bt = BodyType::new(crate::form::designed(p.inject_kind as u8), NONE, year, p.b_comp);
         let g = self.types.len() as u32;
@@ -636,7 +636,8 @@ impl Bodies {
             fm.nv, fm.frac[FRAME], fm.frac[MUSCLE], fm.frac[GUT], fm.frac[FAT], fm.frac[GLUE], fm.legs, fm.bite, fm.mouth, fm.face_tip[FRONT], fm.glue_under, bt.bev[0], bt.bev[1]
         );
         self.types.push(Some(Box::new(bt)));
-        let at: Vec<usize> = (0..self.list.len()).filter(|&i| !ter.sea[self.list[i].cell as usize]).collect();
+        let on = |c: usize| !ter.sea[c] && (p.inject_island == 0.0 || island[c] == p.inject_island as u16);
+        let at: Vec<usize> = (0..self.list.len()).filter(|&i| on(self.list[i].cell as usize)).collect();
         let want = (p.inject_bodies as usize).min(at.len());
         let mut rng = Rng::new(p.life as u64 ^ 0x1A7E_C7ED);
         let s = (p.big_s / m).round().max(1.0);
