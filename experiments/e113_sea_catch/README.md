@@ -123,9 +123,70 @@ at today's reach left most bodies seen at 500 m. That was visible in `bench` bef
 save the prey either. Whether prey would learn to flee was not read: this prey met a full hunter with no time. The trial world is also too small to test the piece's hypothesis
 (that a crash on one island is not a crash of the world): a hunter crosses it in hours.
 
+### Part 2, the pilot: a hunter evolves, the sea is still not a place
+
+Ubuntu, 2026-11-01, `isles1` to year 100, three runs at once on two threads each: `all` 11.3 hours, `sow41` 13.6,
+`hungry70` 10.8. Read by `control.py` (`results/pilot_<run>.csv`, `_ways.csv`) and `crash.py` (`results/crash.csv`,
+`crash_reach.csv`, `hunters.csv`, `flesh_eaters.csv`); thresholds in `results/provenance.csv`. `hungry70` is `all` to
+the digit up to year 70, so these are two histories, not three: **the runs that make hunters share their first 70
+years.** Ledgers 5e-12 at most. No audit, as in part 1.
+
+| last decade, years 91-100 | `all` | `sow41` | `hungry70` | e112 `layers` | line |
+|---|---|---|---|---|---|
+| land of the bare world | 78% | 83% | 81% | 81% | at least 50%: **met** |
+| flesh of the diet | 0.55% | 0.00% | 0.55% | 0.00% | at least 1%: **not met** |
+| `held` by island, 81-90 / 91-100 | 0.08 / 0.13 | 0.11 / 0.07 | 0.07 / 0.07 | 0.15 / 0.24 | at least 0.2 in both: **not met** |
+| ways (Hill) | 3.22 | 2.32 | 2.29 | 2.38 | - |
+| size spread (Hill, `hill_size`) | 1.46 | 1.82 | 1.34 | 1.26 | - |
+| bodies, mean | 33,583 | 51,124 | 32,609 | 44,222 | - |
+
+**A hunter evolves and lives with its prey.** In `all`, genotypes with over half their lifetime diet in kills appear
+in year 76 (one body) and stand at 1,090 bodies, 1,334 t, 2.7% of the matter at year 100, on ten land masses and at
+sea, beside 33,000 others. They grow about 38-fold from year 83 to 100 (a doubling in about three years) and have been
+flat at 1,235-1,334 t since year 97. The hunter's way at year 100: 18.4 kg, frame 0.36, muscle 0.31, gut 0.13, front
+tip 0.35, kill 90% of the diet; the same founder's line as its prey, whose way is 18.4 kg, gut 0.56, muscle 0.19.
+Kills rise to 0.79% of the world's diet in year 98. `hungry70` has the same outcome by its own descent after year 70
+(1,087 bodies at year 100, none of the designed line). `sow41` has no genotype over 10% flesh at any census.
+
+So in one history of two the catch is lived in. The world stays standing with it for 25 years; the run ends before it
+is known whether this settles, keeps growing or crashes. No factorial was run: this is all four laws together, and
+which of them it needs was not read. e112, without them, had none over 60 years.
+
+**The sea is still not a place.** `held` is lower than e112's in all three, and the two largest ways of `all` are still
+one body, on land and at sea: 18.4 kg, gut 0.56 and 12% at sea, 540 km a year (63% of the matter); gut 0.65 and 73% at
+sea, 1,793 km a year (22%). `floor` lowered the share of bodies at sea only from 33% to 24-27%. What they live on out
+there was not read beyond litter being 99% of the diet.
+
+**Two sizes stand, not by island.** Two ways over 5% of the matter a decade apart at year 100, in all three: 18.4 and
+0.57 kg in `all` (63% and 7.7%) and `hungry70` (80% and 6.9%), 18.4 and 244 kg in `sow41` (72% and 22%). This meets the
+written line, but `held` says they are not parted by island, which was the hypothesis. Each small or large way has the
+make of the largest: a change of size alone. Why it pays was not read.
+
+**The designed hunter on one island.** Put on island 1 alone in year 70, it stands on eight land masses and the sea
+within two years: the sea does not hold it. Kills that year are 20.6 million animals against 9,321 in `all`. It dies
+of hunger by year 74, at 75% kills in its diet.
+
+By the line as written there was **no crash to test**: island 1's bodies never fall under half of `all`'s (0.74 at the
+least, year 74), its matter least 0.69 (year 74), and the other islands' matter is 0.89-1.08 of `all`'s at years 75,
+80, 90 and 100. The line was written in bodies and matter, and that hid what happened. A body is a cohort, and
+**animals** say otherwise: at year 72, 3.9 million on island 1 against `all`'s 64 million, and on the other islands 6.0
+against 22.6 million, while the matter stands (animal counts swing widely in `all` itself, 61 to 920 million on those
+islands between years 75 and 85, so only the first years' gap is read). Animals fell far more than matter, which reads as the young eaten on every island
+at once and the adults left (not measured directly), and the world came back within about ten years, not because the sea held the hunter but because
+the hunter starved. This differs from the trial world, where the same body took the world over. Why was not read.
+
 ## Conclusion
 
-Part 1 only, under this world's conditions. The starving of e112 was the press's price. Under it there is a second
-wall, as #116's turn said: a slower body is caught every time and nothing limits what a hunter finds, so a hunter that pays grows
-far faster than its prey and the world has no place it does not reach. What the islands do about it is not yet read.
-`vision.md` is updated when the piece ends.
+Under this world's conditions, on one seed:
+
+1. **A hunter lives: yes, when evolved; no, when designed.** The designed line dies in four years; the evolved one
+   stands 25 years to the run's end, in one history of two. Flesh remains under 1% and far under rung 3's 10%.
+2. **It does not empty the world: yes on `isles1`, so far.** But `sight` and `cover` have not been shown to be why, and
+   the trial world says otherwise. The 25 years end with hunters flat, and a run to year 100 cannot say what follows.
+3. **The sea is a place: no.** Bodies cross it, and live on it as one body with those on land. `floor` did not change this.
+4. **Parted islands hold different sizes: no as stated.** Two sizes do stand, in each run, but not by island.
+5. **A crash stays local: no.** A hunter on one island reached the others within two years. The world held because it starved.
+
+`press_work` is kept: a press priced by what it breaks replaces a price recorded as wrong in e112. `floor`, `sight` and
+`cover` stay in the crate, on, with no effect shown. Rows changed in `vision.md`: C size, F ways, F food web, the lessons
+and the direction.

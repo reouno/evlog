@@ -73,7 +73,7 @@ Every freedom is a law about a material with a price no form escapes. They are b
 | skin | soft open surface passes water, heat and breath | breath in water, cooling | water lost to dry air, warmth lost in the cold | e106 |
 | speed | muscle over drag (the front) and friction (the mass); a climb is paid by mass x rise | reach | muscle's upkeep, work by the path | e106 |
 | eggs | many small or few large, from the parent's fat | number, or a start | the parent's A and B | e106 |
-| contact | a face fails where a front's pressure passes its strength, as fast as the front's own gut takes it in (it swallows it); the part of the front that is no mouth tears its own tip's mass a contact; glue holds; the compound at a failed contact harms by keys; the part of the front that is no mouth tears nothing (e112) | flesh | tip, muscle and glue; a soft mouth fails on a harder face; a press works the front's muscle for the whole hold | e110, e111, e112 (feeds no line) |
+| contact | a face fails where a front's pressure passes its strength, as fast as the front's own gut takes it in (it swallows it); the part of the front that is no mouth tears its own tip's mass a contact; glue holds; the compound at a failed contact harms by keys; the part of the front that is no mouth tears nothing (e112) | flesh | tip, muscle and glue; a soft mouth fails on a harder face; a press is paid for what it breaks, need x volume, or one bite's time if nothing broke | e110, e111, e112, e113 (a hunter lives) |
 | strata, mind | three layers a land cell, one controller output to move between them; a body meets, senses and eats only in its own: the ground if its front presses past the soil (1e5 Pa, twice dry; roots, stores digested whole, the bank), the crowns if glue under it holds its weight and wood bears it (no water); hidden units and plastic weights by nerve | refuge, the ground's 45% of the producers, crowns, learning | dark and slow digging; thirst aloft; nerve is the costliest tissue | e112, behind switches (open, unlived in 60 years); the mind #131 |
 
 ## 3. Rungs, pass lines and measures
@@ -113,7 +113,7 @@ nothing shows a longer one safe, e110). A body holds about S kg of animals at an
 is one animal a body, a smaller kind a flock, a clutch one brood carried until it holds a tenth of S. The watcher
 sees a place, later at real size through a window that plays what the world decided. **S is 4,000 kg** (e111): on a
 land that stands the animals weigh 38 t a km2 after 30 years (11,000 bodies) and 195 after a hundred (50,000, still
-rising; e112). **Open**: what parts the lines - one line holds every island, on land and sea alike.
+rising; e112). **Open**: what parts the lines - one line holds every island, on land and sea alike (e113's `floor`, `sight` and `cover` stand on, no effect shown).
 
 **Compute**: the islands with producers take 26 s a year on six threads (e109); 11,000 bodies add 60 s and 50,000
 add 320 s (e112's control: a hundred years with bodies in 5 hours), so a 300-year run is about a day at S 4,000 kg.

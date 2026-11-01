@@ -1,11 +1,11 @@
 """Read e113's pilot and its control by decade, against e109's world without bodies, with the bodies read by the
 open measure (`analysis/ways.py`). The control is e111's pilot run on to year 140 (`e111_holds/results/pilot/
-all140_*`); the pilot is `results/pilot/layers_*`.
+all140_*`) and e112's; here each of the pilot's runs is read alone.
 
-    uv run python experiments/e113_sea_catch/control.py [pilot]
+    uv run python experiments/e113_sea_catch/control.py <run> [year sown]
 
-Writes `results/<control|pilot>.csv` (a row a decade) and `results/<control|pilot>_ways.csv` (the groups of the last
-census), and adds its rows to `results/provenance.csv`. The body censuses (66-71 MB) are not committed: without one
+Reads `results/pilot/<run>_*`. Writes `results/pilot_<run>.csv` (a row a decade) and `results/pilot_<run>_ways.csv` (the
+groups of the last census), and adds its rows to `results/provenance.csv`. The body censuses (66-71 MB) are not committed: without one
 beside its log the files are left as they are.
 """
 import csv
@@ -17,12 +17,12 @@ sys.path.insert(0, os.path.join(HERE, "..", ".."))
 from analysis import ways  # noqa: E402
 
 RES = os.path.join(HERE, "results")
-NAME = sys.argv[1] if len(sys.argv) > 1 else "control"
-PILOT = {"control": os.path.join(HERE, "..", "e111_holds", "results", "pilot", "all140"),
-         "pilot": os.path.join(RES, "pilot", "layers")}[NAME]
+RUN = sys.argv[1]
+NAME = "pilot_" + RUN
+PILOT = os.path.join(RES, "pilot", RUN)
 BARE = os.path.join(HERE, "..", "e109_metres", "results", "isles1_life1_log.csv")
 CELL_M2 = 125.0 ** 2
-SOWN = 40  # the year the bodies were sown
+SOWN = int(sys.argv[2]) if len(sys.argv) > 2 else 40  # the year the bodies were sown
 BIG = 1.0  # kg: an adult mass over it is a large body
 FLESH = 0.1  # share of flesh in its lifetime diet over which a genotype is read as a flesh eater
 LINE = 0.01  # share of the bodies' matter over which a founder's line is counted
@@ -56,8 +56,8 @@ def main():
     for r in rows(PILOT + "_bodies.csv"):
         cen.setdefault(int(r["year"]), []).append(r)
     out, reads = [], {}
-    for y1 in range(SOWN + 10, end + 1, 10):
-        ys = range(y1 - 9, y1 + 1)
+    for y1 in range(50, end + 1, 10):
+        ys = range(max(y1 - 9, SOWN + 1), y1 + 1)
         f = lambda k, src=log: mean(float(src[y][k]) for y in ys)
         ate = {k: f("ate_" + k) for k in foods}
         o, rd = ways.read(cen[y1])
@@ -86,7 +86,7 @@ def main():
             "ways_hill": o["groups_hill"], "top_way": o["top_group_share"], **{k: o[k] for k in o if k.startswith("hill_")},
             "held": ways.held(where[y1], {r["id"]: int(gi) for r, gi in zip(kept, rd[3])}) if y1 in where else "",
             "changed": ways.changed(rd, reads[y1 - BACK]) if y1 - BACK in reads else "",
-            "new_since_first": ways.changed(rd, reads[SOWN + 10]) if y1 > SOWN + 10 else "",
+            "new_since_first": ways.changed(rd, reads[50]) if y1 > 50 else "",
             "err": max(max(float(log[y][k]) for k in ("water_err", "a_err", "b_err", "c_err")) for y in ys),
         })
     last = max(reads)
@@ -124,10 +124,10 @@ def main():
         ["control: the world without bodies", "e109_metres/results/isles1_life1_log.csv, the same years"],
         ["control: a large body, a flesh eater, a line", f"adult mass over {BIG} kg; flesh over {FLESH} of its lifetime diet; a founder's line over {LINE} of the matter"],
         ["control: the ways", ways.provenance()],
-        ["control: changed, new_since_first", f"the matter of a census in ways with no match in the census {BACK} years before, and in the census of year {SOWN + 10} (analysis/ways.py)"],
+        ["control: changed, new_since_first", f"the matter of a census in ways with no match in the census {BACK} years before, and in the census of year 50 (analysis/ways.py)"],
         ["control: held", "ways.held over the matter of each genotype by island (_where.csv, every tenth year); \"\" where no table"],
         ["control: layers", "ground_share, crown_share: body_ground, body_crown of the log; layer_food_share: root, store, bank and leaf in the diet"],
-        ["control: seconds a year", "ms_step x 11,880 steps (six threads on Ubuntu; " + ("from year 127 five other runs shared the machine)" if NAME == "control" else "beside the trace runs early on)")],
+        ["control: seconds a year", "ms_step x 11,880 steps (two threads on Ubuntu, three runs at once)"],
     ]]
     with open(prov, "w", newline="") as f:
         csv.writer(f, lineterminator="\n").writerows(keep)
