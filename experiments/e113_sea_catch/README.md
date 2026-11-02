@@ -175,6 +175,21 @@ islands between years 75 and 85, so only the first years' gap is read). Animals 
 at once and the adults left (not measured directly), and the world came back within about ten years, not because the sea held the hunter but because
 the hunter starved. This differs from the trial world, where the same body took the world over. Why was not read.
 
+### Part 3, the hunter's fate: `all200` (running)
+
+Agreed with the user on 2026-11-03. The hunters of `all` were flat from year 97 when the run ended, so nothing says what
+follows. `all` again from year 0, to year 200, on six threads, on Ubuntu, alone: about 20 hours (120 core-hours), since
+the crate has no checkpoint. Thread count may change the history, so its first 100 years are compared with `all` first;
+if they differ, it is a third history, read as one. Written before the run, and read from `hunters.csv`'s measure:
+
+- **Settles**: hunters alive at year 200 and their matter within a factor of 2 over the last 30 years.
+- **Grows**: kills at least 1% of the diet over a decade (the pilot's line), then 10% (rung 3's).
+- **Crashes**: no hunters by year 200, or the world's bodies under a tenth of their year-100 number.
+
+**Stop early if:**
+
+- `bodies` < 10 at 540000
+
 ## Conclusion
 
 Under this world's conditions, on one seed:
