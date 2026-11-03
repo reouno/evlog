@@ -175,7 +175,7 @@ islands between years 75 and 85, so only the first years' gap is read). Animals 
 at once and the adults left (not measured directly), and the world came back within about ten years, not because the sea held the hunter but because
 the hunter starved. This differs from the trial world, where the same body took the world over. Why was not read.
 
-### Part 3, the hunter's fate: `all200` (running)
+### Part 3, the hunter's fate: `all200` settles, and the world's size turns over
 
 Agreed with the user on 2026-11-03. The hunters of `all` were flat from year 97 when the run ended, so nothing says what
 follows. `all` again from year 0, to year 200, on six threads, on Ubuntu, alone: about 20 hours (120 core-hours), since
@@ -190,18 +190,54 @@ if they differ, it is a third history, read as one. Written before the run, and 
 
 - `bodies` < 10 at 540000
 
+Ubuntu, 2026-11-03/04: 109,596 s (30.4 hours, not 20: a step took 33 ms at year 100 and 170 ms in the last decade, as
+the bodies grew fourfold). Read by `fate.py` (`results/fate.csv`, `fate_decades.csv`, `fate_islands.csv`) and
+`control.py all200` (`results/pilot_all200.csv`, `_ways.csv`); thresholds in `results/provenance.csv`. Ledgers 9e-13
+at most. **Its first 100 years are `all`'s to the digit** (every log column but timing), so this is `all` carried on.
+
+**The hunter settles.** Alive at year 200 (140 genotypes, 915 bodies, 991 t), its matter 828-1,172 t over the last 30
+years, a factor of 1.4: **met**. It never grows: kills peak at 0.61% of the diet (years 111-120) and fall to 0.17-0.19%
+from year 151, under the 1% line in every decade. Nothing crashes: the world's bodies end at 120,963, 3.6 times year
+100's. The hunter's matter stays at 580-1,570 t for a hundred years while its share of all matter falls from 2.7% to
+0.5%: it does not follow its prey up. In every tenth year read it stands at sea and on 11-18 land masses of the 28-30
+with bodies, those holding 98-100% of the matter, and keeps its make: 18-24 kg, muscle 0.24-0.31, kill 77-87% of its
+lifetime diet.
+
+| years | 91-100 | 121-130 | 151-160 | 181-190 | 191-200 |
+|---|---|---|---|---|---|
+| kills of the diet | 0.55% | 0.51% | 0.19% | 0.17% | 0.18% |
+| bodies, mean | 33,583 | 37,097 | 67,276 | 114,360 | 127,757 |
+| bodies' matter, t | 49,181 | 58,853 | 104,986 | 180,564 | 197,339 |
+| matter in bodies over 1 kg | 91% | 74% | 30% | 9% | 2% |
+| bodies at sea | 27% | 38% | 39% | 43% | 46% |
+| ways (Hill) | 3.22 | 4.29 | 3.29 | 2.88 | 2.65 |
+| `held` by island | 0.13 | 0.28 | 0.13 | 0.14 | 0.19 |
+| land of the bare world | 78% | 85% | 84% | 85% | 84% |
+
+**The size of the world turns over, a century after the sowing.** The 18 kg litter eater that held the matter for sixty
+years gives way to the 0.57 kg way that stood beside it at year 100 (7.7%): at year 200 two ways of 0.57 kg hold 91% of
+the matter, one 71% at sea and one 5%, both the same make (gut 0.62, muscle 0.04, litter 100%); the 18 kg way is 1.3%.
+Matter weighted, the bodies' adult mass falls from 17 kg at year 100 to 1.1 kg at year 200, and their matter grows
+fourfold, most of it at sea (17,600 t at year 100, 110,000 t at year 200). Muscle falls from 0.19 to 0.05. Why was not
+read: the hunters, at 18-24 kg, may favour the small, or the small may simply win slowly on litter; one run without a
+hunter would part the two, and none was run. The ways rise to 4.5 and fall back to 2.7 as the small way takes over;
+`held` stays under 0.2 but once (years 121-130), so the sea still parts nothing.
+
 ## Conclusion
 
 Under this world's conditions, on one seed:
 
 1. **A hunter lives: yes, when evolved; no, when designed.** The designed line dies in four years; the evolved one
-   stands 25 years to the run's end, in one history of two. Flesh remains under 1% and far under rung 3's 10%.
-2. **It does not empty the world: yes on `isles1`, so far.** But `sight` and `cover` have not been shown to be why, and
-   the trial world says otherwise. The 25 years end with hunters flat, and a run to year 100 cannot say what follows.
+   stands from year 76 to year 200 in one history of two, settled at about 1,000 t. Flesh never reaches 1%, and falls
+   to 0.2% as its prey multiply: it is a stable top of one small chain, not a food web.
+2. **It does not empty the world: yes on `isles1`.** But `sight` and `cover` have not been shown to be why, and the
+   trial world says otherwise. The hunter does not follow its prey up: what bounds it was not read.
+6. **A world's first years set its size: for a century only** (part 3). After a hundred years the small way that
+   stood beside the large one takes the matter over. Whether the hunter drives this was not read.
 3. **The sea is a place: no.** Bodies cross it, and live on it as one body with those on land. `floor` did not change this.
 4. **Parted islands hold different sizes: no as stated.** Two sizes do stand, in each run, but not by island.
 5. **A crash stays local: no.** A hunter on one island reached the others within two years. The world held because it starved.
 
 `press_work` is kept: a press priced by what it breaks replaces a price recorded as wrong in e112. `floor`, `sight` and
 `cover` stay in the crate, on, with no effect shown. Rows changed in `vision.md`: C size, F ways, F food web, the lessons
-and the direction.
+and the direction (part 3 again: C size, F ways, F food web, the lessons).

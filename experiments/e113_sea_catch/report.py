@@ -174,6 +174,13 @@ def main():
     other = lambda r: r["island"] not in ("0", "1")
     a1, h1, ao, ho = animals("all", one), animals("hungry70", one), animals("all", other), animals("hungry70", other)
     ys = list(range(68, 79))
+    fate = rows(RES, "fate.csv")
+    f200 = rows(RES, "pilot_all200.csv")
+    fy = [int(x["year"]) for x in fate if int(x["year"]) >= 70]
+    c_fate = chart("Hunters' matter to year 200", "all200. Settled: within a factor of 2 over the last 30 years. Zero would be a crash.",
+                   [("hunters, t", fy, [float(x["matter_t"]) for x in fate if int(x["year"]) >= 70], ALL, False)], ymin=0)
+    c_size = chart("Who holds the matter", "Share of the bodies' matter in bodies over 1 kg, and share of bodies at sea, by decade.",
+                   [("over 1 kg", *decade(f200, "over_1kg"), SOW, False), ("at sea", *decade(f200, "sea_share"), HUNGRY, False)], xlabel="year (census)", fmt=pct, ymin=0)
     c_an1 = chart("Animals on island 1, where the hunter was put", "Log scale; year 70 is the injection. Together would mean no effect.",
                   [("all", ys, [a1[y] for y in ys], ALL, False), ("hungry70, without the line", ys, [h1[y] for y in ys], HUNGRY, False)], log=True)
     c_ano = chart("Animals on the other islands", "The same on the land the hunter was not put on. A local crash would leave these lines together.",
@@ -201,27 +208,28 @@ def main():
 <body>
 <main>
 <h1>e113: the sea as a place, and the catch</h1>
-<p class="sub">Experiment report - 2026-11-01 - a gate on the trial world, then three runs on the islands to year 100</p>
+<p class="sub">Experiment report - 2026-11-01 - a gate on the trial world, then three runs on the islands to year 100, one carried to year 200 - updated 2026-11-04</p>
 
 <section class="tldr">
 <h2>TL;DR</h2>
-<p>With a press paid for what it breaks, a hunter evolves unaided and lives 25 years beside its prey, 2.7% of the matter, without emptying the world, in one history of two. The sea is still not a place: one body lives on land and at sea. The run ends before the hunter's fate is known.</p>
+<p>With a press paid for what it breaks, a hunter evolves unaided in one history of two. Carried to year 200 it settles at about 1,000 t: kills fall from 0.55% to 0.18% of the diet as its prey multiply fourfold. After a century the world's size turns over, 18 kg to 0.57 kg. The sea is still not a place.</p>
 </section>
 
 <h2>1. Question</h2>
-<p>e112 left one line on one food. Would a sea that parts islands and a catch that pays, together, change that?</p>
+<p>e112 left one line on one food. Would a sea that parts islands and a catch that pays change that?</p>
 <ol>
   <li><strong>A hunter lives.</strong></li>
   <li><strong>It does not empty the world.</strong></li>
   <li><strong>The sea is a place.</strong></li>
   <li><strong>Parted islands hold different sizes.</strong></li>
   <li><strong>A crash stays local</strong> (added before the pilot).</li>
+  <li><strong>The hunter's fate</strong> by year 200: settles, grows or crashes (added before part 3).</li>
 </ol>
 
 <h2>2. The world</h2>
 <p>e112's world with four new laws. None names a hunter, a refuge or a size.</p>
 {DIAGRAM}
-<p><strong>Runs.</strong> <code>isles1</code>, one seed, to year 100. <code>all</code>; <code>sow41</code>, sown a year later; <code>hungry70</code>, <code>all</code> with 50 designed hunters on the largest island in year 70. The gate had failed (a hunter emptied the trial world in a year); the user chose to run these anyway. We read:</p>
+<p><strong>Runs.</strong> <code>isles1</code>, one seed, to year 100. <code>all</code>; <code>sow41</code>, sown a year later; <code>hungry70</code>, <code>all</code> with 50 designed hunters on the largest island in year 70; <code>all200</code>, <code>all</code> carried to year 200. The gate had failed (a hunter emptied the trial world in a year); the user chose to run these anyway. We read:</p>
 <ul class="measures">
   <li><strong>Hunter</strong> - a genotype with over half its lifetime diet in kills.</li>
   <li><strong>Held</strong> - how far ways differ by island, 0 to 1.</li>
@@ -234,32 +242,36 @@ def main():
 <thead><tr><th>Years 91-100</th><th>Land, of bare</th><th>Flesh</th><th>Held, last two</th><th>Ways</th><th>Size spread</th><th>Bodies</th></tr></thead>
 <tbody>{table}</tbody></table></div>
 <ol class="verdicts">
-<li><span class="verdict partly">Partly</span> A hunter lives: evolved yes, 25 years to the end; designed no, starved in four. Flesh 0.55%, under the 1% line.</li>
-<li><span class="verdict partly">So far</span> It does not empty the world: 33,000 bodies at year 100. Which law holds it is unread.</li>
+<li><span class="verdict partly">Partly</span> A hunter lives: evolved yes, year 76 to 200; designed no, starved in four. Flesh under the 1% line throughout.</li>
+<li><span class="verdict">Yes</span> It does not empty the world: 121,000 bodies at year 200.</li>
 <li><span class="verdict no">No</span> The sea is a place: held 0.07-0.13 against the 0.2 line, lower than e112.</li>
 <li><span class="verdict no">No</span> Parted islands hold sizes: two sizes stand in every run, 13-32x apart, but not by island.</li>
 <li><span class="verdict no">No</span> A crash stays local: the hunter stood on eight land masses within two years.</li>
+<li><span class="verdict">Settles</span> The hunter's fate: 828-1,172 t over years 171-200, a factor of 1.4. It never grows; nothing crashes.</li>
 </ol>
 
 <h3>3.1 A hunter evolves and stays</h3>
 <div class="grid2">{c_matter}{c_kill}</div>
-<p>The first hunter is one body in year 76. Matter then doubles about every three years, and has been flat since year 97. It is the same founder's line as its prey: a frame of 0.36 and a gut of 0.13 against their 0.10 and 0.56. <code>hungry70</code> shares <code>all</code>'s first 70 years, so these are one history; <code>sow41</code> has none.</p>
+<p>The first hunter is one body in year 76; its matter doubles about every three years to year 97. It is its prey's founder's line, with a frame of 0.36 and a gut of 0.13 against their 0.10 and 0.56.</p>
 
 <h3>3.2 The world stands; the sea does not part it</h3>
 <div class="grid2">{c_bodies}{c_held}</div>
-<p>The two largest ways of <code>all</code> are one body at 18.4 kg: 12% at sea with a gut of 0.56, and 73% at sea with 0.65. <code>floor</code> moved the share of bodies at sea only from 33% to 24-27%.</p>
+<p>The two largest ways of <code>all</code> are one body at 18.4 kg: 12% at sea with a gut of 0.56, and 73% at sea with 0.65.</p>
 
 <h3>3.3 A hunter on one island hits all of them, then starves</h3>
 <div class="grid2">{c_an1}{c_ano}</div>
-<p>The line as written, in bodies and matter, read "no crash to test": island 1's matter never fell under 0.69 of <code>all</code>'s. A body is a cohort, and the animals show it: at year 72, 3.9 million against 64 million on island 1, and 6.0 against 22.6 on the others. Animals fell far more than matter, which reads as the young eaten, everywhere; that was not measured directly.</p>
+<p>In bodies and matter there was no crash to test: island 1's matter never fell under 0.69 of <code>all</code>'s. In animals there was: at year 72, 3.9 million against 64 million on island 1, 6.0 against 22.6 on the others. That reads as the young eaten everywhere, not measured directly.</p>
+
+<h3>3.4 Carried to year 200: the hunter settles, its prey shrink</h3>
+<div class="grid2">{c_fate}{c_size}</div>
+<p><code>all200</code> is <code>all</code> to the digit for 100 years. The hunter stays at 18-24 kg, on 11-18 land masses and at sea, its share of the matter falling from 2.7% to 0.5%. The 0.57 kg way beside the 18 kg one at year 100 holds 91% of the matter by year 200, most of it at sea.</p>
 
 <h2>4. Discussion</h2>
-<p>The designed hunter failed the gate and the evolved one lives. The designed body is a strong killer that takes its food down and starves; the evolved body arrives as one mutant among the prey it can already eat, and grows about a hundred times slower than the gate's arithmetic said a hunter could. Why was not read.</p>
-<p>The world held the designed hunter by its starving, not by the sea. Nothing shows <code>sight</code> or <code>cover</code> doing anything, and all four laws ran together, so the hunter cannot yet be credited to one.</p>
-<p>It does not show a food web. Flesh is 0.55%, one founder's line holds everything, and litter is still 99% of the diet. Animal counts swing tenfold in <code>all</code> alone, so only the first years' gap is read.</p>
+<p>The designed hunter takes its food down and starves; the evolved one arrives as one mutant among prey it can already eat, and grows about a hundred times slower than the gate's arithmetic allowed. The world held the designed one by its starving, not by the sea. All four laws ran together, so the hunter cannot be credited to one.</p>
+<p>It is not a food web: flesh under 1%, one founder's line, litter 99% of the diet. What keeps the hunter from following its prey up, and whether it drives the turn to small bodies, are unread; a run without hunters to year 200 would part the two. e112's lesson that the first years set a world's size holds for a century only.</p>
 
 <h2>5. Conclusion and next step</h2>
-<p>The catch can be lived in, and the sea is still no place. The press's price is kept; <code>floor</code>, <code>sight</code> and <code>cover</code> stay on, with no effect shown. Next is the hunter's fate, which needs the run carried past year 100.</p>
+<p>The catch can be lived in and settles, one small chain on top of litter; the sea is still no place. <code>press_work</code> is kept; the other three stay on, with no effect shown. Next is a plan check on the sea and on litter, still 99% of the diet (#116).</p>
 
 <h2>Appendix: data</h2>
 <p>Thresholds are in <code>results/provenance.csv</code>; the rest in <code>results/*.csv</code>. Build with <code>uv run python experiments/e113_sea_catch/report.py</code>.</p>
