@@ -280,6 +280,8 @@ params! {
     sight_ref = 0.1, "m: the length of a body seen at the eye reach itself (about the grown bodies of e111-e112)";
     cover = 0.0, "1: another body is seen at that distance x the light its cell's leaves let through (Beer's law, `ext`, `sla`)";
     // e114's design (#133, agreed 2026-11-05): the chemistry of matter, behind one switch (0: e113's world).
+    lit_eat = 1.0, "e114, a reading: 0 under `lock`: the small eaters do not eat litter (nor is their waste mineral)";
+    lit_keep = 1.0, "e114, a reading: 0 under `lock`: to a body litter is as in e113 - the softest tissue's pressure, no compound";
     lock = 0.0, "1: a key opens a lock - a tissue's bulk carries its genotype's lock, a gut takes it apart as far as its keys fit (`genome::fit`), the dead keep their lock, A and compound in litter slots, and the small eaters eat litter, their waste mineral";
 }
 

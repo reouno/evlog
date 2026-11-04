@@ -1237,7 +1237,8 @@ fn cell(
         // open its lock, and its compound
         let mut wl = [0.0; LS];
         let mut toxl = [0.0; LS];
-        if on {
+        let lit_on = on && p.lit_eat > 0.0;
+        if lit_on {
             for (j, sl) in lit.s.iter().enumerate() {
                 if sl.m < 1e-12 {
                     continue;
@@ -1272,7 +1273,7 @@ fn cell(
             }
         }
         f.eaten += im;
-        if on {
+        if lit_on {
             let mut lm = 0.0;
             for j in 0..LS {
                 if wl[j] <= 0.0 {
@@ -1301,7 +1302,7 @@ fn cell(
         let grow = (eff * im).min(ib / (1000.0 * p.eater_b)).min(ia / (1000.0 * p.eater_a));
         e.m += grow;
         let waste = im - grow;
-        if on {
+        if lit_on {
             // e114: half the waste is dung of the lock it mostly ate; what they took apart and did not keep is
             // mineral, to the soil (the rot is the living's)
             lit.put(Organ { m: 0.5 * waste, a: 0.0, b: 0.0 }, big.1);
@@ -1319,7 +1320,7 @@ fn cell(
         let dead = (e.m * die + harm).min(e.m - resp);
         f.returned += resp;
         let own = if on { ep.lock } else { 0 };
-        if on {
+        if lit_on {
             lit.put(Organ { m: dead, a: dead * 1000.0 * p.eater_a, b: dead * 1000.0 * p.eater_b }, own);
             *sa += resp * 1000.0 * p.eater_a;
             *sb += resp * 1000.0 * p.eater_b;

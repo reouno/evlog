@@ -1837,7 +1837,7 @@ fn live(x: &Ctx, sh: &Sh, i: usize, f: &mut BFlux) {
                 for (j, sl) in l.s.iter().enumerate() {
                     if sl.m > 1e-12 {
                         let (la, lb) = (sl.a / (sl.m * 1000.0), sl.b / (sl.m * 1000.0));
-                        let (need, tox) = if on {
+                        let (need, tox) = if on && p.lit_keep > 0.0 {
                             let best = bt.keys.iter().map(|&dk| hamming(sl.ckey, dk)).min().unwrap_or(8) as f64;
                             (need_of(la), if sl.cmp > 0.0 { sl.cmp / sl.m * (best - bt.tr[6]).max(0.0) / 8.0 / 0.01 } else { 0.0 })
                         } else {
