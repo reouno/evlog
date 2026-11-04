@@ -13,7 +13,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 GATE = os.path.join(HERE, "results", "gate")
 E113 = os.path.join(HERE, "..", "e113_sea_catch", "results", "gate", "all_log.csv")
 NOBODY = os.path.join(HERE, "..", "e112_layers", "results", "read", "nobody_log.csv")
-RUNS = ["off", "lock", "lock80", "no_lit_eat", "no_lit_keep", "neither", "off2", "make", "make80"]
+RUNS = ["off", "lock", "lock80", "no_lit_eat", "no_lit_keep", "neither", "off2", "make", "make80", "off3", "worn", "worn80"]
 TIMING = {"ms_step", "secs_decide", "secs_meet", "secs_live", "secs_last"}
 YEARS = [15, 20, 25, 30, 35, 40, 50, 60, 70, 80]
 LOCK_SHARE = 0.1  # a producer lock holding this share of the producers' mass counts
@@ -34,7 +34,7 @@ def write(name, table):
 
 def main():
     old = rows(E113)
-    for name in ("off", "off2"):
+    for name in ("off", "off2", "off3"):
         off = rows(os.path.join(GATE, name + "_log.csv"))
         cols = [k for k in old[0] if k not in TIMING and k in off[0]]
         diff = [(a["year"], k) for a, b in zip(off, old) for k in cols if a[k] != b[k]]

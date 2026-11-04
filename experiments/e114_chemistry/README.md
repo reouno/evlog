@@ -134,4 +134,12 @@ Ubuntu, 2026-11-05, `gate.py`. Ledgers 1.6e-13 at most.
   animals stand on litter that loses its toughness by rule, the stand-in for a rot that softens.
 - **No lock appears** in `make80` to year 80 (every producer on the plain bond).
 
+### The rot softens, written before its gate
+
+Agreed with the user on 2026-11-05. Each slot keeps the share of it still whole (`Slot::whole`): tissue, carrion and
+dung arrive whole (1), mixed by mass, and the rot wears it at the rot's own rate (the slot's decay, slower by its
+lock), so fresh litter is as tough to a mouth as the tissue it came from and old litter soft: the pressure a mouth
+needs is the toughness its A sets times the share still whole. No new rate; one number a slot. The gut is as before.
+Gate `gate3.sh`: `off3`, `worn`, `worn80`, the same world and lines; compared with `make`.
+
 ## Conclusion

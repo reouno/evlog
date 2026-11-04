@@ -1836,7 +1836,8 @@ fn live(x: &Ctx, sh: &Sh, i: usize, f: &mut BFlux) {
                         let (la, lb) = (sl.a / (sl.m * 1000.0), sl.b / (sl.m * 1000.0));
                         let (need, tox) = if on && p.lit_keep > 0.0 {
                             let best = bt.keys.iter().map(|&dk| hamming(sl.ckey, dk)).min().unwrap_or(8) as f64;
-                            (need_of(la), if sl.cmp > 0.0 { sl.cmp / sl.m * (best - bt.tr[6]).max(0.0) / 8.0 / 0.01 } else { 0.0 })
+                            // what the rot has worn is soft to a mouth
+                            (p.bite_ref * (1.0 + p.bite_tough * toughness(la) * sl.whole), if sl.cmp > 0.0 { sl.cmp / sl.m * (best - bt.tr[6]).max(0.0) / 8.0 / 0.01 } else { 0.0 })
                         } else {
                             (p.bite_ref, 0.0)
                         };
@@ -2013,7 +2014,7 @@ fn live(x: &Ctx, sh: &Sh, i: usize, f: &mut BFlux) {
         if harm > 0.0 {
             b.harm += harm / b.m;
             let lost = shrink(b, harm.min(0.5 * b.m), sh, c, k, false);
-            sh.lit.at(c).slot(b.lock).m += lost * k;
+            sh.lit.at(c).slot(b.lock).gain(lost * k);
         }
     }
 
@@ -2122,7 +2123,7 @@ fn live(x: &Ctx, sh: &Sh, i: usize, f: &mut BFlux) {
     let lifespan = p.body_life + p.body_life_frame * fm.frac[FRAME] * fm.frame_tough;
     if tb < -2.0 {
         let lost = shrink(b, FROST * dt * (-2.0 - tb) * b.m, sh, c, k, false);
-        sh.lit.at(c).slot(b.lock).m += lost * k;
+        sh.lit.at(c).slot(b.lock).gain(lost * k);
         if b.m < 0.5 * b.peak {
             b.dead = Death::Cold;
         }

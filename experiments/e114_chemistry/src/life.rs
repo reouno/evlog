@@ -121,11 +121,20 @@ pub struct Slot {
     pub cmp: f64,
     pub lock: u8,
     pub ckey: u8,
+    pub whole: f64, // the share of it still whole: 1 as it arrives, worn by the rot at the rot's own rate
 }
 
 impl Slot {
     pub fn empty(&self) -> bool {
         self.m == 0.0 && self.a == 0.0 && self.b == 0.0
+    }
+    /// Fresh tissue joins: mass, and the whole share by mass.
+    pub fn gain(&mut self, m: f64) {
+        let t = self.m.max(0.0) + m;
+        if t > 0.0 {
+            self.whole = (self.whole * self.m.max(0.0) + m) / t;
+        }
+        self.m += m;
     }
 }
 
@@ -205,6 +214,9 @@ impl Litter {
         let (i, j) = if self.s[pair.0].m >= self.s[pair.1].m { pair } else { (pair.1, pair.0) };
         let y = self.s[j];
         let x = &mut self.s[i];
+        if x.m + y.m > 0.0 {
+            x.whole = (x.whole * x.m + y.whole * y.m) / (x.m + y.m);
+        }
         x.m += y.m;
         x.a += y.a;
         x.b += y.b;
@@ -218,7 +230,7 @@ impl Litter {
     /// A whole arrival, mass and A and B together; the slot it joined.
     pub fn add(&mut self, m: f64, a: f64, b: f64, lock: u8) -> &mut Slot {
         let x = self.pick(&Organ { m, a, b }, lock);
-        x.m += m;
+        x.gain(m);
         x.a += a;
         x.b += b;
         x
@@ -229,7 +241,7 @@ impl Litter {
     /// Tissue with its compound (kg, part of `o.m`) and the compound's key.
     pub fn put_cmp(&mut self, o: Organ, lock: u8, cmp: f64, ckey: u8) {
         let x = self.pick(&o, lock);
-        x.m += o.m;
+        x.gain(o.m);
         x.a += o.a;
         x.b += o.b;
         if cmp > 0.0 {
@@ -1444,6 +1456,7 @@ fn cell(
             sl.a -= o.a;
             sl.b -= o.b;
             sl.cmp *= 1.0 - k;
+            sl.whole *= 1.0 - k;
             *sa += o.a;
             *sb += o.b;
             f.returned += o.m;
