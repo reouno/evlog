@@ -6,7 +6,7 @@ issues (#116), never here. **Keep this under 120 lines**:
 when a row wants a paragraph, the paragraph belongs in an experiment's README and the row keeps the one sentence
 that decides the next step.
 
-Last updated: 2026-10-27.
+Last updated: 2026-11-05.
 
 ## 1. The ideal
 
@@ -19,8 +19,8 @@ and die out, none of it scripted (`principles.md`). As a picture, a savanna as a
 - **Time that moves animals**: herds follow the rains, some sleep through the bad season, numbers swing.
 - **Bodies that differ and whose shape does something**, from mouse to elephant, with a reason for each part.
 - **Animals that behave**: look, chase, flee, go to water, return home.
-- **History**: no line holds the world for good, and **a replay is a different world** - the same laws and
-  terrain run again fill their roles with other bodies, and need not fill the same roles at all.
+- **History**: no line holds the world for good, **a replay is a different world**, and a disturbance (a fire, a
+  drought, an invader) moves the optimum and the web rebuilds otherwise - none of it written, all of it allowed.
 
 **The measure is ways of living, not shapes** - what a body eats, whether it can break another, whether it stays
 or roams, where it lives - counted by birth form (e068) at a census and as kinds kept to a place, judged on six
@@ -116,4 +116,4 @@ world's physics; producers evolve and the living make each other's niches; a sma
 space of forms; the world is judged whole, over long runs, by an open measure instead of the 64-box label.
 
 **The gap being filled** is the bodies' (rows C to F), on a ground and producers that differ by place and evolve:
-their machinery runs (e110), the land stands (e111), the layers are open and unlived (e112), a hunter lives and the sea parts nothing (e113). #116 says what is next.
+their machinery runs (e110), the land stands (e111), the layers are open and unlived (e112), a hunter lives and the sea parts nothing (e113). The narrowest part left is matter: every food is two numbers and the dead one food that asks nothing, so the next piece is a general chemistry (keys and locks), not a value per food (#116, #133).
