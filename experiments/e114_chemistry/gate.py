@@ -33,10 +33,12 @@ def write(name, table):
 
 
 def main():
-    off, old = rows(os.path.join(GATE, "off_log.csv")), rows(E113)
-    cols = [k for k in old[0] if k not in TIMING and k in off[0]]
-    diff = [(a["year"], k) for a, b in zip(off, old) for k in cols if a[k] != b[k]]
-    print(f"off against e113's gate all: {len(cols)} columns, {min(len(off), len(old))} years, {len(diff)} differ" + (f", first {diff[0]}" if diff else ""))
+    old = rows(E113)
+    for name in ("off", "off2"):
+        off = rows(os.path.join(GATE, name + "_log.csv"))
+        cols = [k for k in old[0] if k not in TIMING and k in off[0]]
+        diff = [(a["year"], k) for a, b in zip(off, old) for k in cols if a[k] != b[k]]
+        print(f"{name} against e113's gate all: {len(cols)} columns, {min(len(off), len(old))} years, {len(diff)} differ" + (f", first {diff[0]}" if diff else ""))
     nobody = {int(r["year"]): float(r["land_biomass"]) for r in rows(NOBODY)}
     out, locks = [], []
     for run in RUNS:
@@ -74,7 +76,7 @@ def main():
     prov = os.path.join(HERE, "results", "provenance.csv")
     keep = [r for r in csv.reader(open(prov))] if os.path.exists(prov) else [["what", "value"]]
     keep = [r for r in keep if not r[0].startswith("gate")]
-    keep += [["gate: off", f"results/gate/off_log.csv against e113_sea_catch/results/gate/all_log.csv, {len(cols)} columns but timing: {len(diff)} differ"],
+    keep += [["gate: off", f"results/gate/off_log.csv and off2_log.csv against e113_sea_catch/results/gate/all_log.csv, {len(cols)} columns but timing (printed per run)"],
              ["gate: of_nobody", "land_biomass over e112_layers/results/read/nobody_log.csv, same year (it ends at year 30)"],
              ["gate: diet", "ate_<food> of the log's year, litter and carrion + kill over all"],
              ["gate: locks", f"_census.csv by lock: producer mass (land + sea) a lock holds, counted at {LOCK_SHARE} of it"]]

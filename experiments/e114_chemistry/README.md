@@ -121,4 +121,17 @@ seed soft, wood and root hard") but by what they are made of, so that a parting 
   (`lock=1`, to year 40), `make80` (`lock=1`, to year 80). Ubuntu, two threads each, three at once, under an hour.
   Compared with the gate's `no_lit_eat` (the same but one litter slot for all lock-0 matter: 37 bodies at year 40).
 
+### The gate again: the land stands, the bodies starve
+
+Ubuntu, 2026-11-05, `gate.py`. Ledgers 1.6e-13 at most.
+
+- **`off2` is e113's gate `all` to the digit** (103 columns, 40 years).
+- **The land stands**: `make` holds 0.97 of `nobody` at year 20 and 1.00 at year 30.
+- **The bodies starve**: of 300 sown, 23 at year 16, 5 at year 20, none at year 25; every death a cause is given for
+  is hunger. With one slot for all lock-0 matter (`no_lit_eat`) 25 were left at year 20. So the mixing was not what
+  kept them from the litter (the diagnosis above was wrong): a litter as tough as the tissue it came from is food they
+  cannot live on. In e113 they lived on litter at the softest tissue's pressure, 99.8% of their diet: the world's
+  animals stand on litter that loses its toughness by rule, the stand-in for a rot that softens.
+- **No lock appears** in `make80` to year 80 (every producer on the plain bond).
+
 ## Conclusion
