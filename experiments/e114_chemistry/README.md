@@ -72,4 +72,34 @@ For the gate (bodies sown in year 15; the step is the end of year 16, at 11,880 
 
 ## Result
 
+### The gate: not passed
+
+Ubuntu, 2026-11-05, read by `gate.py` (`results/gate.csv`, `gate_locks.csv`, `provenance.csv`). Ledgers 1.6e-13 at
+most in all six runs. `analysis/audit.py` does not read this crate's output (as in e113), so it was not run.
+
+- **`off` is e113's gate `all` to the digit**: 103 log columns (all but timing and e114's own), 40 years.
+- **With `lock` the world does not stand.** The land falls to 47% of `nobody` by year 15, before any body is sown, and
+  to 33% at year 30; of the 300 bodies sown in year 15, 3 are left at year 30 and none at year 35.
+- **No lock appears.** Every producer genotype in `lock80` holds the plain bond at every census to year 80, though all
+  84 genotypes alive at year 80 are mutants: on this small world a gene landing on the lock's address is too rare, so
+  the locks themselves were not tested.
+
+Since no lock appeared, every key fitted, and the fall is the design's two other clauses. Two readings switch each off
+(`lit_eat`, `lit_keep`; `split.sh`, added after the gate):
+
+| run | small eaters eat litter | litter keeps toughness and compound | land of `nobody`, year 15 / 30 | bodies, year 40 |
+|---|---|---|---|---|
+| `lock` | yes | yes | 0.47 / 0.33 | 0 |
+| `no_lit_keep` | yes | no | 0.47 / 0.39 | 2,040 |
+| `no_lit_eat` | no | yes | 1.00 / 0.99 | 37 |
+| `neither` | no | no | 1.00 / 0.87 | 6,020 |
+| e113 `all` (`off`) | - | - | 1.00 / 0.78 | 7,410 |
+
+1. **The small eaters on litter take the land.** Fed by the litter as well, they weigh 7.2 times more by year 15
+   (7.4e-4 against 1.0e-4 kg a m2) and graze the leaves down: one eater eats both, and nothing in the world prices
+   eating both. The soil's B rises fourfold (0.60 against 0.15 g a m2), so the land is not starved of nutrients but eaten.
+2. **A litter that keeps its toughness feeds no body.** With the small eaters off it, the land stands, but the bodies
+   stay at 7-37. Until locks part it, all of a cell's litter is one slot (lock 0): leaf, wood and root mixed, so the
+   whole of it takes the pressure its mixed A sets. Whether the compound adds to this was not parted.
+
 ## Conclusion
