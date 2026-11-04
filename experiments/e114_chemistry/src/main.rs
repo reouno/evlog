@@ -577,7 +577,7 @@ fn main() {
     let mut cm = 0.0f64; // the living's matter: fixed less returned
     let upy = (p.year / p.tick).round() as usize;
     let mut log = std::fs::File::create(format!("{prefix}_log.csv")).unwrap();
-    writeln!(log, "step,year,land_temp,land_rain,land_evap,sea_evap,sea_rain,to_sea,water,water_err,a,b,a_err,b_err,weathered_a,weathered_b,river_a,river_b,buried_a,buried_b,rivers,lakes,storms,land_water,land_biomass,sea_biomass,land_cover,sea_cover,land_height,litter,eaters,eater_cells,gpp,resp,transp,eaten,decayed,burnt,burnt_cells,genotypes,eater_genotypes,leading,mutant_share,matter,c_err,ms_step,wind_net,air_err,bodies,animals,body_land_cells,body_sea_share,body_matter,carrion,body_genotypes,births,splits,{},{},body_km,body_drunk,body_evap,body_resp,catches,presses,breaks,killed,torn,riders,rotted,secs_decide,secs_meet,secs_live,secs_last,land_b_soil,land_b_plants,land_b_litter,land_b_bodies,sea_b_bodies,land_a_soil,land_a_plants,land_a_litter,land_a_bodies,sea_a_bodies,land_leaf,land_wood,land_root,land_store,land_seed,land_bank,body_ground,body_crown,lit_eaten,lit_locked,p_locked,p_locks,b_locked,b_keys", body::DEATHS.map(|d| format!("died_{d}")).join(","), body::FOODS.map(|d| format!("ate_{d}")).join(",")).unwrap();
+    writeln!(log, "step,year,land_temp,land_rain,land_evap,sea_evap,sea_rain,to_sea,water,water_err,a,b,a_err,b_err,weathered_a,weathered_b,river_a,river_b,buried_a,buried_b,rivers,lakes,storms,land_water,land_biomass,sea_biomass,land_cover,sea_cover,land_height,litter,eaters,eater_cells,gpp,resp,transp,eaten,decayed,burnt,burnt_cells,genotypes,eater_genotypes,leading,mutant_share,matter,c_err,ms_step,wind_net,air_err,bodies,animals,body_land_cells,body_sea_share,body_matter,carrion,body_genotypes,births,splits,{},{},body_km,body_drunk,body_evap,body_resp,catches,presses,breaks,killed,torn,riders,rotted,secs_decide,secs_meet,secs_live,secs_last,land_b_soil,land_b_plants,land_b_litter,land_b_bodies,sea_b_bodies,land_a_soil,land_a_plants,land_a_litter,land_a_bodies,sea_a_bodies,land_leaf,land_wood,land_root,land_store,land_seed,land_bank,body_ground,body_crown,lit_eaten,lit_locked,p_locked,p_locks,b_locked,b_keys,p_lock_cohorts", body::DEATHS.map(|d| format!("died_{d}")).join(","), body::FOODS.map(|d| format!("ate_{d}")).join(",")).unwrap();
     let mut cen = std::io::BufWriter::new(std::fs::File::create(format!("{prefix}_census.csv")).unwrap());
     writeln!(cen, "year,id,parent,born,genes,mass_land,mass_sea,cells,lead_cells,h_real,age,lifespan,alloc_leaf,alloc_wood,alloc_root,alloc_store,alloc_seed,leaf_b,leaf_a,wood_b,wood_a,root_b,root_a,height,deep,seed_mass,wing,float,compound,t_opt,breadth,shed,n_keys,keys,conditional,lock").unwrap();
     let mut ecen = std::io::BufWriter::new(std::fs::File::create(format!("{prefix}_eaters.csv")).unwrap());
@@ -811,8 +811,11 @@ fn main() {
             }
         }
         let mut pl = [0.0f64; 256];
+        let mut p_lock_co = 0usize; // live cohorts of a locked genotype: are locks born at all
         for x in life.co.iter().filter(|x| x.live()) {
-            pl[life.gen[x.g as usize].as_ref().unwrap().base.lock as usize] += x.mass();
+            let l = life.gen[x.g as usize].as_ref().unwrap().base.lock as usize;
+            pl[l] += x.mass();
+            p_lock_co += (l != 0) as usize;
         }
         let pt = pl.iter().sum::<f64>().max(1e-30);
         let hill = (-pl.iter().filter(|&&v| v > 0.0).map(|&v| v / pt * (v / pt).ln()).sum::<f64>()).exp();
@@ -827,7 +830,7 @@ fn main() {
             bt_keys += m * t.keys.len() as f64;
         }
         let bt_all = bt_all.max(1e-30);
-        writeln!(log, ",{:.4e},{:.4},{:.4},{:.3},{:.4},{:.3}", lf.lit_eaten, lt_lock / lt_all.max(1e-30), 1.0 - pl[0] / pt, hill, bt_lock / bt_all, bt_keys / bt_all).unwrap();
+        writeln!(log, ",{:.4e},{:.4e},{:.4e},{:.4},{:.4e},{:.3},{}", lf.lit_eaten, lt_lock / lt_all.max(1e-30), 1.0 - pl[0] / pt, hill, bt_lock / bt_all, bt_keys / bt_all, p_lock_co).unwrap();
         log.flush().unwrap();
         eprintln!(
             "year {:>3}: land {:.1} C, rain {:.0} mm, evap {:.0}, transp {:.0}, to sea {:.0}, land bio {:.3}, cover {:.2}/{:.2}, h {:.1}, eaters {:.2e}, burnt {}, genotypes {ng}/{neg}, leading {}, mutants {mutant_share:.3}, errs w {werr:.0e} A {aerr:.0e} C {cerr:.0e}, {:.1} s",

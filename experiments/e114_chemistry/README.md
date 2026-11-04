@@ -142,4 +142,32 @@ lock), so fresh litter is as tough to a mouth as the tissue it came from and old
 needs is the toughness its A sets times the share still whole. No new rate; one number a slot. The gut is as before.
 Gate `gate3.sh`: `off3`, `worn`, `worn80`, the same world and lines; compared with `make`.
 
+### The gate a third time: passed but for the locks
+
+Ubuntu, 2026-11-05, `gate.py`. Ledgers 1.6e-13 at most. `off3` is e113's gate `all` to the digit (103 columns, 40
+years). With `worn` the land holds 0.97 of `nobody` at year 30 and 834 bodies live at year 40 (6,690 at year 80 in
+`worn80`), on litter 99.8% of their diet (e113 `all`: 7,410 at year 40). Hunger is still the main death: 59 in year 30.
+**No lock appears** in `worn80` to year 80: the producers' locked share of mass is under 5e-5 at every year. Whether
+locked genotypes are born and lost, or never born, the log did not say (its share was rounded to four places); it now
+writes the shares in full and `p_lock_cohorts`, the live cohorts of a locked genotype.
+
+As stated before the gate, the pilot runs though locks did not spread.
+
+### The pilot, written before its run
+
+`pilot.sh lock lock=1`: `isles1` to year 100, e113's `all` with the chemistry on, Ubuntu, one run on six threads,
+about 10 hours (6 cores x 10 h). Control: e113's pilot `all`, the same machine.
+
+- **The world stands**: the land at year 70 at least half of e113 `all`'s, and bodies alive at year 100.
+- **Locks are born** (precondition of the rest): `p_lock_cohorts` above 0 in some year after year 10.
+- **Locks spread** (hypothesis 2): at least two producer locks each hold 10% of the producers' mass at some census.
+- Hypotheses 3 and 4 are read only if locks spread: bodies' litter split by lock (`lit_locked` over 10%), bodies of
+  different keys (`b_keys`), and `held` by island against e113 `all`'s.
+
+**Stop early if:**
+
+- `bodies` < 10 at 498960
+
+(sown in year 40; the step is the end of year 41.)
+
 ## Conclusion
