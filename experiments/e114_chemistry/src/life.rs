@@ -22,6 +22,7 @@ use crate::noise::Rng;
 use crate::terrain::{nbrs, Terrain, NONE};
 use crate::Params;
 use std::collections::VecDeque;
+use std::sync::atomic::{AtomicBool, Ordering::Relaxed};
 use std::f64::consts::{PI, TAU};
 
 pub const K: usize = 4; // producer cohorts a cell
@@ -109,6 +110,8 @@ impl Default for Eater {
 /// kg, g of A and B, kg of compound and the compound's key. What arrives joins the slot of its lock, an empty one,
 /// or the nearest lock's. With `lock` 0 every lock is 0 and slot 0 is e113's one litter, to the digit.
 pub const LS: usize = 4;
+/// e114: the litter is kept by its make (`Litter::pick`), set once from `lock` when the world is made.
+pub static MAKE: AtomicBool = AtomicBool::new(false);
 
 #[derive(Clone, Copy, Default)]
 pub struct Slot {
@@ -141,12 +144,20 @@ impl Litter {
     pub fn b(&self) -> f64 {
         self.s.iter().map(|x| x.b).sum()
     }
-    /// The slot what has this lock joins: its own lock's, an empty one, or the nearest lock's.
+    /// The slot what has this lock joins when its make is not known (a part of an arrival: A, B or mass alone): its
+    /// own lock's (the largest, if the make keeps several), an empty one, or the nearest lock's.
     pub fn slot(&mut self, lock: u8) -> &mut Slot {
-        let i = (0..LS)
-            .find(|&i| self.s[i].lock == lock && !self.s[i].empty())
-            .or_else(|| (0..LS).find(|&i| self.s[i].empty()))
-            .unwrap_or_else(|| (0..LS).min_by_key(|&i| hamming(self.s[i].lock, lock)).unwrap());
+        let own = |i: usize| self.s[i].lock == lock && !self.s[i].empty();
+        let i = if MAKE.load(Relaxed) {
+            (0..LS).filter(|&i| own(i)).max_by(|&i, &j| self.s[i].m.total_cmp(&self.s[j].m))
+        } else {
+            (0..LS).find(|&i| own(i))
+        }
+        .or_else(|| (0..LS).find(|&i| self.s[i].empty()))
+        .unwrap_or_else(|| (0..LS).min_by_key(|&i| hamming(self.s[i].lock, lock)).unwrap());
+        self.open(i, lock)
+    }
+    fn open(&mut self, i: usize, lock: u8) -> &mut Slot {
         let x = &mut self.s[i];
         if x.empty() {
             x.lock = lock;
@@ -154,15 +165,70 @@ impl Litter {
         }
         x
     }
+    /// e114 (#133, revised after the gate): under `lock` what arrives is kept apart by what it is made of, not by
+    /// where it came from. How far two pieces of matter lie apart is what a mouth and a key read of them: the
+    /// toughness their A sets and an eighth for each bit between their locks (the fit's own step). An arrival takes
+    /// an empty slot; with none, it joins the nearest slot, unless the two nearest slots lie closer to each other
+    /// than it lies to any, and then those two merge and it takes the freed one. So the cell keeps the `LS` most
+    /// distinct pieces it has: leaf and wood lie apart when their A does, and lie together when a producer makes
+    /// them alike. `LS` is the compute's limit, not a kind of litter.
+    fn pick(&mut self, o: &Organ, lock: u8) -> &mut Slot {
+        if !MAKE.load(Relaxed) || o.m <= 1e-15 {
+            return self.slot(lock);
+        }
+        let t = toughness(o.share_a());
+        let make = |x: &Slot| toughness(if x.m > 1e-15 { x.a / (x.m * 1000.0) } else { 0.0 });
+        let far = |x: &Slot, l: u8, tx: f64| hamming(x.lock, l) as f64 / 8.0 + (make(x) - tx).abs();
+        if let Some(i) = (0..LS).find(|&i| self.s[i].empty()) {
+            return self.open(i, lock);
+        }
+        let (mut near, mut dn) = (0, f64::MAX);
+        for i in 0..LS {
+            let d = far(&self.s[i], lock, t);
+            if d < dn {
+                (near, dn) = (i, d);
+            }
+        }
+        let (mut pair, mut dp) = ((0, 1), f64::MAX);
+        for i in 0..LS {
+            for j in i + 1..LS {
+                let d = far(&self.s[i], self.s[j].lock, make(&self.s[j]));
+                if d < dp {
+                    (pair, dp) = ((i, j), d);
+                }
+            }
+        }
+        if dn <= dp {
+            return &mut self.s[near];
+        }
+        // the two nearest merge into the larger's lock, the compound's key of the more compound
+        let (i, j) = if self.s[pair.0].m >= self.s[pair.1].m { pair } else { (pair.1, pair.0) };
+        let y = self.s[j];
+        let x = &mut self.s[i];
+        x.m += y.m;
+        x.a += y.a;
+        x.b += y.b;
+        if y.cmp > x.cmp {
+            x.ckey = y.ckey;
+        }
+        x.cmp += y.cmp;
+        self.s[j] = Slot::default();
+        self.open(j, lock)
+    }
+    /// A whole arrival, mass and A and B together; the slot it joined.
+    pub fn add(&mut self, m: f64, a: f64, b: f64, lock: u8) -> &mut Slot {
+        let x = self.pick(&Organ { m, a, b }, lock);
+        x.m += m;
+        x.a += a;
+        x.b += b;
+        x
+    }
     pub fn put(&mut self, o: Organ, lock: u8) {
-        let x = self.slot(lock);
-        x.m += o.m;
-        x.a += o.a;
-        x.b += o.b;
+        self.add(o.m, o.a, o.b, lock);
     }
     /// Tissue with its compound (kg, part of `o.m`) and the compound's key.
     pub fn put_cmp(&mut self, o: Organ, lock: u8, cmp: f64, ckey: u8) {
-        let x = self.slot(lock);
+        let x = self.pick(&o, lock);
         x.m += o.m;
         x.a += o.a;
         x.b += o.b;
@@ -302,6 +368,7 @@ impl Life {
     pub fn new(ter: &Terrain, p: &Params) -> Self {
         let n = ter.n;
         let cells = n * n;
+        MAKE.store(p.lock > 0.0, Relaxed);
         Life {
             n,
             co: vec![Cohort::default(); cells * K],

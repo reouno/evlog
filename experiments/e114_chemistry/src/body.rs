@@ -710,10 +710,7 @@ impl Bodies {
                 let (x, l) = (car.at(c), lit.at(c));
                 if x.m > 0.0 {
                     let q = if x.m < 1e-12 { 1.0 } else { 1.0 - (-p.carrion_rot * q10(temp[c]) * days).exp() };
-                    let l = l.slot(x.lock);
-                    l.m += x.m * q;
-                    l.a += x.a * q;
-                    l.b += x.b * q;
+                    l.add(x.m * q, x.a * q, x.b * q, x.lock);
                     rotted += x.m * q;
                     x.m *= 1.0 - q;
                     x.a *= 1.0 - q;
@@ -2005,9 +2002,7 @@ fn live(x: &Ctx, sh: &Sh, i: usize, f: &mut BFlux) {
         let kb = gb.min((cap_b - b.pb).max(0.0));
         b.pa += ka;
         b.pb += kb;
-        let l = sh.lit.at(c).slot(dung_lock.1);
-        l.m += dung * k;
-        l.a += da * k;
+        let l = sh.lit.at(c).add(dung * k, da * k, 0.0, dung_lock.1);
         if p.road > 0.0 {
             *sh.sa.at(c) += (ga - ka) * k;
             *sh.sb.at(c) += (gb - kb) * k;

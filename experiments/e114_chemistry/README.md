@@ -102,4 +102,23 @@ Since no lock appeared, every key fitted, and the fall is the design's two other
    stay at 7-37. Until locks part it, all of a cell's litter is one slot (lock 0): leaf, wood and root mixed, so the
    whole of it takes the pressure its mixed A sets. Whether the compound adds to this was not parted.
 
+### The revision, written before its gate
+
+Proposed to the user on 2026-11-05 and corrected by them: the dead must not be parted by a rule ("leaf and
+seed soft, wood and root hard") but by what they are made of, so that a parting can come out of the matter or not.
+
+- **The litter is kept by its make** (`Litter::pick`): how far two pieces lie apart is what a mouth and a key read
+  of them, the toughness their A sets plus an eighth for each bit between their locks. An arrival takes an empty
+  slot; with none it joins the nearest, unless the two nearest slots lie closer to each other than it lies to any,
+  and then those two merge and it takes the freed slot. A cell keeps its four most distinct pieces; no organ is named,
+  and leaf and wood lie together when a producer makes them alike. Four is the compute's limit (as before), not a
+  number of kinds. Parts that arrive without their mass (a pool's A and B, a body's lost A) join the largest slot of
+  their lock.
+- **The small eaters are off litter** (`lit_eat` now 0): their eating stays one budget shared by leaves and litter,
+  but a world where litter feeds them grows them sevenfold and they graze the land down. Who rots the dead is its
+  own piece later, with what limits a decomposer; until then the rot is abiotic, slowed by the lock as before.
+- **Gate again** (`gate2.sh`, same world and lines as above): `off2` (`lock=0`, e113 to the digit), `make`
+  (`lock=1`, to year 40), `make80` (`lock=1`, to year 80). Ubuntu, two threads each, three at once, under an hour.
+  Compared with the gate's `no_lit_eat` (the same but one litter slot for all lock-0 matter: 37 bodies at year 40).
+
 ## Conclusion
