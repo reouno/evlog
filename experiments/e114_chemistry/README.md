@@ -170,4 +170,30 @@ about 10 hours (6 cores x 10 h). Control: e113's pilot `all`, the same machine.
 
 (sown in year 40; the step is the end of year 41.)
 
+### The pilot: the bodies die in the bottleneck
+
+Ubuntu, 2026-11-05, one hour (the bodies were gone by year 47). Ledgers 7.9e-13 at most. Against e113's `all` (same
+machine, same seeds):
+
+| year | bodies | e113 | land biomass | e113 | producers' locked share | locked cohorts |
+|---|---|---|---|---|---|---|
+| 41 | 62 | 91 | 1.27 | 1.30 | 0 | 0 |
+| 43 | 56 | 93 | - | - | - | - |
+| 45 | 6 | 33 | 1.44 | 1.47 | 0 | 0 |
+| 50 | 0 | 36 | 1.46 | 1.48 | 5.5e-13 | 1 |
+| 70 | 0 | 14,656 | 1.78 | 1.71 | 5.5e-8 | 1 |
+| 100 | 0 | 33,464 | 1.95 | 1.61 | 0 | 0 |
+
+- **The world does not stand**: both worlds pass a bottleneck after the sowing; e113's holds 33-42 bodies through
+  years 45-50 and then grows, e114's falls to none by year 47. Hunger is most of the deaths (86 in year 43; e113 22).
+  The stop rule (`bodies` < 10 at the end of year 41) did not catch it: 62 were alive then.
+- **Locks are born and lost**: 1 to 6 cohorts of a locked genotype live in most years from year 15 on, never above
+  3e-5 of the producers' mass. A likely reason, not read: a lock gene is most often born from a compound gene one point
+  away (the address map puts them there), so the mutant loses its compound and its lock is the compound's key, which
+  the small eaters already carry.
+
+One run through a bottleneck of a few dozen cannot part chance from cost. **Seeds** (written before they run):
+`pilot.sh` with `life=2` and `life=3`, each with `lock=0` (e113's world, as `off` showed) and `lock=1`, to year 60,
+four runs at once on three threads each, Ubuntu, about 2 hours. Read: bodies at years 50 and 60.
+
 ## Conclusion
