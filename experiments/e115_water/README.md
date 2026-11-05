@@ -121,4 +121,50 @@ e114's `lock_l2` and `lock_l3`, the same machine.
 
 (sown in year 40; the step is the end of year 41.)
 
+### The pilot: thirst eases, the living are not eaten more
+
+Ubuntu, 2026-11-05, about 2 hours, both to year 60 (`pilot.py`; `results/pilot.csv`, `results/pilot_wet.csv`).
+Ledgers 5.5e-12 at most. `analysis/audit.py` does not read this crate's output (as in e113-e114). Against e114's seeds:
+
+| life seed | run | bodies, year 45 / 50 / 60 | land, year 60 | leaf of the diet, 60 | thirst of the deaths, 60 | food of the water, 60 | producers' locked share, 60 |
+|---|---|---|---|---|---|---|---|
+| 2 | e114 `lock_l2` | 7,967 / 7,299 / 7,786 | 0.96 | 1.26% | 44% | 0 | 4.3e-6 |
+| 2 | `water_l2` | 7,412 / 8,080 / 9,393 | 1.03 | 1.02% | 36% | 15% | 3e-12 |
+| 3 | e114 `lock_l3` | 2,004 / 3,717 / 5,911 | 1.20 | 0.53% | 24% | 0 | 2.0e-6 |
+| 3 | `water_l3` | 329 / 4,572 / 4,441 | 1.24 | 0.49% | 4% | 39% | 7e-9 |
+
+- **The world stands**: yes, in both, with more land than the control and 1.2x and 0.75x its bodies.
+- **Hypothesis 2, the living are eaten: no.** The leaf's share at year 60 is under the control's in both seeds
+  (1.02% against 1.26%, 0.49% against 0.53%). By place (years 46-60) it is a little higher on the driest tenth than on
+  the wettest (1.57% against 1.11% in seed 2, 0.89% against 0.77% in seed 3); e114 wrote no reading by place to
+  compare with.
+- **Hypothesis 3, thirst eases: yes**, 36% against 44% and 4% against 24% of the deaths at year 60. In seed 3 the
+  control's share swings between 7% and 24% from year 45 to 60, so one year is a weak reading there.
+- **Hypothesis 4, the doors open: no.** No body lives in the crowns (`body_crown` 0 in every year), and the producers'
+  locked share is 1,000 times or more under the control's.
+
+By place, the thirsty still die where it is dry in seed 2 (95% of the thirst deaths on the driest tenth, 2.1% of the
+animal-days), where food brings 2% of the water taken in (27% on the wettest). In seed 3, where thirst is rare, 76% of
+its deaths are on the wettest tenth, where 88% of the animal-days are: a crowd's drink rate, not dry ground.
+
 ## Conclusion
+
+Under this world's conditions (isles1 and the trial world, two life seeds to year 60, one run to year 80):
+
+1. **The world stands with it: yes.** Plants that hold water in their tissue leave the land as it was (1.03 and 1.24
+   against 0.96 and 1.20), and the bodies live.
+2. **The living are eaten: no.** Water makes every mouthful also a drink, but most of what is drunk this way comes
+   where it is wet: a litter's water follows the ground's wetness, and 87-88% of the bodies' time is on the wettest
+   tenth. On dry ground, where the thirsty die, the leaf is 1-1.6% of what is eaten, too little to bring water.
+3. **Thirst eases: yes**, in both seeds; food brings 15-39% of the water at year 60.
+4. **The doors open: no.** No body enters the crowns, and locks hold less than in e114.
+
+The finding: water in matter prices food on a second axis, as designed, but the axis does not reach the doors. The
+living stay behind height and the crown. A body reaches 14% of the leaves (#116, plan check), and none climbs to
+where the rest are. Water was the price a climber could not pay in e112; no body went up here to find out whether
+it can pay it now. The next gap is the door itself: height as a continuous axis around a plant, set aside in the plan
+check.
+
+Kept in the crate, on (`water=1`): it is a property of matter and harms nothing read here. Like e110-e114, nothing
+goes to `base/` (it holds the world without bodies, e109). Rows changed in `vision.md`: B water in matter, F food
+web, the lessons and the direction.
