@@ -59,6 +59,9 @@ half of e112's `nobody` and bodies live at year 40. Then the thirsty are read by
 ground's wetness): if they do not die where it is dry (the drink rate, not dry ground), the piece opens only the crown,
 and that is written here before the pilot.
 
+**Read by place** (`_wet.csv`, a reading, no law): on land, a year's animal-days, thirst deaths, leaf, litter and all
+food eaten, water in food and water drunk, by the ground's wetness where the body is, in tenths of full.
+
 **Stop early if:**
 
 - `bodies` < 10 at 190080

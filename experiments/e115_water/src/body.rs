@@ -71,6 +71,7 @@ pub enum Death {
     Broken,
 }
 
+pub const WET_BINS: usize = 10;
 pub const DEATHS: [&str; 9] = ["hunger", "thirst", "heat", "cold", "breath", "poison", "age", "form", "broken"];
 // e112: roots, stores and the seed bank are foods of the ground (the bank reached from the surface, with `reach` 0,
 // is counted as seed, as in e111)
@@ -237,6 +238,9 @@ pub struct BFlux {
     pub riders: f64,  // a catcher carried by the body it holds
     pub rotted: f64,  // carrion gone to the litter
     pub food_water: f64, // e115: water taken in with food
+    // e115, a reading: on land, by the ground's wetness where a body is (tenths of full), animal-days, thirst deaths,
+    // leaf, litter and all food eaten, water in food and drunk
+    pub wet: [[f64; 7]; WET_BINS],
 }
 
 impl BFlux {
@@ -248,6 +252,11 @@ impl BFlux {
         }
         self.drunk += o.drunk;
         self.food_water += o.food_water;
+        for i in 0..WET_BINS {
+            for j in 0..7 {
+                self.wet[i][j] += o.wet[i][j];
+            }
+        }
         self.evap += o.evap;
         self.births += o.births;
         for k in 0..9 {
@@ -1710,6 +1719,11 @@ fn live(x: &Ctx, sh: &Sh, i: usize, f: &mut BFlux) {
     let dt = x.dt;
     let dts = dt * 86400.0;
     let (t_opt, breadth) = (bt.tr[4], bt.tr[5]);
+    // e115, a reading: the ground's wetness where it is, in tenths
+    let wbin = if sea { WET_BINS } else { ((*sh.ground.at(c) / x.ter.cap[c]).clamp(0.0, 1.0) * WET_BINS as f64).min(WET_BINS as f64 - 1.0) as usize };
+    if wbin < WET_BINS {
+        f.wet[wbin][0] += k * dt;
+    }
     let Size { wet, d, d2, height, .. } = size(b, fm);
     let fat_cap = b.m * (0.05 + p.fat_hold * fm.frac[FAT]);
 
@@ -1978,6 +1992,11 @@ fn live(x: &Ctx, sh: &Sh, i: usize, f: &mut BFlux) {
             };
             f.eaten[kind] += m;
             b.eaten[kind] += m / k;
+            if wbin < WET_BINS {
+                f.wet[wbin][2] += if kind == 0 { m } else { 0.0 };
+                f.wet[wbin][3] += if kind == 3 { m } else { 0.0 };
+                f.wet[wbin][4] += m;
+            }
             got[ng] = (m / k, a / k, bb / k, kind, fo.tox, fo.a, fo.b, fo.lock);
             ng += 1;
             intake += m / k;
@@ -1987,6 +2006,9 @@ fn live(x: &Ctx, sh: &Sh, i: usize, f: &mut BFlux) {
         // e115: a body keeps what it can hold, as it drinks; the rest goes to the ground
         b.w += fw / k;
         f.food_water += fw;
+        if wbin < WET_BINS {
+            f.wet[wbin][5] += fw;
+        }
         let over = (b.w - b.target_water()).max(0.0);
         b.w -= over;
         *sh.ground.at(c) += over * k;
@@ -2074,8 +2096,14 @@ fn live(x: &Ctx, sh: &Sh, i: usize, f: &mut BFlux) {
         b.w += drink;
         *g -= drink * k;
         f.drunk += drink * k;
+        if wbin < WET_BINS {
+            f.wet[wbin][6] += drink * k;
+        }
         if b.w < 0.5 * target {
             b.dead = Death::Thirst;
+            if wbin < WET_BINS {
+                f.wet[wbin][1] += b.s;
+            }
         }
     }
 

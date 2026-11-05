@@ -598,6 +598,9 @@ fn main() {
     writeln!(fcen, "year,root,cause,bodies,animals").unwrap();
     let mut wcen = std::io::BufWriter::new(std::fs::File::create(format!("{prefix}_where.csv")).unwrap());
     writeln!(wcen, "year,id,island,bodies,animals,matter").unwrap();
+    // e115, a reading: the bodies on land by the ground's wetness where they are (`BFlux::wet`)
+    let mut wet = std::io::BufWriter::new(std::fs::File::create(format!("{prefix}_wet.csv")).unwrap());
+    writeln!(wet, "year,wet,animal_days,thirst,leaf,litter,eaten,food_water,drunk").unwrap();
     let mut leadbin = std::io::BufWriter::new(std::fs::File::create(format!("{prefix}_lead.bin")).unwrap());
     let mut lead_years: Vec<usize> = Vec::new();
     let mut kept: Vec<(usize, Vec<Vec<f32>>)> = Vec::new();
@@ -860,6 +863,10 @@ fn main() {
             lcen.flush().unwrap();
             bodies.fates(&mut fcen, yr + 1);
             fcen.flush().unwrap();
+            for (i, r) in bf.wet.iter().enumerate() {
+                writeln!(wet, "{},{:.1},{:.4e},{:.4e},{:.4e},{:.4e},{:.4e},{:.4e},{:.4e}", yr + 1, (i as f64 + 0.5) / body::WET_BINS as f64, r[0], r[1], r[2], r[3], r[4], r[5], r[6]).unwrap();
+            }
+            wet.flush().unwrap();
             if (yr + 1) % 10 == 0 || yr + 1 == years {
                 bodies.places(&mut wcen, &island, yr + 1);
                 wcen.flush().unwrap();
