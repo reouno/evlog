@@ -196,4 +196,21 @@ One run through a bottleneck of a few dozen cannot part chance from cost. **Seed
 `pilot.sh` with `life=2` and `life=3`, each with `lock=0` (e113's world, as `off` showed) and `lock=1`, to year 60,
 four runs at once on three threads each, Ubuntu, about 2 hours. Read: bodies at years 50 and 60.
 
+**Seeds, read** (Ubuntu, about 2 hours):
+
+| life seed | `lock` | bodies, year 41 / 45 / 50 / 60 | land biomass, year 60 | locked cohorts, year 60 | producers' locked share, most |
+|---|---|---|---|---|---|
+| 1 | 0 (e113 `all`) | 91 / 33 / 36 / 686 | 1.74 | - | - |
+| 1 | 1 | 62 / 6 / 0 / 0 | 1.70 | 2 | 3e-5 |
+| 2 | 0 | 3,690 / 9,328 / 9,616 / 10,066 | 0.98 | 0 | 2e-9 |
+| 2 | 1 | 158 / 7,967 / 7,299 / 7,786 | 0.96 | 9 | 4e-6 |
+| 3 | 0 | 203 / 11,628 / 9,032 / 9,425 | 1.22 | 0 | 3e-8 |
+| 3 | 1 | 66 / 2,004 / 3,717 / 5,911 | 1.20 | 7 | 1.4e-5 |
+
+- **The world stands with the law in two seeds of three**: seed 1's end was the bottleneck's chance, not the law's.
+  Where both stand, the law's world holds 63-77% of the bodies at year 60, with more deaths by hunger.
+- **Locks do not spread**: with the law their share stays under 2e-5 to year 60, though it is 100 to 1,000 times what
+  the same genes hold where a lock does nothing (`lock=0` reads the gene but nothing reads the lock): a lock pays a
+  little, far too little to spread in twenty years of bodies.
+
 ## Conclusion
