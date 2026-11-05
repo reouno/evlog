@@ -214,3 +214,22 @@ four runs at once on three threads each, Ubuntu, about 2 hours. Read: bodies at 
   little, far too little to spread in twenty years of bodies.
 
 ## Conclusion
+
+Under this world's conditions, on three life seeds to year 60 (one to year 100):
+
+1. **The world stands with it: yes, in two seeds of three, once the rot softens.** As first designed it did not: small
+   eaters fed by litter grazed the land down, and a litter that kept its tissue's toughness fed no body. Kept apart by
+   its make and worn soft by its rot, it holds the land and 63-77% of e113's bodies. In seed 1 the bodies died in the
+   bottleneck after the sowing, a chance e113 passed with 33.
+2. **Locks spread: no.** They are born and pay a little (100-1,000 times the share the same genes hold where nothing
+   reads a lock), but stay under 2e-5 of the producers' mass. A lock is a plant's defence, and the bodies hardly eat
+   living plants (under 1% of their diet), so it is not paid for.
+3. and 4. **Not read**: they needed locks.
+
+The finding behind it: **e113's animals lived on a rule** - litter that loses its toughness when it dies. Replaced by
+the matter's own state, they live at three quarters of the number, and still on the dead alone. What a living plant
+costs a body against the dead, under these laws, is the next question; a lock means something only after it.
+
+Kept in the crate, on: the lock and digestion by fit, the litter kept by its make, the rot that softens. Off: the small
+eaters on litter (`lit_eat`). Like e110-e113 nothing goes to `base/` yet (it holds the world without bodies, e109).
+Rows changed in `vision.md`: B response to eating, F food web, the lessons and the direction.
