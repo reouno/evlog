@@ -864,7 +864,7 @@ fn main() {
             bodies.fates(&mut fcen, yr + 1);
             fcen.flush().unwrap();
             for (i, r) in bf.wet.iter().enumerate() {
-                writeln!(wet, "{},{:.1},{:.4e},{:.4e},{:.4e},{:.4e},{:.4e},{:.4e},{:.4e}", yr + 1, (i as f64 + 0.5) / body::WET_BINS as f64, r[0], r[1], r[2], r[3], r[4], r[5], r[6]).unwrap();
+                writeln!(wet, "{},{:.2},{:.4e},{:.4e},{:.4e},{:.4e},{:.4e},{:.4e},{:.4e}", yr + 1, (i as f64 + 0.5) / body::WET_BINS as f64, r[0], r[1], r[2], r[3], r[4], r[5], r[6]).unwrap();
             }
             wet.flush().unwrap();
             if (yr + 1) % 10 == 0 || yr + 1 == years {

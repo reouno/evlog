@@ -71,4 +71,54 @@ For the gate (bodies sown in year 15; the steps are the ends of years 16 and 20,
 
 ## Result
 
+### The gate: passed
+
+Ubuntu, 2026-11-05, under an hour (`gate.py`; `results/gate.csv`, `results/gate_wet.csv`). Ledgers 3.5e-13 at most.
+
+- **`off` is e114's `worn` to the digit**: 109 columns, 40 years, none differ to the digits e114 printed (its four lock
+  columns had four places then; the crate prints them in full since).
+- **The world stands, with more bodies**: with `water` the land at year 30 is 0.98 of e112's `nobody` (`off` 0.97),
+  and 2,878 bodies live at year 40 against `off`'s 834. In `water80` they reach 9,832 at year 80 while the land falls
+  from 0.94 (year 50) to 0.73; e114 has no run of its final law to year 80 on this world to set it against.
+- **Water comes in food**, 56-75% of what the bodies take in years 25-40 and 19-25% in years 60-80. The diet is still
+  99% litter; the leaf is 0.15-0.33% of it (`off` 0.08-0.20%).
+
+By the ground's wetness where the body is (years 21-40 for `water`, 21-80 for `water80`):
+
+| ground's fill | of the animal-days | of the thirst deaths | leaf of what is eaten | food of the water taken in |
+|---|---|---|---|---|
+| 0-0.1 | 1.5% / 1.2% | 100% / 99% | 0.15% / 0.14% | 1.2% / 0.7% |
+| 0.4-0.5 | 0.5% / 0.7% | 0 / 0 | 0.35% / 0.23% | 18% / 6% |
+| 0.8-0.9 | 8.9% / 5.4% | 0 / 0 | 0.92% / 0.46% | 46% / 18% |
+| 0.9-1 | 85% / 87% | 0 / 0.9% | 0.56% / 0.51% | 72% / 32% |
+
+- **The thirsty die where it is dry**: all but 1% of the thirst deaths are on ground under a tenth full, where 1-2% of
+  the animal-days are spent. So, by the rule stated before, the piece is not one for the crown alone.
+- **But food brings water where it is wet, not where it is dry**: a litter's water is its make times the ground's
+  wetness, so on dry ground it is dry, and the living leaf there is no larger a part of the diet than on wet ground.
+  Most bodies live on the wettest ground, where food is the cheaper drink; that is what lets more of them live.
+
+The gate's `wet` column was printed to one decimal, so two bins share a label; `gate.py` takes the bin from the row's
+place in its year, and the crate now prints two decimals. `animal_days` is in animals a m2 times years.
+
+### The pilot, written before its run
+
+Plan check's pilot was e114's pilot to year 100. Its control with e114's final law exists only to year 60 (the seeds,
+`lock_l2` and `lock_l3`; seed 1 died in the bottleneck), so the pilot is those two: `pilot.sh water_l2 lock=1 water=1
+life=2 years=60 threads=3` and the same with `life=3`, Ubuntu, two at once, about 2 hours (6 cores x 2 h). Control:
+e114's `lock_l2` and `lock_l3`, the same machine.
+
+- **The world stands**: land at year 60 at least half of the control's, and bodies alive at year 60.
+- **Hypothesis 2**: the leaf's share of the diet at year 60 above the control's (1.26% and 0.53%), and higher on dry
+  ground than on the wettest (`_wet.csv`, years 45-60).
+- **Hypothesis 3**: thirst's share of the deaths at year 60 below the control's (44% and 24%).
+- **Hypothesis 4**: `body_crown` above 0 in some year; `p_locked` above the control's at year 60 (4.3e-6 and 2.0e-6).
+
+**Stop early if:**
+
+- `bodies` < 10 at 498960
+- `food_water` < 1e-12 at 498960
+
+(sown in year 40; the step is the end of year 41.)
+
 ## Conclusion
