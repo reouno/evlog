@@ -313,13 +313,14 @@ impl World {
             let o = |out: usize, inp: usize| out * NI + inp;
             genes[o(0, 2)] += 3.0;
             genes[o(1, 3)] += 3.0;
-            genes[o(0, 4)] -= 3.0;
-            genes[o(1, 5)] -= 3.0;
+            genes[o(0, 4)] -= 6.0;
+            genes[o(1, 5)] -= 6.0;
             genes[o(2, 0)] -= 1.0;
             if hunter {
-                genes[o(0, 7)] += 4.0;
-                genes[o(1, 8)] += 4.0;
+                genes[o(0, 7)] += 6.0;
+                genes[o(1, 8)] += 6.0;
                 genes[o(2, 0)] += 2.0;
+                genes[o(2, 10)] -= 4.0; // and only while not full
             }
             let id = w.next_id;
             let (next, born) = (w.rng.f() * 60.0, -w.rng.f() * LIFE * 0.5);
@@ -439,7 +440,8 @@ impl World {
         let mut close = false;
         for &(k, dx, dy, d) in scratch.iter() {
             let o = &self.b[k];
-            if d < 10.0 * len + 5.0 {
+            // fine time only where one could bite the other
+            if d < 10.0 * len + 5.0 && (o.m > 1.5 * m || o.m < 2.0 / 3.0 * m) {
                 close = true;
             }
             if o.m > m {
@@ -451,12 +453,12 @@ impl World {
             }
         }
         let dir = |n: Option<(usize, f64, f64, f64)>| match n {
-            Some((_, dx, dy, d)) => (dx / d.max(1e-9), dy / d.max(1e-9), 1.0 / (1.0 + d / len)),
+            Some((_, dx, dy, d)) => (dx / d.max(1e-9), dy / d.max(1e-9), 1.0 / (1.0 + d / (10.0 * len))),
             None => (0.0, 0.0, 0.0),
         };
         let (bx, by, bn) = dir(big);
         let (sx, sy, sn) = dir(small);
-        let inp = [1.0, g_here, gx, gy, bx * bn.sqrt(), by * bn.sqrt(), bn, sx, sy, sn, e / cap];
+        let inp = [1.0, g_here, gx, gy, bx * bn, by * bn, bn, sx * sn, sy * sn, sn, e / cap];
         let mut out = [0.0f64; NO];
         for (o, v) in out.iter_mut().enumerate() {
             *v = (0..NI).map(|k| self.b[i].w[o * NI + k] as f64 * inp[k]).sum();
@@ -477,8 +479,9 @@ impl World {
         let vmax = 5.0 * m.powf(0.17);
         let (ux, uy) = (out[0], out[1]);
         let u = (ux * ux + uy * uy).sqrt();
-        let s = vmax * u.tanh();
-        let (nvx, nvy) = if s < 0.1 * vmax { (0.0, 0.0) } else { (s * ux / u, s * uy / u) };
+        // a dead zone: under a push of 1 it stands (and grazes)
+        let s = vmax * (2.0 * u.tanh() - 1.0).max(0.0);
+        let (nvx, nvy) = if s <= 0.0 { (0.0, 0.0) } else { (s * ux / u, s * uy / u) };
         // a birth when its store is full
         if !self.p.bench && self.b[i].e >= cap {
             self.b[i].e -= 0.6 * cap;
