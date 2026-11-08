@@ -10,6 +10,8 @@ The world exists and moves forward whether or not a user is present.
 ## Principles
 
 1. **Watching is the main activity.** Users do not control the world. The world does not need user input to advance.
+   The world is built at the grain of what is watched: a body is one animal at its own size, in metres and seconds,
+   and life too small to follow is a field (#135).
 2. **Do not script the fun.** Behavior and evolution emerge from simple rules and selection pressure. The author does not decide the outcome.
    - **Laws are about materials and the world, never about traits.** We write what a block is (what it costs, how hard it is, what it can push or digest) and what the world is (where food grows, what a cell holds). We do not write what a creature can do. A bite, armor, an eye, a chase are not rules; they are things a body may turn out to be able to do because of its shape, its materials, and the world. If a rule names a trait (attack, defense, flee, hunt), it is written at the wrong level.
    - **Progress is more freedom, given by physics with a price.** With few things a world and a body can be, the optimum is simple and single, and the world converges to it and stops. The real world's space of states is astronomical, built from simple parts (four bases), and its variety comes from freedom whose every form has a physical cost. So the freedom of the environment, the bodies, their behaviour and their interactions is raised **together and by a jump**, through laws about materials and the world, each with a trade-off no form escapes (#116). Adding a rule to get a result we want is the failure mode: e008 and e009 hit a wall that was one of our own rules (attack capped at 24 by "the front three rows").

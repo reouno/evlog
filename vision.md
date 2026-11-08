@@ -5,7 +5,7 @@ step. What happened lives in the experiments' READMEs and git, and what is to be
 issues (#116), never here. **Keep this under 120 lines**: when a row wants a paragraph, the paragraph belongs in an
 experiment's README and the row keeps the one sentence that decides the next step.
 
-Last updated: 2026-11-05 (e115).
+Last updated: 2026-11-09 (#135).
 
 ## 1. The ideal
 
@@ -108,12 +108,13 @@ Each holds under the conditions it was found in.
 
 ## 5. The direction
 
-**The redesign (#116)**, agreed 2026-09-26. About 25 experiments since e075 added laws one at a time and kept two;
-every bottleneck above has the same root: the world and its bodies can be too few things, so the optimum is simple
-and single and the world converges to it. The premise changed (`principles.md`): the freedom of the environment,
-the bodies, their behaviour and their interactions is raised together and by a jump, every form priced by the
-world's physics; producers evolve and the living make each other's niches; a small genome develops into a large
-space of forms; the world is judged whole, over long runs, by an open measure instead of the 64-box label.
+**The redesign (#116)**, agreed 2026-09-26: every bottleneck above has one root - the world and its bodies can be too
+few things, so the optimum is simple and single and the world converges to it. The premise changed (`principles.md`):
+the freedom of the environment, the bodies, their behaviour and their interactions is raised together and by a jump,
+every form priced by the world's physics; producers evolve and the living make each other's niches; a small genome
+develops into a large space of forms; the world is judged whole, over long runs, by an open measure.
 
-**The gap being filled** is the bodies' (rows C to F), on a ground and producers that differ by place and evolve:
-their machinery runs (e110), the land stands (e111), the layers are open and unlived (e112), a hunter lives and the sea parts nothing (e113), matter has a chemistry - locks, a litter kept by its make, a rot that softens - and the bodies still eat the dead alone (e114); the living are behind doors (height, the crown, the ground), and water in matter eases thirst without opening one (e115). The narrowest part left is the door itself: height as a continuous axis around a plant, which the plan check of 2026-11-05 set aside (#116).
+**The gap being filled** was the bodies' at 125 m and 44-minute steps (e110-e115): the land stands, the living stay behind
+doors and, watched (2026-11-08), no animal is anywhere - a body is a crowd of 300,000. **The world is rebuilt at the
+size of an animal** (#135, 2026-11-09): one body one animal from ~1 kg, smaller life a field, an open-world map whose
+places differ by latitude, wind side, height and island, and a day; a speed prototype sets its size first.
