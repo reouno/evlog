@@ -313,12 +313,12 @@ impl World {
             let o = |out: usize, inp: usize| out * NI + inp;
             genes[o(0, 2)] += 3.0;
             genes[o(1, 3)] += 3.0;
-            genes[o(0, 4)] -= 6.0;
-            genes[o(1, 5)] -= 6.0;
+            genes[o(0, 4)] -= 12.0;
+            genes[o(1, 5)] -= 12.0;
             genes[o(2, 0)] -= 1.0;
             if hunter {
-                genes[o(0, 7)] += 6.0;
-                genes[o(1, 8)] += 6.0;
+                genes[o(0, 7)] += 20.0;
+                genes[o(1, 8)] += 20.0;
                 genes[o(2, 0)] += 2.0;
                 genes[o(2, 10)] -= 4.0; // and only while not full
             }
