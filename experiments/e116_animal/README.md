@@ -51,4 +51,36 @@ placeholder for #131's mind.
 
 ## Result
 
+Ubuntu, one thread each, seed 1, 2026-11-09. `bench10k` and `bench30k` were stopped after 6 days and 1 day of 60
+(they would have run for 6 and 19 hours).
+
+| run | animals | decisions an animal-day | us a decision | notices a decision | animal-years a core-hour |
+|---|---|---|---|---|---|
+| `bench1k` | 993 | 23,340 | 1.65 | 0.3 | 256 |
+| `bench10k` (days 1-6) | 9,983 | 29,800 | 3.5-5.2 | 0.9-1.7 | about 70 |
+| `bench30k` (day 1) | 30,049 | 28,200 | 5.5 | 1.6 | about 50 |
+| `live`, 2 years | 300 founders, 1,000-1,580 | 2,366 | 1.07 | 0.07 | 3,891 |
+
+- **The benches measured a world of endless chases.** With bites off in a bench, a hunter that sees a smaller
+  animal chases it for 60 days at a decision a second, and its prey flees at the same pace: a third to a half of
+  all decisions are "close". No bench number is the cost of a living world.
+- **The cost of a decision grows with N** at a fixed density, 1.5 to 5.5 us from 1k to 30k, with the notices a
+  decision sends (0.3 to 1.6): hypothesis 2 does not hold as built.
+- **`live`**: the population rises from 300 to 1,580 in four months and holds at 1,000-1,340 (100-140 a km2) for
+  the rest of two years. Hunters fall from 16 to 1-2 by day 300. Mean mass rises from 15 to 83 kg. 2,366 decisions
+  an animal-day is 8.6e5 an animal-year, ten times hypothesis 1, at 1 us each: 1e4 animals for a year cost about
+  2.6 core-hours.
+- **On the screen** (`look_close`, `look_lapse`): the ground reads at 5 m and a 34 kg animal reads as an animal
+  standing on it. Two things hide it: grass is drawn as tufts of blades taller than the animal, and only within a
+  disk around the eye, so from 200 m away the animals are lost in the tufts.
+
 ## Conclusion
+
+1. **No (cost a decision yes, count no).** A decision costs 1 us, but the placeholder mind decides ten times more
+   often than hoped, mostly a second at a time beside a threat. At 2.6 core-hours a year for 1e4 animals, 300 years
+   of a 50 km2 island is about 800 core-hours on one thread: the world needs either decisions paced by the time a
+   threat takes to close (not a fixed second) or several threads, and likely both.
+2. **No as built**: the notices a decision sends grow with N. To be found before the next crate (probably the
+   meeting test on 50 m buckets at 400 a km2).
+3. **Half**: animals at their own size read as animals over a 5 m ground; the drawing of grass must change before
+   they can be seen from afar.
