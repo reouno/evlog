@@ -118,12 +118,13 @@ function buildTile(L, tx, ty, s, day, mat) {
             const aa = Math.min(m, Math.max(0, a - 1)), i = i0 + aa * s;
             const v = b * side + a;
             const skirt = a === 0 || b === 0 || a === side - 1 || b === side - 1;
-            const h = L.surface(i, j);
+            // the sea floor flattened past 40 m: deeper ground would show through the water as hills
+            const h = Math.max(-40, L.surface(i, j));
             pos[v * 3] = (i + 0.5) * cell;
             pos[v * 3 + 1] = h - (skirt ? drop : 0);
             pos[v * 3 + 2] = L.size - (j + 0.5) * cell;
-            const dx = (L.surface(i + s, j) - L.surface(i - s, j)) / (2 * s * cell);
-            const dz = (L.surface(i, j + s) - L.surface(i, j - s)) / (2 * s * cell);
+            const dx = (Math.max(-40, L.surface(i + s, j)) - Math.max(-40, L.surface(i - s, j))) / (2 * s * cell);
+            const dz = (Math.max(-40, L.surface(i, j + s)) - Math.max(-40, L.surface(i, j - s))) / (2 * s * cell);
             // z runs against j: the normal's z is +dz
             const l = Math.hypot(dx, 1, dz);
             nor[v * 3] = -dx / l;
@@ -174,7 +175,7 @@ function colourTile(L, mesh, day) {
             const v = b * side + a, c = j * n + i, kind = L.kind[c], h = L.height[c];
             let rgb;
             if (kind === SEA) {
-                rgb = mix(C.seabed, C.water, smooth(0, 25, -h), out);
+                rgb = mix(C.seabed, C.water, smooth(0, 15, -h), out);
             }
             else if (kind === POND || kind === STREAM) {
                 rgb = C.water;
@@ -189,7 +190,7 @@ function colourTile(L, mesh, day) {
                 mix(C.soil, mix(C.straw, rain > 1400 ? C.lush : C.green, growing, v2), allow, out);
                 if (h < 2)
                     mix(out, C.sand, 1 - smooth(0.5, 2, h), out);
-                mix(out, C.rock, smooth(0.12, 0.3, steep), out);
+                mix(out, C.rock, smooth(0.2, 0.4, steep), out); // bare from about 37 degrees, rock by 53
                 const snow = smooth(1, -2, temp) * (1 - smooth(0.25, 0.45, steep));
                 rgb = mix(out, C.snow, snow, out);
             }

@@ -17,6 +17,7 @@ const DETAIL_M: f64 = 6.0; // m of detail on flat ground
 const DETAIL_SLOPE: f64 = 0.12; // and this share of the coarse drop across a coarse cell
 const POND_MAX: f64 = 1.0; // m: a hollow deeper than this is raised to it (the noise is not a basin)
 const POND_MIN: f64 = 0.5; // m of standing water that makes a pond
+const POND_STEEP: f64 = 50.0; // m of coarse drop across a coarse cell (about 22 degrees) above which no pond stands
 const ROUGH: f64 = 0.7; // each finer octave of the detail this strong (real ground is rough at every scale)
 const RUNOFF: f64 = 0.7; // share of the rain that runs off the bare ground to the streams
 const BROOK: f64 = 0.005; // m3/s: the least flow drawn as a stream (5 litres a second)
@@ -196,6 +197,12 @@ impl Ground5 {
                 height[c] = filled[c] - POND_MAX as f32;
             }
             let d = (filled[c] - height[c]) as f64;
+            let (cx, cy) = (((c % n) as f64 + 0.5) / k as f64, ((c / n) as f64 + 0.5) / k as f64);
+            if bilinear(&drop, nc, cx, cy) > POND_STEEP {
+                // a hollow in a steep slope is the detail's, not a basin: filled, no pond
+                height[c] = filled[c];
+                continue;
+            }
             if d > POND_MIN {
                 kind[c] = POND;
                 water[c] = d as f32;
