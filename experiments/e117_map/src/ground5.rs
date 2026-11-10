@@ -17,6 +17,7 @@ const DETAIL_M: f64 = 3.0; // m of detail on flat ground
 const DETAIL_SLOPE: f64 = 0.12; // and this share of the coarse drop across a coarse cell
 const POND_MAX: f64 = 1.0; // m: a hollow deeper than this is raised to it (the noise is not a basin)
 const POND_MIN: f64 = 0.5; // m of standing water that makes a pond
+const ROUGH: f64 = 0.6; // each finer octave of the detail this strong (real ground is rough at every scale)
 const RUNOFF: f64 = 0.7; // share of the rain that runs off the bare ground to the streams
 const BROOK: f64 = 0.005; // m3/s: the least flow drawn as a stream (5 litres a second)
 
@@ -52,7 +53,7 @@ fn detail(seed: u64, x: f64, y: f64, l: f64, fine: f64) -> f64 {
         let b = hash(sd, i, j + 1) * (1.0 - u) + hash(sd, i + 1, j + 1) * u;
         s += amp * (2.0 * (a * (1.0 - v) + b * v) - 1.0);
         w += amp;
-        amp *= 0.5;
+        amp *= ROUGH;
         l *= 0.5;
         o += 1;
     }
@@ -161,7 +162,7 @@ impl Ground5 {
             order.push(c as u32);
             let (x, y) = (c % n, c / n);
             // eight neighbours, so that water does not run only along the grid; a filled hollow keeps a slope of a
-            // millimetre a cell towards its outlet, so that its water finds the way out rather than a straight line
+            // millimetre or so a cell towards its outlet, wobbling over some 80 m, so that its water winds its way out
             let (l, r, u, d) = (x > 0, x + 1 < n, y > 0, y + 1 < n);
             let nb = [
                 (l, c.wrapping_sub(1)),
@@ -176,7 +177,8 @@ impl Ground5 {
             for (ok, m) in nb {
                 if ok && !done[m] {
                     done[m] = true;
-                    filled[m] = filled[m].max(filled[c] + 0.001);
+                    let wobble = 0.5 + 0.5 * (detail(seed ^ 0xF1A7, (m % n) as f64 * cell_m, (m / n) as f64 * cell_m, 80.0, 20.0) + 1.0);
+                    filled[m] = filled[m].max(filled[c] + (0.001 * wobble) as f32);
                     down[m] = c as u32;
                     heap.push(Reverse((key(filled[m]), m as u32)));
                 }
