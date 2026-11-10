@@ -472,7 +472,8 @@ impl World {
         }
         let gl = (gx * gx + gy * gy).sqrt();
         if gl > 1e-9 {
-            let k = 2.0 * (2.5 * gl).tanh() / gl;
+            // a mouth takes the best bites and moves on: a patch a hundredth poorer than around already pulls
+            let k = 2.0 * (50.0 * gl).tanh() / gl;
             gx *= k;
             gy *= k;
         }
