@@ -426,6 +426,10 @@ export class Life {
     this.standing.forEach((p) => p.reset());
     const cx = Math.round(at.x), cz = Math.round(at.z);
     const mid2 = this.mid * this.mid, near2 = this.near * this.near, centreY = ground.centreY;
+    // At real size (a world whose header gives a cell in metres) a tuft is a few decimetres, too small to
+    // see past some 60 m, and it shrinks to nothing there instead of ending at an edge.
+    const cellM = Number(this.world.params.cell_m ?? 0);
+    const tuftR = cellM > 0 ? Math.min(this.near, 60 / cellM) : this.near, tuft2 = tuftR * tuftR;
     for (let dz = -this.mid; dz <= this.mid; dz++) {
       const row = ((((cz + dz) % d) + d) % d) * w;
       const dz2 = dz * dz;
@@ -442,7 +446,7 @@ export class Life {
         // This cell's own season: how much of its sun it is losing now, or gaining.
         const cold = Math.max(0, -amp[c] * swing), warm = Math.max(0, amp[c] * swing);
         if (wd >= this.treeMin) this.tree(c, px, pz, y, p, wd, cold, warm, near);
-        else if (p > 0.002 && near) this.tuft(c, px, pz, y, p, cold, warm);
+        else if (p > 0.002 && r2 <= tuft2) this.tuft(c, px, pz, y, p, cold, warm, 1 - (r2 / tuft2) ** 2);
         if (near && fruit && fruit[c] > 0.001) this.fallen(c, px, pz, y, fruit[c]);
         if (near && carrion && carrion[c] > 0.002) this.dead(c, px, pz, y, carrion[c]);
       }
@@ -563,15 +567,17 @@ export class Life {
    *
    * A column of p matter stands p cells tall, which is nothing for a lawn; it is drawn a little
    * taller than that so it can be seen, and never above a body's back. */
-  tuft(c: number, px: number, pz: number, y: number, p: number, cold: number, warm: number): void {
-    const n = this.detail + 1;
+  tuft(c: number, px: number, pz: number, y: number, p: number, cold: number, warm: number, edge: number): void {
+    const cellM = Number(this.world.params.cell_m ?? 0);
+    const n = cellM > 0 ? (this.detail + 1) * 4 : this.detail + 1;
     const snow = Math.min(1, Math.max(0, (cold - 0.45) / 0.35));
     TINT.copy(DRY).lerp(FRESH, Math.min(1, p * 2.2)); // short and yellow grazed down, green standing
     if (warm > 0) TINT.lerp(LUSH, warm * 0.3);
     if (cold > 0) TINT.lerp(HAY, Math.min(0.9, cold * 1.2));
     if (snow > 0) TINT.lerp(SNOW, snow * 0.42);
-    const hgt = (0.07 + Math.min(1, p) * 0.9) * UP.plant * 1.3 * (1 - snow * 0.5);
-    const wide = 0.42 + 0.3 * Math.min(1, p);
+    // at real size: 8-55 cm tall, 25-50 cm across; otherwise a cell's lawn drawn so that it can be seen
+    const hgt = (cellM > 0 ? (0.08 + Math.min(1, p) * 0.5) / cellM : (0.07 + Math.min(1, p) * 0.9) * UP.plant * 1.3) * (1 - snow * 0.5) * edge;
+    const wide = (cellM > 0 ? (0.25 + 0.25 * Math.min(1, p)) / cellM : 0.42 + 0.3 * Math.min(1, p)) * edge;
     for (let i = 0; i < n; i++) {
       const jx = (rnd(c, 60 + i) - 0.5) * 0.78, jz = (rnd(c, 70 + i) - 0.5) * 0.78;
       const a = rnd(c, 80 + i) * 3.1416, sc = 0.72 + rnd(c, 90 + i) * 0.56;

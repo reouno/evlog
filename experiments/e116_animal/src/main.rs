@@ -28,7 +28,8 @@ const LIFE: f64 = 5.0 * YEAR;
 const K_GRASS: f64 = 0.15; // kg a m2 of grass on open, fertile ground
 const R_GRASS: f64 = 2.0 / YEAR; // its growth rate, logistic
 const SIGHT: f64 = 40.0; // m kg^-1/3
-const LEN: f64 = 0.25; // m kg^-1/3: a body's length
+const LEN: f64 = 0.4; // m kg^-1/3: a body's length (a 40 kg sheep 1.4 m, a 2 kg hare 0.5 m)
+const V_WALK: f64 = 0.25; // m s^-1 kg^-0.17: the pace a mouth crops at; it crops nothing at three times it
 const STRIDE: f64 = 20.0; // m an animal goes between decisions at most
 const IDLE: f64 = 600.0; // s: the longest it goes without one
 const CLOSE: f64 = 1.0; // s between decisions while another is near
@@ -153,6 +154,20 @@ impl Ground {
         self.seen[c] = t as f32;
         f
     }
+    /// How far from (x, y) the way `a` (radians) stays on land, up to `want` m.
+    fn free_run(&self, x: f64, y: f64, a: f64, want: f64) -> f64 {
+        let (ux, uy) = (a.cos(), a.sin());
+        let step = 0.5 * self.cell;
+        let mut d = 0.0;
+        while d < want {
+            let nd = (d + step).min(want);
+            if !self.land(x + nd * ux, y + nd * uy) {
+                return d;
+            }
+            d = nd;
+        }
+        want
+    }
     fn peek(&self, x: f64, y: f64, t: f64) -> f64 {
         let Some(c) = self.at(x, y) else { return 0.0 };
         let k = self.cap[c] as f64;
@@ -182,6 +197,7 @@ struct Body {
     e: f64,
     born: f64,
     w: [f32; NW],
+    hd: f64, // the way it faces, radians
     bucket: usize,
     ate_grass: f64,
     ate_flesh: f64,
@@ -311,8 +327,8 @@ impl World {
             // The founders' placeholder minds (#131 replaces them): up the grass's slope and stop where it is
             // thick; away from a larger body; a hunter towards a smaller one, biting.
             let o = |out: usize, inp: usize| out * NI + inp;
-            genes[o(0, 2)] += 3.0;
-            genes[o(1, 3)] += 3.0;
+            genes[o(0, 2)] += 1.0;
+            genes[o(1, 3)] += 1.0;
             genes[o(0, 4)] -= 12.0;
             genes[o(1, 5)] -= 12.0;
             genes[o(2, 0)] -= 1.0;
@@ -324,7 +340,8 @@ impl World {
             }
             let id = w.next_id;
             let (next, born) = (w.rng.f() * 60.0, -w.rng.f() * LIFE * 0.5);
-            w.add(Body { id, line: id, alive: true, x, y, vx: 0.0, vy: 0.0, t0: 0.0, next, ver: 0, m, e: 0.0, born, w: genes, bucket: 0, ate_grass: 0.0, ate_flesh: 0.0 });
+            let hd = w.rng.f() * std::f64::consts::TAU;
+            w.add(Body { id, line: id, alive: true, x, y, vx: 0.0, vy: 0.0, t0: 0.0, next, ver: 0, m, e: 0.0, born, w: genes, hd, bucket: 0, ate_grass: 0.0, ate_flesh: 0.0 });
             let i = w.b.len() - 1;
             w.b[i].e = 0.6 * w.b[i].cap();
             placed += 1;
@@ -406,12 +423,18 @@ impl World {
         self.c.animal_s += dt;
         // what it spent, and what it grazed if it stood
         let mut e = self.b[i].e - BMR * m.powf(0.75) * dt - COT * m.powf(0.68) * moved;
-        if moved == 0.0 {
+        // a mouth crops while the animal stands or walks slowly, not while it runs, and takes less from a short
+        // sward than from a tall one
+        let vw = V_WALK * m.powf(0.17);
+        let crop = ((3.0 * vw - (vx * vx + vy * vy).sqrt()) / (2.0 * vw)).clamp(0.0, 1.0);
+        if crop > 0.0 {
             if let Some(c) = self.g.at(x, y) {
                 let area = self.g.cell * self.g.cell;
-                let have = self.g.grass(c, t) * area;
+                let dens = self.g.grass(c, t);
+                let have = dens * area;
                 let room = ((cap - e) / GRASS_J).max(0.0);
-                let eat = (GRAZE * m.powf(0.75) * dt).min(0.9 * have).min(room);
+                let rate = GRAZE * m.powf(0.75) * crop * dens / (dens + 0.5 * K_GRASS);
+                let eat = (rate * dt).min(0.9 * have).min(room);
                 self.g.grass[c] -= (eat / area) as f32;
                 e += eat * GRASS_J;
                 self.b[i].ate_grass += eat;
@@ -434,8 +457,25 @@ impl World {
         let len = self.b[i].len();
         self.near(x, y, sight, t, i, scratch);
         let g_here = self.g.peek(x, y, t) / K_GRASS;
-        let gx = (self.g.peek(x + 10.0, y, t) - self.g.peek(x - 10.0, y, t)) / K_GRASS * 5.0;
-        let gy = (self.g.peek(x, y + 10.0, t) - self.g.peek(x, y - 10.0, t)) / K_GRASS * 5.0;
+        // the grass around it: better ground pulls, the way it faces a little more, so that a patch eaten down
+        // with fresh grass all round still sends it on; the pull saturates (grass is no reason to run)
+        let (hx, hy) = (self.b[i].hd.cos(), self.b[i].hd.sin());
+        let (mut gx, mut gy) = (0.0, 0.0);
+        let r = 1.5 * self.g.cell;
+        for k in 0..8 {
+            let a = k as f64 * std::f64::consts::FRAC_PI_4;
+            let (ux, uy) = (a.cos(), a.sin());
+            let better = (self.g.peek(x + r * ux, y + r * uy, t) / K_GRASS - g_here).max(0.0);
+            let wgt = 1.0 + (ux * hx + uy * hy).max(0.0);
+            gx += better * wgt * ux;
+            gy += better * wgt * uy;
+        }
+        let gl = (gx * gx + gy * gy).sqrt();
+        if gl > 1e-9 {
+            let k = 2.0 * (2.5 * gl).tanh() / gl;
+            gx *= k;
+            gy *= k;
+        }
         let (mut big, mut small) = (None::<(usize, f64, f64, f64)>, None::<(usize, f64, f64, f64)>);
         let mut close = false;
         for &(k, dx, dy, d) in scratch.iter() {
@@ -444,11 +484,14 @@ impl World {
             if d < 10.0 * len + 5.0 && (o.m > 1.5 * m || o.m < 2.0 / 3.0 * m) {
                 close = true;
             }
-            if o.m > m {
-                if big.map_or(true, |b| d < b.3) {
+            if o.m > 1.5 * m {
+                // a body that could bite it, while it comes nearer
+                let closing = -(dx * o.vx + dy * o.vy) / d.max(1e-9);
+                if closing > 0.3 && big.map_or(true, |b| d < b.3) {
                     big = Some((k, dx, dy, d));
                 }
-            } else if small.map_or(true, |s| d < s.3) {
+            } else if o.m < 2.0 / 3.0 * m && small.map_or(true, |s| d < s.3) {
+                // a body it could bite
                 small = Some((k, dx, dy, d));
             }
         }
@@ -480,8 +523,36 @@ impl World {
         let (ux, uy) = (out[0], out[1]);
         let u = (ux * ux + uy * uy).sqrt();
         // a dead zone: under a push of 1 it stands (and grazes)
-        let s = vmax * (2.0 * u.tanh() - 1.0).max(0.0);
-        let (nvx, nvy) = if s <= 0.0 { (0.0, 0.0) } else { (s * ux / u, s * uy / u) };
+        // gaits: under a push of 1 it stands (and grazes), to 2 it walks at the pace it crops at, from 4 it runs
+        let mut s = vw * (u - 1.0).clamp(0.0, 1.0) + (vmax - vw) * ((u - 4.0) / 4.0).clamp(0.0, 1.0);
+        // the shore: it does not walk into the sea; it turns along the coast, or stops short of it
+        let mut reach = f64::INFINITY;
+        let mut a = uy.atan2(ux);
+        if s > 0.0 {
+            let want = STRIDE.min(s * IDLE);
+            let mut best = (0.0, a);
+            for k in [0.0, 0.5, -0.5, 1.0, -1.0, 1.5, -1.5, 2.0, -2.0, 2.6, -2.6, std::f64::consts::PI] {
+                let free = self.g.free_run(x, y, a + k, want);
+                if free > best.0 + 1e-9 {
+                    best = (free, a + k);
+                }
+                if free >= want {
+                    break;
+                }
+            }
+            if best.0 < 2.0 {
+                s = 0.0;
+            } else {
+                a = best.1;
+                if best.0 < want {
+                    reach = best.0 - 0.5;
+                }
+            }
+        }
+        let (nvx, nvy) = if s <= 0.0 { (0.0, 0.0) } else { (s * a.cos(), s * a.sin()) };
+        if s > 0.0 {
+            self.b[i].hd = a;
+        }
         // a birth when its store is full
         if !self.p.bench && self.b[i].e >= cap {
             self.b[i].e -= 0.6 * cap;
@@ -519,7 +590,7 @@ impl World {
             self.c.close += 1;
             CLOSE
         } else if speed > 0.0 {
-            (STRIDE / speed).min(IDLE)
+            (STRIDE / speed).min(IDLE).min(reach / speed)
         } else if self.g.at(x, y).is_some() {
             let have = self.g.peek(x, y, t) * self.g.cell * self.g.cell;
             (0.7 * have / (GRAZE * m.powf(0.75))).clamp(10.0, IDLE)
@@ -615,7 +686,7 @@ fn main() {
     // the viewer: nothing unless EVLOG_VIEW is set
     let height: Vec<f32> = w.g.elev.iter().map(|&e| if e > 0.0 { e / w.g.cell as f32 / 0.28 } else { -3.0 * (-e / 20.0).min(1.0) }).collect();
     let band = vec![0u8; n * n];
-    let params = format!("{{\"side\":{},\"cell\":{},\"n\":{},\"bench\":{},\"hunters\":{},\"seed\":{},\"frame\":{},\"view_size\":{}}}", w.p.side, w.g.cell, w.p.n, w.p.bench as u8, w.p.hunters, w.p.seed, w.p.frame, 2.0 * LEN / w.g.cell * 0.5);
+    let params = format!("{{\"side\":{},\"cell\":{},\"n\":{},\"bench\":{},\"hunters\":{},\"seed\":{},\"frame\":{},\"view_size\":{},\"cell_m\":{}}}", w.p.side, w.g.cell, w.p.n, w.p.bench as u8, w.p.hunters, w.p.seed, w.p.frame, 2.0 * LEN / w.g.cell * 0.5, w.g.cell);
     let mut view = viewer::View::from_env_ext(
         &prefix,
         viewer::Init {
@@ -677,7 +748,8 @@ fn main() {
                         for b in w.b.iter().filter(|b| b.alive) {
                             let (x, y) = b.pos(ft);
                             let hunter = b.w[2 * NI] > 0.0;
-                            let facing = if b.vx.abs() > b.vy.abs() { if b.vx > 0.0 { 2 } else { 3 } } else if b.vy > 0.0 { 1 } else { 0 };
+                            let (hx, hy) = (b.hd.cos(), b.hd.sin());
+                            let facing = if hx.abs() > hy.abs() { if hx > 0.0 { 2 } else { 3 } } else if hy > 0.0 { 1 } else { 0 };
                             let diet = if b.ate_flesh > 0.0 && b.ate_flesh >= b.ate_grass { 1 } else if b.ate_grass > 0.0 { 0 } else { 2 };
                             let a = viewer::AgentIn {
                                 id: b.id,
