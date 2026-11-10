@@ -34,7 +34,7 @@ placeholder for #131's mind.
   grazing up to 0.1 kg^0.75 of dry grass a day at 9 MJ a kg. A bite at contact on an animal under 2/3 of its mass kills
   and eats it. Births at twice the energy of a newborn, deaths by hunger or age (five years).
 - **Time**: each animal has its own next decision in one queue: when it has gone 20 m, when its patch runs low, when
-  another enters its sight (worked out from both paths when either decides), or after ten minutes; two seconds while
+  another enters its sight (worked out from both paths when either decides), or after ten minutes; one second while
   another is within ten body lengths. Positions between decisions are on straight lines.
 - **Meeting**: a grid of 50 m buckets, each animal in the bucket of its last decision; a query widens by the 20 m an
   animal can have gone since.
@@ -57,16 +57,16 @@ Ubuntu, one thread each, seed 1, 2026-11-09. `bench10k` and `bench30k` were stop
 | run | animals | decisions an animal-day | us a decision | notices a decision | animal-years a core-hour |
 |---|---|---|---|---|---|
 | `bench1k` | 993 | 23,340 | 1.65 | 0.3 | 256 |
-| `bench10k` (days 1-6) | 9,983 | 29,800 | 3.5-5.2 | 0.9-1.7 | about 70 |
-| `bench30k` (day 1) | 30,049 | 28,200 | 5.5 | 1.6 | about 50 |
-| `live`, 2 years | 300 founders, 1,000-1,580 | 2,366 | 1.07 | 0.07 | 3,891 |
+| `bench10k` (days 1-6) | 9,983 | 29,800 | 3.5-5.2 | 0.9-1.7 | 64 |
+| `bench30k` (day 1) | 30,049 | 28,200 | 5.5 | 1.6 | 55 |
+| `live`, 2 years | 300 founders, 926-1,696 | 2,366 | 1.07 | 0.07 | 3,891 |
 
 - **The benches measured a world of endless chases.** With bites off in a bench, a hunter that sees a smaller
   animal chases it for 60 days at a decision a second, and its prey flees at the same pace: a third to a half of
   all decisions are "close". No bench number is the cost of a living world.
 - **The cost of a decision grows with N** at a fixed density, 1.5 to 5.5 us from 1k to 30k, with the notices a
   decision sends (0.3 to 1.6): hypothesis 2 does not hold as built.
-- **`live`**: the population rises from 300 to 1,580 in four months and holds at 1,000-1,340 (100-140 a km2) for
+- **`live`**: the population rises from 300 to 1,696 by day 150 and holds at 926-1,470 (100-150 a km2) for
   the rest of two years. Hunters fall from 16 to 1-2 by day 300. Mean mass rises from 15 to 83 kg. 2,366 decisions
   an animal-day is 8.6e5 an animal-year, ten times hypothesis 1, at 1 us each: 1e4 animals for a year cost about
   2.6 core-hours.
@@ -84,8 +84,10 @@ bare, which a slope read over 20 m around cannot see).
 - Over 10 hours at a frame a minute, the median grazer walks 63 m, the top 0.6-1.2 km, grazing 20-100 minutes then
   walking about 20 m, within 100-200 m; some shuttle between two spots. No animal runs: a hunter grazes like the
   rest and does not search, so no chase is seen. No loop at the shore.
-- A population of about 200 holds for 140 days (after 300 founders fall to 230 in ten days); hunters fall from 11
-  to 2-3. Walking in short legs costs 9,000 decisions an animal-day against 2,366.
+- `live2`: 300 founders fall to 230 in ten days, hold at about 190-290 to day 150, then rise to 394 by day 364;
+  hunters fall from 11 to 2-3. It costs 7,583 decisions an animal-day against `live`'s 2,366, and 97% of them are
+  the one-second tick beside a body of another size (5% in `live`): the longer bodies widen its radius, and it is
+  set by size alone, hunter or not (corrected 2026-11-11 from numbers read while the run was going).
 
 ## Conclusion
 
