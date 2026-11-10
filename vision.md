@@ -5,7 +5,7 @@ step. What happened lives in the experiments' READMEs and git, and what is to be
 issues (#116), never here. **Keep this under 120 lines**: when a row wants a paragraph, the paragraph belongs in an
 experiment's README and the row keeps the one sentence that decides the next step.
 
-Last updated: 2026-11-09 (#135).
+Last updated: 2026-11-11 (#135, e116).
 
 ## 1. The ideal
 
@@ -116,5 +116,5 @@ develops into a large space of forms; the world is judged whole, over long runs,
 
 **The gap being filled** was the bodies' at 125 m and 44-minute steps (e110-e115): the land stands, the living stay behind
 doors and, watched (2026-11-08), no animal is anywhere - a body is a crowd of 300,000. **The world is rebuilt at the
-size of an animal** (#135, 2026-11-09): one body one animal from ~1 kg, smaller life a field, an open-world map whose
-places differ by latitude, wind side, height and island, and a day; a speed prototype sets its size first.
+size of an animal** (#135, design agreed 2026-11-11): one body one animal, plants as things at metres, the mind with
+it, since what is watched is behaviour - e116's placeholder grazed and nothing searched, so nothing was seen.

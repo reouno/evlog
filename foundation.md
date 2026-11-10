@@ -104,16 +104,16 @@ measures - kinds by birth form, the 64-box label, the six-seed ladder at 7.14 ki
 
 ## 4. Scale and compute
 
-**Today's world** is `base/` on the islands (`cargo run --release -p base -- <prefix> base/worlds/isles1.params`;
-the ground e108, producers e109): 64 km on a side, 512 x 512 cells of 125 m, a tenth of it land (410 km2) in eight
-islands up to 2 km high; climate from height, the wind's side and the season; an update of 3.2 hours, a year of 159
-days. The planet `c1225` (cells of 63 km, climate by latitude) is e102-e106's world, read from their crates. A body's
-laws are in metres and seconds - the cell is the ground's grain, the update the step of integration (19 minutes;
-nothing shows a longer one safe, e110). A body holds about S kg of animals at any age: a kind whose adult weighs S
-is one animal a body, a smaller kind a flock, a clutch one brood carried until it holds a tenth of S. The watcher
-sees a place, later at real size through a window that plays what the world decided. **S is 4,000 kg** (e111): on a
-land that stands the animals weigh 38 t a km2 after 30 years (11,000 bodies) and 195 after a hundred (50,000, still
-rising; e112). **Open**: what parts the lines - one line holds every island, on land and sea alike (e113's `floor`, `sight` and `cover` stand on, no effect shown).
+**The scale being built** (#135, agreed 2026-11-11): a body is one animal of its own size from about 1 kg; a plant
+whose adult crown is wider than about 2 m is a thing with a place, a height and a crown; smaller plants and life under
+1 kg are fields (plants on 5 m cells, small life on 125 m). The map is 16 km on a side with 40-60 km2 of land in four
+islands, a band of latitude folded north to south (the one stated fiction), the westerlies' wet and dry sides, a high
+island's snow line and a day; climate, soil and water stay on 125 m cells, the ground is drawn at 5 m with its
+streams. Time is continuous: each animal decides when its mind says and pays for each decision by its nerve; plants
+and fields move daily, the climate hourly; a year is 365 days. Rungs 1-3 are rebuilt in that order (#135).
 
-**Compute**: the islands with producers take 26 s a year on six threads (e109); 11,000 bodies add 60 s and 50,000
-add 320 s (e112's control: a hundred years with bodies in 5 hours), so a 300-year run is about a day at S 4,000 kg.
+**Compute**: a decision costs about 1 us (e116); e116's placeholder mind made 2,400-9,000 an animal-day, and a
+budget of a world year in about 10 minutes on six threads (1e4 animals) allows about 500. Islands run on their own
+threads (animals on two islands cannot meet). Viewer positions are 16-bit at 64 a cell, short of 3,200 cells.
+
+**Before**: `base/` on isles1 (64 km, 125 m cells; e108, e109) and e110-e115's bodies of S = 4,000 kg of animals.
