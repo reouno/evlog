@@ -74,6 +74,19 @@ Ubuntu, one thread each, seed 1, 2026-11-09. `bench10k` and `bench30k` were stop
   standing on it. Two things hide it: grass is drawn as tufts of blades taller than the animal, and only within a
   disk around the eye, so from 200 m away the animals are lost in the tufts.
 
+**Second look** (2026-11-11, `runs2.sh`, after the user watched): grass is drawn 8-55 cm tall within 60 m of the
+eye, a body 0.4 m kg^-1/3 long (a 40 kg animal 1.4 m), a mouth crops while the animal stands or walks at its
+cropping pace and less from a short sward, gaits (stand, walk, run), a larger body is fled only while it comes
+nearer, and the shore is turned along instead of walked into (the first look's animals looped at the shore,
+put back at their last decision when they reached the sea, and 728 of 745 stood for ten minutes on a patch eaten
+bare, which a slope read over 20 m around cannot see).
+
+- Over 10 hours at a frame a minute, the median grazer walks 63 m, the top 0.6-1.2 km, grazing 20-100 minutes then
+  walking about 20 m, within 100-200 m; some shuttle between two spots. No animal runs: a hunter grazes like the
+  rest and does not search, so no chase is seen. No loop at the shore.
+- A population of about 200 holds for 140 days (after 300 founders fall to 230 in ten days); hunters fall from 11
+  to 2-3. Walking in short legs costs 9,000 decisions an animal-day against 2,366.
+
 ## Conclusion
 
 1. **No (cost a decision yes, count no).** A decision costs 1 us, but the placeholder mind decides ten times more
