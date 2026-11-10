@@ -219,6 +219,11 @@ async function main(): Promise<void> {
   sea.position.set(L.size / 2, 0, L.size / 2);
   sea.renderOrder = 1;
   scene.add(sea);
+  // and a floor under it past the map's edge, where there is no ground to see through the water
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(L.size * 4, L.size * 4), new THREE.MeshBasicMaterial({ color: 0x163d58 }));
+  floor.rotation.x = -Math.PI / 2;
+  floor.position.set(L.size / 2, -41, L.size / 2);
+  scene.add(floor);
   const groundMat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.95, metalness: 0 });
 
   // where to start: above the highest ground, looking at it from the south-west
