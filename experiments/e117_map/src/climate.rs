@@ -325,7 +325,7 @@ impl Air {
         let aspect = p.aspect != 0.0;
         let (sea_sum, sea_n) = (0..cells).filter(|&c| t.sea[c]).fold((0.0, 0usize), |(s, k), c| (s + self.temp[c], k + 1));
         let t_air = sea_sum / sea_n.max(1) as f64;
-        // e117: on a band of latitude the sea air of each row is that row's sea (the world's mean, row by row)
+        // e117: on a band of latitude the sea air's warmth over each row is that row's sea (the world's mean, row by row)
         let t_row: Vec<f64> = (0..n)
             .map(|y| {
                 if p.lat_span == 0.0 {
@@ -420,7 +420,7 @@ impl Air {
         }
 
         if p.sweep != 0.0 {
-            return self.sweep(p, t, sat, wx, season, t_row, cover);
+            return self.sweep(p, t, sat, wx, season, t_air, cover);
         }
         // The air takes up water where it can and rains what it cannot hold; this year's anomaly and the
         // storms change how much of the excess falls.
@@ -526,7 +526,7 @@ impl Air {
     /// its excess over what it can hold: the sea air's holding, less the share of its lifted layer that the
     /// cell's height wrings out. A column's gain or loss over one crossing is the ground's `per` times over,
     /// the crossings in an update. The pass is one after another, so it does not depend on the threads.
-    fn sweep(&mut self, p: &Params, t: &Terrain, sat: &Sat, wx: &Weather, season: f64, t_row: &[f64], cover: &[f64]) -> Flux {
+    fn sweep(&mut self, p: &Params, t: &Terrain, sat: &Sat, wx: &Weather, season: f64, t_air: f64, cover: &[f64]) -> Flux {
         let n = t.n;
         let secs = p.tick / p.day * 86400.0;
         let dx = p.cell_km * 1000.0;
@@ -538,16 +538,17 @@ impl Air {
         let per = secs / tc; // crossings an update
         let ke = 1.0 - (-tc / p.evap_tau).exp();
         let kr = 1.0 - (-tc / p.rain_tau).exp();
-        // the sea air's holding and its water as it comes in, row by row (one value on one latitude)
-        let s0r: Vec<f64> = t_row.iter().map(|&ta| sat.at(ta + wx.temp(0, p))).collect();
+        // e117: the sea air's water stays the world's one value - by row, air flowing north would carry a southern
+        // row's excess that the pass rains `per` times over (it follows one crossing an update); only the air's
+        // warmth is the row's
+        let s0 = sat.at(t_air + wx.temp(0, p));
+        let c0 = RAIN_RH * s0;
+        let v_in = c0 + (s0 - c0) * ke / (ke + kr); // where the open sea's taking up and raining balance
         let mut f = Flux::default();
         let (mut gained, mut inflow, mut outflow, mut dv) = (0.0, 0.0, 0.0, 0.0);
         for j in 0..n {
             let y = if north { j } else { n - 1 - j };
             let below = if j == 0 { None } else { Some(if north { y - 1 } else { y + 1 }) };
-            let s0 = s0r[y];
-            let c0 = RAIN_RH * s0;
-            let v_in = c0 + (s0 - c0) * ke / (ke + kr); // where the open sea's taking up and raining balance
             for i in 0..n {
                 let x = if east { i } else { n - 1 - i };
                 let c = y * n + x;
