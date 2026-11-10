@@ -15,8 +15,8 @@ pub const STREAM: u8 = 3;
 
 const DETAIL_M: f64 = 3.0; // m of detail on flat ground
 const DETAIL_SLOPE: f64 = 0.12; // and this share of the coarse drop across a coarse cell
-const POND_MAX: f64 = 1.5; // m: a hollow deeper than this is raised to it (the noise is not a basin)
-const POND_MIN: f64 = 0.3; // m of standing water that makes a pond
+const POND_MAX: f64 = 1.0; // m: a hollow deeper than this is raised to it (the noise is not a basin)
+const POND_MIN: f64 = 0.5; // m of standing water that makes a pond
 const RUNOFF: f64 = 0.7; // share of the rain that runs off the bare ground to the streams
 const BROOK: f64 = 0.005; // m3/s: the least flow drawn as a stream (5 litres a second)
 
@@ -160,11 +160,23 @@ impl Ground5 {
             let c = c as usize;
             order.push(c as u32);
             let (x, y) = (c % n, c / n);
-            let nb = [(x > 0, c.wrapping_sub(1)), (x + 1 < n, c + 1), (y > 0, c.wrapping_sub(n)), (y + 1 < n, c + n)];
+            // eight neighbours, so that water does not run only along the grid; a filled hollow keeps a slope of a
+            // millimetre a cell towards its outlet, so that its water finds the way out rather than a straight line
+            let (l, r, u, d) = (x > 0, x + 1 < n, y > 0, y + 1 < n);
+            let nb = [
+                (l, c.wrapping_sub(1)),
+                (r, c + 1),
+                (u, c.wrapping_sub(n)),
+                (d, c + n),
+                (l && u, c.wrapping_sub(n + 1)),
+                (r && u, c.wrapping_sub(n).wrapping_add(1)),
+                (l && d, (c + n).wrapping_sub(1)),
+                (r && d, c + n + 1),
+            ];
             for (ok, m) in nb {
                 if ok && !done[m] {
                     done[m] = true;
-                    filled[m] = filled[m].max(filled[c]);
+                    filled[m] = filled[m].max(filled[c] + 0.001);
                     down[m] = c as u32;
                     heap.push(Reverse((key(filled[m]), m as u32)));
                 }
