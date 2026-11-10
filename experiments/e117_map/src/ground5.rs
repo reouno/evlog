@@ -212,9 +212,38 @@ impl Ground5 {
                 bilinear(rain, nc, cx, cy).max(0.0) / 1000.0 * RUNOFF * area
             })
             .collect();
-        for &c in order.iter().rev() {
-            let d = down[c as usize];
-            if d != u32::MAX {
+        // Water goes down the steepest way of the filled ground (its own slope where nothing is filled, the
+        // millimetres towards the outlet where it is): every step is lower, so no water goes round. The flood's
+        // own way (`down`) would draw straight lines across every filled hollow.
+        let steep: Vec<u32> = (0..cells)
+            .map(|c| {
+                if kind[c] == SEA {
+                    return u32::MAX;
+                }
+                let (x, y) = (c % n, c / n);
+                let (mut best, mut to) = (0.0f64, down[c]);
+                for (dx, dy) in [(-1i64, 0i64), (1, 0), (0, -1), (0, 1), (-1, -1), (1, -1), (-1, 1), (1, 1)] {
+                    let (mx, my) = (x as i64 + dx, y as i64 + dy);
+                    if mx < 0 || my < 0 || mx >= n as i64 || my >= n as i64 {
+                        continue;
+                    }
+                    let m = my as usize * n + mx as usize;
+                    let drop = (filled[c] - filled[m]) as f64 / if dx != 0 && dy != 0 { std::f64::consts::SQRT_2 } else { 1.0 };
+                    let drop = if kind[m] == SEA { drop.max(1e-9) } else { drop };
+                    if drop > best {
+                        best = drop;
+                        to = m as u32;
+                    }
+                }
+                to
+            })
+            .collect();
+        // highest first, so that a cell has all it gathers before it passes it on
+        let mut by_height: Vec<u32> = order.clone();
+        by_height.sort_by(|&a, &b| filled[b as usize].partial_cmp(&filled[a as usize]).unwrap());
+        for &c in &by_height {
+            let d = steep[c as usize];
+            if d != u32::MAX && kind[d as usize] != SEA {
                 acc[d as usize] += acc[c as usize];
             }
         }
