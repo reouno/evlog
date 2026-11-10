@@ -13,11 +13,11 @@ pub const SEA: u8 = 1;
 pub const POND: u8 = 2;
 pub const STREAM: u8 = 3;
 
-const DETAIL_M: f64 = 3.0; // m of detail on flat ground
+const DETAIL_M: f64 = 6.0; // m of detail on flat ground
 const DETAIL_SLOPE: f64 = 0.12; // and this share of the coarse drop across a coarse cell
 const POND_MAX: f64 = 1.0; // m: a hollow deeper than this is raised to it (the noise is not a basin)
 const POND_MIN: f64 = 0.5; // m of standing water that makes a pond
-const ROUGH: f64 = 0.6; // each finer octave of the detail this strong (real ground is rough at every scale)
+const ROUGH: f64 = 0.7; // each finer octave of the detail this strong (real ground is rough at every scale)
 const RUNOFF: f64 = 0.7; // share of the rain that runs off the bare ground to the streams
 const BROOK: f64 = 0.005; // m3/s: the least flow drawn as a stream (5 litres a second)
 
