@@ -23,6 +23,7 @@
 
 mod climate;
 mod genome;
+mod ground5;
 mod hydro;
 mod life;
 mod noise;
@@ -112,6 +113,7 @@ params! {
     // e117: the map at an animal's size (#135)
     lat_span = 0.0, "1: the rows run once from lat_lo (south, row 0) to lat_hi (north), a band of latitude folded into the map; 0: there and back";
     survey = 0.0, "n > 0: print the islands the first n terrain seeds make, and stop";
+    fine = 0.0, "k > 0: at the end, draw the ground at k fine cells a cell from the kept years' rain (`_ground5.bin`)";
     edge = 0.0, "cells from the border over which the ground sinks under the sea (0: the world wraps as a planet)";
     span_lon = 1.0, "share of a day the world's width spans (1: a planet's longitudes; 0: one hour everywhere)";
     aspect = 0.0, "1: a slope's light follows its tilt against the sun";
@@ -601,6 +603,15 @@ fn main() {
         ),
     )
     .unwrap();
+    if p.fine > 0.0 && !kept.is_empty() {
+        // e117: the ground at an animal's grain, from the kept years' mean rain
+        let t5 = Instant::now();
+        let ri = FIELDS.iter().position(|&f| f == "rain").unwrap();
+        let rain: Vec<f64> = (0..cells).map(|c| kept.iter().map(|(_, m)| m[ri][c] as f64).sum::<f64>() / kept.len() as f64).collect();
+        let g5 = ground5::Ground5::new(&ter, p.cell_km, p.fine as usize, &rain, p.seed as u64 ^ 0x5EED, p.threads as usize);
+        g5.write(&prefix);
+        eprintln!("ground5: {}x{} cells of {} m in {:.1} s", g5.n, g5.n, g5.cell_m, t5.elapsed().as_secs_f64());
+    }
     let mut row = std::fs::File::create(format!("{prefix}_row.csv")).unwrap();
     writeln!(row, "{}", Params::NAMES.join(",")).unwrap();
     writeln!(row, "{}", p.values().iter().map(|v| format!("{v}")).collect::<Vec<_>>().join(",")).unwrap();
