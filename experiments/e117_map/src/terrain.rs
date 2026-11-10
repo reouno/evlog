@@ -71,7 +71,14 @@ impl Terrain {
         sorted.sort_by(|a, b| a.partial_cmp(b).unwrap());
         let level = sorted[(((1.0 - p.land) * cells as f64) as usize).min(cells - 1)];
         let top = sorted[cells - 1];
-        let mut elev: Vec<f64> = h.iter().map(|&v| (v - level) / (top - level) * p.relief).collect();
+        // e117: heights over the sea to a power, so that lowlands lie flat and one summit stands (1: as they were)
+        let mut elev: Vec<f64> = h
+            .iter()
+            .map(|&v| {
+                let f = (v - level) / (top - level);
+                if f > 0.0 { f.powf(p.relief_pow) * p.relief } else { f * p.relief }
+            })
+            .collect();
         let sea: Vec<bool> = elev.iter().map(|&e| e < 0.0).collect();
         // The rows run from lat_lo to lat_hi and back: no edge, every latitude twice.
         // e117: or once, south to north (the rows grow northwards: `nbrs`' yd is the cell to the north).

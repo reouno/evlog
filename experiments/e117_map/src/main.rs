@@ -113,6 +113,7 @@ params! {
     // e117: the map at an animal's size (#135)
     lat_span = 0.0, "1: the rows run once from lat_lo (south, row 0) to lat_hi (north), a band of latitude folded into the map; 0: there and back";
     survey = 0.0, "n > 0: print the islands the first n terrain seeds make, and stop";
+    relief_pow = 1.0, "the land's heights as a share of the highest, to this power (e117: above 1 the lowlands flatten)";
     fine = 0.0, "k > 0: at the end, draw the ground at k fine cells a cell from the kept years' rain (`_ground5.bin`)";
     edge = 0.0, "cells from the border over which the ground sinks under the sea (0: the world wraps as a planet)";
     span_lon = 1.0, "share of a day the world's width spans (1: a planet's longitudes; 0: one hour everywhere)";
