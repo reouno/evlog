@@ -255,8 +255,48 @@ fn handle(r: &Arc<Replay>, mut s: TcpStream) {
     let _ = s.flush();
 }
 
+/// The map at real size (#135, e117): the page `map.html`, and a run's files as `/data/<name>` from `<prefix>_<name>`.
+fn handle_map(prefix: &str, mut s: TcpStream) {
+    let Some(req) = http::read_request(&mut s) else { return };
+    let web = http::web_dir();
+    let _ = match req.path.as_str() {
+        "/" => http::serve_file(&mut s, &web, "/map.html").map(|_| ()),
+        p if p.starts_with("/data/") => {
+            let name = &p[6..];
+            if !name.is_empty() && name.chars().all(|c| c.is_ascii_alphanumeric() || c == '_' || c == '.') && !name.contains("..") {
+                match std::fs::read(format!("{prefix}_{name}")) {
+                    Ok(body) => http::send(&mut s, "200 OK", if name.ends_with(".json") { "application/json" } else { "application/octet-stream" }, &body),
+                    Err(_) => http::not_found(&mut s),
+                }
+            } else {
+                http::not_found(&mut s)
+            }
+        }
+        p => match http::serve_file(&mut s, &web, p) {
+            Ok(true) => Ok(()),
+            _ => http::not_found(&mut s),
+        },
+    };
+    let _ = s.flush();
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
+    if args.get(1).map(String::as_str) == Some("map") {
+        let prefix = args.get(2).cloned().unwrap_or_else(|| {
+            eprintln!("usage: viewer map <run prefix> [port]");
+            std::process::exit(2);
+        });
+        let port: u16 = args.get(3).and_then(|p| p.parse().ok()).unwrap_or(7777);
+        let listener = std::net::TcpListener::bind(("127.0.0.1", port)).unwrap_or_else(|e| panic!("port {port}: {e}"));
+        http::warn_if_stale(&http::web_dir());
+        println!("viewer: the map of {prefix} at http://127.0.0.1:{port}/");
+        for s in listener.incoming().flatten() {
+            let prefix = prefix.clone();
+            std::thread::spawn(move || handle_map(&prefix, s));
+        }
+        return;
+    }
     let path = args.get(1).unwrap_or_else(|| {
         eprintln!("usage: viewer <run>_view.bin [port]");
         std::process::exit(2);
