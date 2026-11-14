@@ -48,9 +48,11 @@ The crate (`src/plants.rs`; the ground, air and water are `base/`'s):
   place when it dies. A crown is as wide as its leaves need at a leaf area of 4 (`lai_crown`), at most 0.35 of its
   height (`crown_h`), and lies over the fine cells within it. Light falls through the crowns over a cell, the tallest
   first, then through the cell's field;
-- **a stem** (added after the first pilot): a plant is no taller than its wood can stand as one stem, 2.9 m at a kg
-  by the mass's fourth root (wood of 500 kg a m3 that buckles at 30 d^(2/3); `h_stem`). The base's height is a ratio
-  of wood to leaf, so a seedling of a gram was 4 m tall and 27,000 "trees" stood a year after the sowing;
+- **a stem** (added after the first pilot): a plant is no taller than its wood can stand as one stem, 4.2 m at a kg
+  by the mass's fourth root (`h_stem`: wood of 500 kg a m3 in a stem as slender as trees are, 50 d^(2/3), half the
+  height at which it buckles - 20 m at half a tonne; the pilots ran at 2.9, a stout 30 d^(2/3), which asks 2.3 t for
+  20 m). The base's height is a ratio of wood to leaf, so a seedling of a gram was 4 m tall and 27,000 "trees" stood
+  a year after the sowing;
 - **water** as above (`wet_reach` 10 m, `wet_rise` 2 m);
 - **rot frees A and B to the roots in the same step** (after the first pilot): the base lets them lie a step in the
   soil, under the rain, before roots take them;
