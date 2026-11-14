@@ -116,8 +116,8 @@ params! {
     ice = 3000.0, "mm of water: snow lying deeper than this creeps to the cell below";
     // e118: plants at metres (#135 rung 2)
     h_stem = 4.2, "m: the height a kg of wood stands as one stem, by its mass's fourth root (wood of 500 kg a m3, a stem as slender as trees are: 50 d^(2/3), half the height at which it buckles)";
-    lai_crown = 4.0, "m2 of leaf a m2 of crown: a crown spreads as wide as its leaves need at this";
-    crown_h = 0.35, "a crown's radius is at most this share of the tree's height (a branch reaches out no further)";
+    crown_h = 0.35, "a crown's radius, as a share of the tree's height: its leaves spread as far as its branches reach";
+    bare = 0.001, "a tree whose leaf and store together are under this share of its mass is dead and falls";
     steep = 0.84, "m a m: fine ground steeper than this (40 degrees) holds no soil";
     wet_reach = 10.0, "m: ground within this of a pond or a stream reaches the groundwater whatever its roots";
     wet_rise = 2.0, "m: and no higher than this over the water";
