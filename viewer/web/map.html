@@ -19,6 +19,7 @@
   #hud b { font: 500 20px/1.2 ui-monospace, monospace; display: block; }
   #hud .row { display: flex; justify-content: space-between; gap: 14px; color: var(--dim); }
   #hud .row span:last-child { color: var(--ink); font-family: ui-monospace, monospace; }
+  #hud select { background: #ffffff14; color: var(--ink); border: 1px solid var(--line); border-radius: 6px; font: inherit; }
   #time { left: 50%; transform: translateX(-50%); bottom: 12px; display: grid; grid-template-columns: auto 1fr auto;
     gap: 6px 10px; align-items: center; width: min(560px, calc(100vw - 24px)); }
   #time input[type=range] { width: 100%; }
@@ -44,16 +45,22 @@
   <div class="row"><span>年平均気温</span><span id="tmean">—</span></div>
   <div class="row"><span>年降水量</span><span id="rain">—</span></div>
   <div class="row"><span>視点の高さ</span><span id="eye">—</span></div>
+  <div id="flora">
+    <div class="row"><span>天気</span><span id="wx">—</span></div>
+    <div class="row"><span>草の葉</span><span id="grass">—</span></div>
+    <div class="row"><span>木が取る光</span><span id="shade">—</span></div>
+    <div class="row"><span>植物の年</span><select id="fyear"></select></div>
+  </div>
 </div>
 <div id="help" class="ui">
   ドラッグで回す、右ドラッグで動かす、ホイールで寄る。WASD で歩く（Shift で速く）。右下の地図をクリックで飛ぶ。<br>
-  植物はまだない。緑は「その月が暖かく、土が湿っている」所、藁色は寒いか乾いている所、白は積もった雪。小川は水の少ない月に涸れる。
+  植物のある世界では、草の緑と枯れ色、木（近くは 1 本ずつ、遠くは森の色）、火の跡（黒）を描く。「時計を進める」で一日と天気が進み、前線が来ると雨か雪になる。小川は水の少ない月に涸れる。
 </div>
 <div id="time" class="ui">
   <span>日付</span><input id="day" type="range" min="0" max="364" step="1" value="120"><span class="v" id="dayv"></span>
   <span>時刻</span><input id="hour" type="range" min="0" max="24" step="0.25" value="11"><span class="v" id="hourv"></span>
   <span></span>
-  <div><button id="playYear">季節を進める</button> <button id="playDay">一日を進める</button></div>
+  <div><button id="playYear">季節を進める</button> <button id="playDay">時計を進める</button></div>
   <span></span>
 </div>
 <div id="mini" class="ui"><canvas id="minimap" width="320" height="320"></canvas></div>
