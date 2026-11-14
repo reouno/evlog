@@ -109,11 +109,11 @@ Runs, all on Ubuntu with six threads:
   over 15 C, 4.8-6.0% at 11-15 C, 0.6% under 9 C; lowlands at 44-49 N 7.3%, 49-54 N 6.4%, 54-59 N 3.2%, 59-64 N
   0.1%. The lowlands' wettest third 4.5% and 0.28 kg of wood a m2, the driest third 5.9% and 0.28 (x1.0). Where
   2% of the ground or more burns a year (690 cells) 2.1%, where none does 6.7%.
-- **A tree line**: 5% of the ground or more is under crowns in every band of height up to 1,400 m and 1.0% above
-  (7 C at 1,200-1,400 m, 5 C above); almost none on the northern lowlands (5.6 C).
+- **A tree line**: 4.4-12.2% of the ground is under crowns in the bands of height up to 1,400 m and 1.0% above
+  (6.9 C at 1,200-1,400 m, 4.7 C above); 0.1% on the northern lowlands (6.9 C in these years).
 - **Leaves hardly differ north and south.** Field at 44-54 N against 54-64 N: leaf A 0.72 and 0.68%, shed 0.44 and
   0.45 a year, optimum 12.8 and 11.9 C. Trees: shed 0.23 and 0.28, optimum 13.6 and 12.7 C.
-- **Lives turn over, lines do not.** 1% of the trees of year 130 were trees by year 30; 13,013 fall a year (7.7%);
+- **Lives turn over, lines do not.** 0.6% of the trees of year 130 were trees by year 30; 13,013 fall a year (7.7%);
   their mean age is 33. But two of the 256 sown genomes are 94% of the trees (74% and 20%), and what was born
   after the sowing is 1.3% of the living mass.
 - **A tree's wood grows and its height does not.** Trees for 5-20 years hold 29 kg of wood at 5.2 m, for 20-50
