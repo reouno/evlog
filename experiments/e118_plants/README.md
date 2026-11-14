@@ -43,16 +43,16 @@ The crate (`src/plants.rs`; the ground, air and water are `base/`'s):
 
 - **the field**: a fine cell of 5 m with soil (not water; not steeper than 50 degrees) holds up to three cohorts, a
   litter and a seed bank, by `base/src/life.rs`'s law for a cohort;
-- **a tree**: a cohort that grows past 3 m (`h_thing`: a crown about 2 m wide) becomes one plant rooted in its cell,
-  with the part of the stand its crown holds; the rest stays in the field under it, no taller than 3 m, and takes the
-  place when it dies. A crown is as wide as its leaves need at a leaf area of 4 (`lai_crown`), at most 0.35 of its
-  height (`crown_h`), and lies over the fine cells within it. Light falls through the crowns over a cell, the tallest
-  first, then through the cell's field;
-- **a stem** (added after the first pilot): a plant is no taller than its wood can stand as one stem, 4.2 m at a kg
-  by the mass's fourth root (`h_stem`: wood of 500 kg a m3 in a stem as slender as trees are, 50 d^(2/3), half the
-  height at which it buckles - 20 m at half a tonne; the pilots ran at 2.9, a stout 30 d^(2/3), which asks 2.3 t for
-  20 m). The base's height is a ratio of wood to leaf, so a seedling of a gram was 4 m tall and 27,000 "trees" stood
-  a year after the sowing;
+- **a stand thins into a tree** (the third pilot's finding): a stand of the field is stems. Each stands as high as its
+  wood lets one stem stand - 4.2 m at a kg by the mass's fourth root (`h_stem`: wood of 500 kg a m3 in a stem as
+  slender as trees are, 50 d^(2/3), half the height at which it buckles; 20 m at half a tonne) - and their crowns,
+  0.35 of the height in radius (`crown_h`), fill the ground: so a stand is as tall as h_stem^2 crown_h sqrt(pi w)
+  for w kg of wood a m2, many stems while low and fewer as it grows. Thinned to one stem a cell (8 m on cells of
+  5 m) it is one plant rooted there, the whole of it, with a place, a height and a crown: as wide as its leaves need
+  at a leaf area of 4 (`lai_crown`), at most 0.35 of its height, lying over the fine cells within it. Light falls
+  through the crowns over a cell, the tallest first, then through the cell's field. (The base's height is a ratio of
+  wood to leaf: a seedling of a gram was 4 m tall. The pilots made a tree of a stand at 3 m with the part its crown
+  held: one whip a cell, a twelfth of its light, that did not grow in thirty years.)
 - **water** as above (`wet_reach` 10 m, `wet_rise` 2 m);
 - **rot frees A and B to the roots in the same step** (after the first pilot): the base lets them lie a step in the
   soil, under the rain, before roots take them;
