@@ -9,8 +9,9 @@
 //! - **a tree** rooted in it, at most one. A stand of the field is stems that thin as they grow: each stands as high
 //!   as its wood lets one stem stand (`h_stem`), their crowns (`crown_h` of the height wide) filling the cell, so a
 //!   stand is as tall as the root of its wood a m2 allows. When it has thinned to one stem a cell (about 8 m on
-//!   cells of 5 m) it is one plant, its matter in kg, with a place, a height and a crown: as wide as its leaves need
-//!   at `lai_crown`, no wider than `crown_h` of its height, lying over the fine cells about it.
+//!   cells of 5 m) it is one plant, its matter in kg, with a place, a height and a crown `crown_h` of its height in
+//!   radius - the stand's own crowns, so nothing changes the day it is counted a tree - lying over the fine cells
+//!   about it. A tree with no leaf and no store is dead and falls.
 //!
 //! Every plant step: light falls through the crowns over a fine cell, the tallest first, and what is left through
 //! the cell's field by height; carbon is paid in water drawn from the 125 m cell's one soil by every plant rooted in
@@ -611,11 +612,15 @@ impl Plants {
             if disc <= fa {
                 self.entries.push(Entry { tree: ti as u32, slot: t.slot, lai: (area / disc) as f32, frac: (disc / fa) as f32, h: t.b.h as f32, took: 0.0, could: 0.0 });
             } else {
-                let ri = (t.r / self.fm) as i64;
-                let r2 = (t.r / self.fm).powi(2);
+                // its own cell whole, and the rest of the disc shared among the cells about it, the nearer the more
+                let rr = t.r / self.fm;
+                let ri = (rr + 0.5) as i64;
+                let mut ring = 0.0;
                 for dj in -ri..=ri {
                     for di in -ri..=ri {
-                        if ((di * di + dj * dj) as f64) > r2 {
+                        let own = di == 0 && dj == 0;
+                        let w = if own { 1.0 } else { (rr + 0.5 - ((di * di + dj * dj) as f64).sqrt()).clamp(0.0, 1.0) };
+                        if w <= 0.0 {
                             continue;
                         }
                         let (a, b) = (i as i64 + di, j as i64 + dj);
@@ -623,12 +628,22 @@ impl Plants {
                             continue;
                         }
                         if let Some(s) = self.slot(a as usize, b as usize) {
-                            self.entries.push(Entry { tree: ti as u32, slot: s as u32, lai: 0.0, frac: 1.0, h: t.b.h as f32, took: 0.0, could: 0.0 });
+                            self.entries.push(Entry { tree: ti as u32, slot: s as u32, lai: 0.0, frac: w as f32, h: t.b.h as f32, took: 0.0, could: 0.0 });
+                            if !own {
+                                ring += w;
+                            }
                         }
                     }
                 }
-                let cells = self.entries.len() - e0 as usize;
-                let lai = (area / (cells as f64 * fa)) as f32;
+                let k = if ring > 0.0 { ((disc / fa - 1.0) / ring).min(1.0) } else { 0.0 };
+                let mut cells = 0.0;
+                for e in &mut self.entries[e0 as usize..] {
+                    if e.slot != t.slot {
+                        e.frac = (e.frac as f64 * k) as f32;
+                    }
+                    cells += e.frac as f64;
+                }
+                let lai = (area / (cells.max(1e-9) * fa)) as f32;
                 for e in &mut self.entries[e0 as usize..] {
                     e.lai = lai;
                 }
@@ -726,7 +741,7 @@ impl Plants {
             for o in 0..5 {
                 b.o[o] = y.o[o].times(self.fa);
             }
-            let r = (p.sla * b.lpk / (PI * p.lai_crown)).sqrt().min(p.crown_h * b.h).max(0.3);
+            let r = (p.crown_h * b.h).max(0.3);
             let t = Tree { b, slot: s as u32, r, absa: 0.0, drop: Litter::default(), born: year, e0: 0, e1: 0, dead: false };
             let id = match self.free.pop() {
                 Some(id) => {
@@ -760,16 +775,18 @@ impl Plants {
             if t.drop.m > 0.0 || t.drop.a > 0.0 || t.drop.b > 0.0 {
                 let own = [Entry { tree: 0, slot: t.slot, lai: 0.0, frac: 1.0, h: 0.0, took: 0.0, could: 0.0 }];
                 let es = if t.e1 > t.e0 { &self.entries[t.e0 as usize..t.e1 as usize] } else { &own[..] };
-                let cells = es.iter().filter(|e| self.grows[e.slot as usize]).count().max(1) as f64;
-                let k = 1.0 / (cells * self.fa);
+                let cells: f64 = es.iter().filter(|e| self.grows[e.slot as usize]).map(|e| e.frac as f64).sum();
                 let mut laid = false;
-                for e in es {
-                    if self.grows[e.slot as usize] {
-                        let l = &mut self.lit[e.slot as usize];
-                        l.m += t.drop.m * k;
-                        l.a += t.drop.a * k;
-                        l.b += t.drop.b * k;
-                        laid = true;
+                if cells > 1e-6 {
+                    for e in es {
+                        if self.grows[e.slot as usize] {
+                            let k = e.frac as f64 / (cells * self.fa);
+                            let l = &mut self.lit[e.slot as usize];
+                            l.m += t.drop.m * k;
+                            l.a += t.drop.a * k;
+                            l.b += t.drop.b * k;
+                            laid = true;
+                        }
                     }
                 }
                 if !laid {
@@ -919,7 +936,7 @@ impl Plants {
                         sig[7] = (10.0 * y.damage).min(1.0);
                         let ph = gt.pheno_cow(&sig);
                         y.h = tree_height(p, &ph, y);
-                        tr.r = (p.sla * y.lpk / (PI * p.lai_crown)).sqrt().min(p.crown_h * y.h).max(0.3);
+                        tr.r = (p.crown_h * y.h).max(0.3);
                         let bact = if y.o[LEAF].m > 1e-15 { ((y.o[LEAF].b - y.cmp * 1000.0 * p.b_comp).max(0.0)) / (y.o[LEAF].m * 1000.0) } else { 0.0 };
                         let act = activity(bact);
                         let w = ph.breadth;
@@ -1011,7 +1028,8 @@ impl Plants {
                         let tr = trees.at(x.at);
                         let (y, drop) = (&mut tr.b, &mut tr.drop);
                         grow(p, rates, &x.ph, x.genes, y, gpp, stress, t, q10t, true, stormy[c], 1.0, drop, &mut f);
-                        if y.mass() < p.m_min || y.age >= y.lifespan(p) {
+                        // a tree with no leaf and no store has nothing to grow a leaf from: it is dead, and falls
+                        if y.mass() < p.m_min || y.age >= y.lifespan(p) || y.o[LEAF].m + y.o[STORE].m < p.bare * y.mass() {
                             fallen.push(x.at as u32);
                         }
                     } else {
