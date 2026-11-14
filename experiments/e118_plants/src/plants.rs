@@ -907,6 +907,34 @@ impl Plants {
                     rt += x.ract;
                 }
                 *cover.at(c) = open / f2 as f64;
+                // the litter decays by warmth, wetness and its own A:B - before the roots take up, in the same step: what
+                // rot frees among roots is theirs, not the next five days' rain's (the base let it lie a step in the soil)
+                let (mut da, mut db) = (0.0, 0.0);
+                for l in 0..f2 {
+                    let s = b * f2 + l;
+                    let li = lit.at(s);
+                    if li.m > 1e-15 {
+                        let la = li.a / (li.m * 1000.0);
+                        let lb = li.b / (li.m * 1000.0);
+                        let qual = 2.0 * lb / (lb + 0.005) / (1.0 + la / 0.01);
+                        let k = 1.0 - (-p.decay * q10t * fill * qual * dt).exp();
+                        let o = Organ { m: li.m * k, a: li.a * k, b: li.b * k };
+                        li.m -= o.m;
+                        li.a -= o.a;
+                        li.b -= o.b;
+                        da += o.a;
+                        db += o.b;
+                        f.returned += o.m * fa;
+                        f.decayed += o.m * fa;
+                    } else if li.a > 0.0 || li.b > 0.0 || li.m != 0.0 {
+                        da += li.a;
+                        db += li.b;
+                        f.returned += li.m * fa;
+                        *li = Litter::default();
+                    }
+                }
+                *sa.at(c) += da * fa / ca;
+                *sb.at(c) += db * fa / ca;
                 // the water of the cell's one soil, by root; A and B by active root
                 let d = (sat.at(t) - *vapor.at(c)).max(0.0);
                 let ratio = (d / p.deficit_ref).clamp(0.2, 3.0);
@@ -971,33 +999,6 @@ impl Plants {
                 f.transp += used_g + used_d;
                 *sa.at(c) -= ta_sum / ca;
                 *sb.at(c) -= tb_sum / ca;
-                // the litter decays by warmth, wetness and its own A:B
-                let (mut da, mut db) = (0.0, 0.0);
-                for l in 0..f2 {
-                    let s = b * f2 + l;
-                    let li = lit.at(s);
-                    if li.m > 1e-15 {
-                        let la = li.a / (li.m * 1000.0);
-                        let lb = li.b / (li.m * 1000.0);
-                        let qual = 2.0 * lb / (lb + 0.005) / (1.0 + la / 0.01);
-                        let k = 1.0 - (-p.decay * q10t * fill * qual * dt).exp();
-                        let o = Organ { m: li.m * k, a: li.a * k, b: li.b * k };
-                        li.m -= o.m;
-                        li.a -= o.a;
-                        li.b -= o.b;
-                        da += o.a;
-                        db += o.b;
-                        f.returned += o.m * fa;
-                        f.decayed += o.m * fa;
-                    } else if li.a > 0.0 || li.b > 0.0 || li.m != 0.0 {
-                        da += li.a;
-                        db += li.b;
-                        f.returned += li.m * fa;
-                        *li = Litter::default();
-                    }
-                }
-                *sa.at(c) += da * fa / ca;
-                *sb.at(c) += db * fa / ca;
             }
             (f, grown, fallen)
         });
