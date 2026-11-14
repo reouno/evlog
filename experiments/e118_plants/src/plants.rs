@@ -17,6 +17,10 @@
 //! frost. Fire runs from fine cell to fine cell through dry fuel the sun reaches. Seeds fall near, or go with the
 //! wind from their plant's height, in metres; a free slot is won by lottery from the cell's bank.
 //!
+//! **Humus** (e118): a share of the A and B that rot frees stays in the soil's organic matter of the 125 m cell and
+//! comes free slowly (decades), by warmth and wetness; roots take it as it does. The land starts with an old soil's
+//! humus (`old_soil`): a world sown on bare rock holds, a century on, only what its rock gave in that century.
+//!
 //! Left out of this rung: the small eaters of leaves, the sea's producers, seeds carried by rivers.
 
 use crate::climate::{Sat, Weather};
@@ -213,6 +217,8 @@ pub struct Plants {
     cstart: Vec<u32>,
     cidx: Vec<u32>,
     pub cover: Vec<f64>, // coarse: the share of the sun reaching the soil (the climate's evaporation reads it)
+    pub hum_a: Vec<f64>, // coarse: g of A a m2 in the soil's humus
+    pub hum_b: Vec<f64>,
     pub gen: Vec<Option<Box<Genotype>>>,
     pub founders: usize,
     light: Vec<f64>,
@@ -430,6 +436,8 @@ impl Plants {
             cstart: vec![0; slots + 1],
             cidx: Vec::new(),
             cover: vec![1.0; n * n],
+            hum_a: vec![0.0; n * n],
+            hum_b: vec![0.0; n * n],
             gen: Vec::new(),
             founders: 0,
             light: vec![0.0; n * n],
@@ -527,6 +535,22 @@ impl Plants {
 
     pub fn due(&self, p: &Params) -> bool {
         self.acc >= p.life_every as usize
+    }
+
+    /// An old soil's humus: `old_soil` years of what a cell's rock gives, by the depth of its soil. What it adds to
+    /// the land's A and B comes back for the ledger.
+    pub fn old_soil(&mut self, p: &Params, ter: &Terrain) -> (f64, f64) {
+        let (mut a, mut b) = (0.0, 0.0);
+        for &c in &self.lands {
+            let c = c as usize;
+            let r = &crate::terrain::ROCKS[ter.rock[c] as usize];
+            let deep = ter.cap[c] / (p.soil * r.hold).max(1e-9);
+            self.hum_a[c] = p.old_soil * p.weather * r.a * deep;
+            self.hum_b[c] = p.old_soil * p.weather * r.b * deep;
+            a += self.hum_a[c];
+            b += self.hum_b[c];
+        }
+        (a, b)
     }
 
     /// The founders: `founders` random genomes. Their seed rains on every cell with soil for `sow_years`.
@@ -797,6 +821,7 @@ impl Plants {
         let (co, bank, lit, sun, trees) = (Shared::new(&mut self.co), Shared::new(&mut self.bank), Shared::new(&mut self.lit), Shared::new(&mut self.sun), Shared::new(&mut self.trees));
         let (ground, vapor, deep, sa, sb) = (Shared::new(ground), Shared::new(vapor), Shared::new(deep), Shared::new(sa), Shared::new(sb));
         let (cover, transp) = (Shared::new(&mut self.cover), Shared::new(&mut self.transp));
+        let (hum_a, hum_b) = (Shared::new(&mut self.hum_a), Shared::new(&mut self.hum_b));
         let (lands, grows, wet, tree_at, under, gen) = (&self.lands, &self.grows, &self.wet, &self.tree_at, &self.under, &self.gen);
         let (light, temp, snow, stormy) = (&self.light, &self.temp, &self.snow, &self.stormy);
         let n = self.n;
@@ -933,8 +958,14 @@ impl Plants {
                         *li = Litter::default();
                     }
                 }
-                *sa.at(c) += da * fa / ca;
-                *sb.at(c) += db * fa / ca;
+                // a share of what rot frees stays in the humus; the humus comes free by warmth and wetness
+                let (da, db) = (da * fa / ca, db * fa / ca);
+                let free = 1.0 - (-p.humus * q10t * fill * dt).exp();
+                let (ha, hb) = (*hum_a.at(c) * free, *hum_b.at(c) * free);
+                *hum_a.at(c) += p.humify * da - ha;
+                *hum_b.at(c) += p.humify * db - hb;
+                *sa.at(c) += (1.0 - p.humify) * da + ha;
+                *sb.at(c) += (1.0 - p.humify) * db + hb;
                 // the water of the cell's one soil, by root; A and B by active root
                 let d = (sat.at(t) - *vapor.at(c)).max(0.0);
                 let ratio = (d / p.deficit_ref).clamp(0.2, 3.0);
@@ -1383,6 +1414,8 @@ impl Plants {
                 m += t.drop.m;
             }
         }
+        a += self.hum_a.iter().sum::<f64>() * self.ca;
+        b += self.hum_b.iter().sum::<f64>() * self.ca;
         (m, a, b)
     }
 }

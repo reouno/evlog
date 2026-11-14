@@ -123,6 +123,9 @@ params! {
     wet_reach = 10.0, "m: ground within this of a pond or a stream reaches the groundwater whatever its roots";
     wet_rise = 2.0, "m: and no higher than this over the water";
     fire_shade = 0.2, "share of the open ground's drying that fuel has in full shade (the sun dries what it reaches)";
+    humify = 0.3, "share of the A and B that rot frees that stays in the soil's humus";
+    humus = 0.02, "share of the humus's A and B that comes free a year at 20 C in a full soil (a residence of decades)";
+    old_soil = 300.0, "years of its rock's giving that a soil of mean depth holds as humus at the sowing (0: bare rock)";
     sow_years = 5.0, "years the founders' seed rains on every cell with soil";
     snap_every = 25.0, "years between snapshots of the trees, the field and the traits";
     fine = 0.0, "k > 0: at the end, draw the ground at k fine cells a cell from the kept years' rain (`_ground5.bin`)";
@@ -553,6 +556,9 @@ fn main() {
             g5.write(&prefix);
             let mut x = Plants::new(&ter, &p, &g5);
             x.found(&p, yr as u32);
+            let (ha, hb) = x.old_soil(&p, &ter);
+            na += ha;
+            nb += hb;
             eprintln!(
                 "ground5 and plants: {}x{} cells of {} m, {} with soil ({:.1} km2), {} beside water, in {:.1} s",
                 g5.n, g5.n, g5.cell_m, x.grows.iter().filter(|&&v| v).count(), x.grows.iter().filter(|&&v| v).count() as f64 * x.fa / 1e6, x.wet.iter().filter(|&&v| v).count(), t5.elapsed().as_secs_f64()
