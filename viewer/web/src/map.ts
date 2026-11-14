@@ -13,7 +13,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 const SEA = 1, POND = 2, STREAM = 3;
 const T = 64; // fine cells a tile side
-const BROOK = 0.005; // m3/s: a stream under this in its month is a dry bed
+const TRICKLE = 0.001; // m3/s: a stream under a litre a second in its month is a dry bed
 const BUILDS_PER_FRAME = 10;
 
 const $ = (id: string) => document.getElementById(id)!;
@@ -129,7 +129,7 @@ class Land {
 
   /** Whether a stream's cell runs on the day set: its year's flow by its month's share. */
   runs(c: number, i: number, j: number): boolean {
-    return this.flow[c] * this.coarse(this.dFlow, i, j) >= BROOK;
+    return this.flow[c] * this.coarse(this.dFlow, i, j) >= TRICKLE;
   }
 
   /** A coarse field at a fine cell (bilinear between coarse centres). */
@@ -304,10 +304,11 @@ async function main(): Promise<void> {
   sea.position.set(L.size / 2, 0, L.size / 2);
   sea.renderOrder = 1;
   scene.add(sea);
-  // and a floor under it past the map's edge, where there is no ground to see through the water
+  // and a floor under it past the map's edge, where there is no ground to see through the water (over the tiles'
+  // own deep floor at -40, so that no seam shows at the border)
   const floor = new THREE.Mesh(new THREE.PlaneGeometry(L.size * 40, L.size * 40), new THREE.MeshStandardMaterial({ color: new THREE.Color(0.16, 0.36, 0.52), roughness: 0.95 }));
   floor.rotation.x = -Math.PI / 2;
-  floor.position.set(L.size / 2, -41, L.size / 2);
+  floor.position.set(L.size / 2, -38, L.size / 2);
   scene.add(floor);
   const groundMat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.95, metalness: 0 });
 
