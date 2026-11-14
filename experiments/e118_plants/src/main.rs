@@ -115,7 +115,6 @@ params! {
     snow_melt = 0.0, "mm of snow melted a day for each degree above freezing (e117; 0: no snow lies)";
     ice = 3000.0, "mm of water: snow lying deeper than this creeps to the cell below";
     // e118: plants at metres (#135 rung 2)
-    h_thing = 3.0, "m: a stand that grows past this height becomes a thing, one plant with a crown (a crown about 2 m wide)";
     h_stem = 4.2, "m: the height a kg of wood stands as one stem, by its mass's fourth root (wood of 500 kg a m3, a stem as slender as trees are: 50 d^(2/3), half the height at which it buckles)";
     lai_crown = 4.0, "m2 of leaf a m2 of crown: a crown spreads as wide as its leaves need at this";
     crown_h = 0.35, "a crown's radius is at most this share of the tree's height (a branch reaches out no further)";
@@ -431,7 +430,7 @@ fn snapshot(prefix: &str, year: usize, pl: &Plants, sv: &Survey) {
         out.write_all(&t.born.to_le_bytes()).unwrap();
     }
     out.flush().unwrap();
-    // the field: leaf (kg a m2 x 100), height (m x 50), litter (kg a m2 x 50), light under the crowns (x 255), years
+    // the field: leaf (kg a m2 x 100), height (m x 25), litter (kg a m2 x 50), light under the crowns (x 255), years
     // since it burnt (255: never, or no soil)
     let cells = pl.nf * pl.nf;
     let mut layers = vec![vec![0u8; cells]; 5];
@@ -455,7 +454,7 @@ fn snapshot(prefix: &str, year: usize, pl: &Plants, sv: &Survey) {
             }
         }
         layers[0][c] = (leaf * 100.0).min(255.0) as u8;
-        layers[1][c] = (h * 50.0).min(255.0) as u8;
+        layers[1][c] = (h * 25.0).min(255.0) as u8;
         layers[2][c] = (pl.lit[q].m * 50.0).min(255.0) as u8;
         if pl.burnt_year[q] > 0 {
             layers[4][c] = (year as i64 - pl.burnt_year[q] as i64).clamp(0, 254) as u8;
@@ -764,7 +763,7 @@ fn main() {
         std::fs::write(
             format!("{prefix}_snaps.json"),
             format!(
-                "{{\"years\":[{}],\"sow\":{sow},\"founders\":{},\"n\":{n},\"fine\":{},\"cell_m\":{},\"trees\":[\"x:f32\",\"y:f32\",\"height:f32\",\"crown_r:f32\",\"leaf:f32\",\"wood:f32\",\"age:f32\",\"tough:f32\",\"genotype:u32\",\"born:u32\"],\"field\":[\"leaf x100\",\"height x50\",\"litter x50\",\"light under crowns x255\",\"years since fire (255 never)\"],\"traits\":[{}],\"year\":\"12 grids of fine/{REC} a side (field leaf x100, u8), 12 rows of a byte a tree in the trees' order (leaf as a share of its fullest month x255), then {upy} updates x 3 f32 (a front's reach in degrees or 99, wind east, wind north); months from the spring equinox\",\"traits_layout\":\"field's traits, trees' traits, then field, wood, crown, trees; float32 on n x n; seed_mass is its natural log\"}}\n",
+                "{{\"years\":[{}],\"sow\":{sow},\"founders\":{},\"n\":{n},\"fine\":{},\"cell_m\":{},\"trees\":[\"x:f32\",\"y:f32\",\"height:f32\",\"crown_r:f32\",\"leaf:f32\",\"wood:f32\",\"age:f32\",\"tough:f32\",\"genotype:u32\",\"born:u32\"],\"field\":[\"leaf x100\",\"height x25\",\"litter x50\",\"light under crowns x255\",\"years since fire (255 never)\"],\"traits\":[{}],\"year\":\"12 grids of fine/{REC} a side (field leaf x100, u8), 12 rows of a byte a tree in the trees' order (leaf as a share of its fullest month x255), then {upy} updates x 3 f32 (a front's reach in degrees or 99, wind east, wind north); months from the spring equinox\",\"traits_layout\":\"field's traits, trees' traits, then field, wood, crown, trees; float32 on n x n; seed_mass is its natural log\"}}\n",
                 snaps.iter().map(|y| y.to_string()).collect::<Vec<_>>().join(","),
                 x.founders,
                 x.nf,

@@ -6,9 +6,11 @@
 //!
 //! - **the field**: up to `KF` cohorts (a stand of one genotype: the mass and the A and B of each organ - leaf, wood,
 //!   root, store, seed - a m2), a litter and a seed bank, by `base/`'s producer law (`base/src/life.rs`, e103-e109);
-//! - **a tree** rooted in it, at most one: a cohort that grew past `h_thing` (the height whose crown is about 2 m
-//!   wide) becomes one plant, its matter in kg, with a place, a height and a crown. The crown is as wide as its leaves
-//!   need at `lai_crown` and no wider than `crown_h` of its height; it lies over the fine cells about it.
+//! - **a tree** rooted in it, at most one. A stand of the field is stems that thin as they grow: each stands as high
+//!   as its wood lets one stem stand (`h_stem`), their crowns (`crown_h` of the height wide) filling the cell, so a
+//!   stand is as tall as the root of its wood a m2 allows. When it has thinned to one stem a cell (about 8 m on
+//!   cells of 5 m) it is one plant, its matter in kg, with a place, a height and a crown: as wide as its leaves need
+//!   at `lai_crown`, no wider than `crown_h` of its height, lying over the fine cells about it.
 //!
 //! Every plant step: light falls through the crowns over a fine cell, the tallest first, and what is left through
 //! the cell's field by height; carbon is paid in water drawn from the 125 m cell's one soil by every plant rooted in
@@ -290,11 +292,17 @@ impl Rates {
     }
 }
 
-/// A plant's height: its genome's, what its wood holds up over its leaves (`sigma`), and what its wood can stand as
-/// one stem (e118: `h_stem` m at a kg, by the mass's fourth root - a stem as slender as trees are, 50 d^(2/3)). `wood_kg` is
-/// the wood of the tree, or of the stand on its fine cell: a stand thins to the stems its wood can hold up.
-fn height(p: &Params, ph: &Pheno, y: &Cohort, wood_kg: f64) -> f64 {
-    ph.height.min(p.h0 + y.o[WOOD].m / (p.sigma * y.lpk.max(1e-4))).min(p.h0 + p.h_stem * wood_kg.sqrt().sqrt())
+/// A tree's height: its genome's, what its wood holds up over its leaves (`sigma`), and what its wood can stand as
+/// one stem (e118: `h_stem` m at a kg, by the mass's fourth root - a stem as slender as trees are, 50 d^(2/3)).
+fn tree_height(p: &Params, ph: &Pheno, y: &Cohort) -> f64 {
+    ph.height.min(p.h0 + y.o[WOOD].m / (p.sigma * y.lpk.max(1e-4))).min(p.h0 + p.h_stem * y.o[WOOD].m.sqrt().sqrt())
+}
+
+/// A stand's height (its matter a m2): the same, its wood shared among the stems whose crowns, `crown_h` of the
+/// height in radius, fill the ground - so many stems while it is low, fewer as it grows. With n stems a m2, each
+/// of wood w / n and height h_stem (w / n)^(1/4), and n pi (crown_h h)^2 = 1: h = h_stem^2 crown_h sqrt(pi w).
+fn stand_height(p: &Params, ph: &Pheno, y: &Cohort) -> f64 {
+    ph.height.min(p.h0 + y.o[WOOD].m / (p.sigma * y.lpk.max(1e-4))).min(p.h0 + p.h_stem * p.h_stem * p.crown_h * (PI * y.o[WOOD].m).sqrt())
 }
 
 /// One plant's carbon, growth and losses over a step: the base's law (`base/src/life.rs`). `y` holds its matter in
@@ -495,6 +503,11 @@ impl Plants {
         }
         pl.soil = (0..slots).filter(|&s| pl.grows[s]).map(|s| s as u32).collect();
         pl
+    }
+
+    /// The height at which a stand has thinned to one stem a fine cell: its crown as wide as the cell.
+    pub fn h_thing(&self, p: &Params) -> f64 {
+        (self.fa / PI).sqrt() / p.crown_h
     }
 
     /// A slot's fine cell (column, row).
@@ -702,25 +715,16 @@ impl Plants {
         let t2 = std::time::Instant::now();
         let mut f = LFlux::default();
         let (grown, fallen) = self.growth(p, ter, sat, ground, vapor, deep, sa, sb, dt, phase, threads, &mut f);
-        // a cohort past the height of a thing becomes a tree, with the part of the stand its crown holds
+        // a stand thinned to one stem a cell is a tree: the whole of it
         for (s, i) in grown {
             if self.tree_at[s] != NONE {
                 continue;
             }
-            let y = &mut self.co[s * KF + i];
-            let crown = PI * (p.crown_h * y.h).powi(2);
-            let part = (crown * p.lai_crown / (p.sla * y.lpk.max(y.o[LEAF].m).max(1e-12) * self.fa)).clamp(0.02, 1.0);
-            let mut b = Cohort { g: y.g, lpk: y.lpk * part * self.fa, lite: y.lite, damage: y.damage, h: y.h, age: y.age, ..Default::default() };
+            let y = std::mem::take(&mut self.co[s * KF + i]);
+            let mut b = Cohort { g: y.g, cmp: y.cmp * self.fa, pa: y.pa * self.fa, pb: y.pb * self.fa, lpk: y.lpk * self.fa, lite: y.lite, damage: y.damage, h: y.h, age: y.age, ..Default::default() };
             for o in 0..5 {
-                b.o[o] = y.o[o].take(part).times(self.fa);
+                b.o[o] = y.o[o].times(self.fa);
             }
-            b.cmp = y.cmp * part * self.fa;
-            b.pa = y.pa * part * self.fa;
-            b.pb = y.pb * part * self.fa;
-            y.cmp *= 1.0 - part;
-            y.pa *= 1.0 - part;
-            y.pb *= 1.0 - part;
-            y.lpk *= 1.0 - part;
             let r = (p.sla * b.lpk / (PI * p.lai_crown)).sqrt().min(p.crown_h * b.h).max(0.3);
             let t = Tree { b, slot: s as u32, r, absa: 0.0, drop: Litter::default(), born: year, e0: 0, e1: 0, dead: false };
             let id = match self.free.pop() {
@@ -827,6 +831,7 @@ impl Plants {
         let n = self.n;
         let rates = Rates::new(p, dt);
         let rates = &rates;
+        let h_thing = self.h_thing(p);
         let parts = par::pieces(threads, lands.len(), |lo, hi| {
             let mut f = LFlux::default();
             let mut grown: Vec<(usize, usize)> = Vec::new();
@@ -868,9 +873,9 @@ impl Plants {
                         sig[6] = if mass > 0.0 { y.o[STORE].m / mass } else { 0.0 };
                         sig[7] = (10.0 * y.damage).min(1.0);
                         let ph = gt.pheno_cow(&sig);
-                        y.h = height(p, &ph, y, y.o[WOOD].m * fa);
+                        y.h = stand_height(p, &ph, y);
                         if has_tree {
-                            y.h = y.h.min(p.h_thing);
+                            y.h = y.h.min(h_thing);
                         }
                         tmp.push(Tmp { ph, genes: gt.genes.len(), at: s * KF + i, tree: false, scale: fa, pp: 0.0, act: 0.0, rs: 0.0, rd: 0.0, ract: 0.0, snowed: y.h < depth, slot: s, area: fa });
                     }
@@ -912,7 +917,7 @@ impl Plants {
                         sig[6] = if mass > 0.0 { y.o[STORE].m / y.mass() } else { 0.0 };
                         sig[7] = (10.0 * y.damage).min(1.0);
                         let ph = gt.pheno_cow(&sig);
-                        y.h = height(p, &ph, y, y.o[WOOD].m);
+                        y.h = tree_height(p, &ph, y);
                         tr.r = (p.sla * y.lpk / (PI * p.lai_crown)).sqrt().min(p.crown_h * y.h).max(0.3);
                         let bact = if y.o[LEAF].m > 1e-15 { ((y.o[LEAF].b - y.cmp * 1000.0 * p.b_comp).max(0.0)) / (y.o[LEAF].m * 1000.0) } else { 0.0 };
                         let act = activity(bact);
@@ -1018,7 +1023,7 @@ impl Plants {
                             l.a += y.pa;
                             l.b += y.pb;
                             *y = Cohort::default();
-                        } else if y.h >= p.h_thing && tree_at[x.slot] == NONE {
+                        } else if y.h >= h_thing && tree_at[x.slot] == NONE {
                             grown.push((x.slot, x.at % KF));
                         }
                     }
