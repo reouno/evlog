@@ -34,9 +34,9 @@ rungs, each judged before the next stands on it. The older world is e001-e101 an
   seed with their A and B, a height and an age. Light falls through the leaves by height; carbon fixed is paid in
   water from the soil and the groundwater; roots take A and B; tissue is lost to turnover, frost, wilting, storms
   and fire, and returns as litter. A stand dies at the lifespan its wood sets; a free slot is won by lottery from the
-  seed bank. In the sea the same genome floats. **At metres** (e118, in its crate): the same law on 5 m cells; a stand
-  thins as it grows (a stem stands 4.2 m at a kg, by the fourth root) and at one stem a cell (8 m) is a tree, a thing
-  whose crown, 0.35 of its height wide, shades the cells about it; a 125 m cell's plants share its one soil and humus.
+  seed bank. In the sea the same genome floats. **At metres** (e118, e119, in e119's crate): the same law on 5 m cells; a
+  height is what the wood holds up over its leaves and can stand as stems (4.2 m at a kg, by the fourth root); a stand thins
+  and at one stem a cell (8 m) is a tree, a thing whose crown, 0.35 of its height wide, shades about it; a 125 m cell shares one soil.
 - **Small eaters** (e103), life below a body's scale: up to 2 cohorts a cell eat leaves by their mass and B, less by
   their toughness, and are harmed by a compound whose 8-bit key is far from every detox key they carry.
 - **The living cross metres** (e109), a cell only where a thing lands: a seed goes its stand's height x the wind /
@@ -92,8 +92,8 @@ is not searched to hit a result. If a rung fails on a ground that passed, the fa
 - **Rung 2, producers** (e103-e105): ledgers; producers on >= 50% of the land and >= 20% of the sea; >= 5 effective
   groups held by place (NMI >= 0.2); they keep changing; the living change the ground. On the planet: 7.6-11.9
   groups, mutants 41-51% after a millennium, no form replaced. On the islands (e109, 300 years): 7-8 groups, NMI
-  0.12-0.13 and rising - a transient. At metres (e118, 120 years; 500): ledgers; crowns over 5.7% of the ground (10.4%;
-  asked 20-70%), by warmth and fire, not water; two (three) sown lines are over 90% of the trees, under 10 m by their limit.
+  0.12-0.13 and rising - a transient. At metres (e119, 120 years; 4 of its 6 lines): ledgers; crowns over 23.5% of the
+  ground, 19% of the cells closed woods, 46% open, by warmth first; old trees over 12 m; no floor dark. Under a genome's limit on a height (e118): a thicket.
 - **Rung 3, bodies** (e106): ledgers; bodies on >= 10% of the land's cells and producers on >= 50% for 50 years;
   bodies eat >= 10% of what producers fix and producers turn over; the freedoms are used (adult masses x100, two
   strata, flesh 10% of the diet, plastic weights, a group that travels); >= 5 effective groups of bodies by place.
@@ -115,6 +115,6 @@ latitudes 44-64 N folded south to north (the one stated fiction), a year of 365 
 125 m cells, the ground drawn once at 5 m with ponds and streams (`ground5.rs`). Time is continuous: an animal decides
 when its mind says and pays for each decision; plants move every 5 days, the climate every 3.2 hours.
 
-**Compute**: on six threads the bare map takes 4.4 s a year (e117), with plants 44 s (e118). A decision costs about 1 us; a
+**Compute**: on six threads the bare map takes 4.4 s a year (e117), with plants 49 s (e119). A decision costs about 1 us; a
 world year in about 10 minutes on six threads (1e4 animals) allows about 500 an animal-day (e116's placeholder made
 2,400-9,000). Islands run on their own threads. The map has its own viewer page (`viewer map`).
