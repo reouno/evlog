@@ -14,6 +14,8 @@ WET, DRY = 2 / 3, 1 / 3  # the lowlands' wettest third and driest third, by the 
 LINE = 0.05      # a height band is under trees while crowns stand over this share of its ground or more
 BAND = 200       # m: the height bands of the tree line
 OLD = 20         # years after the sowing: a tree that became a thing by then is one of the first
+OPEN, CLOSED = 0.05, 0.5  # a cell is open ground with crowns over less than the first share of it, a closed wood over the second or more
+STOOD, TALL = 50, 12      # years a tree has stood to be an old one; m an old tree is asked to pass
 TREE = np.dtype([('x', '<f4'), ('y', '<f4'), ('h', '<f4'), ('r', '<f4'), ('leaf', '<f4'), ('wood', '<f4'), ('age', '<f4'),
                  ('tough', '<f4'), ('g', '<u4'), ('born', '<u4')])
 
@@ -94,6 +96,31 @@ for name, v, bins in (('year\'s mean C', g('temp'), [-50, 9, 11, 13, 15, 50]), (
             rows.append(dict(part=f'{name} {lo} to {hi}', cells=int(sel.sum()), wood=float(wood[sel].mean()), cover=float(cover[sel].mean()), field=float(field[sel].mean()),
                              burnt=float(g('burnt')[sel].mean() / k ** 2)))
 
+# the lines written before the run: a wood's floor against open ground; what the open ground is; wet against dry, band by band
+temp, burn = g('temp'), 100 * g('burnt') / k ** 2
+opn, wdd, clo = soil & (cover < OPEN), soil & (cover >= OPEN), soil & (cover >= CLOSED)
+print(f'   closed woods (crowns over {100 * CLOSED:.0f}% or more): {100 * clo.sum() / soil.sum():.0f}% of the cells, crowns take {100 * crown[clo].mean():.0f}% of their light, field {field[clo].mean():.2f} kg/m2; '
+      f'open ground (under {100 * OPEN:.0f}%): {100 * opn.sum() / soil.sum():.0f}%, field {field[opn].mean():.2f}; the floor holds x{field[clo].mean() / field[opn].mean():.2f}')
+print(f'   open ground: {temp[opn].mean():.1f} C, burnt {burn[opn].mean():.2f}% a year, rain {rain[opn].mean():.0f} mm; wooded: {temp[wdd].mean():.1f} C, burnt {burn[wdd].mean():.2f}%, rain {rain[wdd].mean():.0f} mm')
+for nm, sel in (('open ground', opn), ('wooded', wdd), ('closed woods', clo)):
+    rows.append(dict(part=nm, cells=int(sel.sum()), rain=round(float(rain[sel].mean())), wood=float(wood[sel].mean()), cover=float(cover[sel].mean()), field=float(field[sel].mean()),
+                     burnt=float(burn[sel].mean() / 100), temp=float(temp[sel].mean()), crown=float(crown[sel].mean())))
+cold, fire = temp < 9, burn >= 2
+for nm, sel in (('cold (under 9 C)', soil & cold), ('burnt 2% a year or more, not cold', soil & ~cold & fire), ('neither', soil & ~cold & ~fire)):
+    o = sel & opn
+    print(f'   {nm}: {sel.sum()} cells, {100 * o.sum() / sel.sum():.0f}% of them open ({100 * o.sum() / opn.sum():.0f}% of the open ground), under crowns {100 * cover[sel].mean():.1f}%')
+    rows.append(dict(part=f'{nm}', cells=int(sel.sum()), cover=float(cover[sel].mean()), open_share=float(o.sum() / sel.sum()), of_open=float(o.sum() / opn.sum())))
+nei = soil & ~cold & ~fire
+print(f'   neither cold nor burnt, open against wooded: rain {rain[nei & opn].mean():.0f} / {rain[nei & wdd].mean():.0f} mm, soil holds {s("cap")[nei & opn].mean():.0f} / {s("cap")[nei & wdd].mean():.0f} mm, '
+      f'{elev[nei & opn].mean():.0f} / {elev[nei & wdd].mean():.0f} m up, wood {wood[nei & opn].mean():.2f} / {wood[nei & wdd].mean():.2f}')
+for lo, hi in [(0, 32), (32, 64), (64, 96), (96, 128)]:
+    sel = low.copy(); sel[:lo] = False; sel[hi:] = False
+    if sel.sum() >= 30:
+        q1, q2 = np.quantile(rain[sel], [DRY, WET]); w_, d_ = sel & (rain >= q2), sel & (rain <= q1)
+        print(f'   lowlands {lat[lo, 0]:.0f}-{lat[hi - 1, 0]:.0f} N, wettest third against driest: rain {rain[w_].mean():.0f} / {rain[d_].mean():.0f} mm, wood {wood[w_].mean():.2f} / {wood[d_].mean():.2f} '
+              f'(x{wood[w_].mean() / max(wood[d_].mean(), 1e-9):.1f}), burnt {burn[w_].mean():.2f} / {burn[d_].mean():.2f}% a year')
+        rows.append(dict(part=f'lowland {lat[lo, 0]:.0f}-{lat[hi - 1, 0]:.0f}N wet over dry', wood=float(wood[w_].mean() / max(wood[d_].mean(), 1e-9))))
+
 # 3. a tree line
 print('3. by height:')
 top = None
@@ -136,6 +163,14 @@ for lo, hi in [(0, 5), (5, 20), (20, 50), (50, 200)]:
         w50 = float(np.median(trees['wood'][sel]))
         print(f'   a tree for {lo}-{hi} years: {sel.sum()}, median {np.median(trees["h"][sel]):.1f} m with {w50:.0f} kg of wood (a stem of it could stand {4.2 * w50 ** 0.25:.1f} m) and {np.median(trees["leaf"][sel]):.1f} kg of leaf')
         rows.append(dict(part=f'a tree for {lo}-{hi} years', trees=int(sel.sum()), height=float(np.median(trees['h'][sel])), wood=w50))
+old = since >= STOOD
+print(f'   trees that have stood {STOOD} years or more: {old.sum()}, {100 * (trees["h"][old] > TALL).mean():.0f}% over {TALL} m, heights 10/50/90/99% {np.percentile(trees["h"][old], [10, 50, 90, 99]).round(1)} m')
+tw = trees['wood'].sum()
+for lo, hi in [(0, 10), (10, 20), (20, 100)]:
+    sel = (trees['h'] >= lo) & (trees['h'] < hi)
+    print(f'   trees {lo}-{hi} m: {100 * sel.mean():.1f}% of them, {100 * trees["wood"][sel].sum() / tw:.0f}% of the wood, {100 * (trees["r"][sel] ** 2).sum() / (trees["r"] ** 2).sum():.0f}% of the crowns\' ground')
+    rows.append(dict(part=f'trees {lo}-{hi} m', trees=int(sel.sum()), wood=float(trees['wood'][sel].sum() / tw)))
+rows.append(dict(part=f'trees stood {STOOD} years', trees=int(old.sum()), height=float(np.median(trees['h'][old])), over_tall=float((trees['h'][old] > TALL).mean())))
 rows.append(dict(part='trees', trees=len(trees), first_share=float(first.mean()), fall_a_year=died, genotypes=int(len(np.unique(trees['g'])))))
 
 keys = []
@@ -152,4 +187,7 @@ with open(os.path.join(os.path.dirname(pre), 'provenance.csv' if run == 'main' e
     w.writerow(['maps read (the kept years, their mean)', ' '.join(str(y) for y in m['years'])])
     w.writerow(['lowland: land under (m)', LOW]); w.writerow(['wet and dry lowlands: thirds of the kept years\' rain', f'over {q_wet:.0f} mm, under {q_dry:.0f} mm'])
     w.writerow(['under trees: crowns stand over this share of the ground or more', LINE]); w.writerow(['height bands (m)', BAND])
+    w.writerow(['open ground: crowns over less than this share of a cell', OPEN]); w.writerow(['a closed wood: crowns over this share of a cell or more', CLOSED])
+    w.writerow(['cold: a year\'s mean under (C)', 9]); w.writerow(['burnt: this % of a cell a year or more', 2])
+    w.writerow(['an old tree: a thing for (years) or more', STOOD]); w.writerow(['an old tree is asked to pass (m)', TALL])
     w.writerow(['one of the first trees: a thing within (years of the sowing)', OLD]); w.writerow(['trees falling a year: mean of the last (years)', 10])
