@@ -23,6 +23,7 @@
 
 mod climate;
 mod genome;
+mod ground5;
 mod hydro;
 mod life;
 mod noise;
@@ -109,6 +110,21 @@ params! {
     storm_rain = 4.0, "times the rain inside a storm";
     // e108: the small world (#126, #127). The defaults leave the planet as it was.
     cell_km = 63.0, "km: a cell's side";
+    // e117: the map at an animal's size (#135)
+    lat_span = 0.0, "1: the rows run once from lat_lo (south, row 0) to lat_hi (north), a band of latitude folded into the map; 0: there and back";
+    survey = 0.0, "n > 0: print the islands the first n terrain seeds make, and stop";
+    relief_pow = 1.0, "the land's heights as a share of the highest, to this power (e117: above 1 the lowlands flatten)";
+    mirror = 0.0, "1: the generated ground mirrored west for east (e117: which side of an island its heights stand on)";
+    track = 0.0, "mm a year the fronts bring into the air over a cell that every front reaches (e117; 0: no fronts, the sea's wet air always)";
+    track_lat = 48.0, "degrees: the latitude a front reaches south to, in the mean, at the equinoxes (the storm track's edge)";
+    track_shift = 8.0, "degrees the edge lies further north at midsummer and further south at midwinter";
+    track_width = 5.0, "degrees: the spread of the fronts' reach about the edge";
+    front_days = 1.5, "days a front lasts, in the mean";
+    front_gap = 2.5, "days of clear air between two fronts, in the mean";
+    dry = 0.2, "share by which the air sunk from aloft (between fronts, and south of one) is short of the sea air's water";
+    snow_melt = 0.0, "mm of snow melted a day for each degree above freezing (e117; 0: no snow lies)";
+    ice = 3000.0, "mm of water: snow lying deeper than this creeps to the cell below";
+    fine = 0.0, "k > 0: at the end, draw the ground at k fine cells a cell from the kept years' rain (`_ground5.bin`)";
     edge = 0.0, "cells from the border over which the ground sinks under the sea (0: the world wraps as a planet)";
     span_lon = 1.0, "share of a day the world's width spans (1: a planet's longitudes; 0: one hour everywhere)";
     aspect = 0.0, "1: a slope's light follows its tilt against the sun";
@@ -216,8 +232,13 @@ struct Year {
     q: Vec<f64>,
     lake: Vec<f64>,
     light: Vec<f64>,
+    month: Vec<f64>, // e117: twelve months of `MONTHLY`, a field after a field
     updates: usize,
 }
+
+/// A month's maps (e117): the mean temperature, the rain and snow fallen (mm), the soil's mean fill, the mean snow
+/// lying (mm of water) and the mean water run out of the cell an update. The year starts at the spring equinox.
+const MONTHLY: [&str; 5] = ["temp", "rain", "fill", "snow", "flow"];
 
 const FIELDS: [&str; 17] = [
     "temp", "swing", "fill", "rain", "discharge", "lake", "a", "b", "biomass", "height", "lai", "litter", "eaters", "burnt", "transp", "lead", "light",
@@ -226,9 +247,12 @@ const FIELDS: [&str; 17] = [
 impl Year {
     fn new(cells: usize) -> Self {
         let z = vec![0.0; cells];
-        Year { temp: z.clone(), quarter: [z.clone(), z.clone(), z.clone(), z.clone()], fill: z.clone(), rain: z.clone(), q: z.clone(), lake: z.clone(), light: z, updates: 0 }
+        Year { temp: z.clone(), quarter: [z.clone(), z.clone(), z.clone(), z.clone()], fill: z.clone(), rain: z.clone(), q: z.clone(), lake: z.clone(), light: z, month: vec![0.0; 12 * MONTHLY.len() * cells], updates: 0 }
     }
-    fn add(&mut self, t: &Terrain, air: &Air, hy: &Hydro, quarter: usize, threads: usize) {
+    fn add(&mut self, t: &Terrain, air: &Air, hy: &Hydro, quarter: usize, month: usize, threads: usize) {
+        let cells = t.sea.len();
+        let mo = par::Shared::new(&mut self.month);
+        let m0 = month * MONTHLY.len() * cells;
         let (temp, qt, rain, fill, q, lake, light) = (
             par::Shared::new(&mut self.temp),
             par::Shared::new(&mut self.quarter[quarter]),
@@ -244,7 +268,12 @@ impl Year {
                 *qt.at(c) += air.temp[c];
                 *rain.at(c) += air.rain_now[c];
                 *light.at(c) += air.light[c];
+                *mo.at(m0 + c) += air.temp[c];
+                *mo.at(m0 + cells + c) += air.rain_now[c];
                 if !t.sea[c] {
+                    *mo.at(m0 + 2 * cells + c) += (air.ground[c] / t.cap[c]).min(1.0);
+                    *mo.at(m0 + 3 * cells + c) += air.snow[c];
+                    *mo.at(m0 + 4 * cells + c) += hy.q[c];
                     *fill.at(c) += (air.ground[c] / t.cap[c]).min(1.0);
                     *q.at(c) += hy.q[c];
                     if air.ground[c] - t.cap[c] >= POOL {
@@ -254,6 +283,13 @@ impl Year {
             }
         });
         self.updates += 1;
+    }
+    /// The year's months, in the order of `MONTHLY`: means over a month's updates, the rain its sum.
+    fn season(&self) -> Vec<f32> {
+        let cells = self.temp.len();
+        let per = self.updates as f64 / 12.0;
+        let k = MONTHLY.len();
+        (0..12 * k * cells).map(|i| (self.month[i] / if (i / cells) % k == 1 { 1.0 } else { per }) as f32).collect()
     }
     /// The year's maps, in the order of `FIELDS`.
     fn maps(&self, hy: &Hydro, life: &Life, st: &State, p: &Params) -> Vec<Vec<f32>> {
@@ -416,6 +452,19 @@ fn main() {
         std::fs::create_dir_all(dir).unwrap();
     }
     let t0 = Instant::now();
+    if p.survey > 0.0 {
+        // e117: which seeds make the map asked for (#135): four islands, one high, a few km2 each
+        let km2 = p.cell_km * p.cell_km;
+        for seed in 1..=p.survey as usize {
+            let mut q = p.clone();
+            q.seed = seed as f64;
+            let t = Terrain::new(&q);
+            let isl = terrain::islands(&t);
+            let big: Vec<String> = isl.iter().filter(|i| i.0 as f64 * km2 >= 1.0).map(|i| format!("{:.1}km2/{:.0}m", i.0 as f64 * km2, i.1)).collect();
+            println!("seed {seed}: {} over 1 km2 ({} in all): {}", big.len(), isl.len(), big.join(" "));
+        }
+        return;
+    }
     let ter = Terrain::new(&p);
     let n = ter.n;
     let cells = n * n;
@@ -439,6 +488,7 @@ fn main() {
     let mut leadbin = std::io::BufWriter::new(std::fs::File::create(format!("{prefix}_lead.bin")).unwrap());
     let mut lead_years: Vec<usize> = Vec::new();
     let mut kept: Vec<(usize, Vec<Vec<f32>>)> = Vec::new();
+    let mut months: Vec<Vec<f32>> = Vec::new();
     let years = p.years as usize;
     for yr in 0..years {
         if yr > 0 {
@@ -458,7 +508,7 @@ fn main() {
             let t0 = Instant::now();
             let f = air.update(&p, &ter, &sat, &mut wx, step, &life.cover);
             let t1 = Instant::now();
-            let h = hy.update(&p, &ter, &mut air.ground, &air.temp, &air.rain_now);
+            let h = hy.update(&p, &ter, &mut air.ground, &air.temp, &air.wet_now);
             let t2 = Instant::now();
             fl.add(&f);
             hf.add(&h);
@@ -470,7 +520,7 @@ fn main() {
                 }
             }
             let t3 = Instant::now();
-            year.add(&ter, &air, &hy, (u * 4 / upy).min(3), p.threads as usize);
+            year.add(&ter, &air, &hy, (u * 4 / upy).min(3), (u * 12 / upy).min(11), p.threads as usize);
             secs[0] += (t1 - t0).as_secs_f64();
             secs[1] += (t2 - t1).as_secs_f64();
             secs[2] += (t3 - t2).as_secs_f64();
@@ -531,6 +581,10 @@ fn main() {
             "year {:>3}: land {:.1} C, rain {:.0} mm, evap {:.0}, transp {:.0}, to sea {:.0}, land bio {:.3}, cover {:.2}/{:.2}, h {:.1}, eaters {:.2e}, burnt {}, genotypes {ng}/{neg}, leading {}, mutants {mutant_share:.3}, errs w {werr:.0e} A {aerr:.0e} C {cerr:.0e}, {:.1} s",
             yr + 1, land_temp, fl.land_rain / lfn, fl.land_evap / lfn, lf.transp / lfn, hf.to_sea / lfn, lbio / lfn, lcov as f64 / lfn, scov as f64 / sfn, lh / lbio.max(1e-30), emass / cells as f64, lf.burnt_cells, leads.len(), ty.elapsed().as_secs_f64()
         );
+        if p.snow_melt > 0.0 {
+            let lying = air.snow.iter().filter(|&&v| v > 1.0).count();
+            eprintln!("  snow at the year's end (the spring equinox): on {lying} cells, deepest {:.0} mm", air.snow.iter().cloned().fold(0.0, f64::max));
+        }
         eprintln!("  life secs: accumulate {:.1}, cells {:.1}, fire {:.1}, eaters {:.1}, seeds {:.1}", life.secs[0], life.secs[1], life.secs[2], life.secs[3], life.secs[4]);
         life.secs = [0.0; 5];
         if life.sown {
@@ -547,6 +601,7 @@ fn main() {
         }
         if yr + (p.maps_years as usize) >= years {
             kept.push((yr + 1, year.maps(&hy, &life, &st, &p)));
+            months.push(year.season());
         }
     }
     leadbin.flush().unwrap();
@@ -585,6 +640,28 @@ fn main() {
         ),
     )
     .unwrap();
+    if !months.is_empty() {
+        // e117: the kept years' mean months
+        let mut bin = std::io::BufWriter::new(std::fs::File::create(format!("{prefix}_season.bin")).unwrap());
+        for i in 0..months[0].len() {
+            let v = months.iter().map(|m| m[i]).sum::<f32>() / months.len() as f32;
+            bin.write_all(&v.to_le_bytes()).unwrap();
+        }
+        std::fs::write(
+            format!("{prefix}_season.json"),
+            format!("{{\"n\":{n},\"months\":12,\"fields\":[{}],\"start_day\":79,\"dtype\":\"float32\"}}\n", q(&MONTHLY)),
+        )
+        .unwrap();
+    }
+    if p.fine > 0.0 && !kept.is_empty() {
+        // e117: the ground at an animal's grain, from the kept years' mean rain
+        let t5 = Instant::now();
+        let ri = FIELDS.iter().position(|&f| f == "rain").unwrap();
+        let rain: Vec<f64> = (0..cells).map(|c| kept.iter().map(|(_, m)| m[ri][c] as f64).sum::<f64>() / kept.len() as f64).collect();
+        let g5 = ground5::Ground5::new(&ter, p.cell_km, p.fine as usize, &rain, p.seed as u64 ^ 0x5EED, p.threads as usize);
+        g5.write(&prefix);
+        eprintln!("ground5: {}x{} cells of {} m in {:.1} s", g5.n, g5.n, g5.cell_m, t5.elapsed().as_secs_f64());
+    }
     let mut row = std::fs::File::create(format!("{prefix}_row.csv")).unwrap();
     writeln!(row, "{}", Params::NAMES.join(",")).unwrap();
     writeln!(row, "{}", p.values().iter().map(|v| format!("{v}")).collect::<Vec<_>>().join(",")).unwrap();

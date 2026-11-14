@@ -67,15 +67,33 @@ impl Terrain {
                 }
             }
         }
+        if p.mirror != 0.0 {
+            // e117: the same ground seen from the other side, west for east
+            for y in 0..n {
+                h[y * n..(y + 1) * n].reverse();
+            }
+        }
         let mut sorted = h.clone();
         sorted.sort_by(|a, b| a.partial_cmp(b).unwrap());
         let level = sorted[(((1.0 - p.land) * cells as f64) as usize).min(cells - 1)];
         let top = sorted[cells - 1];
-        let mut elev: Vec<f64> = h.iter().map(|&v| (v - level) / (top - level) * p.relief).collect();
+        // e117: heights over the sea to a power, so that lowlands lie flat and one summit stands (1: as they were)
+        let mut elev: Vec<f64> = h
+            .iter()
+            .map(|&v| {
+                let f = (v - level) / (top - level);
+                if f > 0.0 { f.powf(p.relief_pow) * p.relief } else { f * p.relief }
+            })
+            .collect();
         let sea: Vec<bool> = elev.iter().map(|&e| e < 0.0).collect();
         // The rows run from lat_lo to lat_hi and back: no edge, every latitude twice.
+        // e117: or once, south to north (the rows grow northwards: `nbrs`' yd is the cell to the north).
         let lat: Vec<f64> = (0..n)
-            .map(|y| (p.lat_lo + (p.lat_hi - p.lat_lo) * (1.0 - (2.0 * (y as f64 + 0.5) / n as f64 - 1.0).abs())).to_radians())
+            .map(|y| {
+                let f = (y as f64 + 0.5) / n as f64;
+                let f = if p.lat_span != 0.0 { f } else { 1.0 - (2.0 * f - 1.0).abs() };
+                (p.lat_lo + (p.lat_hi - p.lat_lo) * f).to_radians()
+            })
             .collect();
         let (filled, down, order) = drainage(n, &elev, &sea);
         // A pit in noise is not a basin: real ground is filled by what the water brings. Each is filled to
@@ -110,6 +128,33 @@ impl Terrain {
         let groups = basin_groups(&sea, &down, &order);
         Terrain { n, elev, sea, air, lat, filled, down, order, slope, rock, nx, ny, nz, cap, lake_cap, groups }
     }
+}
+
+/// e117: the islands a terrain makes - (cells, highest m) of each, largest first - by 4-neighbour flood fill.
+pub fn islands(t: &Terrain) -> Vec<(usize, f64)> {
+    let n = t.n;
+    let mut seen = vec![false; n * n];
+    let mut out = Vec::new();
+    for c0 in 0..n * n {
+        if t.sea[c0] || seen[c0] {
+            continue;
+        }
+        let (mut size, mut top, mut stack) = (0, 0.0f64, vec![c0]);
+        seen[c0] = true;
+        while let Some(c) = stack.pop() {
+            size += 1;
+            top = top.max(t.elev[c]);
+            for m in nbrs(n, c) {
+                if !t.sea[m] && !seen[m] {
+                    seen[m] = true;
+                    stack.push(m);
+                }
+            }
+        }
+        out.push((size, top));
+    }
+    out.sort_by(|a, b| b.0.cmp(&a.0));
+    out
 }
 
 pub fn nbrs(n: usize, c: usize) -> [usize; 4] {
