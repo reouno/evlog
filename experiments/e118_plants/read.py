@@ -28,9 +28,10 @@ s = lambda k: st[S.index(k)]
 land = s('sea') < 0.5; elev = s('elev'); lat = s('lat'); rain = g('rain')
 sn = json.load(open(pre + '_snaps.json')); sow = sn['sow']; last = sn['years'][-1]; T = sn['traits']; nt = len(T)
 tr = np.fromfile(f'{pre}_traits_{last}.bin', dtype='<f4').reshape(2 * nt + 4, n, n)
-field, wood, crown, count = tr[2 * nt], tr[2 * nt + 1], tr[2 * nt + 2], tr[2 * nt + 3]
+# the field, the trees' wood and the light the crowns take: the kept years' means (a snapshot is the end of a winter)
+field, wood, crown = g('field'), g('wood'), g('crown')
 trees = np.fromfile(f'{pre}_trees_{last}.bin', dtype=TREE)
-soil = np.isfinite(tr[0]) | (field > 0) | (wood > 0)
+soil = land & (np.isfinite(tr[0]) | (field > 0) | (wood > 0))
 
 print(f'{pre}: sown in year {sow}, read at year {last} ({last - sow} years of plants); maps of years {m["years"][0]}-{m["years"][-1]}')
 
@@ -48,7 +49,8 @@ rows.append(dict(part='land', field=float(f1['field']), wood=float(f1['wood']), 
 low = land & (elev < LOW) & soil
 q_wet, q_dry = np.quantile(rain[low], WET), np.quantile(rain[low], DRY)
 wet, dry = low & (rain >= q_wet), low & (rain <= q_dry)
-print(f'2. crowns take {100 * float(f1["crown"]):.1f}% of the light over the land\'s soil')
+print(f'2. crowns take {100 * crown[soil].mean():.1f}% of the light over the land\'s soil (the kept years\' mean; {100 * (crown[soil] >= LINE).mean():.0f}% of its cells are under trees)')
+rows[0]['crown'] = float(crown[soil].mean())
 print(f'   lowlands: wettest third (rain over {q_wet:.0f} mm) wood {wood[wet].mean():.2f} kg/m2, crowns {100 * crown[wet].mean():.1f}%, field {field[wet].mean():.2f}; '
       f'driest third (under {q_dry:.0f} mm) wood {wood[dry].mean():.2f}, crowns {100 * crown[dry].mean():.1f}%, field {field[dry].mean():.2f}; wood x{wood[wet].mean() / max(wood[dry].mean(), 1e-9):.1f}')
 rows.append(dict(part='lowland wettest third', cells=int(wet.sum()), rain=round(float(rain[wet].mean())), wood=float(wood[wet].mean()), crown=float(crown[wet].mean()), field=float(field[wet].mean())))
@@ -89,6 +91,7 @@ for grp, off, w in (('field', 0, field), ('trees', nt, wood)):
 # 5. lives turn over
 first = trees['born'] <= sow + OLD
 died = sum(float(r['fallen']) for r in plant[-10:]) / 10
+print(f'   (with leaf at the winter\'s end: {100 * (trees["leaf"] > 0.01).mean():.0f}% of them)')
 print(f'5. trees at year {last}: {len(trees)}, heights 10/50/90/99% {np.percentile(trees["h"], [10, 50, 90, 99]).round(1)} m, crowns\' radius 50/90/99% {np.percentile(trees["r"], [50, 90, 99]).round(1)} m')
 print(f'   {100 * first.mean():.0f}% became things within {OLD} years of the sowing ({100 * trees["wood"][first].sum() / max(trees["wood"].sum(), 1e-9):.0f}% of the wood); '
       f'{died:.0f} trees fall a year ({100 * died / max(len(trees), 1):.2f}% of them); mean age {float(f1["tree_age"]):.0f} years; genotypes with trees {len(np.unique(trees["g"]))}, '

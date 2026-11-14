@@ -48,11 +48,14 @@ The crate (`src/plants.rs`; the ground, air and water are `base/`'s):
   slender as trees are, 50 d^(2/3), half the height at which it buckles; 20 m at half a tonne) - and their crowns,
   0.35 of the height in radius (`crown_h`), fill the ground: so a stand is as tall as h_stem^2 crown_h sqrt(pi w)
   for w kg of wood a m2, many stems while low and fewer as it grows. Thinned to one stem a cell (8 m on cells of
-  5 m) it is one plant rooted there, the whole of it, with a place, a height and a crown: as wide as its leaves need
-  at a leaf area of 4 (`lai_crown`), at most 0.35 of its height, lying over the fine cells within it. Light falls
-  through the crowns over a cell, the tallest first, then through the cell's field. (The base's height is a ratio of
-  wood to leaf: a seedling of a gram was 4 m tall. The pilots made a tree of a stand at 3 m with the part its crown
-  held: one whip a cell, a twelfth of its light, that did not grow in thirty years.)
+  5 m) it is one plant rooted there, the whole of it, with a place, a height and a crown 0.35 of its height in
+  radius - the stand's own crowns, so nothing changes the day it is counted a tree; the disc beyond its own cell is
+  shared among the cells about it, the nearer the more. Light falls through the crowns over a cell, the tallest
+  first, then through the cell's field. A tree with no leaf and no store left (under a thousandth of its mass,
+  `bare`) is dead and falls. (The base's height is a ratio of wood to leaf: a seedling of a gram was 4 m tall. The
+  pilots made a tree of a stand at 3 m with the part its crown held: one whip a cell, a twelfth of its light, that
+  did not grow in thirty years. The first long run, `dense`, packed a new tree's leaves into a crown at a leaf
+  area of 4: see Result.)
 - **water** as above (`wet_reach` 10 m, `wet_rise` 2 m);
 - **rot frees A and B to the roots in the same step** (after the first pilot): the base lets them lie a step in the
   soil, under the rain, before roots take them;
@@ -79,7 +82,11 @@ Runs, all on Ubuntu with six threads:
   a m2 of field and 0.02 of trees after twenty years, the soil's A at 0.02 g a m2 - starved.
 - `pilot2` (rot's A and B to the roots at once; stopped at year 14): the land takes in 0.4 g of A a m2 a year and
   loses 0.12-0.34; its living hold 1 g after four years.
-- `pilot3` (humus and an old soil; 10 bare years and 50 with plants): whether a wood grows in decades.
+- `pilot3`, `pilot4` (humus and an old soil; the stand that thins; 10 bare years and 18 to 50 with plants): stands
+  reach 8 m in five to seven years and the first trees 14.5 m fifteen years after the sowing.
+- `dense` (10 bare years, 120 with plants; 90 minutes): the first long run, a tree's crown as wide as its leaves
+  need at a leaf area of 4.
+- `main` (the same, a tree's crown its height's): the run read below.
 
 **Stop early if:**
 
