@@ -67,6 +67,12 @@ impl Terrain {
                 }
             }
         }
+        if p.mirror != 0.0 {
+            // e117: the same ground seen from the other side, west for east
+            for y in 0..n {
+                h[y * n..(y + 1) * n].reverse();
+            }
+        }
         let mut sorted = h.clone();
         sorted.sort_by(|a, b| a.partial_cmp(b).unwrap());
         let level = sorted[(((1.0 - p.land) * cells as f64) as usize).min(cells - 1)];

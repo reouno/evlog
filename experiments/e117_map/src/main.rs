@@ -114,6 +114,7 @@ params! {
     lat_span = 0.0, "1: the rows run once from lat_lo (south, row 0) to lat_hi (north), a band of latitude folded into the map; 0: there and back";
     survey = 0.0, "n > 0: print the islands the first n terrain seeds make, and stop";
     relief_pow = 1.0, "the land's heights as a share of the highest, to this power (e117: above 1 the lowlands flatten)";
+    mirror = 0.0, "1: the generated ground mirrored west for east (e117: which side of an island its heights stand on)";
     track = 0.0, "mm a year the fronts bring into the air over a cell that every front reaches (e117; 0: no fronts, the sea's wet air always)";
     track_lat = 48.0, "degrees: the latitude a front reaches south to, in the mean, at the equinoxes (the storm track's edge)";
     track_shift = 8.0, "degrees the edge lies further north at midsummer and further south at midwinter";
