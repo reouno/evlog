@@ -768,7 +768,7 @@ impl Plants {
             if year < p.sow as u32 + p.sow_years as u32 {
                 self.sow(p, sa, sb, &mut f);
             }
-            self.establish(p, ter, ground);
+            self.establish(p, ter, ground, dt * p.seed_every);
         }
         let t5 = std::time::Instant::now();
         for c in 0..self.light.len() {
@@ -822,27 +822,12 @@ impl Plants {
                 tmp.clear();
                 let (mut rs, mut rd, mut rt) = (0.0, 0.0, 0.0);
                 let mut open = 0.0;
-                let sd = 1.0 - (-p.seed_decay * dt).exp();
                 // the light, and what each plant could fix with it
                 for l in 0..f2 {
                     let s = b * f2 + l;
                     if !grows[s] {
                         open += 1.0;
                         continue;
-                    }
-                    // the seed bank ages
-                    for j in 0..BANK {
-                        let e = bank.at(s * BANK + j);
-                        if e.g != NONE {
-                            let mut o = Organ { m: e.m, a: e.a, b: e.b };
-                            lit.at(s).add(o.take(sd));
-                            *e = if o.m < 1e-12 {
-                                lit.at(s).add(o);
-                                Seeds::default()
-                            } else {
-                                Seeds { g: e.g, m: o.m, a: o.a, b: o.b }
-                            };
-                        }
                     }
                     let first = tmp.len();
                     let has_tree = tree_at[s] != NONE;
@@ -1237,12 +1222,27 @@ impl Plants {
 
     /// A free slot of a cell is taken by the bank's best (its seeds' number x their chance in this cell's shade and
     /// dryness); with no free slot, seedlings outweighing the weakest stand take its place.
-    fn establish(&mut self, p: &Params, ter: &Terrain, ground: &[f64]) {
+    /// The bank ages by the time since the last release, here.
+    fn establish(&mut self, p: &Params, ter: &Terrain, ground: &[f64], since: f64) {
         let f2 = self.k * self.k;
+        let sd = 1.0 - (-p.seed_decay * since).exp();
         for q in 0..self.soil.len() {
             let s = self.soil[q] as usize;
             if (0..BANK).all(|j| self.bank[s * BANK + j].g == NONE) {
                 continue;
+            }
+            for j in 0..BANK {
+                let e = self.bank[s * BANK + j];
+                if e.g != NONE {
+                    let mut o = Organ { m: e.m, a: e.a, b: e.b };
+                    self.lit[s].add(o.take(sd));
+                    self.bank[s * BANK + j] = if o.m < 1e-12 {
+                        self.lit[s].add(o);
+                        Seeds::default()
+                    } else {
+                        Seeds { g: e.g, m: o.m, a: o.a, b: o.b }
+                    };
+                }
             }
             let c = self.lands[s / f2] as usize;
             let fill = (ground[c] / ter.cap[c]).min(1.0);
