@@ -261,6 +261,29 @@ fn handle_map(prefix: &str, mut s: TcpStream) {
     let web = http::web_dir();
     let _ = match req.path.as_str() {
         "/" => http::serve_file(&mut s, &web, "/map.html").map(|_| ()),
+        // the fine ground, packed for the page: heights as i16 of 5 cm, a byte of kind, then the water cells alone
+        // (count, then index, depth and flow each) - a quarter of the file's 13 bytes a cell
+        "/pack/ground5" => match std::fs::read(format!("{prefix}_ground5.bin")) {
+            Ok(raw) => {
+                let nn = raw.len() / 13;
+                let f = |part: usize, c: usize| f32::from_le_bytes(raw[(part * nn + c) * 4..(part * nn + c) * 4 + 4].try_into().unwrap());
+                let kind = &raw[12 * nn..13 * nn];
+                let mut body = Vec::with_capacity(3 * nn + 4);
+                for c in 0..nn {
+                    body.extend_from_slice(&((f(0, c).clamp(-1600.0, 1600.0) * 20.0).round() as i16).to_le_bytes());
+                }
+                body.extend_from_slice(kind);
+                let wet: Vec<usize> = (0..nn).filter(|&c| kind[c] >= 2).collect();
+                body.extend_from_slice(&(wet.len() as u32).to_le_bytes());
+                for &c in &wet {
+                    body.extend_from_slice(&(c as u32).to_le_bytes());
+                    body.extend_from_slice(&f(1, c).to_le_bytes());
+                    body.extend_from_slice(&f(2, c).to_le_bytes());
+                }
+                http::send(&mut s, "200 OK", "application/octet-stream", &body)
+            }
+            Err(_) => http::not_found(&mut s),
+        },
         p if p.starts_with("/data/") => {
             let name = &p[6..];
             if !name.is_empty() && name.chars().all(|c| c.is_ascii_alphanumeric() || c == '_' || c == '.') && !name.contains("..") {
