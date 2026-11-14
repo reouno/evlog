@@ -291,7 +291,7 @@ impl Rates {
 }
 
 /// A plant's height: its genome's, what its wood holds up over its leaves (`sigma`), and what its wood can stand as
-/// one stem (e118: `h_stem` m at a kg, by the mass's fourth root - a stem that buckles at 30 d^(2/3)). `wood_kg` is
+/// one stem (e118: `h_stem` m at a kg, by the mass's fourth root - a stem as slender as trees are, 50 d^(2/3)). `wood_kg` is
 /// the wood of the tree, or of the stand on its fine cell: a stand thins to the stems its wood can hold up.
 fn height(p: &Params, ph: &Pheno, y: &Cohort, wood_kg: f64) -> f64 {
     ph.height.min(p.h0 + y.o[WOOD].m / (p.sigma * y.lpk.max(1e-4))).min(p.h0 + p.h_stem * wood_kg.sqrt().sqrt())
