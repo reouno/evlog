@@ -51,14 +51,14 @@ The cycle it changes - **light** (e118's first):
   gene on its size).
 
 Cost: every stand with wood now grows to a tree, so trees as things may be several times e118's 170,000 and a year
-several times its 44 s (stated before the run; the pilot measures it).
+several times its 44 s (stated before the run, which measures it).
 
 World: `base/worlds/isles1.params base/worlds/isles16.params experiments/e119_height/worlds/plants16.params`
 (e118's). Runs, on Ubuntu with six threads:
 
-- `pilot`: 10 bare years, 40 with plants - does it stand, what a year costs.
 - `main`: 10 bare years, 120 with plants, read at year 130 against e118's `main` by `read.py` (e118's, with the
-  land by the share of its cells under crowns added).
+  land by the share of its cells under crowns added). No pilot apart from it: a pilot is this run's first years,
+  so the run is watched by the rules below and its cost read from its log.
 
 **Stop early if:**
 
