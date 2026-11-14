@@ -87,6 +87,7 @@ Runs, all on Ubuntu with six threads:
 - `dense` (10 bare years, 120 with plants; 90 minutes): the first long run, a tree's crown as wide as its leaves
   need at a leaf area of 4.
 - `main` (the same, a tree's crown its height's): the run read below.
+- `long` (`main`'s world, 10 bare years and 500 with plants; 6.7 hours): what waiting changes.
 
 **Stop early if:**
 
@@ -122,6 +123,16 @@ Runs, all on Ubuntu with six threads:
 - **`dense`**, the first long run (a new tree's leaves packed into a crown at a leaf area of 4, a seventh of its
   cell): 252,065 trees whose crowns stood over 0.9% of the ground; 44% of them had a leaf at the winter's end, the
   median tree over 40 years old none. Counted a tree, a stand's light halved. In `main` 98% have leaves.
+- **`long`**, the same world for 500 years (6.7 hours; its first 130 years are `main`'s to the digit; read at year
+  510, `results/long_reading.csv`, `results/provenance_long.csv`): **still a thicket.** Crowns stand over 10.4% of
+  the ground and take 5.2% of the light; trees' wood 0.58 kg a m2 (0.40 half way; its fifty-year means 0.34, 0.47,
+  0.55, 0.66, 0.67 from year 160 on), field 2.21, 240,834 trees. Heights: half 8.5 m, 99% under 9.9 m, the tallest
+  17.7 m; trees for over 50 years hold 184 kg of wood at 8.5 m, where a stem of it could stand 15.5 m. Three
+  founders' lines are 92% of the trees (42, 38 and 12%), a line born in the run 3%; what was born after the sowing
+  is 19.3% of the living mass. The heights have filled: under crowns 18-32% of the ground at 600-1,400 m (wood
+  2.3-4.2 kg a m2 at 600-1,200 m) against 9% under 600 m, and 18% above 1,400 m - no tree line by height; the
+  northern lowlands 1.8%. Where 2% or more burns a year, wood 0.35 kg against 0.76 where nothing burns; wet and
+  dry lowlands x1.2. Leaves north and south as before (the field's optimum 12.8 and 11.6 C).
 - On the screen (`shots/`): a wood reads as a wood from a walker's height and from above, a thicket as a thicket;
   the woods' edges are straight lines 125 m apart where the soil's cells differ, and fire scars are diamonds.
 
@@ -131,17 +142,18 @@ Runs, all on Ubuntu with six threads:
 2. **Crowns over 20-70% of the land, three times the wood on wet ground**: no. Crowns stand over 5.7% after 120
    years and are still spreading (trees' wood doubled in the last 60), and water does not place them: wet and dry
    lowlands hold the same wood. Warmth and fire do.
-3. **A tree line**: yes, by cold - at 1,400 m and at about 59 N.
+3. **A tree line**: at 120 years yes, by cold - at 1,400 m and at about 59 N. At 500 years only the northern one:
+   trees stand to the summits, and the heights between 600 and 1,400 m, wet and seldom burnt, hold the most wood.
 4. **Leaves differ north and south**: no - an optimum 1 C apart, shedding the same.
 5. **The trees at year 100 are not the sown ones**: as lives yes, as lines no - the trees are two founders' lines.
 
 What bounds the wood is not the climate but what was sown and how a height is made: a tree's height is its genome's
 limit, the two lines that became trees stop at 5.2 and 8.5 m, and 120 years is a few tree lives - too short for a
 taller line to be born and spread (1.3% of the mass is new). Under crowns as thin as theirs (a leaf area of 1-2)
-the field keeps most of its light, so no floor goes dark and no wood closes.
+the field keeps most of its light, so no floor goes dark and no wood closes. Waiting does not change it: after
+500 years crowns stand over a tenth of the ground, no line stands over 10 m, and wood has stopped rising.
 
-Holds under: one sowing of 256 genomes, one terrain seed, 120 years (a transient: `long`, 500 years of the same
-world, is running), nothing grazing. Not built: soil and water finer than 125 m (the woods' straight edges), a
+Holds under: one sowing of 256 genomes, one terrain seed, 120 and 500 years, nothing grazing. Not built: soil and water finer than 125 m (the woods' straight edges), a
 fire front that is round, small eaters, the sea's producers.
 
 `vision.md`: rows B (plant foods, plants as places). `foundation.md`: producers at metres and rung 2's reading.

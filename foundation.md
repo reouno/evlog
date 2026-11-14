@@ -92,8 +92,8 @@ is not searched to hit a result. If a rung fails on a ground that passed, the fa
 - **Rung 2, producers** (e103-e105): ledgers; producers on >= 50% of the land and >= 20% of the sea; >= 5 effective
   groups held by place (NMI >= 0.2); they keep changing; the living change the ground. On the planet: 7.6-11.9
   groups, mutants 41-51% after a millennium, no form replaced. On the islands (e109, 300 years): 7-8 groups, NMI
-  0.12-0.13 and rising - a transient. At metres (e118, 120 years): ledgers, a tree line; crowns over 5.7% of the ground
-  (asked 20-70%), placed by warmth and fire, not water; two sown lines are 94% of the trees, 5-9 m by their genome's limit.
+  0.12-0.13 and rising - a transient. At metres (e118, 120 years; 500): ledgers; crowns over 5.7% of the ground (10.4%;
+  asked 20-70%), by warmth and fire, not water; two (three) sown lines are over 90% of the trees, under 10 m by their limit.
 - **Rung 3, bodies** (e106): ledgers; bodies on >= 10% of the land's cells and producers on >= 50% for 50 years;
   bodies eat >= 10% of what producers fix and producers turn over; the freedoms are used (adult masses x100, two
   strata, flesh 10% of the diet, plastic weights, a group that travels); >= 5 effective groups of bodies by place.

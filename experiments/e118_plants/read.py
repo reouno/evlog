@@ -2,8 +2,9 @@
 
     uv run python experiments/e118_plants/read.py [prefix]      (default: this experiment's results/main)
 
-Prints the reading and writes `<prefix>_reading.csv` and, beside it, `provenance.csv` (the window and every
-threshold). Places are the cells of 125 m; wood, field and crown are a m2 of a cell's soil.
+Prints the reading and writes `<prefix>_reading.csv` and, beside it, the window and every threshold:
+`provenance.csv` for `main`, `provenance_<run>.csv` for another run. Places are the cells of 125 m; wood, field
+and crown are a m2 of a cell's soil.
 """
 import csv, json, os, sys
 import numpy as np
@@ -141,7 +142,8 @@ for r in rows:
             keys.append(k)
 with open(pre + '_reading.csv', 'w', newline='') as f:
     w = csv.DictWriter(f, fieldnames=keys, lineterminator='\n'); w.writeheader(); w.writerows(rows)
-with open(os.path.join(os.path.dirname(pre), 'provenance.csv'), 'w', newline='') as f:
+run = os.path.basename(pre)
+with open(os.path.join(os.path.dirname(pre), 'provenance.csv' if run == 'main' else f'provenance_{run}.csv'), 'w', newline='') as f:
     w = csv.writer(f, lineterminator='\n'); w.writerow(['what', 'value'])
     w.writerow(['run', os.path.basename(pre)]); w.writerow(['snapshot read (year)', last]); w.writerow(['sown (year)', sow])
     w.writerow(['maps read (the kept years, their mean)', ' '.join(str(y) for y in m['years'])])
