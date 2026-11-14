@@ -95,8 +95,54 @@ Runs, all on Ubuntu with six threads:
 
 ## Result
 
-(pilot running)
+`main` (10 bare years, 120 with plants, 90 minutes; read at year 130, maps the mean of years 121-130; `read.py`,
+`results/main_reading.csv`, `results/provenance.csv`):
+
+- **It stands.** Ledgers: water 6e-13, A 1e-12, B 6e-13, matter 1e-10 at worst. A year of plants takes 44 s on six
+  threads (growth 28, seeds 13), ten times the bare map's.
+- **The land is a thicket with young trees in it.** Field 1.90 kg a m2 (1.71 half way), litter 3.27, trees' wood
+  0.34 (0.17 half way: still rising). Of the fine cells with soil the field's stands are under 0.5 m on 13%, 0.5-2 m
+  on 37%, 2-5 m on 27%, over 5 m on 18%, and 6% have no leaf. 168,813 trees stand on 10.3% of them; their crowns
+  stand over 5.7% of the ground and take 3.4% of the light; 11% of the 125 m cells are a fifth or more under
+  crowns. Heights: half are 5.2 m, a tenth over 8.5 m, the tallest 16.9 m.
+- **Trees are placed by warmth and fire, not by water.** Under crowns: 11.0% of the ground where the year's mean is
+  over 15 C, 4.8-6.0% at 11-15 C, 0.6% under 9 C; lowlands at 44-49 N 7.3%, 49-54 N 6.4%, 54-59 N 3.2%, 59-64 N
+  0.1%. The lowlands' wettest third 4.5% and 0.28 kg of wood a m2, the driest third 5.9% and 0.28 (x1.0). Where
+  2% of the ground or more burns a year (690 cells) 2.1%, where none does 6.7%.
+- **A tree line**: 5% of the ground or more is under crowns in every band of height up to 1,400 m and 1.0% above
+  (7 C at 1,200-1,400 m, 5 C above); almost none on the northern lowlands (5.6 C).
+- **Leaves hardly differ north and south.** Field at 44-54 N against 54-64 N: leaf A 0.72 and 0.68%, shed 0.44 and
+  0.45 a year, optimum 12.8 and 11.9 C. Trees: shed 0.23 and 0.28, optimum 13.6 and 12.7 C.
+- **Lives turn over, lines do not.** 1% of the trees of year 130 were trees by year 30; 13,013 fall a year (7.7%);
+  their mean age is 33. But two of the 256 sown genomes are 94% of the trees (74% and 20%), and what was born
+  after the sowing is 1.3% of the living mass.
+- **A tree's wood grows and its height does not.** Trees for 5-20 years hold 29 kg of wood at 5.2 m, for 20-50
+  years 89 kg at 8.5 m, for over 50 years 304 kg at 8.5 m - a stem of 304 kg could stand 17.5 m. The height is the
+  genome's limit (the two lines' are 5.2 and 8.5 m as they stand); wood goes on by the genome's share for it.
+- **`dense`**, the first long run (a new tree's leaves packed into a crown at a leaf area of 4, a seventh of its
+  cell): 252,065 trees whose crowns stood over 0.9% of the ground; 44% of them had a leaf at the winter's end, the
+  median tree over 40 years old none. Counted a tree, a stand's light halved. In `main` 98% have leaves.
+- On the screen (`shots/`): a wood reads as a wood from a walker's height and from above, a thicket as a thicket;
+  the woods' edges are straight lines 125 m apart where the soil's cells differ, and fire scars are diamonds.
 
 ## Conclusion
 
-(open)
+1. **Stands, with every ledger closed**: yes.
+2. **Crowns over 20-70% of the land, three times the wood on wet ground**: no. Crowns stand over 5.7% after 120
+   years and are still spreading (trees' wood doubled in the last 60), and water does not place them: wet and dry
+   lowlands hold the same wood. Warmth and fire do.
+3. **A tree line**: yes, by cold - at 1,400 m and at about 59 N.
+4. **Leaves differ north and south**: no - an optimum 1 C apart, shedding the same.
+5. **The trees at year 100 are not the sown ones**: as lives yes, as lines no - the trees are two founders' lines.
+
+What bounds the wood is not the climate but what was sown and how a height is made: a tree's height is its genome's
+limit, the two lines that became trees stop at 5.2 and 8.5 m, and 120 years is a few tree lives - too short for a
+taller line to be born and spread (1.3% of the mass is new). Under crowns as thin as theirs (a leaf area of 1-2)
+the field keeps most of its light, so no floor goes dark and no wood closes.
+
+Holds under: one sowing of 256 genomes, one terrain seed, 120 years (a transient: `long`, 500 years of the same
+world, is running), nothing grazing. Not built: soil and water finer than 125 m (the woods' straight edges), a
+fire front that is round, small eaters, the sea's producers.
+
+`vision.md`: rows B (plant foods, plants as places). `foundation.md`: producers at metres and rung 2's reading.
+Kept for the next rung as it is, in this crate: the laws go to `base/` when animals stand on them.
