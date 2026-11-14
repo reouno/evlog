@@ -274,6 +274,8 @@ function buildTile(L, F, tx, ty, s, day, mat) {
     mesh.userData = { tx, ty, s, day: -1 };
     if (F && F.ready && s <= TREES_TO)
         plantTile(L, F, mesh);
+    if (F && F.ready && s <= THICKET_TO)
+        thicketTile(L, F, mesh);
     colourTile(L, F, mesh, day);
     return mesh;
 }
@@ -315,8 +317,51 @@ function plantTile(L, F, mesh) {
     mesh.add(group);
     mesh.userData.flora = { crowns, base };
 }
+const THICKET_TO = 2; // tiles at this stride or finer (within about 600 m) show the field's stands that stand over a metre
+const hash = (c, k) => { const v = Math.sin(c * 12.9898 + k * 78.233) * 43758.5453; return v - Math.floor(v); };
+/** A tile's thickets: the field's stands over a metre, a few crowns a cell (a stand is many stems while it is low). */
+function thicketTile(L, F, mesh) {
+    const { tx, ty } = mesh.userData;
+    const cells = [], at = [];
+    for (let b = 0; b < T; b++) {
+        for (let a = 0; a < T; a++) {
+            const i = tx * T + a, j = ty * T + b, c = j * L.n + i, h = F.tall[c] / 25;
+            if (h < 1 || L.kind[c] !== 0)
+                continue;
+            const k = h < 3 ? 3 : h < 5.5 ? 2 : 1;
+            for (let q = 0; q < k; q++) {
+                cells.push(c);
+                at.push(q);
+            }
+        }
+    }
+    if (cells.length === 0)
+        return;
+    const im = new THREE.InstancedMesh(crownGeo, crownMat, cells.length);
+    for (let q = 0; q < cells.length; q++) {
+        const c = cells[q], i = c % L.n, j = Math.floor(c / L.n), h = (F.tall[c] / 25) * (0.75 + 0.4 * hash(c, at[q] + 7));
+        const x = (i + 0.15 + 0.7 * hash(c, at[q])) * L.cell, z = L.size - (j + 0.15 + 0.7 * hash(c, at[q] + 3)) * L.cell;
+        const r = Math.max(0.45, 0.33 * h);
+        M4.compose(V1.set(x, L.heightAt(x, z) + h * 0.55, z), Q0, V2.set(r, h * 0.5, r));
+        im.setMatrixAt(q, M4);
+    }
+    im.userData = { cells };
+    mesh.add(im);
+    mesh.userData.thicket = im;
+}
 /** The crowns of a tile on the day set: full and green in leaf, small and bare without. */
-function leafTile(F, mesh, snowy) {
+function leafTile(L, F, mesh, snowy) {
+    const th = mesh.userData.thicket;
+    if (th) {
+        const cells = th.userData.cells, c3 = [0, 0, 0];
+        for (let q = 0; q < cells.length; q++) {
+            const c = cells[q], i = c % L.n, j = Math.floor(c / L.n);
+            mix(C.bare, hash(c, 11) < 0.5 ? C.leafSoft : C.grass, smooth(0.01, 0.1, F.fieldLeaf(i, j)), c3);
+            th.setColorAt(q, COL.setRGB(c3[0], c3[1], c3[2]));
+        }
+        if (th.instanceColor)
+            th.instanceColor.needsUpdate = true;
+    }
     const fl = mesh.userData.flora;
     if (!fl)
         return;
@@ -410,7 +455,7 @@ function colourTile(L, F, mesh, day) {
     }
     mesh.geometry.attributes.color.needsUpdate = true;
     if (flora)
-        leafTile(flora, mesh, (x, z) => {
+        leafTile(L, flora, mesh, (x, z) => {
             const i = Math.min(n - 1, Math.max(0, Math.floor(x / L.cell))), j = Math.min(n - 1, Math.max(0, Math.floor((L.size - z) / L.cell)));
             return smooth(3, 25, L.coarse(L.dSnow, i, j));
         });
@@ -473,6 +518,7 @@ async function main() {
         m.geometry.dispose();
         for (const im of (m.userData.flora?.crowns ?? []))
             im.dispose();
+        m.userData.thicket?.dispose();
     };
     // the plants, if the run has them: the last snapshot first
     let F = new Flora();
@@ -551,7 +597,9 @@ async function main() {
         const t = controls.target;
         const i = Math.min(L.n - 1, Math.max(0, Math.floor(t.x / L.cell))), j = Math.min(L.n - 1, Math.max(0, Math.floor((L.size - t.z) / L.cell)));
         const w = F.weatherAt(day, hour), front = L.coarse(L.lat, i, j) >= w.reach;
-        cloud += (Number(front) - cloud) * Math.min(1, dt * 0.8);
+        // (from far above the map is seen in clear air)
+        const near = smooth(9000, 2500, camera.position.distanceTo(t));
+        cloud += (Number(front) * near - cloud) * Math.min(1, dt * 0.8);
         L.setDay(day);
         snowing = front && L.tempAt(i, j) < 0.5;
         raining = front && !snowing;
