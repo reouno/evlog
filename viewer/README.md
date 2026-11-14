@@ -44,7 +44,15 @@ It serves `web/map.html` and a run's files as `/data/<name>` from `<prefix>_<nam
 `maps` (the climate's annual maps) and `season` (its twelve mean months). The page (`web/src/map.ts`) draws tiles
 of 64 fine cells coarser with distance, the sun of a day and an hour, and the month: snow where it lies, green where
 the month is warm and its soil wet, straw where it is not, a stream as a dry bed when its month leaves it under a
-litre a second. Nothing lives on it yet; the first load of the ground (133 MB) takes about half a minute.
+litre a second. The first load of the ground (`/pack/ground5`, heights as 16-bit and the kinds) takes about half a
+minute.
+
+A run with plants (e118; `experiments/e118_plants/results/main`) also has `snaps.json` (the years kept),
+`trees_<year>.bin`, `field_<year>.bin` and `year_<year>.bin`, read by `web/src/mapflora.ts`: every tree of the
+snapshot stands as a trunk and a crown on the tiles near the eye and colours the ground from afar; the field is
+green by its leaf of the day set, straw by its litter, charred where a fire passed in the last five years, and a
+thicket where its stands are over a metre; the recorded year's fronts bring an overcast sky and rain or snow to the
+rows they reach; streams ripple downhill; the clock can be left running. The year is chosen at the top left.
 
 ## The interface
 
