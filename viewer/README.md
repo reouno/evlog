@@ -33,6 +33,19 @@ about 90 MB. Recordings are not committed.
 
 Nothing happens without EVLOG_VIEW, and a run with it writes the same results as one without.
 
+## The map at real size
+
+A world whose ground is drawn at 5 m (#135, e117) has its own page, since the frames above carry positions on a
+grid of cells:
+
+    cargo run --release -p viewer -- map experiments/e117_map/results/map 7777
+
+It serves `web/map.html` and a run's files as `/data/<name>` from `<prefix>_<name>`: `ground5` (the fine ground),
+`maps` (the climate's annual maps) and `season` (its twelve mean months). The page (`web/src/map.ts`) draws tiles
+of 64 fine cells coarser with distance, the sun of a day and an hour, and the month: snow where it lies, green where
+the month is warm and its soil wet, straw where it is not, a stream as a dry bed when its month leaves it under a
+litre a second. Nothing lives on it yet; the first load of the ground (133 MB) takes about half a minute.
+
 ## The interface
 
 `wire.rs` is the whole contract, and the browser reads it rather than knowing the experiment:
