@@ -22,9 +22,9 @@ export class Flora {
   count = 0;
   x!: Float32Array; y!: Float32Array; h!: Float32Array; r!: Float32Array; tough!: Float32Array; age!: Float32Array;
   born!: Uint32Array;
-  // the field of the snapshot, a byte a fine cell: leaf x100, litter x50, the light under the crowns x255, the years
-  // since a fire (255: never)
-  leaf!: Uint8Array; litter!: Uint8Array; under!: Uint8Array; burnt!: Uint8Array;
+  // the field of the snapshot, a byte a fine cell: leaf x100, its stands' height x25, litter x50, the light under the
+  // crowns x255, the years since a fire (255: never)
+  leaf!: Uint8Array; tall!: Uint8Array; litter!: Uint8Array; under!: Uint8Array; burnt!: Uint8Array;
   // the year: the field's leaf by month on the grid, each tree's by month, the weather by update
   mField!: Uint8Array; mTree!: Uint8Array; weather!: Float32Array; updates = 0;
   // the trees of each tile of `tile` fine cells, and the tile's crowns' mean leaf by month
@@ -57,7 +57,7 @@ export class Flora {
     }
     status(`${year} 年目の草を読み込み中…`);
     const fb = await bin(`data/field_${year}.bin`), nn = this.n * this.n;
-    this.leaf = new Uint8Array(fb, 0, nn); this.litter = new Uint8Array(fb, 2 * nn, nn);
+    this.leaf = new Uint8Array(fb, 0, nn); this.tall = new Uint8Array(fb, nn, nn); this.litter = new Uint8Array(fb, 2 * nn, nn);
     this.under = new Uint8Array(fb, 3 * nn, nn); this.burnt = new Uint8Array(fb, 4 * nn, nn);
     status(`${year} 年目の一年を読み込み中…`);
     const yb = await bin(`data/year_${year}.bin`), gg = this.g * this.g;

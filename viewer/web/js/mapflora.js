@@ -72,6 +72,7 @@ export class Flora {
         status(`${year} 年目の草を読み込み中…`);
         const fb = await bin(`data/field_${year}.bin`), nn = this.n * this.n;
         this.leaf = new Uint8Array(fb, 0, nn);
+        this.tall = new Uint8Array(fb, nn, nn);
         this.litter = new Uint8Array(fb, 2 * nn, nn);
         this.under = new Uint8Array(fb, 3 * nn, nn);
         this.burnt = new Uint8Array(fb, 4 * nn, nn);
