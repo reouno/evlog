@@ -101,8 +101,8 @@ World: `base/worlds/isles1.params base/worlds/isles16.params experiments/e119_he
   fifty years); half of the trees have been trees for under 10 years, 1% since year 30. Four sown genomes are 80%
   of the trees (31, 24, 14, 11%; in e118 two were 94%), 766 genotypes hold a tree (138), and what was born after the
   sowing is 2.4% of the living mass (1.3%). Two of the four are tall - medians 11 m, 1% of each over 26 and 35 m -
-  and hold 69% of the wood with 35% of the trees; the other two stay low (99% of their trees under 12.1 m) and hold 15% of it with
-  44% of the trees; half of their trees have stood under 3 and under 8 years.
+  and hold 69% of the wood with 35% of the trees; the other two stay low (99% of their trees under 12.1 m) and
+  hold 15% of it with 44% of the trees; half of their trees have stood under 3 and under 8 years.
 - **Leaves hardly differ north and south**, as in e118: the field's optimum 12.8 and 11.8 C, shedding 0.42 and 0.44.
 - On the screen (`shots/`): large trees stand over small ones with a stream between them - a wood in layers, where
   e118's was one height. Young trees stand in rows, on the 5 m grid they were born on, and the woods' edges are
