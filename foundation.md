@@ -32,9 +32,11 @@ rungs, each judged before the next stands on it. The older world is e001-e101 an
   genes' sum squashed into its physical range; mutation is a point change, a duplication or a deletion of a gene.
 - **Producers** (e103, e104) are cohorts: up to 4 stands a cell, each one genotype's leaf, wood, root, store and
   seed with their A and B, a height and an age. Light falls through the leaves by height; carbon fixed is paid in
-  water drawn from the soil and the groundwater; roots take A and B; tissue is lost to turnover, frost, wilting,
-  storms and fire, and returns as litter. A stand dies at the lifespan its wood sets, and a free slot is won by
-  lottery from the cell's seed bank. In the sea the same genome floats and takes A and B from the water.
+  water from the soil and the groundwater; roots take A and B; tissue is lost to turnover, frost, wilting, storms
+  and fire, and returns as litter. A stand dies at the lifespan its wood sets; a free slot is won by lottery from the
+  seed bank. In the sea the same genome floats. **At metres** (e118, in its crate): the same law on 5 m cells; a stand
+  thins as it grows (a stem stands 4.2 m at a kg, by the fourth root) and at one stem a cell (8 m) is a tree, a thing
+  whose crown, 0.35 of its height wide, shades the cells about it; a 125 m cell's plants share its one soil and humus.
 - **Small eaters** (e103), life below a body's scale: up to 2 cohorts a cell eat leaves by their mass and B, less by
   their toughness, and are harmed by a compound whose 8-bit key is far from every detox key they carry.
 - **The living cross metres** (e109), a cell only where a thing lands: a seed goes its stand's height x the wind /
@@ -46,8 +48,7 @@ rungs, each judged before the next stands on it. The older world is e001-e101 an
   through skin; speed is muscle over drag and friction. Of a plant food a gut digests the working part (by its B)
   at once and the bulk only as the rot would while it holds it; what it digests and does not keep of A and B goes
   to the soil, the rest is dung (e111). A body senses within a reach, steers by weighted pulls and a wandering
-  chance, carries a clutch and dies of hunger, thirst, heat, cold, breath, poison, age or being broken. Bodies meet
-  by one law of contact (below). Designed and not built: soil and canopy, hidden units and learning (#125).
+  chance, carries a clutch and dies of hunger, thirst, heat, cold, breath, poison, age or being broken; bodies meet by one law of contact.
 
 **Generated** from the seed and its parameters: the height map and sea level (land, sea, islands and lakes are
 results), the rock provinces, the drainage network, the latitudes, and the genomes sown.
@@ -86,13 +87,13 @@ is not searched to hit a result. If a rung fails on a ground that passed, the fa
 
 - **Rung 1, the ground** (e102): ledgers; rivers reach the sea and the land's water is steady; the soil's A:B and
   A + B each span x4; years differ without drifting; more places than climate alone makes. On the planet: A:B x14,
-  A + B x19, 15.4 places, runoff 10% of the rain. On the islands (e108): A:B x9, A + B x68, 96% of the rain runs off
-  and those bands count 4.5 places bare; what differs is rain x15, 10 C by height and a slope's light x2.3. At an
-  animal's size (e117, lines of #135): 11.4 C north to south, a lee x2-7.5 drier, a rainless southern summer, snow.
+  A + B x19, 15.4 places. On the islands (e108): A:B x9, A + B x68, rain x15, 10 C by height, a slope's light x2.3. At
+  an animal's size (e117, lines of #135): 11.4 C north to south, a lee x2-7.5 drier, a rainless southern summer, snow.
 - **Rung 2, producers** (e103-e105): ledgers; producers on >= 50% of the land and >= 20% of the sea; >= 5 effective
   groups held by place (NMI >= 0.2); they keep changing; the living change the ground. On the planet: 7.6-11.9
-  groups, mutants 41-51% after a millennium, no form ever replaced. On the islands (e109, 300 years): 7-8 groups and
-  falling, NMI 0.12-0.13 and rising, mutants 1.4-5.8% - the sown mosaic sorts a few cells a decade, a transient.
+  groups, mutants 41-51% after a millennium, no form replaced. On the islands (e109, 300 years): 7-8 groups, NMI
+  0.12-0.13 and rising - a transient. At metres (e118, 120 years): ledgers, a tree line; crowns over 5.7% of the ground
+  (asked 20-70%), placed by warmth and fire, not water; two sown lines are 94% of the trees, 5-9 m by their genome's limit.
 - **Rung 3, bodies** (e106): ledgers; bodies on >= 10% of the land's cells and producers on >= 50% for 50 years;
   bodies eat >= 10% of what producers fix and producers turn over; the freedoms are used (adult masses x100, two
   strata, flesh 10% of the diet, plastic weights, a group that travels); >= 5 effective groups of bodies by place.
@@ -112,8 +113,8 @@ whose adult crown is wider than about 2 m is a thing with a place; smaller plant
 (plants on 5 m cells, small life on 125 m). The map (e117, `isles16.params`): 16 km, 49 km2 of land in four islands,
 latitudes 44-64 N folded south to north (the one stated fiction), a year of 365 days; climate, soil and water on
 125 m cells, the ground drawn once at 5 m with ponds and streams (`ground5.rs`). Time is continuous: an animal decides
-when its mind says and pays for each decision; plants and fields move daily, the climate every 3.2 hours.
+when its mind says and pays for each decision; plants move every 5 days, the climate every 3.2 hours.
 
-**Compute**: the bare map's air and water take 4.4 s a year on six threads (e117). A decision costs about 1 us; a
+**Compute**: on six threads the bare map takes 4.4 s a year (e117), with plants 44 s (e118). A decision costs about 1 us; a
 world year in about 10 minutes on six threads (1e4 animals) allows about 500 an animal-day (e116's placeholder made
 2,400-9,000). Islands run on their own threads. The map has its own viewer page (`viewer map`).
