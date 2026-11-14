@@ -286,7 +286,7 @@ async function main(): Promise<void> {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, logarithmicDepthBuffer: true });
   renderer.setPixelRatio(Math.min(2, window.devicePixelRatio));
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(55, 1, 0.3, 60000);
+  const camera = new THREE.PerspectiveCamera(55, 1, 0.3, 400000);
   const controls = new OrbitControls(camera, canvas);
   controls.enableDamping = true;
   controls.maxPolarAngle = Math.PI * 0.495;
@@ -299,13 +299,13 @@ async function main(): Promise<void> {
   scene.fog = new THREE.Fog(0xaec6d8, 4000, 26000);
   // the sea: one sheet at 0, the ground under it shows through its shallows
   const seaMat = new THREE.MeshStandardMaterial({ color: 0x1d4d6e, transparent: true, opacity: 0.82, roughness: 0.25, metalness: 0.1 });
-  const sea = new THREE.Mesh(new THREE.PlaneGeometry(L.size * 4, L.size * 4), seaMat);
+  const sea = new THREE.Mesh(new THREE.PlaneGeometry(L.size * 40, L.size * 40), seaMat);
   sea.rotation.x = -Math.PI / 2;
   sea.position.set(L.size / 2, 0, L.size / 2);
   sea.renderOrder = 1;
   scene.add(sea);
   // and a floor under it past the map's edge, where there is no ground to see through the water
-  const floor = new THREE.Mesh(new THREE.PlaneGeometry(L.size * 4, L.size * 4), new THREE.MeshStandardMaterial({ color: new THREE.Color(0.16, 0.36, 0.52), roughness: 0.95 }));
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(L.size * 40, L.size * 40), new THREE.MeshStandardMaterial({ color: new THREE.Color(0.16, 0.36, 0.52), roughness: 0.95 }));
   floor.rotation.x = -Math.PI / 2;
   floor.position.set(L.size / 2, -41, L.size / 2);
   scene.add(floor);
@@ -471,6 +471,9 @@ async function main(): Promise<void> {
     camera.position.y += gy - controls.target.y;
     controls.target.y = gy;
     controls.update();
+    // the haze begins beyond what is looked at, however far the eye stands back
+    const reach = camera.position.distanceTo(controls.target), fog = scene.fog as THREE.Fog;
+    fog.near = Math.max(4000, reach * 1.5); fog.far = Math.max(26000, reach * 6);
     const under = L.heightAt(camera.position.x, camera.position.z) + 1.6;
     if (camera.position.y < under) camera.position.y = under;
     updateTiles();
