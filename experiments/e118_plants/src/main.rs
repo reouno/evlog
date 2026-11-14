@@ -124,7 +124,7 @@ params! {
     wet_rise = 2.0, "m: and no higher than this over the water";
     fire_shade = 0.2, "share of the open ground's drying that fuel has in full shade (the sun dries what it reaches)";
     humify = 0.3, "share of the A and B that rot frees that stays in the soil's humus";
-    humus = 0.02, "share of the humus's A and B that comes free a year at 20 C in a full soil (a residence of decades)";
+    humus = 0.05, "share of the humus's A and B that comes free a year at 20 C in a full soil (a residence of 20 years there, 40 at 10 C: a slow pool's)";
     old_soil = 300.0, "years of its rock's giving that a soil of mean depth holds as humus at the sowing (0: bare rock)";
     sow_years = 5.0, "years the founders' seed rains on every cell with soil";
     snap_every = 25.0, "years between snapshots of the trees, the field and the traits";
@@ -415,14 +415,16 @@ fn trait_values(ph: &genome::Pheno) -> [f64; 10] {
 fn snapshot(prefix: &str, year: usize, pl: &Plants, sv: &Survey) {
     let f2 = pl.k * pl.k;
     let w = |name: &str| std::io::BufWriter::new(std::fs::File::create(format!("{prefix}_{name}_{year}.bin")).unwrap());
-    // the trees: x, y, height, crown radius, leaf, wood, age (f32), genotype, the year it became a thing (u32)
+    // the trees: x, y, height, crown radius, leaf, wood, age, its leaves' toughness (f32), genotype, the year it
+    // became a thing (u32)
     let mut out = w("trees");
     for t in &pl.trees {
         if t.slot == NONE {
             continue;
         }
         let (i, j) = pl.ij(t.slot as usize);
-        for v in [(i as f64 + 0.5) * pl.fm, (j as f64 + 0.5) * pl.fm, t.b.h, t.r, t.b.o[LEAF].m, t.b.o[WOOD].m, t.b.age] {
+        let tough = plants::toughness(pl.gen[t.b.g as usize].as_ref().unwrap().base.leaf_a);
+        for v in [(i as f64 + 0.5) * pl.fm, (j as f64 + 0.5) * pl.fm, t.b.h, t.r, t.b.o[LEAF].m, t.b.o[WOOD].m, t.b.age, tough] {
             out.write_all(&(v as f32).to_le_bytes()).unwrap();
         }
         out.write_all(&t.b.g.to_le_bytes()).unwrap();
@@ -512,6 +514,55 @@ fn snapshot(prefix: &str, year: usize, pl: &Plants, sv: &Survey) {
     out.flush().unwrap();
 }
 
+/// A year recorded for the page (e118): at each month's end the field's leaf on a grid of `REC` fine cells and each
+/// tree's leaf; at each update the front's reach and the wind.
+const REC: usize = 5;
+
+struct Record {
+    field: Vec<u8>,       // twelve grids of nf / REC a side: kg of leaf a m2 of soil x 100
+    leaf: Vec<Vec<f32>>,  // twelve lists by tree index: kg of leaf
+    weather: Vec<f32>,    // an update: the latitude a front reaches south to (99: none), the wind east and north (m/s)
+}
+
+impl Record {
+    fn month(&mut self, pl: &Plants) {
+        let g = pl.nf / REC;
+        let (mut sum, mut cnt) = (vec![0.0f32; g * g], vec![0u16; g * g]);
+        for q in 0..pl.grows.len() {
+            if !pl.grows[q] {
+                continue;
+            }
+            let (i, j) = pl.ij(q);
+            let c = (j / REC) * g + i / REC;
+            cnt[c] += 1;
+            for k in 0..KF {
+                let x = &pl.co[q * KF + k];
+                if x.live() {
+                    sum[c] += x.o[LEAF].m as f32;
+                }
+            }
+        }
+        self.field.extend((0..g * g).map(|c| if cnt[c] > 0 { (sum[c] / cnt[c] as f32 * 100.0).min(255.0) as u8 } else { 0 }));
+        self.leaf.push(pl.trees.iter().map(|t| if t.slot == NONE { 0.0 } else { t.b.o[LEAF].m as f32 }).collect());
+    }
+
+    /// Written for the trees alive now, in the order of the snapshot's: each month's leaf as a share of its fullest.
+    fn write(&self, prefix: &str, year: usize, pl: &Plants) {
+        let mut out = std::io::BufWriter::new(std::fs::File::create(format!("{prefix}_year_{year}.bin")).unwrap());
+        out.write_all(&self.field).unwrap();
+        let ids: Vec<usize> = (0..pl.trees.len()).filter(|&i| pl.trees[i].slot != NONE).collect();
+        let full: Vec<f32> = ids.iter().map(|&i| self.leaf.iter().map(|m| m.get(i).copied().unwrap_or(0.0)).fold(1e-9, f32::max)).collect();
+        for m in &self.leaf {
+            let row: Vec<u8> = ids.iter().zip(&full).map(|(&i, f)| (m.get(i).copied().unwrap_or(0.0) / f * 255.0) as u8).collect();
+            out.write_all(&row).unwrap();
+        }
+        for v in &self.weather {
+            out.write_all(&v.to_le_bytes()).unwrap();
+        }
+        out.flush().unwrap();
+    }
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let prefix = args.first().expect("usage: e118_plants <prefix> [key=value ...] [file.params ...]").clone();
@@ -574,6 +625,8 @@ fn main() {
             x.secs = [0.0; 6];
         }
         let mut secs_plants = 0.0;
+        let snap = pl.is_some() && ((yr + 1 - sow) % (p.snap_every as usize).max(1) == 0 || yr + 1 == years);
+        let mut rec = Record { field: Vec::new(), leaf: Vec::new(), weather: Vec::new() };
         for u in 0..upy {
             let step = (yr * upy + u) as f64 * p.tick;
             let f = air.update(&p, &ter, &sat, &mut wx, step, pl.as_ref().map_or(&bare_cover, |x| &x.cover));
@@ -590,6 +643,14 @@ fn main() {
                 secs_plants += t1.elapsed().as_secs_f64();
             }
             year.add(&ter, &air, &hy, (u * 4 / upy).min(3), (u * 12 / upy).min(11), p.threads as usize);
+            if snap {
+                let season = (std::f64::consts::TAU * (step + 0.5 * p.tick) / p.year).sin();
+                let (wu, wv) = wx.wind(&p, ter.lat[n / 2], season);
+                rec.weather.extend([if wx.reach.is_finite() { wx.reach as f32 } else { 99.0 }, wu as f32, wv as f32]);
+                if u + 1 == upy || (u + 1) * 12 / upy != u * 12 / upy {
+                    rec.month(pl.as_ref().unwrap());
+                }
+            }
         }
         if yr < sow {
             for c in 0..cells {
@@ -637,9 +698,9 @@ fn main() {
                 );
                 let f = |v: &[f64]| v.iter().map(|x| *x as f32).collect::<Vec<f32>>();
                 maps.extend([f(&sv.field), f(&sv.wood), f(&sv.crown), f(&sv.height), f(&sv.litter), f(&x.burnt), f(&x.transp)]);
-                let since = yr + 1 - sow;
-                if since % (p.snap_every as usize).max(1) == 0 || yr + 1 == years {
+                if snap {
                     snapshot(&prefix, yr + 1, x, &sv);
+                    rec.write(&prefix, yr + 1, x);
                     snaps.push(yr + 1);
                 }
             }
@@ -703,7 +764,7 @@ fn main() {
         std::fs::write(
             format!("{prefix}_snaps.json"),
             format!(
-                "{{\"years\":[{}],\"sow\":{sow},\"founders\":{},\"n\":{n},\"fine\":{},\"cell_m\":{},\"trees\":[\"x:f32\",\"y:f32\",\"height:f32\",\"crown_r:f32\",\"leaf:f32\",\"wood:f32\",\"age:f32\",\"genotype:u32\",\"born:u32\"],\"field\":[\"leaf x100\",\"height x50\",\"litter x50\",\"light under crowns x255\",\"years since fire (255 never)\"],\"traits\":[{}],\"traits_layout\":\"field's traits, trees' traits, then field, wood, crown, trees; float32 on n x n; seed_mass is its natural log\"}}\n",
+                "{{\"years\":[{}],\"sow\":{sow},\"founders\":{},\"n\":{n},\"fine\":{},\"cell_m\":{},\"trees\":[\"x:f32\",\"y:f32\",\"height:f32\",\"crown_r:f32\",\"leaf:f32\",\"wood:f32\",\"age:f32\",\"tough:f32\",\"genotype:u32\",\"born:u32\"],\"field\":[\"leaf x100\",\"height x50\",\"litter x50\",\"light under crowns x255\",\"years since fire (255 never)\"],\"traits\":[{}],\"year\":\"12 grids of fine/{REC} a side (field leaf x100, u8), 12 rows of a byte a tree in the trees' order (leaf as a share of its fullest month x255), then {upy} updates x 3 f32 (a front's reach in degrees or 99, wind east, wind north); months from the spring equinox\",\"traits_layout\":\"field's traits, trees' traits, then field, wood, crown, trees; float32 on n x n; seed_mass is its natural log\"}}\n",
                 snaps.iter().map(|y| y.to_string()).collect::<Vec<_>>().join(","),
                 x.founders,
                 x.nf,
