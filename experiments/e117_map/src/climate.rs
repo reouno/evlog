@@ -87,6 +87,11 @@ pub struct Weather {
     wobble: f64,
     pub storm_dir: Option<f64>,
     storms: Vec<Storm>,
+    // e117: the latitude (degrees) the front now passing reaches south to (infinite between fronts), and the updates
+    // it and the clear spell after it still last
+    pub reach: f64,
+    front_left: u32,
+    gap_left: u32,
     pub rain_f: Vec<f64>, // this update's multiplier of the rain
     pub hit: Vec<bool>,   // under a storm this update (e103: storms fell tall stands)
     pub storms_seen: u64,
@@ -105,6 +110,9 @@ impl Weather {
             wobble: 0.0,
             storm_dir: None,
             storms: Vec::new(),
+            reach: f64::INFINITY,
+            front_left: 0,
+            gap_left: 0,
             rain_f: vec![1.0; cells],
             hit: vec![false; cells],
             storms_seen: 0,
@@ -134,8 +142,26 @@ impl Weather {
     }
 
     /// One update: the anomaly moves toward the year's (over a quarter of a year), storms come and go.
-    fn update(&mut self, p: &Params) {
+    fn update(&mut self, p: &Params, season: f64) {
         let n = p.size as usize;
+        if p.track > 0.0 {
+            // e117: fronts come and go; each reaches south to its own latitude about the storm track's edge, which
+            // lies `track_shift` degrees north of `track_lat` at midsummer and as far south at midwinter
+            let per_day = p.day / p.tick;
+            if self.front_left > 0 {
+                self.front_left -= 1;
+                if self.front_left == 0 {
+                    self.reach = f64::INFINITY;
+                    self.gap_left = (-(1.0 - self.rng.f64()).ln() * p.front_gap * per_day).round() as u32;
+                }
+            } else if self.gap_left > 0 {
+                self.gap_left -= 1;
+            }
+            if self.front_left == 0 && self.gap_left == 0 {
+                self.reach = p.track_lat + p.track_shift * season + p.track_width * self.rng.normal();
+                self.front_left = ((-(1.0 - self.rng.f64()).ln() * p.front_days * per_day).round() as u32).max(1);
+            }
+        }
         let k = (p.tick / (p.year / 4.0)).min(1.0);
         let whole = p.sweep != 0.0;
         let mut stormy = 1.0;
@@ -258,13 +284,6 @@ pub fn zonal(p: &Params, lat: f64, decl: f64) -> f64 {
     p.wind * g
 }
 
-/// The storm track over a latitude (e117): 1 where the fronts pass, 0 under the high south of them. Its southern
-/// edge lies at `track_lat`, `track_shift` degrees further north at midsummer and as far south at midwinter.
-pub fn track(p: &Params, lat_deg: f64, season: f64) -> f64 {
-    let u = ((lat_deg - (p.track_lat + p.track_shift * season)) / p.track_width + 0.5).clamp(0.0, 1.0);
-    u * u * (3.0 - 2.0 * u)
-}
-
 /// What a cell gains from its four edges: k x (the neighbour's value - its own), each edge's flow reckoned from
 /// the same two values in the same order as its neighbour reckons it, so the edges pass exact amounts.
 #[inline]
@@ -316,10 +335,10 @@ impl Air {
     /// One update of the climate over the steps [step, step + tick).
     /// `cover`: the share of the sun that reaches the soil under the leaves (e103), which scales its evaporation.
     pub fn update(&mut self, p: &Params, t: &Terrain, sat: &Sat, wx: &mut Weather, step: f64, cover: &[f64]) -> Flux {
-        wx.update(p);
+        let season = (TAU * (step + 0.5 * p.tick) / p.year).sin();
+        wx.update(p, season);
         let n = t.n;
         let cells = n * n;
-        let season = (TAU * (step + 0.5 * p.tick) / p.year).sin();
         let decl = p.tilt.to_radians() * season;
         let (sd, cd) = (decl.sin(), decl.cos());
         // The light: the sun's height averaged over the update, worked out exactly (e061).
@@ -542,9 +561,10 @@ impl Air {
     /// On a band of latitude (e117) each row's sea air is its own row's: as warm as its sea, as wet as that sea keeps
     /// it, and air that crosses to the next row arrives as wet a share of that row's sea air as it left (the fold:
     /// the rows lie 17 km of latitude apart and are drawn 125 m apart, so the air does not carry a southern
-    /// row's water north in one cell). Where the storm track lies, the fronts bring water from beyond the map into
-    /// the air over every cell (`track` mm a year); south of it, under the high, the air rains only nearer to full
-    /// (`calm`). Rain that falls on freezing land lies as snow and melts by the degrees above freezing.
+    /// row's water north in one cell). The rows a front reaches have the sea's wet air, and the front brings water
+    /// from beyond the map into the air over every cell (`track` mm a year where every front reaches); the rows
+    /// south of it, and every row between fronts, lie under air sunk from aloft, `dry` short of the sea's - it
+    /// rains nowhere. Rain that falls on freezing land lies as snow and melts by the degrees above freezing.
     #[allow(clippy::too_many_arguments)]
     fn sweep(&mut self, p: &Params, t: &Terrain, sat: &Sat, wx: &Weather, season: f64, t_air: f64, t_row: &[f64], cover: &[f64]) -> Flux {
         let n = t.n;
@@ -558,16 +578,18 @@ impl Air {
         let per = secs / tc; // crossings an update
         let ke = 1.0 - (-tc / p.evap_tau).exp();
         let kr = 1.0 - (-tc / p.rain_tau).exp();
-        // each row's sea air: what it holds full, where it rains, what the fronts add a crossing of a cell, and where
-        // the open sea's taking up, the fronts and the rain balance
+        // each row's sea air: where it rains, what a front adds a crossing of a cell, and the water it comes in with
+        // (where the open sea's taking up, the front and the rain balance; under sunk air, `dry` short of that)
         let band = p.lat_span != 0.0;
+        let fronts = band && p.track > 0.0;
+        let in_front = p.track / (p.front_days / (p.front_days + p.front_gap)) * tc / (p.year / p.day * 86400.0);
         let rows: Vec<[f64; 3]> = (0..n)
             .map(|y| {
                 let s0 = sat.at(if band { t_row[y] } else { t_air } + wx.temp(0, p));
-                let g = if band && p.track > 0.0 { track(p, t.lat[y].to_degrees(), season) } else { 1.0 };
-                let c0 = (RAIN_RH + (1.0 - RAIN_RH) * p.calm * (1.0 - g)) * s0;
-                let sup = if band { p.track * g * wx.rain_f[y * n] * tc / (p.year / p.day * 86400.0) } else { 0.0 };
-                [c0, sup, (ke * s0 + kr * c0 + sup) / (ke + kr)]
+                let c0 = RAIN_RH * s0;
+                let wet = !fronts || t.lat[y].to_degrees() >= wx.reach;
+                let sup = if fronts && wet { in_front * wx.rain_f[y * n] } else { 0.0 };
+                [c0, sup, (ke * s0 + kr * c0 + sup) / (ke + kr) * if wet { 1.0 } else { 1.0 - p.dry }]
             })
             .collect();
         let days = p.tick / p.day;
