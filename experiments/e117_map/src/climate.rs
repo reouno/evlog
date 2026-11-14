@@ -589,7 +589,7 @@ impl Air {
                 let c0 = RAIN_RH * s0;
                 let wet = !fronts || t.lat[y].to_degrees() >= wx.reach;
                 let sup = if fronts && wet { in_front * wx.rain_f[y * n] } else { 0.0 };
-                [c0, sup, (ke * s0 + kr * c0 + sup) / (ke + kr) * if wet { 1.0 } else { 1.0 - p.dry }]
+                [c0, sup, (c0 + (s0 - c0) * ke / (ke + kr) + sup / (ke + kr)) * if wet { 1.0 } else { 1.0 - p.dry }]
             })
             .collect();
         let days = p.tick / p.day;
@@ -605,13 +605,14 @@ impl Air {
                 let vw = if i == 0 { v_in } else { self.col[y * n + if east { x - 1 } else { x + 1 }] };
                 let vs = match below {
                     None => v_in,
-                    Some(yb) => {
+                    Some(yb) if band => {
                         // the fold: as wet a share of this row's sea air as it was of the last row's
                         let raw = self.col[yb * n + x];
                         let v = raw * c0 / rows[yb][0];
                         fold += b * (v - raw);
                         v
                     }
+                    Some(yb) => self.col[yb * n + x],
                 };
                 let added = self.vapor[c] - self.col[c];
                 let mut v = pa * vw + pb * vs + added / per + sup;
