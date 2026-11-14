@@ -5,7 +5,7 @@ step. What happened lives in the experiments' READMEs and git, and what is to be
 issues (#116), never here. **Keep this under 120 lines**: when a row wants a paragraph, the paragraph belongs in an
 experiment's README and the row keeps the one sentence that decides the next step.
 
-Last updated: 2026-11-11 (#135, e116).
+Last updated: 2026-11-14 (#135, e117).
 
 ## 1. The ideal
 
@@ -35,7 +35,7 @@ Today is the last whole world (stage C on c1225, e101) and, where a row says so,
 
 | layer | ideal | today | gap |
 |---|---|---|---|
-| A places, time, water, heat | many wide places, a day, a year, weather, rivers and rain shadows, cold and hot | the small world's ground (`base/`, e108): 410 km2 in eight islands, five over 20 km2 with 2.3-32.5 km of sea between; rain x15 by height and side (the windward lowland twice the lee), 10 C by height, a slope's light x2.3, A:B x9 and fertility x68, streams on 6.8% of the land, a cell's rain 17% between years; under stands 7-10% of the soil leaves the full band and fire burns the driest third only (e109) | medium: nothing is under 5 C; with producers the planet's bands count 8-10 places against its 15.4, and whether rain, height and light part the living is not settled - 300 years after the sowing they are still sorting (e109) |
+| A places, time, water, heat | many wide places, a day, a year, weather, rivers and rain shadows, cold and hot | the map at an animal's size (e117, bare): 49 km2 in four islands on 16 km, drawn at 5 m with ponds and 15 km of streams; lowlands 17.0 C in the south to 5.6 C in the north; fronts from a storm track that moves with the season - the south 517 mm with a rainless summer (7% of its rain, a third of its brooks dry), the north 901 mm in every season and four months of snow; 2.2 m of rain on the heights, a lee a half to an eighth of its windward side; a year's rain differs twofold. Before it `base/` on isles1 (e108, e109): eight islands, where under stands 7-10% of the soil leaves the full band and fire burns the driest third | medium: nothing lives on it, so whether these places and seasons part the living is rungs 2 and 3's to show; a lee is dry only close behind a height, streams run straight, weather is not drawn |
 | B plant foods | several, each needing its own mouth and gut | old world: grass, algae, browse, carrion, litter; the planet (e105): producers evolve for a millennium - 41-51% of biomass new, 9-12 groups held by place - but no form is replaced; the islands (`base/`, e109): 7-8 groups and falling, a mosaic of what was sown that sorts by place at a seed's pace (NMI 0.12-0.13 at year 310, rising), mutants 1.4-5.8%; under bodies 45% of the land's living producers is in the ground (roots, stores, the seed bank: ten times the leaves), opened to a body whose front presses harder than the soil, and the crowns to one whose glue holds it; no evolved body enters either in sixty years, and a designed one entered and its line died within ten (e112) | **large** for bodies; nothing carries a seed far |
 | B response to eating | regrowth, defence, fruit offered | new world: compounds with keys; small eaters evolve and come within 1 bit of the producers' keys, or live on the undefended (e103); a tissue's lock that a gut's keys must fit is born and pays a little but never spreads (under 2e-5 of the producers' mass): the bodies hardly eat the living (e114); a tissue holds water by its working part and a mouthful brings it - thirst eases, the leaf stays about 1% of the diet, since the living are behind height and the crown, not behind water (e115) | **large**: a defence pays only where the living are eaten |
 | B plants as places | a forest is home, cover and food | a stand is a home only through its wet ground (e078) | medium |
@@ -117,4 +117,4 @@ develops into a large space of forms; the world is judged whole, over long runs,
 **The gap being filled** was the bodies' at 125 m and 44-minute steps (e110-e115): the land stands, the living stay behind
 doors and, watched (2026-11-08), no animal is anywhere - a body is a crowd of 300,000. **The world is rebuilt at the
 size of an animal** (#135, design agreed 2026-11-11): one body one animal, plants as things at metres, the mind with
-it, since what is watched is behaviour - e116's placeholder grazed and nothing searched, so nothing was seen.
+it, since what is watched is behaviour (e116's placeholder grazed, nothing searched). Its map stands (e117).

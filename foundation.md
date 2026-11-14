@@ -21,6 +21,8 @@ rungs, each judged before the next stands on it. The older world is e001-e101 an
   keeps half of the last one's; storms multiply the rain where they pass. On the small world (e108) the air enters at
   the windward border as sea air and is followed across the cells in one pass, raining where the land lifts it; it
   sets most of a land cell's temperature; a slope's light follows its tilt; the wind turns by season, year and day.
+  On a band of latitude (e117) each row's sea air is its own; fronts come and go, each reaching south to about a
+  storm track's edge that moves with the season - wet air where one reaches, sunk dry air elsewhere; snow lies and melts.
 - **Ground** (e102): five rocks in provinces set what a soil holds and gives. Water over a soil's holding runs down
   a drainage network to the sea, fills basins as lakes, and sinks to groundwater that seeps back into the rivers.
   Rock weathers into nutrients **A** (mobile; structure) and **B** (bound; activity); water leaving a cell takes
@@ -85,7 +87,8 @@ is not searched to hit a result. If a rung fails on a ground that passed, the fa
 - **Rung 1, the ground** (e102): ledgers; rivers reach the sea and the land's water is steady; the soil's A:B and
   A + B each span x4; years differ without drifting; more places than climate alone makes. On the planet: A:B x14,
   A + B x19, 15.4 places, runoff 10% of the rain. On the islands (e108): A:B x9, A + B x68, 96% of the rain runs off
-  and those bands count 4.5 places bare; what differs is rain x15, 10 C by height and a slope's light x2.3.
+  and those bands count 4.5 places bare; what differs is rain x15, 10 C by height and a slope's light x2.3. At an
+  animal's size (e117, lines of #135): 11.4 C north to south, a lee x2-7.5 drier, a rainless southern summer, snow.
 - **Rung 2, producers** (e103-e105): ledgers; producers on >= 50% of the land and >= 20% of the sea; >= 5 effective
   groups held by place (NMI >= 0.2); they keep changing; the living change the ground. On the planet: 7.6-11.9
   groups, mutants 41-51% after a millennium, no form ever replaced. On the islands (e109, 300 years): 7-8 groups and
@@ -105,15 +108,12 @@ measures - kinds by birth form, the 64-box label, the six-seed ladder at 7.14 ki
 ## 4. Scale and compute
 
 **The scale being built** (#135, agreed 2026-11-11): a body is one animal of its own size from about 1 kg; a plant
-whose adult crown is wider than about 2 m is a thing with a place, a height and a crown; smaller plants and life under
-1 kg are fields (plants on 5 m cells, small life on 125 m). The map is 16 km on a side with 40-60 km2 of land in four
-islands, a band of latitude folded north to south (the one stated fiction), the westerlies' wet and dry sides, a high
-island's snow line and a day; climate, soil and water stay on 125 m cells, the ground is drawn at 5 m with its
-streams. Time is continuous: each animal decides when its mind says and pays for each decision by its nerve; plants
-and fields move daily, the climate hourly; a year is 365 days. Rungs 1-3 are rebuilt in that order (#135).
+whose adult crown is wider than about 2 m is a thing with a place; smaller plants and life under 1 kg are fields
+(plants on 5 m cells, small life on 125 m). The map (e117, `isles16.params`): 16 km, 49 km2 of land in four islands,
+latitudes 44-64 N folded south to north (the one stated fiction), a year of 365 days; climate, soil and water on
+125 m cells, the ground drawn once at 5 m with ponds and streams (`ground5.rs`). Time is continuous: an animal decides
+when its mind says and pays for each decision; plants and fields move daily, the climate every 3.2 hours.
 
-**Compute**: a decision costs about 1 us (e116); e116's placeholder mind made 2,400-9,000 an animal-day, and a
-budget of a world year in about 10 minutes on six threads (1e4 animals) allows about 500. Islands run on their own
-threads (animals on two islands cannot meet). Viewer positions are 16-bit at 64 a cell, short of 3,200 cells.
-
-**Before**: `base/` on isles1 (64 km, 125 m cells; e108, e109) and e110-e115's bodies of S = 4,000 kg of animals.
+**Compute**: the bare map's air and water take 4.4 s a year on six threads (e117). A decision costs about 1 us; a
+world year in about 10 minutes on six threads (1e4 animals) allows about 500 an animal-day (e116's placeholder made
+2,400-9,000). Islands run on their own threads. The map has its own viewer page (`viewer map`).
