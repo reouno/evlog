@@ -225,7 +225,9 @@ pub struct Air {
     pub vapor: Vec<f64>,  // mm of water in the air over the cell
     pub ground: Vec<f64>, // mm of water in and on the ground (land only)
     pub light: Vec<f64>,
-    pub rain_now: Vec<f64>, // mm fallen in the last update
+    pub rain_now: Vec<f64>, // mm fallen in the last update, rain and snow
+    pub snow: Vec<f64>,     // mm of water lying as snow (e117; land only)
+    pub wet_now: Vec<f64>,  // mm that reached the ground as water in the last update: the rain and the melt
     rate: Vec<f64>,
     inv_cap: Vec<f64>,
     // the sweep: the air's water over each cell as the last pass left it (what `vapor` has over it since was
@@ -254,6 +256,13 @@ pub fn zonal(p: &Params, lat: f64, decl: f64) -> f64 {
     // -1 below 25, +1 from 35 to 55, -1 beyond 65
     let g = -1.0 + 2.0 * s(step(25.0, 35.0, l)) - 2.0 * s(step(55.0, 65.0, l));
     p.wind * g
+}
+
+/// The storm track over a latitude (e117): 1 where the fronts pass, 0 under the high south of them. Its southern
+/// edge lies at `track_lat`, `track_shift` degrees further north at midsummer and as far south at midwinter.
+pub fn track(p: &Params, lat_deg: f64, season: f64) -> f64 {
+    let u = ((lat_deg - (p.track_lat + p.track_shift * season)) / p.track_width + 0.5).clamp(0.0, 1.0);
+    u * u * (3.0 - 2.0 * u)
 }
 
 /// What a cell gains from its four edges: k x (the neighbour's value - its own), each edge's flow reckoned from
@@ -286,6 +295,8 @@ impl Air {
             ground,
             light: vec![0.0; cells],
             rain_now: vec![0.0; cells],
+            snow: vec![0.0; cells],
+            wet_now: vec![0.0; cells],
             rate: t.sea.iter().map(|&s| if s { p.sea_rate } else { p.land_rate }).collect(),
             inv_cap: t.sea.iter().map(|&s| if s { p.sea_rate / p.land_rate } else { 1.0 }).collect(),
             h0: vec![0.0; n],
@@ -299,7 +310,7 @@ impl Air {
     }
 
     pub fn water(&self) -> f64 {
-        self.vapor.iter().sum::<f64>() + self.ground.iter().sum::<f64>()
+        self.vapor.iter().sum::<f64>() + self.ground.iter().sum::<f64>() + self.snow.iter().sum::<f64>()
     }
 
     /// One update of the climate over the steps [step, step + tick).
@@ -420,7 +431,7 @@ impl Air {
         }
 
         if p.sweep != 0.0 {
-            return self.sweep(p, t, sat, wx, season, t_air, cover);
+            return self.sweep(p, t, sat, wx, season, t_air, t_row, cover);
         }
         // The air takes up water where it can and rains what it cannot hold; this year's anomaly and the
         // storms change how much of the excess falls.
@@ -462,6 +473,7 @@ impl Air {
         for x in &parts {
             f.add(x);
         }
+        self.wet_now.copy_from_slice(&self.rain_now);
 
         // The winds: each row's air shifts along the row by its band's wind (linear, so nothing is lost).
         if p.wind_bands != 0.0 {
@@ -526,7 +538,15 @@ impl Air {
     /// its excess over what it can hold: the sea air's holding, less the share of its lifted layer that the
     /// cell's height wrings out. A column's gain or loss over one crossing is the ground's `per` times over,
     /// the crossings in an update. The pass is one after another, so it does not depend on the threads.
-    fn sweep(&mut self, p: &Params, t: &Terrain, sat: &Sat, wx: &Weather, season: f64, t_air: f64, cover: &[f64]) -> Flux {
+    ///
+    /// On a band of latitude (e117) each row's sea air is its own row's: as warm as its sea, as wet as that sea keeps
+    /// it, and air that crosses to the next row arrives as wet a share of that row's sea air as it left (the fold:
+    /// the rows lie 17 km of latitude apart and are drawn 125 m apart, so the air does not carry a southern
+    /// row's water north in one cell). Where the storm track lies, the fronts bring water from beyond the map into
+    /// the air over every cell (`track` mm a year); south of it, under the high, the air rains only nearer to full
+    /// (`calm`). Rain that falls on freezing land lies as snow and melts by the degrees above freezing.
+    #[allow(clippy::too_many_arguments)]
+    fn sweep(&mut self, p: &Params, t: &Terrain, sat: &Sat, wx: &Weather, season: f64, t_air: f64, t_row: &[f64], cover: &[f64]) -> Flux {
         let n = t.n;
         let secs = p.tick / p.day * 86400.0;
         let dx = p.cell_km * 1000.0;
@@ -538,27 +558,42 @@ impl Air {
         let per = secs / tc; // crossings an update
         let ke = 1.0 - (-tc / p.evap_tau).exp();
         let kr = 1.0 - (-tc / p.rain_tau).exp();
-        // e117: the sea air's water stays the world's one value - by row, air flowing north would carry a southern
-        // row's excess that the pass rains `per` times over (it follows one crossing an update); only the air's
-        // warmth is the row's
-        let s0 = sat.at(t_air + wx.temp(0, p));
-        let c0 = RAIN_RH * s0;
-        let v_in = c0 + (s0 - c0) * ke / (ke + kr); // where the open sea's taking up and raining balance
+        // each row's sea air: what it holds full, where it rains, what the fronts add a crossing of a cell, and where
+        // the open sea's taking up, the fronts and the rain balance
+        let band = p.lat_span != 0.0;
+        let rows: Vec<[f64; 3]> = (0..n)
+            .map(|y| {
+                let s0 = sat.at(if band { t_row[y] } else { t_air } + wx.temp(0, p));
+                let g = if band && p.track > 0.0 { track(p, t.lat[y].to_degrees(), season) } else { 1.0 };
+                let c0 = (RAIN_RH + (1.0 - RAIN_RH) * p.calm * (1.0 - g)) * s0;
+                let sup = if band { p.track * g * wx.rain_f[y * n] * tc / (p.year / p.day * 86400.0) } else { 0.0 };
+                [c0, sup, (ke * s0 + kr * c0 + sup) / (ke + kr)]
+            })
+            .collect();
+        let days = p.tick / p.day;
         let mut f = Flux::default();
-        let (mut gained, mut inflow, mut outflow, mut dv) = (0.0, 0.0, 0.0, 0.0);
+        let (mut gained, mut inflow, mut outflow, mut dv, mut fold) = (0.0, 0.0, 0.0, 0.0, 0.0);
         for j in 0..n {
             let y = if north { j } else { n - 1 - j };
             let below = if j == 0 { None } else { Some(if north { y - 1 } else { y + 1 }) };
             for i in 0..n {
                 let x = if east { i } else { n - 1 - i };
                 let c = y * n + x;
+                let [c0, sup, v_in] = rows[y];
                 let vw = if i == 0 { v_in } else { self.col[y * n + if east { x - 1 } else { x + 1 }] };
                 let vs = match below {
                     None => v_in,
-                    Some(yb) => self.col[yb * n + x],
+                    Some(yb) => {
+                        // the fold: as wet a share of this row's sea air as it was of the last row's
+                        let raw = self.col[yb * n + x];
+                        let v = raw * c0 / rows[yb][0];
+                        fold += b * (v - raw);
+                        v
+                    }
                 };
                 let added = self.vapor[c] - self.col[c];
-                let mut v = pa * vw + pb * vs + added / per;
+                let mut v = pa * vw + pb * vs + added / per + sup;
+                fold += (a + b) * sup;
                 let hold = c0 * (1.0 - (p.lifted * wx.rain_f[c]).min(1.0) * self.lift[c]);
                 let r = (v - hold).max(0.0) * kr;
                 let d = (sat.at(self.temp[c]) - v).max(0.0) * ke;
@@ -575,8 +610,17 @@ impl Air {
                 if t.sea[c] {
                     f.sea_evap += eg;
                     f.sea_rain += rg;
+                    self.wet_now[c] = rg;
                 } else {
-                    self.ground[c] += rg - eg;
+                    // what falls on freezing ground lies as snow (all of it at 0 C, none at 2); the snow melts by
+                    // the degrees above freezing
+                    let tc_ = self.temp[c];
+                    let fall = if p.snow_melt > 0.0 { rg * (1.0 - 0.5 * tc_).clamp(0.0, 1.0) } else { 0.0 };
+                    let pack = self.snow[c] + fall;
+                    let melt = (p.snow_melt * tc_.max(0.0) * days).min(pack);
+                    self.snow[c] = pack - melt;
+                    self.wet_now[c] = rg - fall + melt;
+                    self.ground[c] += rg - fall + melt - eg;
                     f.land_evap += eg;
                     f.land_rain += rg;
                 }
@@ -600,7 +644,8 @@ impl Air {
             }
         }
         // What crossed the borders, as the ground's mm: it is what the pass took up less what it rained.
-        let (inflow, outflow) = (inflow * secs / dx, outflow * secs / dx);
+        // (what the fold and the fronts added came from beyond the map, as the border's air does)
+        let (inflow, outflow) = ((inflow + fold) * secs / dx, outflow * secs / dx);
         f.air_err = (gained - (outflow - inflow)).abs() / inflow.max(1.0);
         // The ledger holds the water over the cells as `vapor`: the wind's net take is what closes it.
         f.wind = f.sea_evap - f.sea_rain + f.land_evap - f.land_rain - dv;
