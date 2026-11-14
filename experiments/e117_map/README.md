@@ -64,13 +64,13 @@ ground at 5 m. Nothing lives on it yet.
 
 - By height: 1,058 mm at 300-800 m, 1,626 mm at 800-1,200 m, 2,176 mm over 1,200 m, where snow lies 5.0 months.
 - By side (lowlands west against east of an island's summit): 896 against 426 mm on the high island (x2.1), 662
-  against 89 mm on the 9.2 km2 one (x7.5), x1.9 and x1.8 on the next two; within an island rain runs from 28 to
+  against 89 mm on the 9.2 km2 one (x7.5), x1.9 and x1.8 on the next two, x1.0 on a low islet; within an island rain runs from 28 to
   2,734 mm (the high one) and from 7 to 1,894 mm.
 - The land's run-off by month, from the spring equinox: 8, 6, 5, 3, 3, 6, 11, 14, 14, 12, 10, 9% of the year's.
 - Years differ: the land's rain 437 to 1,045 mm and its mean 10.2 to 12.5 C over the ten.
 - The 5 m ground: 49 km2 of land, ponds 1.0 km2, streams of 5 l/s and more about 15 km. On the map page 476 of
-  2,980 stream cells are dry beds in mid August (424 of the 1,360 south of 51 N), 175 in January, none in April or
-  October.
+  2,980 stream cells are dry beds on 14 August (424 of the 1,360 south of 51.5 N), 175 on 21 January, none on
+  21 April or 28 October.
 - Before the year's water (10 bare years, first reading): the south's lowlands 1,011 mm and the north's 347, no dry
   season, the lee x1.3; on the page a quarter of the land changed colour between January and July, and that faintly.
 - On the screen: the whole map reads as islands in a sea; in January the northern islands and the summits are white
@@ -79,7 +79,8 @@ ground at 5 m. Nothing lives on it yet.
 
 ## Conclusion
 
-1. **Places differ as designed, the lee less than asked**: 11.4 C north to south at sea level (asked 10); snow on the
+1. **Places differ as designed, the lee less than asked**: 11.4 C between the lowlands of the southern and the
+   northern band (asked 10 at sea level); snow on the
    north's lowlands four months and on the summits five, none in the south; the windward lowlands twice the lee's on
    three islands and 7.5 times on one (asked x5), since a lee is dry only close behind a height: the air a slope has
    wrung is refilled by the fronts within a few km.
