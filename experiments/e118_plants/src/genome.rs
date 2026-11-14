@@ -192,6 +192,14 @@ impl Genotype {
         self.decode(&raw, &keys)
     }
 
+    /// The same, without a copy where no condition holds (e118: a plant a fine cell is read every step).
+    pub fn pheno_cow(&self, sig: &[f64; SIGNALS]) -> std::borrow::Cow<'_, Pheno> {
+        if self.cond.is_empty() {
+            return std::borrow::Cow::Borrowed(&self.base);
+        }
+        std::borrow::Cow::Owned(self.pheno(sig))
+    }
+
     fn decode(&self, raw: &[f64; P_TRAITS], keys: &[u8]) -> Pheno {
         let q = |i: usize| squash(raw[i], P_RANGE[i].1, P_RANGE[i].2, P_RANGE[i].3);
         let m = raw[..5].iter().cloned().fold(f64::MIN, f64::max);

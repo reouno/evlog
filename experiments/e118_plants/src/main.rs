@@ -116,6 +116,7 @@ params! {
     ice = 3000.0, "mm of water: snow lying deeper than this creeps to the cell below";
     // e118: plants at metres (#135 rung 2)
     h_thing = 3.0, "m: a stand that grows past this height becomes a thing, one plant with a crown (a crown about 2 m wide)";
+    h_stem = 2.9, "m: the height a kg of wood stands as one stem, by its mass's fourth root (wood of 500 kg a m3 that buckles at 30 d^(2/3))";
     lai_crown = 4.0, "m2 of leaf a m2 of crown: a crown spreads as wide as its leaves need at this";
     crown_h = 0.35, "a crown's radius is at most this share of the tree's height (a branch reaches out no further)";
     steep = 0.84, "m a m: fine ground steeper than this (40 degrees) holds no soil";

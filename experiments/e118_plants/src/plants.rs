@@ -26,6 +26,7 @@ use crate::noise::Rng;
 use crate::par::{self, Shared};
 use crate::terrain::{Terrain, NONE};
 use crate::Params;
+use std::borrow::Cow;
 use std::collections::VecDeque;
 use std::f64::consts::{PI, TAU};
 
@@ -252,8 +253,8 @@ fn shares(ph: &Pheno, genes: usize, p: &Params) -> [(f64, f64); 5] {
 }
 
 /// A plant during a step, between the pass that reads its light and the one that shares the water.
-struct Tmp {
-    ph: Pheno,
+struct Tmp<'a> {
+    ph: Cow<'a, Pheno>,
     genes: usize,
     at: usize,    // index into `co`, or the tree's index
     tree: bool,
@@ -265,22 +266,45 @@ struct Tmp {
     ract: f64, // kg of root by its activity
     snowed: bool,
     slot: usize,
+    area: f64, // m2 it stands over
+}
+
+/// What a step's length makes of the rates that are the same for every plant.
+struct Rates {
+    dt: f64,
+    flush: f64,
+    store: f64,
+    damage: f64,
+    lpk: f64,
+}
+
+impl Rates {
+    fn new(p: &Params, dt: f64) -> Self {
+        Rates { dt, flush: 1.0 - (-p.flush * dt).exp(), store: 1.0 - (-p.store_turn * dt).exp(), damage: (-12.0 * dt).exp(), lpk: (-dt).exp() }
+    }
+}
+
+/// A plant's height: its genome's, what its wood holds up over its leaves (`sigma`), and what its wood can stand as
+/// one stem (e118: `h_stem` m at a kg, by the mass's fourth root - a stem that buckles at 30 d^(2/3)). `wood_kg` is
+/// the wood of the tree, or of the stand on its fine cell: a stand thins to the stems its wood can hold up.
+fn height(p: &Params, ph: &Pheno, y: &Cohort, wood_kg: f64) -> f64 {
+    ph.height.min(p.h0 + y.o[WOOD].m / (p.sigma * y.lpk.max(1e-4))).min(p.h0 + p.h_stem * wood_kg.sqrt().sqrt())
 }
 
 /// One plant's carbon, growth and losses over a step: the base's law (`base/src/life.rs`). `y` holds its matter in
 /// its own unit (kg a m2 for a field cohort, kg for a tree) and `scale` turns that unit into kg for the ledger.
 #[allow(clippy::too_many_arguments)]
-fn grow(p: &Params, ph: &Pheno, genes: usize, y: &mut Cohort, gpp: f64, stress: f64, t: f64, frosty: bool, stormy: bool, dt: f64, scale: f64, lit: &mut Litter, f: &mut LFlux) {
+fn grow(p: &Params, k: &Rates, ph: &Pheno, genes: usize, y: &mut Cohort, gpp: f64, stress: f64, t: f64, q10t: f64, frosty: bool, stormy: bool, scale: f64, lit: &mut Litter, f: &mut LFlux) {
+    let dt = k.dt;
     let sh = shares(ph, genes, p);
     let bkg = (y.o[LEAF].b + y.o[WOOD].b + y.o[ROOT].b) / 1000.0;
-    let resp = p.resp * q10(t) * bkg * dt;
+    let resp = p.resp * q10t * bkg * dt;
     f.gpp += gpp * scale;
     f.fixed += gpp * scale;
     let net = gpp - resp;
     // Leaves below half of what it held lately are rebuilt from the store (a spring, a regrowth).
     if y.o[LEAF].m < 0.5 * y.lpk && y.o[STORE].m > 0.0 {
-        let from = y.o[STORE].m * (1.0 - (-p.flush * dt).exp());
-        let s = y.o[STORE].take(from / y.o[STORE].m);
+        let s = y.o[STORE].take(k.flush);
         y.pa += s.a;
         y.pb += s.b;
         // this mass is built into leaves below, as if fixed now: count it out and in again
@@ -352,7 +376,7 @@ fn grow(p: &Params, ph: &Pheno, genes: usize, y: &mut Cohort, gpp: f64, stress: 
     let mut fl = 1.0 - (-(p.leaf_turn * (1.0 - 0.8 * tl) + ph.shed + frost + wilt) * dt).exp();
     let mut fw = 1.0 - (-p.wood_turn * (1.0 - 0.8 * tw) * dt).exp();
     let fr = 1.0 - (-p.root_turn * (1.0 - 0.8 * tr) * dt).exp();
-    let fs = 1.0 - (-p.store_turn * dt).exp();
+    let fs = k.store;
     let mut hurt = 1.0 - (-(frost + wilt) * dt).exp();
     if stormy {
         let s = p.storm_fell * (y.h / p.h_storm).powi(2).min(1.0) * (1.0 - tw);
@@ -365,8 +389,8 @@ fn grow(p: &Params, ph: &Pheno, genes: usize, y: &mut Cohort, gpp: f64, stress: 
     lit.add(y.o[WOOD].take(fw));
     lit.add(y.o[ROOT].take(fr));
     lit.add(y.o[STORE].take(fs));
-    y.damage = y.damage * (-12.0 * dt).exp() + hurt;
-    y.lpk = y.o[LEAF].m.max(y.lpk * (-dt).exp());
+    y.damage = y.damage * k.damage + hurt;
+    y.lpk = y.o[LEAF].m.max(y.lpk * k.lpk);
     y.age += dt;
 }
 
@@ -776,6 +800,8 @@ impl Plants {
         let (lands, grows, wet, tree_at, under, gen) = (&self.lands, &self.grows, &self.wet, &self.tree_at, &self.under, &self.gen);
         let (light, temp, snow, stormy) = (&self.light, &self.temp, &self.snow, &self.stormy);
         let n = self.n;
+        let rates = Rates::new(p, dt);
+        let rates = &rates;
         let parts = par::pieces(threads, lands.len(), |lo, hi| {
             let mut f = LFlux::default();
             let mut grown: Vec<(usize, usize)> = Vec::new();
@@ -831,12 +857,12 @@ impl Plants {
                         sig[5] = ((mass / 1e-4).max(1.0).ln() / (1e5f64).ln()).clamp(0.0, 1.0);
                         sig[6] = if mass > 0.0 { y.o[STORE].m / mass } else { 0.0 };
                         sig[7] = (10.0 * y.damage).min(1.0);
-                        let ph = gt.pheno(&sig);
-                        y.h = ph.height.min(p.h0 + y.o[WOOD].m / (p.sigma * y.lpk.max(1e-4)));
+                        let ph = gt.pheno_cow(&sig);
+                        y.h = height(p, &ph, y, y.o[WOOD].m * fa);
                         if has_tree {
                             y.h = y.h.min(p.h_thing);
                         }
-                        tmp.push(Tmp { ph, genes: gt.genes.len(), at: s * KF + i, tree: false, scale: fa, pp: 0.0, act: 0.0, rs: 0.0, rd: 0.0, ract: 0.0, snowed: y.h < depth, slot: s });
+                        tmp.push(Tmp { ph, genes: gt.genes.len(), at: s * KF + i, tree: false, scale: fa, pp: 0.0, act: 0.0, rs: 0.0, rd: 0.0, ract: 0.0, snowed: y.h < depth, slot: s, area: fa });
                     }
                     // the field's own layers under the crowns, the tallest first
                     tmp[first..].sort_by(|x, y| co.at(y.at).h.partial_cmp(&co.at(x.at).h).unwrap().then(x.at.cmp(&y.at)));
@@ -875,8 +901,8 @@ impl Plants {
                         sig[5] = ((mass / 1e-4).max(1.0).ln() / (1e5f64).ln()).clamp(0.0, 1.0);
                         sig[6] = if mass > 0.0 { y.o[STORE].m / y.mass() } else { 0.0 };
                         sig[7] = (10.0 * y.damage).min(1.0);
-                        let ph = gt.pheno(&sig);
-                        y.h = ph.height.min(p.h0 + y.o[WOOD].m / (p.sigma * y.lpk.max(1e-4)));
+                        let ph = gt.pheno_cow(&sig);
+                        y.h = height(p, &ph, y, y.o[WOOD].m);
                         tr.r = (p.sla * y.lpk / (PI * p.lai_crown)).sqrt().min(p.crown_h * y.h).max(0.3);
                         let bact = if y.o[LEAF].m > 1e-15 { ((y.o[LEAF].b - y.cmp * 1000.0 * p.b_comp).max(0.0)) / (y.o[LEAF].m * 1000.0) } else { 0.0 };
                         let act = activity(bact);
@@ -887,7 +913,7 @@ impl Plants {
                         let rsh = root * (1.0 - ph.deep);
                         let rdp = if wet[s] { root } else { root * ph.deep };
                         let ract = root * activity(y.o[ROOT].share_b());
-                        tmp.push(Tmp { ph, genes: gt.genes.len(), at: ti, tree: true, scale: 1.0, pp, act, rs: rsh, rd: rdp, ract, snowed: false, slot: s });
+                        tmp.push(Tmp { ph, genes: gt.genes.len(), at: ti, tree: true, scale: 1.0, pp, act, rs: rsh, rd: rdp, ract, snowed: false, slot: s, area: PI * tr.r * tr.r });
                     }
                 }
                 for x in &tmp {
@@ -923,7 +949,7 @@ impl Plants {
                         }
                     }
                     if rt > 0.0 {
-                        let cap = 50.0 * (y.mass() * x.scale + 0.01 * if x.tree { PI * trees.at(x.at).r.powi(2) } else { fa });
+                        let cap = 50.0 * (y.mass() * x.scale + 0.01 * x.area);
                         let ta = (oa * x.ract / rt).min((cap - y.pa * x.scale).max(0.0));
                         let tb = (ob * x.ract / rt).min((cap - y.pb * x.scale).max(0.0));
                         y.pa += ta / x.scale;
@@ -934,12 +960,12 @@ impl Plants {
                     if x.tree {
                         let tr = trees.at(x.at);
                         let (y, drop) = (&mut tr.b, &mut tr.drop);
-                        grow(p, &x.ph, x.genes, y, gpp, stress, t, true, stormy[c], dt, 1.0, drop, &mut f);
+                        grow(p, rates, &x.ph, x.genes, y, gpp, stress, t, q10t, true, stormy[c], 1.0, drop, &mut f);
                         if y.mass() < p.m_min || y.age >= y.lifespan(p) {
                             fallen.push(x.at as u32);
                         }
                     } else {
-                        grow(p, &x.ph, x.genes, y, gpp, stress, t, !x.snowed, stormy[c], dt, fa, lit.at(x.slot), &mut f);
+                        grow(p, rates, &x.ph, x.genes, y, gpp, stress, t, q10t, !x.snowed, stormy[c], fa, lit.at(x.slot), &mut f);
                         if y.mass() < p.m_min || y.age >= y.lifespan(p) {
                             let l = lit.at(x.slot);
                             for o in y.o {
@@ -1105,11 +1131,14 @@ impl Plants {
                     continue;
                 }
                 let mut rest = self.co[s * KF + i].o[SEED].take(1.0);
-                let ph = self.gen[x.g as usize].as_ref().unwrap().base.clone();
+                let (wing, seed_mass) = {
+                    let ph = &self.gen[x.g as usize].as_ref().unwrap().base;
+                    (ph.wing, ph.seed_mass)
+                };
                 let rg = self.mutant(p, x.g, year);
-                let pw = ph.wing / (ph.wing + 0.1);
+                let pw = wing / (wing + 0.1);
                 let mut wind = rest.take(pw.clamp(0.0, 1.0));
-                let fall = (1.0 / ball(ph.seed_mass).powi(2) + ph.wing / (p.fall_wing * p.fall_wing)).powf(-0.5);
+                let fall = (1.0 / ball(seed_mass).powi(2) + wing / (p.fall_wing * p.fall_wing)).powf(-0.5);
                 let secs = x.h / fall;
                 for j in 0..3 {
                     let part = if j == 2 { std::mem::take(&mut wind) } else { wind.take(1.0 / (3 - j) as f64) };
@@ -1143,10 +1172,13 @@ impl Plants {
                 continue;
             }
             let mut rest = self.trees[ti as usize].b.o[SEED].take(1.0);
-            let ph = self.gen[t.b.g as usize].as_ref().unwrap().base.clone();
+            let (wing, seed_mass) = {
+                let ph = &self.gen[t.b.g as usize].as_ref().unwrap().base;
+                (ph.wing, ph.seed_mass)
+            };
             let rg = self.mutant(p, t.b.g, year);
-            let pw = ph.wing / (ph.wing + 0.1);
-            let fall = (1.0 / ball(ph.seed_mass).powi(2) + ph.wing / (p.fall_wing * p.fall_wing)).powf(-0.5);
+            let pw = wing / (wing + 0.1);
+            let fall = (1.0 / ball(seed_mass).powi(2) + wing / (p.fall_wing * p.fall_wing)).powf(-0.5);
             let secs = t.b.h / fall;
             // sixteen packets from points under its crown, the winged share of each carried by a gust of its own
             for j in 0..16 {
