@@ -292,17 +292,18 @@ impl Rates {
     }
 }
 
-/// A tree's height: its genome's, what its wood holds up over its leaves (`sigma`), and what its wood can stand as
-/// one stem (e118: `h_stem` m at a kg, by the mass's fourth root - a stem as slender as trees are, 50 d^(2/3)).
+/// A tree's height: its genome's (where to stop growing: what stands does not shrink when a plastic genome's limit
+/// falls - a stand of 8 m became trees of 1.6 m at a signal), what its wood holds up over its leaves (`sigma`), and
+/// what its wood can stand as one stem (e118: `h_stem` m at a kg, by the mass's fourth root - a stem as slender as trees are, 50 d^(2/3)).
 fn tree_height(p: &Params, ph: &Pheno, y: &Cohort) -> f64 {
-    ph.height.min(p.h0 + y.o[WOOD].m / (p.sigma * y.lpk.max(1e-4))).min(p.h0 + p.h_stem * y.o[WOOD].m.sqrt().sqrt())
+    ph.height.max(y.h).min(p.h0 + y.o[WOOD].m / (p.sigma * y.lpk.max(1e-4))).min(p.h0 + p.h_stem * y.o[WOOD].m.sqrt().sqrt())
 }
 
 /// A stand's height (its matter a m2): the same, its wood shared among the stems whose crowns, `crown_h` of the
 /// height in radius, fill the ground - so many stems while it is low, fewer as it grows. With n stems a m2, each
 /// of wood w / n and height h_stem (w / n)^(1/4), and n pi (crown_h h)^2 = 1: h = h_stem^2 crown_h sqrt(pi w).
 fn stand_height(p: &Params, ph: &Pheno, y: &Cohort) -> f64 {
-    ph.height.min(p.h0 + y.o[WOOD].m / (p.sigma * y.lpk.max(1e-4))).min(p.h0 + p.h_stem * p.h_stem * p.crown_h * (PI * y.o[WOOD].m).sqrt())
+    ph.height.max(y.h).min(p.h0 + y.o[WOOD].m / (p.sigma * y.lpk.max(1e-4))).min(p.h0 + p.h_stem * p.h_stem * p.crown_h * (PI * y.o[WOOD].m).sqrt())
 }
 
 /// One plant's carbon, growth and losses over a step: the base's law (`base/src/life.rs`). `y` holds its matter in
