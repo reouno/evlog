@@ -665,6 +665,24 @@ impl Air {
                 }
             }
         }
+        if p.snow_melt > 0.0 {
+            // snow deeper than `ice` creeps to the cell below (upstream cells first), as a glacier does to where it
+            // melts; at the shore it breaks off as water
+            for &c in &t.order {
+                let c = c as usize;
+                let over = self.snow[c] - p.ice;
+                if over > 0.0 {
+                    self.snow[c] = p.ice;
+                    let d = t.down[c] as usize;
+                    if t.sea[d] {
+                        self.ground[c] += over;
+                        self.wet_now[c] += over;
+                    } else {
+                        self.snow[d] += over;
+                    }
+                }
+            }
+        }
         // What crossed the borders, as the ground's mm: it is what the pass took up less what it rained.
         // (what the fold and the fronts added came from beyond the map, as the border's air does)
         let (inflow, outflow) = ((inflow + fold) * secs / dx, outflow * secs / dx);

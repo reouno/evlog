@@ -123,6 +123,7 @@ params! {
     front_gap = 2.5, "days of clear air between two fronts, in the mean";
     dry = 0.2, "share by which the air sunk from aloft (between fronts, and south of one) is short of the sea air's water";
     snow_melt = 0.0, "mm of snow melted a day for each degree above freezing (e117; 0: no snow lies)";
+    ice = 3000.0, "mm of water: snow lying deeper than this creeps to the cell below";
     fine = 0.0, "k > 0: at the end, draw the ground at k fine cells a cell from the kept years' rain (`_ground5.bin`)";
     edge = 0.0, "cells from the border over which the ground sinks under the sea (0: the world wraps as a planet)";
     span_lon = 1.0, "share of a day the world's width spans (1: a planet's longitudes; 0: one hour everywhere)";

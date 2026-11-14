@@ -1,15 +1,18 @@
 /**
  * The map at real size (#135, e117): a world of 16 km drawn from its ground at 5 m, near the eye cell by cell and
- * coarser with distance, under the sun of its day and hour, with the season's snow and green from its climate.
+ * coarser with distance, under the sun of its day and hour, with the month's snow, wet and dry ground and streams
+ * from its climate.
  *
- * Served by `viewer map <run prefix>`: the page reads `/data/ground5.json|bin` (the fine ground) and
- * `/data/maps.json|bin` (the climate's annual maps on cells of 125 m). One unit is a metre: x east, y up, and -z
+ * Served by `viewer map <run prefix>`: the page reads `/data/ground5.json|bin` (the fine ground),
+ * `/data/maps.json|bin` (the climate's annual maps on cells of 125 m) and `/data/season.json|bin` (its twelve
+ * mean months; a run without them gets months drawn from the annual maps). One unit is a metre: x east, y up, and -z
  * north (rows run south to north, so a row's z is the map's height less its own).
  */
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 const SEA = 1, POND = 2, STREAM = 3;
 const T = 64; // fine cells a tile side
+const BROOK = 0.005; // m3/s: a stream under this in its month is a dry bed
 const BUILDS_PER_FRAME = 10;
 const $ = (id) => document.getElementById(id);
 async function fetchBin(url) {
@@ -27,6 +30,12 @@ class Land {
         // the climate, coarse: mean temperature, the season's swing (max - min of quarter means), rain, ground height
         this.nc = 0;
         this.ck = 1;
+        // its twelve months (from `start`, a day of the calendar year): temperature, rain (mm), the soil's fill, snow lying
+        // (mm of water), and a cell's run-off as a share of its year's mean
+        this.start = 79;
+        this.months = [];
+        // and the day now drawn, between two months
+        this.day = -1;
     }
     async load(status) {
         status('地面（5 m）を読み込み中…');
@@ -38,6 +47,7 @@ class Land {
         const nn = this.n * this.n;
         this.height = new Float32Array(buf, 0, nn);
         this.water = new Float32Array(buf, 4 * nn, nn);
+        this.flow = new Float32Array(buf, 8 * nn, nn);
         this.kind = new Uint8Array(buf, 12 * nn, nn);
         status('気候を読み込み中…');
         const m = await (await fetch('data/maps.json')).json();
@@ -60,6 +70,89 @@ class Land {
         this.rain = mean('rain');
         this.celev = stat('elev');
         this.lat = stat('lat');
+        const seaC = stat('sea');
+        // the months
+        const months = [];
+        const sj = await fetch('data/season.json').then((r) => (r.ok ? r.json() : null)).catch(() => null);
+        if (sj) {
+            const sb = new Float32Array(await fetchBin('data/season.bin')), SF = sj.fields;
+            this.start = sj.start_day;
+            const part = (m, f) => sb.slice((m * SF.length + SF.indexOf(f)) * cc, (m * SF.length + SF.indexOf(f) + 1) * cc);
+            for (let m = 0; m < 12; m++)
+                months.push([part(m, 'temp'), part(m, 'rain'), part(m, 'fill'), part(m, 'snow'), part(m, 'flow')]);
+        }
+        else {
+            // a run without months: the year's swing as a sine (coldest about 20 January), its rain spread evenly
+            this.start = 0;
+            for (let m = 0; m < 12; m++) {
+                const t = new Float32Array(cc), k = Math.cos((2 * Math.PI * ((m + 0.5) * 30.4 - 20)) / 365);
+                for (let c = 0; c < cc; c++)
+                    t[c] = this.tmean[c] - (this.swing[c] / 1.8) * k;
+                months.push([t, this.rain.map((v) => v / 12), new Float32Array(cc).fill(1), new Float32Array(cc), new Float32Array(cc).fill(1)]);
+            }
+        }
+        // run-off as a share of the cell's own mean month
+        for (let c = 0; c < cc; c++) {
+            let sum = 0;
+            for (let m = 0; m < 12; m++)
+                sum += months[m][4][c];
+            for (let m = 0; m < 12; m++)
+                months[m][4][c] = sum > 0 ? (months[m][4][c] * 12) / sum : 1;
+        }
+        // the sea has no soil, snow or run-off: the shore's land reads its neighbours' there, not zeros
+        for (let m = 0; m < 12; m++) {
+            for (const f of [2, 3, 4]) {
+                const v = months[m][f];
+                let known = Uint8Array.from(seaC, (x) => (x < 0.5 ? 1 : 0));
+                for (let pass = 0; pass < 3; pass++) {
+                    const next = known.slice();
+                    for (let y = 0; y < nc; y++) {
+                        for (let x = 0; x < nc; x++) {
+                            const c = y * nc + x;
+                            if (known[c])
+                                continue;
+                            let sum = 0, k = 0;
+                            for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+                                const xx = x + dx, yy = y + dy;
+                                if (xx >= 0 && yy >= 0 && xx < nc && yy < nc && known[yy * nc + xx]) {
+                                    sum += v[yy * nc + xx];
+                                    k++;
+                                }
+                            }
+                            if (k) {
+                                v[c] = sum / k;
+                                next[c] = 1;
+                            }
+                        }
+                    }
+                    known = next;
+                }
+            }
+        }
+        this.months = months;
+        this.dTemp = new Float32Array(cc);
+        this.dRain = new Float32Array(cc);
+        this.dFill = new Float32Array(cc);
+        this.dSnow = new Float32Array(cc);
+        this.dFlow = new Float32Array(cc);
+    }
+    /** The coarse climate of a day of the calendar year, between the two months about it. */
+    setDay(day) {
+        if (day === this.day)
+            return;
+        this.day = day;
+        const u = (((day - this.start + 365) % 365) / 365) * 12 - 0.5, m0 = Math.floor(u), f = u - m0;
+        const a = this.months[(m0 + 12) % 12], b = this.months[(m0 + 1) % 12];
+        const out = [this.dTemp, this.dRain, this.dFill, this.dSnow, this.dFlow];
+        for (let k = 0; k < 5; k++) {
+            const o = out[k], x = a[k], y = b[k];
+            for (let c = 0; c < o.length; c++)
+                o[c] = x[c] + (y[c] - x[c]) * f;
+        }
+    }
+    /** Whether a stream's cell runs on the day set: its year's flow by its month's share. */
+    runs(c, i, j) {
+        return this.flow[c] * this.coarse(this.dFlow, i, j) >= BROOK;
     }
     /** A coarse field at a fine cell (bilinear between coarse centres). */
     coarse(f, i, j) {
@@ -84,18 +177,20 @@ class Land {
         const h = (this.surface(i, j) * (1 - tx) + this.surface(i + 1, j) * tx) * (1 - ty) + (this.surface(i, j + 1) * (1 - tx) + this.surface(i + 1, j + 1) * tx) * ty;
         return Math.max(0, h);
     }
-    /** The air's temperature at a fine cell on a day of the year (0 = 1 January): the season as a sine from the
-     * quarters' swing, coldest about 20 January, and the lapse from the coarse cell's height to this one's. */
-    tempAt(i, j, day) {
-        const amp = this.coarse(this.swing, i, j) / 1.8;
-        const t = this.coarse(this.tmean, i, j) - amp * Math.cos((2 * Math.PI * (day - 20)) / 365);
-        const dh = Math.max(0, this.height[j * this.n + i]) - Math.max(0, this.coarse(this.celev, i, j));
-        return t - 0.0065 * dh;
+    /** How far a fine cell stands over its coarse cell's ground, m. */
+    over(i, j) {
+        return Math.max(0, this.height[j * this.n + i]) - Math.max(0, this.coarse(this.celev, i, j));
+    }
+    /** The air's mean temperature at a fine cell on the day set: the month's, and the lapse from the coarse cell's
+     * height to this one's. */
+    tempAt(i, j) {
+        return this.coarse(this.dTemp, i, j) - 0.0065 * this.over(i, j);
     }
 }
 const C = {
     sand: [0.78, 0.72, 0.55], soil: [0.45, 0.38, 0.28], straw: [0.66, 0.6, 0.38], green: [0.3, 0.48, 0.18],
     lush: [0.18, 0.38, 0.12], rock: [0.48, 0.47, 0.45], snow: [0.93, 0.95, 0.98], water: [0.16, 0.36, 0.52], seabed: [0.3, 0.38, 0.36],
+    bed: [0.6, 0.57, 0.5],
 };
 const mix = (a, b, t, out) => {
     for (let k = 0; k < 3; k++)
@@ -157,17 +252,19 @@ function buildTile(L, tx, ty, s, day, mat) {
     colourTile(L, mesh, day);
     return mesh;
 }
-/** A tile's colours for a day: the ground by its slope and height, green as far as the climate allows it now,
- * snow where the day is cold enough, water where it stands. */
+/** A tile's colours for a day: the ground by its slope and height, green where the month is warm and its soil wet
+ * (no plants exist: it is what the climate would let grow), straw where it is not, the month's snow, water where it
+ * stands or runs and a dry bed where a stream does not. */
 function colourTile(L, mesh, day) {
     const { tx, ty, s } = mesh.userData;
     if (mesh.userData.day === day)
         return;
     mesh.userData.day = day;
+    L.setDay(day);
     const m = T / s, side = m + 3;
     const col = mesh.geometry.attributes.color.array;
     const nor = mesh.geometry.attributes.normal.array;
-    const n = L.n, out = [0, 0, 0], v2 = [0, 0, 0];
+    const n = L.n, out = [0, 0, 0];
     for (let b = 0; b < side; b++) {
         const j = ty * T + Math.min(m, Math.max(0, b - 1)) * s;
         for (let a = 0; a < side; a++) {
@@ -177,22 +274,26 @@ function colourTile(L, mesh, day) {
             if (kind === SEA) {
                 rgb = mix(C.seabed, C.water, smooth(0, 15, -h), out);
             }
-            else if (kind === POND || kind === STREAM) {
+            else if (kind === POND || (kind === STREAM && L.runs(c, i, j))) {
                 rgb = C.water;
+            }
+            else if (kind === STREAM) {
+                rgb = C.bed;
             }
             else {
                 const steep = 1 - nor[v * 3 + 1]; // 0 flat, ~0.3 at 45 degrees
-                const temp = L.tempAt(i, j, day), tmean = L.coarse(L.tmean, i, j) - 0.0065 * (h - L.coarse(L.celev, i, j));
+                const dh = L.over(i, j), temp = L.coarse(L.dTemp, i, j) - 0.0065 * dh, tmean = L.coarse(L.tmean, i, j) - 0.0065 * dh;
                 const rain = L.coarse(L.rain, i, j);
-                // what the climate would let grow: rain and a warm enough year; green while the day is warm, straw after
-                const allow = smooth(250, 1200, rain) * smooth(-2, 6, tmean);
-                const growing = smooth(3, 10, temp);
-                mix(C.soil, mix(C.straw, rain > 1400 ? C.lush : C.green, growing, v2), allow, out);
+                // what the climate would let grow: green while the month is warm and the soil wet, straw when it is cold or
+                // dry, bare soil where little rain ever falls
+                const growing = smooth(3, 10, temp) * smooth(0.2, 0.6, L.coarse(L.dFill, i, j)) * smooth(-2, 6, tmean);
+                mix(mix(C.soil, C.straw, smooth(100, 400, rain), out), rain > 1400 ? C.lush : C.green, growing, out);
                 if (h < 2)
                     mix(out, C.sand, 1 - smooth(0.5, 2, h), out);
                 mix(out, C.rock, smooth(0.2, 0.4, steep), out); // bare from about 37 degrees, rock by 53
-                const snow = smooth(1, -2, temp) * (1 - smooth(0.25, 0.45, steep));
-                rgb = mix(out, C.snow, snow, out);
+                // the month's snow, deeper on the ground that stands over its coarse cell's
+                const lying = L.coarse(L.dSnow, i, j) * Math.min(2.5, Math.max(0, 1 + dh / 80));
+                rgb = mix(out, C.snow, smooth(3, 25, lying) * (1 - smooth(0.25, 0.45, steep)), out);
             }
             col[v * 3] = rgb[0];
             col[v * 3 + 1] = rgb[1];
@@ -309,16 +410,20 @@ async function main() {
         scene.fog.color.copy(sky);
     }
     function hud() {
+        L.setDay(day);
         const t = controls.target;
         const i = Math.min(L.n - 1, Math.max(0, Math.floor(t.x / L.cell))), j = Math.min(L.n - 1, Math.max(0, Math.floor((L.size - t.z) / L.cell)));
         const c = j * L.n + i, k = L.kind[c];
         const date = new Date(Date.UTC(2001, 0, 1 + day));
         $('date').textContent = `${date.getUTCMonth() + 1}月${date.getUTCDate()}日`;
         $('clock').textContent = `${Math.floor(hour)}:${String(Math.round((hour % 1) * 60)).padStart(2, '0')}`;
-        $('where').textContent = ['陸', '海', '池', '小川'][k];
+        $('where').textContent = k === STREAM && !L.runs(c, i, j) ? '涸れた小川' : ['陸', '海', '池', '小川'][k];
         $('elev').textContent = `${Math.round(L.height[c])} m`;
         $('lat').textContent = `${L.coarse(L.lat, i, j).toFixed(1)}°N`;
-        $('temp').textContent = `${L.tempAt(i, j, day).toFixed(1)} ℃`;
+        $('temp').textContent = `${L.tempAt(i, j).toFixed(1)} ℃`;
+        $('mrain').textContent = `${Math.round(L.coarse(L.dRain, i, j))} mm`;
+        $('wet').textContent = k === SEA ? '—' : `${Math.round(100 * Math.min(1, L.coarse(L.dFill, i, j)))} %`;
+        $('snow').textContent = k === SEA ? '—' : `${Math.round(L.coarse(L.dSnow, i, j))} mm`;
         $('tmean').textContent = `${(L.coarse(L.tmean, i, j) - 0.0065 * (Math.max(0, L.height[c]) - L.coarse(L.celev, i, j))).toFixed(1)} ℃`;
         $('rain').textContent = `${Math.round(L.coarse(L.rain, i, j))} mm`;
         $('eye').textContent = `${Math.round(camera.position.distanceTo(t))} m`;
