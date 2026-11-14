@@ -41,26 +41,43 @@ The cycles (what takes from whom, what refills it, what limits it, the balance e
 
 The crate (`src/plants.rs`; the ground, air and water are `base/`'s):
 
-- **the field**: a fine cell of 5 m with soil (not water; not steeper than 40 degrees) holds up to three cohorts, a
+- **the field**: a fine cell of 5 m with soil (not water; not steeper than 50 degrees) holds up to three cohorts, a
   litter and a seed bank, by `base/src/life.rs`'s law for a cohort;
 - **a tree**: a cohort that grows past 3 m (`h_thing`: a crown about 2 m wide) becomes one plant rooted in its cell,
   with the part of the stand its crown holds; the rest stays in the field under it, no taller than 3 m, and takes the
   place when it dies. A crown is as wide as its leaves need at a leaf area of 4 (`lai_crown`), at most 0.35 of its
   height (`crown_h`), and lies over the fine cells within it. Light falls through the crowns over a cell, the tallest
   first, then through the cell's field;
+- **a stem** (added after the first pilot): a plant is no taller than its wood can stand as one stem, 2.9 m at a kg
+  by the mass's fourth root (wood of 500 kg a m3 that buckles at 30 d^(2/3); `h_stem`). The base's height is a ratio
+  of wood to leaf, so a seedling of a gram was 4 m tall and 27,000 "trees" stood a year after the sowing;
 - **water** as above (`wet_reach` 10 m, `wet_rise` 2 m);
+- **rot frees A and B to the roots in the same step** (after the first pilot): the base lets them lie a step in the
+  soil, under the rain, before roots take them;
+- **humus** (after the second pilot): 0.3 of the A and B that rot frees stays in the soil's organic matter
+  (`humify`) and comes free at 0.05 a year at 20 C in a full soil (`humus`: a residence of 20 years there, 40 at
+  10 C); the land starts with an old soil's humus, 300 years of its rock's giving at a soil of mean depth
+  (`old_soil`: about 180 g of A and 210 g of B a m2). On bare rock the land's whole capital a century on is what
+  its rock gave in that century (0.4 g a m2 a year, a third to two thirds of it washed out): scrub. A real soil
+  holds thousands of years of it;
 - **fire** from fine cell to fine cell, a fuel's drying in full shade a fifth of the open ground's (`fire_shade`);
 - **snow**: a field cohort shorter than the lying snow (a mm of its water is 3.3 mm of snow) has no light, no frost;
 - **seeds** fall near or go with the wind from their plant's height, in metres; a tree's from under its crown;
 - **the sowing**: 256 random genomes; for five years a founder's seed falls on every cell with soil at each release,
   so that a place is filled by what suits it of all that was sown (e109's mosaic of what was sown took centuries).
+- A plant step is 5 days (`life_every` 37) and seeds leave every 60 days (`seed_every` 12): a step a day took 150 s
+  a year for 1.6 million cells, mostly memory.
 - Left out on purpose: the small eaters of leaves (they return as the 125 m field of small life with rung 3), the
   sea's producers, seeds carried by rivers.
 
 World: `base/worlds/isles1.params base/worlds/isles16.params experiments/e118_plants/worlds/plants16.params`.
 Runs, all on Ubuntu with six threads:
 
-- `pilot`: 10 bare years and 10 with plants - the cost of a year, and whether anything stands.
+- `pilot` (10 bare years, 20 with plants; daily steps first, then 5 days): 54 s a year; every ledger closed; 0.40 kg
+  a m2 of field and 0.02 of trees after twenty years, the soil's A at 0.02 g a m2 - starved.
+- `pilot2` (rot's A and B to the roots at once; stopped at year 14): the land takes in 0.4 g of A a m2 a year and
+  loses 0.12-0.34; its living hold 1 g after four years.
+- `pilot3` (humus and an old soil; 10 bare years and 50 with plants): whether a wood grows in decades.
 
 **Stop early if:**
 
