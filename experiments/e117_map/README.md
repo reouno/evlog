@@ -85,8 +85,8 @@ ground at 5 m. Nothing lives on it yet.
    wrung is refilled by the fronts within a few km.
 2. **The 5 m ground reads as a landscape**, as far as watched (the user, 2026-11-14: "the terrain looks good").
    Streams still run straight down smooth slopes.
-3. **The year is on the map**: the south has a rainless summer (7% of its rain, the soil at 0.28 of its fill, most of
-   its brooks dry) and a green winter; the north rain in every season and four months of snow. Whether it is seen is
+3. **The year is on the map**: the south has a rainless summer (7% of its rain, the soil at 0.28 of its fill, a third
+   of its streams' length dry) and a green winter; the north rain in every season and four months of snow. Whether it is seen is
    the user's to say.
 
 Holds under: bare ground (plants will draw the soil down further, and shade it), one terrain seed, ten years.
