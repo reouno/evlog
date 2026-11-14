@@ -322,7 +322,7 @@ const FIELDS: [&str; 16] = ["temp", "swing", "fill", "rain", "discharge", "lake"
 struct Survey {
     field: Vec<f64>,  // kg of field a m2 of soil
     wood: Vec<f64>,   // kg of trees a m2 of soil
-    crown: Vec<f64>,  // share of the soil under crowns that take half the light or more
+    crown: Vec<f64>,  // share of the light the crowns take over the soil
     height: Vec<f64>, // m: the tallest tree
     litter: Vec<f64>, // kg a m2 of soil
     soil: Vec<f64>,   // fine cells with soil
@@ -349,9 +349,7 @@ fn survey(pl: &Plants, p: &Params) -> Survey {
         let c = pl.lands[q / f2] as usize;
         s.soil[c] += 1.0;
         s.litter[c] += pl.lit[q].m;
-        if pl.under[q] < 0.5 {
-            s.crown[c] += 1.0;
-        }
+        s.crown[c] += 1.0 - pl.under[q] as f64;
         for i in 0..KF {
             let x = &pl.co[q * KF + i];
             if x.live() {
@@ -536,7 +534,7 @@ fn main() {
     let mut cm = 0.0f64; // the living's matter: fixed less returned
     let upy = (p.year / p.tick).round() as usize;
     let mut log = std::fs::File::create(format!("{prefix}_log.csv")).unwrap();
-    writeln!(log, "step,year,land_temp,land_rain,land_evap,to_sea,water_err,a_err,b_err,c_err,field,wood,litter,trees,crown,tree_h,tree_h_max,tree_age,gpp,resp,transp,decayed,burnt,burnt_cells,fires,grown,fallen,genotypes,mutant_share,secs,secs_plants").unwrap();
+    writeln!(log, "step,year,land_temp,land_rain,land_evap,to_sea,water_err,a_err,b_err,c_err,field,wood,litter,trees,crown,tree_h,tree_h_max,tree_age,gpp,resp,transp,decayed,burnt,burnt_cells,fires,grown,fallen,genotypes,mutant_share,secs,secs_plants,weathered_a,weathered_b,river_a,river_b,soil_a,soil_b,live_a,live_b").unwrap();
     let mut kept: Vec<(usize, Vec<Vec<f32>>)> = Vec::new();
     let mut months: Vec<Vec<f32>> = Vec::new();
     let mut snaps: Vec<usize> = Vec::new();
@@ -608,6 +606,8 @@ fn main() {
         let u = year.updates as f64;
         let land_temp = (0..cells).filter(|&c| !ter.sea[c]).map(|c| year.temp[c]).sum::<f64>() / u / lfn;
         let mut maps = year.maps(&hy);
+        // the land's A and B a m2: in the soil, and (below) in the living and their litter
+        let soil_ab = (0..cells).filter(|&c| !ter.sea[c]).fold((0.0, 0.0), |s, c| (s.0 + hy.a[c], s.1 + hy.b[c]));
         let secs = ty.elapsed().as_secs_f64();
         match pl.as_mut() {
             Some(x) => {
@@ -616,16 +616,18 @@ fn main() {
                 let soil_m2 = sv.soil_all * x.fa;
                 writeln!(
                     log,
-                    "{},{},{:.3},{:.1},{:.1},{:.1},{:.3e},{:.3e},{:.3e},{:.3e},{:.5},{:.5},{:.5},{},{:.4},{:.3},{:.2},{:.2},{:.6e},{:.6e},{:.1},{:.6e},{:.6e},{},{},{},{},{},{:.5},{:.1},{:.1}",
+                    "{},{},{:.3},{:.1},{:.1},{:.1},{:.3e},{:.3e},{:.3e},{:.3e},{:.5},{:.5},{:.5},{},{:.4},{:.3},{:.2},{:.2},{:.6e},{:.6e},{:.1},{:.6e},{:.6e},{},{},{},{},{},{:.5},{:.1},{:.1},{:.4},{:.4},{:.4},{:.4},{:.4},{:.4},{:.4},{:.4}",
                     (yr + 1) * upy * p.tick as usize, yr + 1, land_temp, fl.land_rain / lfn, fl.land_evap / lfn, hf.to_sea / lfn, werr, aerr, berr, cerr,
                     sv.all[0] / soil_m2, sv.all[1] / soil_m2, sv.all[2] / soil_m2, sv.trees, sv.crown_all / sv.soil_all, sv.h_mean, sv.h_max, sv.age_mean,
-                    lf.gpp, lf.resp, lf.transp / (lfn * ca), lf.decayed, lf.burnt, lf.burnt_cells, lf.fires, lf.grown, lf.fallen, ng, sv.mutant, secs, secs_plants
+                    lf.gpp, lf.resp, lf.transp / (lfn * ca), lf.decayed, lf.burnt, lf.burnt_cells, lf.fires, lf.grown, lf.fallen, ng, sv.mutant, secs, secs_plants,
+                    hf.weathered_a / lfn, hf.weathered_b / lfn, hf.river_a / lfn, hf.river_b / lfn, soil_ab.0 / lfn, soil_ab.1 / lfn, la / ca / lfn, lb / ca / lfn
                 )
                 .unwrap();
                 eprintln!(
-                    "year {:>3}: land {:.1} C, rain {:.0} mm, evap {:.0}, transp {:.0}; field {:.3} kg/m2, wood {:.3}, litter {:.3}; trees {} (h {:.1} m, to {:.1}, age {:.1}), crowns {:.3}; grown {}, fallen {}, fires {} over {} cells; genotypes {ng}, new {:.3}; errs w {werr:.0e} A {aerr:.0e} C {cerr:.0e}; {secs:.1} s (plants {secs_plants:.1}: crowns {:.1}, light {:.1}, growth {:.1}, fire {:.1}, seeds {:.1})",
+                    "year {:>3}: land {:.1} C, rain {:.0} mm, evap {:.0}, transp {:.0}; field {:.3} kg/m2, wood {:.3}, litter {:.3}; trees {} (h {:.1} m, to {:.1}, age {:.1}), crowns {:.3}; grown {}, fallen {}, fires {} over {} cells; genotypes {ng}, new {:.3}; A {:.2}+{:.2} g/m2 (in {:.2}, out {:.2}), B {:.2}+{:.2} (in {:.2}, out {:.2}); errs w {werr:.0e} A {aerr:.0e} C {cerr:.0e}; {secs:.1} s (plants {secs_plants:.1}: crowns {:.1}, light {:.1}, growth {:.1}, fire {:.1}, seeds {:.1})",
                     yr + 1, land_temp, fl.land_rain / lfn, fl.land_evap / lfn, lf.transp / (lfn * ca), sv.all[0] / soil_m2, sv.all[1] / soil_m2, sv.all[2] / soil_m2,
-                    sv.trees, sv.h_mean, sv.h_max, sv.age_mean, sv.crown_all / sv.soil_all, lf.grown, lf.fallen, lf.fires, lf.burnt_cells, sv.mutant, x.secs[0], x.secs[1], x.secs[2], x.secs[3], x.secs[4]
+                    sv.trees, sv.h_mean, sv.h_max, sv.age_mean, sv.crown_all / sv.soil_all, lf.grown, lf.fallen, lf.fires, lf.burnt_cells, sv.mutant,
+                    soil_ab.0 / lfn, la / ca / lfn, hf.weathered_a / lfn, hf.river_a / lfn, soil_ab.1 / lfn, lb / ca / lfn, hf.weathered_b / lfn, hf.river_b / lfn, x.secs[0], x.secs[1], x.secs[2], x.secs[3], x.secs[4]
                 );
                 let f = |v: &[f64]| v.iter().map(|x| *x as f32).collect::<Vec<f32>>();
                 maps.extend([f(&sv.field), f(&sv.wood), f(&sv.crown), f(&sv.height), f(&sv.litter), f(&x.burnt), f(&x.transp)]);
@@ -636,7 +638,7 @@ fn main() {
                 }
             }
             None => {
-                writeln!(log, "{},{},{:.3},{:.1},{:.1},{:.1},{:.3e},{:.3e},{:.3e},0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,{:.1},0", (yr + 1) * upy * p.tick as usize, yr + 1, land_temp, fl.land_rain / lfn, fl.land_evap / lfn, hf.to_sea / lfn, werr, aerr, berr, secs).unwrap();
+                writeln!(log, "{},{},{:.3},{:.1},{:.1},{:.1},{:.3e},{:.3e},{:.3e},0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,{:.1},0,{:.4},{:.4},{:.4},{:.4},{:.4},{:.4},0,0", (yr + 1) * upy * p.tick as usize, yr + 1, land_temp, fl.land_rain / lfn, fl.land_evap / lfn, hf.to_sea / lfn, werr, aerr, berr, secs, hf.weathered_a / lfn, hf.weathered_b / lfn, hf.river_a / lfn, hf.river_b / lfn, soil_ab.0 / lfn, soil_ab.1 / lfn).unwrap();
                 eprintln!("year {:>3}: land {:.1} C, rain {:.0} mm, evap {:.0}, to sea {:.0}; bare; errs w {werr:.0e} A {aerr:.0e}; {secs:.1} s", yr + 1, land_temp, fl.land_rain / lfn, fl.land_evap / lfn, hf.to_sea / lfn);
                 let z = vec![0.0f32; cells];
                 maps.extend(std::iter::repeat(z).take(7));
